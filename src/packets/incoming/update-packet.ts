@@ -1,4 +1,5 @@
 import { GroundTileData } from '../../data/ground-tile-data';
+import { read as compressedRead } from '../../data/compressed-int';
 import { ObjectData } from '../../data/object-data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
@@ -37,7 +38,7 @@ export class UpdatePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const tilesLen = reader.readShort();
+    const tilesLen = compressedRead(reader);
     this.tiles = new Array<GroundTileData>(tilesLen);
     for (let i = 0; i < tilesLen; i++) {
       const gd = new GroundTileData();
@@ -45,7 +46,7 @@ export class UpdatePacket implements Packet {
       this.tiles[i] = gd;
     }
 
-    const newObjectsLen = reader.readShort();
+    const newObjectsLen = compressedRead(reader);
     this.newObjects = new Array<ObjectData>(newObjectsLen);
     for (let i = 0; i < newObjectsLen; i++) {
       const od = new ObjectData();
@@ -53,10 +54,10 @@ export class UpdatePacket implements Packet {
       this.newObjects[i] = od;
     }
 
-    const dropsLen = reader.readShort();
+    const dropsLen = compressedRead(reader);
     this.drops = new Array<number>(dropsLen);
     for (let i = 0; i < dropsLen; i++) {
-      this.drops[i] = reader.readInt32();
+      this.drops[i] = compressedRead(reader);
     }
   }
 
