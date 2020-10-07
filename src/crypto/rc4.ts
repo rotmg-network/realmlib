@@ -71,7 +71,7 @@ export class RC4 {
  * @example
  * const key = Buffer.from(OUTGOING_KEY, 'hex');
  */
-export const OUTGOING_KEY = '6a39570cc9de4ec71d64821894';
+export const OUTGOING_KEY = '5a4d2016bc16dc64883194ffd9';
 /**
  * The RC4 Private Key to decrypt incoming packet data.
  * This key is a Hex String, so should be converted to
@@ -79,4 +79,4 @@ export const OUTGOING_KEY = '6a39570cc9de4ec71d64821894';
  * @example
  * const key = Buffer.from(INCOMING_KEY, 'hex');
  */
-export const INCOMING_KEY = 'c79332b197f92ba85ed281a023';
+export const INCOMING_KEY = 'c91d9eec420160730d825604e0';
