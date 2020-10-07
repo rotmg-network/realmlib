@@ -19,7 +19,7 @@ export enum FailureCode {
    */
   EmailVerificationNeeded = 7,
   /**
-   * > Unknown.
+   * Received when teleporting when the client has the non-guild cooldown
    */
   TeleportRealmBlock = 9,
 }
