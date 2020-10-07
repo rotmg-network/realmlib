@@ -49,6 +49,7 @@ export class DeathPacket implements Packet {
     this.killedBy = '';
     this.zombieId = 0;
     this.zombieType = 0;
+    this.unknown = 0;
     this.isZombie = false;
   }
 
