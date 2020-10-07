@@ -1,12 +1,13 @@
 import { Reader } from '../reader';
 
+/* tslint:disable:no-bitwise */
 export function read(reader: Reader): number {
     let value = 0;
     let uByte = reader.readUnsignedByte();
-    let isNegative = !((uByte & 64) === 0);
     let shift = 6;
+    const isNegative = !((uByte & 64) === 0);
     value = uByte & 63;
-    
+
     while (uByte & 128) {
         uByte = reader.readUnsignedByte();
         value = value | (uByte & 127) << shift;
@@ -18,3 +19,4 @@ export function read(reader: Reader): number {
     }
     return value;
 }
+/* tslint:enable:no-bitwise */
