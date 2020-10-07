@@ -1,9 +1,8 @@
-// auto generated with tsai
-// https://github.com/thomas-crane/tsai
 export * from './account-list-packet';
 export * from './ally-shoot-packet';
 export * from './aoe-packet';
 export * from './buy-result-packet';
+export * from './chat-token';
 export * from './claim-daily-reward-response';
 export * from './client-stat-packet';
 export * from './createsuccess-packet';
