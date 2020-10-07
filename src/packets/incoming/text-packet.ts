@@ -44,6 +44,10 @@ export class TextPacket implements Packet {
    * Whether or not the sender of the message is a supporter.
    */
   isSupporter: boolean;
+  /**
+   * The star background of the player
+   */
+  starBackground: number;
   //#endregion
 
   constructor() {
@@ -55,6 +59,7 @@ export class TextPacket implements Packet {
     this.text = '';
     this.cleanText = '';
     this.isSupporter = false;
+    this.starBackground = 0;
   }
 
   read(reader: Reader): void {
@@ -66,6 +71,7 @@ export class TextPacket implements Packet {
     this.text = reader.readString();
     this.cleanText = reader.readString();
     this.isSupporter = reader.readBoolean();
+    this.starBackground = reader.readInt32();
   }
 
   write(writer: Writer): void {
@@ -77,5 +83,6 @@ export class TextPacket implements Packet {
     writer.writeString(this.text);
     writer.writeString(this.cleanText);
     writer.writeBoolean(this.isSupporter);
+    writer.writeInt32(this.starBackground);
   }
 }
