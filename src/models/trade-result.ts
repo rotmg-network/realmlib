@@ -3,5 +3,5 @@
  */
 export enum TradeResult {
   Successful = 0,
-  PlayerCanceled = 1
+  PlayerCancelled = 1
 }
