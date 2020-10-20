@@ -40,6 +40,10 @@ export class PlayerShootPacket implements Packet {
    * The lifetime MS multiplier for the projectile (affected by Inspired?)
    */
   lifeMult: number;
+  /**
+   * If the projectile is a burst
+   */
+  isBurst: boolean;
   //#endregion
 
   constructor() {
@@ -50,6 +54,7 @@ export class PlayerShootPacket implements Packet {
     this.angle = 0;
     this.speedMult = 0;
     this.lifeMult = 0;
+    this.isBurst = false;
   }
 
   write(writer: Writer): void {
@@ -62,6 +67,7 @@ export class PlayerShootPacket implements Packet {
     // equivalent to `Math.floor` in JS.
     writer.writeShort(Math.floor(this.speedMult * 1000));
     writer.writeShort(Math.floor(this.lifeMult * 1000));
+    writer.writeBoolean(this.isBurst);
   }
 
   read(reader: Reader): void {
@@ -72,5 +78,6 @@ export class PlayerShootPacket implements Packet {
     this.angle = reader.readFloat();
     this.speedMult = Math.floor(reader.readShort() / 1000);
     this.lifeMult = Math.floor(reader.readShort() / 1000);
+    this.isBurst = reader.readBoolean();
   }
 }
