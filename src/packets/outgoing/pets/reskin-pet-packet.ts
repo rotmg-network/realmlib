@@ -32,13 +32,13 @@ export class ReskinPetPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.instanceId);
-    writer.writeByte(this.newPetType);
+    writer.writeInt32(this.newPetType);
     this.item.write(writer);
   }
 
   read(reader: Reader): void {
     this.instanceId = reader.readInt32();
-    this.newPetType = reader.readByte();
+    this.newPetType = reader.readInt32();
     this.item.read(reader);
   }
 }

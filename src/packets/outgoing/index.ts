@@ -1,5 +1,3 @@
-// auto generated with tsai
-// https://github.com/thomas-crane/tsai
 export * from './accept-trade-packet';
 export * from './aoeack-packet';
 export * from './buy-packet';
