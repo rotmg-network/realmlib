@@ -10,12 +10,10 @@ export class PlayerTextPacket implements Packet {
 
   readonly type = PacketType.PLAYERTEXT;
 
-  //#region packet-specific members
   /**
    * The message to send.
    */
   text: string;
-  //#endregion
 
   constructor() {
     this.text = '';
