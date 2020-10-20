@@ -49,6 +49,7 @@ export class StatData implements DataPacket {
       case StatType.PET_NAME_STAT:
       case StatType.ACCOUNT_ID_STAT:
       case StatType.OWNER_ACCOUNT_ID_STAT:
+      case StatType.GRAVE_ACCOUNT_ID:
         return true;
       default:
         return false;
