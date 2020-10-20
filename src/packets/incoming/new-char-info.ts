@@ -8,7 +8,7 @@ import { Writer } from '../../writer';
  */
 export class NewCharacterInfoPacket implements Packet {
 
-  readonly type = PacketType.NEW_CHAR_INFO;
+  readonly type = PacketType.NEW_CHARACTER_INFORMATION;
 
   charXML: string;
   //#endregion

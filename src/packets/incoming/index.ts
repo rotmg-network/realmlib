@@ -21,6 +21,7 @@ export * from './key-info-response-packet';
 export * from './mapinfo-packet';
 export * from './name-result-packet';
 export * from './new-ability-message';
+export * from './new-char-info';
 export * from './newtick-packet';
 export * from './notification-packet';
 export * from './password-prompt-packet';

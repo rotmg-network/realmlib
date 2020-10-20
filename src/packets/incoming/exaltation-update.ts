@@ -7,7 +7,7 @@ import { Writer } from "../../writer";
  * Received when the players exaltation stats update
  */
 export class ExaltationUpdatePacket implements Packet {
-  readonly type = PacketType.EXALTATIONUPDATE;
+  readonly type = PacketType.EXALTATION_UPDATE;
 
   objType: number;
 
