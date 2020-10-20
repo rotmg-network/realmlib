@@ -30,6 +30,7 @@ export * from './play-sound-packet';
 export * from './quest-fetch-response';
 export * from './quest-objectid-packet';
 export * from './quest-redeem-response-packet';
+export * from './queue-info';
 export * from './realm-heroes-left-packet';
 export * from './reconnect-packet';
 export * from './reskin-unlock-packet';
