@@ -215,6 +215,12 @@ export function createPacket(type: PacketType): Packet {
       return new IncomingPackets.RealmHeroesLeftPacket();
     case PacketType.RESET_DAILY_QUESTS:
       return new OutgoingPackets.ResetDailyQuestsPacket();
+    case PacketType.VAULT_UPDATE:
+      return new IncomingPackets.VaultUpdatePacket();
+    case PacketType.QUEUE_INFO:
+      return new IncomingPackets.QueueInfoPacket();
+    case PacketType.EXALTATIONUPDATE:
+      return new IncomingPackets.ExaltationUpdatePacket();
   }
   throw new Error(`Unknown packet type: ${type}`);
 }
