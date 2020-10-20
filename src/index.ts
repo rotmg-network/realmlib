@@ -1,5 +1,3 @@
-// auto generated with tsai
-// https://github.com/thomas-crane/tsai
 export * from './create-packet';
 export * from './packet-map';
 export * from './packet-type';
