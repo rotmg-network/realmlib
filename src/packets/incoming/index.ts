@@ -9,6 +9,7 @@ export * from './createsuccess-packet';
 export * from './damage-packet';
 export * from './death-packet';
 export * from './enemy-shoot-packet';
+export * from './exaltation-update';
 export * from './failure-packet';
 export * from './file-packet';
 export * from './global-notification-packet';
