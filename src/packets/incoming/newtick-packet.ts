@@ -65,8 +65,6 @@ export class NewTickPacket implements Packet {
   write(writer: Writer): void {
     writer.writeInt32(this.tickId);
     writer.writeInt32(this.tickTime);
-    writer.writeUInt32(this.serverRealTimeMS);
-    writer.writeUnsignedShort(this.serverLastTimeRTTMS);
     writer.writeShort(this.statuses.length);
     for (const status of this.statuses) {
       status.write(writer);
