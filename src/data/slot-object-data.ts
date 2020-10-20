@@ -25,13 +25,13 @@ export class SlotObjectData implements DataPacket {
 
   read(reader: Reader): void {
     this.objectId = reader.readInt32();
-    this.slotId = reader.readUnsignedByte();
+    this.slotId = reader.readInt32();
     this.objectType = reader.readUInt32();
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.objectId);
-    writer.writeUnsignedByte(this.slotId);
+    writer.writeInt32(this.slotId);
     writer.writeInt32(this.objectType);
   }
 }
