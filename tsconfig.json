@@ -7,7 +7,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "incremental": true,
+    "incremental": false,
     "rootDir": "./src",
     "outDir": "./lib",
     "lib": ["es2017"]

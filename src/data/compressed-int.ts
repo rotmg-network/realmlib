@@ -4,8 +4,8 @@ import { Reader } from '../reader';
 export function read(reader: Reader): number {
     let value = 0;
     let uByte = reader.readUnsignedByte();
+    const isNegative = (uByte & 64) !== 0;
     let shift = 6;
-    const isNegative = !((uByte & 64) === 0);
     value = uByte & 63;
 
     while (uByte & 128) {
