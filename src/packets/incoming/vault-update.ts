@@ -35,30 +35,33 @@ export class VaultUpdatePacket implements Packet {
   }
 
   read(reader: Reader): void {
+    /* read the lengths of the chests into the buffer */
+    compressedRead(reader);
+    compressedRead(reader);
+    compressedRead(reader);
+    compressedRead(reader);
+
     let counter = 0;
-
-    //compressedRead(reader);
-    //compressedRead(reader);
-    //compressedRead(reader);
-    //compressedRead(reader);
-
     let itemCount = compressedRead(reader);
     while (counter < itemCount) {
       this.vaultContents.push(compressedRead(reader));
       counter++;
     }
+
     let giftItemCount = compressedRead(reader);
     counter = 0;
     while (counter < giftItemCount) {
       this.giftContents.push(compressedRead(reader));
       counter++;
     }
+
     let potionCount = compressedRead(reader);
     counter = 0;
     while (counter < potionCount) {
       this.potionContents.push(compressedRead(reader));
       counter++;
     }
+    
     this.vaultUpgradeCost = reader.readShort();
     this.potionUpgradeCost = reader.readShort();
     this.currentPotionMax = reader.readShort();
