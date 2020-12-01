@@ -20,10 +20,6 @@ export class ReconnectPacket implements Packet {
    */
   host: string;
   /**
-   * > Unknown.
-   */
-  stats: string;
-  /**
    * The port of the new host.
    */
   port: number;
@@ -48,7 +44,6 @@ export class ReconnectPacket implements Packet {
   constructor() {
     this.name = '';
     this.host = '';
-    this.stats = '';
     this.port = 0;
     this.gameId = 0;
     this.keyTime = 0;
@@ -59,7 +54,6 @@ export class ReconnectPacket implements Packet {
   read(reader: Reader): void {
     this.name = reader.readString();
     this.host = reader.readString();
-    this.stats = reader.readString();
     this.port = reader.readInt32();
     this.gameId = reader.readInt32();
     this.keyTime = reader.readInt32();
@@ -70,7 +64,6 @@ export class ReconnectPacket implements Packet {
   write(writer: Writer): void {
     writer.writeString(this.name);
     writer.writeString(this.host);
-    writer.writeString(this.stats);
     writer.writeInt32(this.port);
     writer.writeInt32(this.gameId);
     writer.writeInt32(this.keyTime);
