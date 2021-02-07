@@ -2,6 +2,8 @@
 
 A networking library for Realm of the Mad God Unity.
 
+# I won't be updating this publicly anymore, but it still works with a few minor changes as of 02/21
+
 ## Contents
 
 + [Install](#install)
