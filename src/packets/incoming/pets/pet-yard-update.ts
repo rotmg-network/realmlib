@@ -1,23 +1,20 @@
-import { PetYardType } from '../../../models/pet-yard-type';
+import { PetYardType } from '../../../models';
 import { Packet } from '../../../packet';
 import { PacketType } from '../../../packet-type';
 import { Reader } from '../../../reader';
 import { Writer } from '../../../writer';
 
 /**
- * Received when the pet yard is updated to a new type of yard.
+ * Received when the pet yard is updated to a new type of yard
  */
 export class PetYardUpdate implements Packet {
 
   readonly type = PacketType.PETYARDUPDATE;
-  propagate = true;
 
-  //#region packet-specific members
   /**
-   * The type of the new yard.
+   * The type of the new yard
    */
   yardType: PetYardType;
-  //#endregion
 
   constructor() {
     this.yardType = 0;
@@ -29,5 +26,9 @@ export class PetYardUpdate implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.yardType);
+  }
+
+  toString(): string {
+    return `[PetYardUpdate - 78] Yard Type: ${this.yardType}`;
   }
 }

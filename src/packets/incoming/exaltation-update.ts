@@ -7,24 +7,22 @@ import { Writer } from "../../writer";
  * Received when the players exaltation stats update
  */
 export class ExaltationUpdatePacket implements Packet {
-  readonly type = PacketType.EXALTATION_UPDATE;
+  readonly type = PacketType.EXALTATION_BONUS_CHANGED;
 
+  /**
+   * The object type of the player's class
+   */
   objType: number;
-
+  /**
+   * The amount of stats to increase
+   */
   attackProgress: number;
-
   defenseProgress: number;
-
   speedProgress: number;
-
   dexterityProgress: number;
-
   vitalityProgress: number;
-
   wisdomProgress: number;
-
   healthProgress: number;
-
   manaProgress: number;
 
   constructor() {
@@ -61,5 +59,17 @@ export class ExaltationUpdatePacket implements Packet {
     writer.writeByte(this.attackProgress);
     writer.writeByte(this.manaProgress);
     writer.writeByte(this.healthProgress);
+  }
+
+  toString(): string {
+    return `[ExaltationUpdate - 114] ObjectType: ${this.objType}` +
+      `DEX: ${this.dexterityProgress}\n` +
+      `SPD: ${this.speedProgress}\n` +
+      `VIT: ${this.vitalityProgress}\n` +
+      `WIS: ${this.wisdomProgress}\n` +
+      `DEF: ${this.defenseProgress}\n` +
+      `ATK: ${this.attackProgress}\n` +
+      `MANA: ${this.manaProgress}\n` +
+      `LIFE: ${this.healthProgress}`;
   }
 }

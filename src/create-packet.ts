@@ -6,8 +6,8 @@ import * as OutgoingPackets from './packets/outgoing';
 
 /**
  * Creates the correct packet object for the given type.
- * @param type The type of packet to create.
- * @throws {Error} if the packet cannot be created.
+ * @param type The type of packet to create
+ * @throws {Error} if the packet cannot be created
  */
 export function createPacket(type: PacketType): Packet {
   if (typeof type !== 'string') {
@@ -39,6 +39,8 @@ export function createPacket(type: PacketType): Packet {
       return new OutgoingPackets.HelloPacket();
     case PacketType.MOVE:
       return new OutgoingPackets.MovePacket();
+    case PacketType.CHATTOKEN:
+      return new IncomingPackets.ChatToken();
     case PacketType.SETCONDITION:
       return new OutgoingPackets.SetConditionPacket();
     case PacketType.ACTIVEPETUPDATE:
@@ -217,12 +219,20 @@ export function createPacket(type: PacketType): Packet {
       return new OutgoingPackets.ResetDailyQuestsPacket();
     case PacketType.NEW_CHARACTER_INFORMATION:
       return new IncomingPackets.NewCharacterInfoPacket();
-    case PacketType.QUEUE_INFO:
+    case PacketType.QUEUE_INFORMATION:
       return new IncomingPackets.QueueInfoPacket();
-    case PacketType.EXALTATION_UPDATE:
-      return new IncomingPackets.ExaltationUpdatePacket();
+    case PacketType.QUEUE_CANCEL:
+      return new OutgoingPackets.QueueCancelPacket();
     case PacketType.VAULT_UPDATE:
       return new IncomingPackets.VaultUpdatePacket();
+    case PacketType.EXALTATION_BONUS_CHANGED:
+      return new IncomingPackets.ExaltationUpdatePacket();
+    case PacketType.FORGE_REQUEST:
+      return new OutgoingPackets.ForgeRequestPacket();
+    case PacketType.FORGE_RESULT:
+      return new IncomingPackets.ForgeResultPacket();
+    case PacketType.CHANGE_ALLYSHOOT:
+      return new OutgoingPackets.ChangeAllyShootPacket();
   }
   throw new Error(`Unknown packet type: ${type}`);
 }

@@ -1,9 +1,8 @@
-import { WorldPosData } from '../../data/world-pos-data';
+import { WorldPosData, CompressedInt } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
-import { read as compressedRead } from '../../data/compressed-int';
 
 /**
  * Received to tell the player to display an effect such as an AOE grenade.
@@ -52,7 +51,7 @@ export class ShowEffectPacket implements Packet {
     this.effectType = reader.readUnsignedByte();
     let loc2 = reader.readUnsignedByte();
     if (loc2 & 64) {
-      this.targetObjectId = compressedRead(reader);
+      this.targetObjectId = new CompressedInt().read(reader);
     } else {
       this.targetObjectId = 0;
     }
@@ -90,7 +89,7 @@ export class ShowEffectPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeUnsignedByte(this.effectType);
-    writer.writeInt32(this.targetObjectId);
+    new CompressedInt().write(writer, this.targetObjectId);
     this.pos1.write(writer);
     this.pos2.write(writer);
     writer.writeInt32(this.color);

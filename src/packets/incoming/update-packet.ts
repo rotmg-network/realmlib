@@ -1,6 +1,4 @@
-import { GroundTileData } from '../../data/ground-tile-data';
-import { read as compressedRead } from '../../data/compressed-int';
-import { ObjectData } from '../../data/object-data';
+import { GroundTileData, ObjectData, CompressedInt } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
@@ -38,15 +36,14 @@ export class UpdatePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const tilesLen = compressedRead(reader);
-    this.tiles = new Array<GroundTileData>(tilesLen);
-    for (let i = 0; i < tilesLen; i++) {
+    this.tiles = new Array<GroundTileData>(new CompressedInt().read(reader));
+    for (let i = 0; i < this.tiles.length; i++) {
       const gd = new GroundTileData();
       gd.read(reader);
       this.tiles[i] = gd;
     }
 
-    const newObjectsLen = compressedRead(reader);
+    const newObjectsLen = new CompressedInt().read(reader);
     this.newObjects = new Array<ObjectData>(newObjectsLen);
     for (let i = 0; i < newObjectsLen; i++) {
       const od = new ObjectData();
@@ -54,25 +51,25 @@ export class UpdatePacket implements Packet {
       this.newObjects[i] = od;
     }
 
-    const dropsLen = compressedRead(reader);
+    const dropsLen = new CompressedInt().read(reader);
     this.drops = new Array<number>(dropsLen);
     for (let i = 0; i < dropsLen; i++) {
-      this.drops[i] = compressedRead(reader);
+      this.drops[i] = new CompressedInt().read(reader);
     }
   }
 
   write(writer: Writer): void {
-    writer.writeShort(this.tiles.length);
+    new CompressedInt().write(writer, this.tiles.length);
     for (const tile of this.tiles) {
       tile.write(writer);
     }
-    writer.writeShort(this.newObjects.length);
+    new CompressedInt().write(writer, this.tiles.length);
     for (const obj of this.newObjects) {
       obj.write(writer);
     }
-    writer.writeShort(this.drops.length);
+    new CompressedInt().write(writer, this.tiles.length);
     for (const drop of this.drops) {
-      writer.writeInt32(drop);
+      new CompressedInt().write(writer, drop);
     }
   }
 }

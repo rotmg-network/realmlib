@@ -7,7 +7,7 @@ import { Writer } from '../../writer';
  * Received when the client connects to a server with a queue.
  */
 export class QueueInfoPacket implements Packet {
-    readonly type = PacketType.QUEUE_INFO;
+    readonly type = PacketType.QUEUE_INFORMATION;
 
     /**
      * The current position of the client in the queue

@@ -4,13 +4,12 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to initiate the chat stream
+ * Sent to initiate the chat stream (unnused)
  */
 export class ChatHelloPacket implements Packet {
 
   readonly type = PacketType.CHATHELLO;
 
-  //#region packet-specific members
   /**
    * The clients account ID
    */
@@ -19,7 +18,6 @@ export class ChatHelloPacket implements Packet {
    * The chat initiation token
    */
   token: string;
-  //#endregion
 
   constructor() {
     this.accountId = "";
@@ -34,5 +32,9 @@ export class ChatHelloPacket implements Packet {
   read(reader: Reader): void {
     this.accountId = reader.readString();
     this.token = reader.readString();
+  }
+
+  toString(): string {
+    return `[ChatHello - 206] AccountId: ${this.accountId} - Token: ${this.token}`;
   }
 }

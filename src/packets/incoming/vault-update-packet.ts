@@ -1,7 +1,7 @@
 import { Packet } from "../../packet";
 import { PacketType } from "../../packet-type";
 import { Reader } from "../../reader";
-import { read as compressedRead } from "../../data/compressed-int";
+import { CompressedInt } from "../../data/compressed-int";
 import { Writer } from "../../writer";
 
 /**
@@ -9,6 +9,22 @@ import { Writer } from "../../writer";
  */
 export class VaultUpdatePacket implements Packet {
   readonly type = PacketType.VAULT_UPDATE;
+  /**
+   * Unknown.
+   */
+  unknownBool: boolean;
+  /**
+   * The amount of items in the player vault.
+   */
+  vaultItemCount: number;
+  /**
+   * The amount of items in the gift vault.
+   */
+  giftItemCount: number;
+  /**
+   * The amount of items in the potion vault.
+   */
+  potionItemCount: number;
   /**
    * The contents of the players vault, sent as an array of item object IDs or -1 if the slot is empty
    */
@@ -39,6 +55,7 @@ export class VaultUpdatePacket implements Packet {
   nextPotionMax: number;
 
   constructor() {
+    this.unknownBool = false;
     this.vaultContents = [];
     this.giftContents = [];
     this.potionContents = [];
@@ -49,30 +66,29 @@ export class VaultUpdatePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    /* read the lengths of the chests into the buffer */
-    compressedRead(reader);
-    compressedRead(reader);
-    compressedRead(reader);
-    compressedRead(reader);
+    this.unknownBool = reader.readBoolean();
+    this.vaultItemCount = new CompressedInt().read(reader);
+    this.giftItemCount = new CompressedInt().read(reader);
+    this.potionItemCount = new CompressedInt().read(reader);
 
     let counter = 0;
-    let itemCount = compressedRead(reader);
+    let itemCount = new CompressedInt().read(reader);
     while (counter < itemCount) {
-      this.vaultContents.push(compressedRead(reader));
+      this.vaultContents.push(new CompressedInt().read(reader));
       counter++;
     }
 
-    let giftItemCount = compressedRead(reader);
+    let giftItemCount = new CompressedInt().read(reader);
     counter = 0;
     while (counter < giftItemCount) {
-      this.giftContents.push(compressedRead(reader));
+      this.giftContents.push(new CompressedInt().read(reader));
       counter++;
     }
 
-    let potionCount = compressedRead(reader);
+    let potionCount = new CompressedInt().read(reader);
     counter = 0;
     while (counter < potionCount) {
-      this.potionContents.push(compressedRead(reader));
+      this.potionContents.push(new CompressedInt().read(reader));
       counter++;
     }
 
@@ -83,6 +99,12 @@ export class VaultUpdatePacket implements Packet {
   }
 
   write(writer: Writer): void {
+    writer.writeBoolean(this.unknownBool);
+
+    writer.writeInt32(this.vaultItemCount);
+    writer.writeInt32(this.giftItemCount);
+    writer.writeInt32(this.potionItemCount);
+
     writer.writeInt32(this.vaultContents.length);
     for (const item of this.vaultContents) {
       writer.writeInt32(item);

@@ -1,44 +1,41 @@
 import { SlotObjectData } from '../../../data';
-import { PetUpgradePaymentType } from '../../../models/pet-upgrade-payment-type';
+import { PaymentType, PetUpgradeType } from '../../../models';
 import { Packet } from '../../../packet';
 import { PacketType } from '../../../packet-type';
 import { Reader } from '../../../reader';
 import { Writer } from '../../../writer';
 
 /**
- * Sent to upgrade (feed) a pet.
+ * Sent when you are feeding and fusing pets or upgrading your pet yard
  */
 export class PetUpgradeRequestPacket implements Packet {
 
   readonly type = PacketType.PETUPGRADEREQUEST;
-  propagate = true;
 
-  //#region packet-specific members
   /**
-   * > Unknown.
+   * The upgrade transaction type
    */
-  petTransType: number;
+  petTransType: PetUpgradeType;
   /**
-   * > Unknown.
+   * The object ID of the first pet
    */
   pIdOne: number;
   /**
-   * > Unknown.
+   * The object ID of the second pet
    */
   pIdTwo: number;
   /**
-   * > Unknown.
+   * The owner's object ID
    */
   objectId: number;
   /**
-   * The items which will be used to upgrade the pet.
+   * The items which will be used to upgrade the pet
    */
   slotObjects: SlotObjectData[];
   /**
-   * The type of currency which will be used to purchase the upgrade.
+   * The type of currency which will be used to purchase the upgrade
    */
-  paymentType: PetUpgradePaymentType;
-  //#endregion
+  paymentType: PaymentType;
 
   constructor() {
     this.petTransType = 0;
@@ -72,6 +69,25 @@ export class PetUpgradeRequestPacket implements Packet {
     for (let i = 0; i < slotObjectLen; i++) {
       this.slotObjects[i] = new SlotObjectData();
       this.slotObjects[i].read(reader);
+    }
+  }
+
+  toString(showSlots: boolean = true): string {
+    let str = `[PetUpgradeRequest - 16] TransType: ${this.petTransType}\nPetIdOne: ${this.pIdOne}\nPetIdTwo: ${this.pIdTwo}\n
+    ObjectId: ${this.objectId}\nPaymentType ${this.paymentType}\nSlot count: ${this.slotObjects.length}`;
+    if (!showSlots) {
+      return str;
+    } else {
+      for(let i = 0; i < this.slotObjects.length; i++) {
+        if (i == 0) {
+          str += `\n${this.slotObjects[i].toString()}\n`;
+        } else if (i == this.slotObjects.length - 1) {
+          str += this.slotObjects[i].toString();
+        } else {
+          str += `${this.slotObjects[i].toString()}\n`;
+        }
+      }
+      return str;
     }
   }
 }

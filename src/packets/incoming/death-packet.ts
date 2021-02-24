@@ -4,44 +4,42 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received when a player has died.
+ * Received when a player dies
  */
 export class DeathPacket implements Packet {
 
   readonly type = PacketType.DEATH;
 
-  //#region packet-specific members
   /**
-   * The account id of the player who died.
+   * The account id of the player who died
    */
   accountId: string;
   /**
-   * The character id of the player who died.
+   * The character id of the player who died
    */
   charId: number;
   /**
-   * The cause of death.
+   * The cause of death
    */
   killedBy: string;
   /**
-   * The object id of the zombie, if the player died wearing a cursed amulet.
+   * The object id of the zombie, if the player died wearing a cursed amulet
    */
   zombieId: number;
   /**
-   * The type of zombie, if the player died wearing a cursed amulet.
+   * The type of zombie, if the player died wearing a cursed amulet
    */
   zombieType: number;
   /**
-   * Whether or not a zombie was spawned.
+   * Whether or not a zombie was spawned
    *
-   * This is a derived property, and is the result of `zombieId !== -1`.
+   * This is a derived property, and is the result of `zombieId !== -1`
    */
   isZombie: boolean;
   /**
    * Unknown exalt stat type
    */
   unknown: number
-  //#endregion
 
   constructor() {
     this.accountId = '';
@@ -69,5 +67,12 @@ export class DeathPacket implements Packet {
    writer.writeString(this.killedBy);
    writer.writeInt32(this.zombieType);
    writer.writeInt32(this.zombieId);
+  }
+
+  toString(): string {
+    return `[Death - 46] AccountId: ${this.accountId} - CharId: ${this.charId}\n
+    KilledBy: ${this.killedBy}\n
+    IsZombie: ${this.isZombie} - ZombieType: ${this.zombieType} - ZombieId: ${this.zombieId}\n
+    Unknown: ${this.unknown}`;
   }
 }

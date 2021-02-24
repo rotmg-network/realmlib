@@ -1,14 +1,14 @@
 import { EventEmitter } from 'events';
 import { Socket } from 'net';
-import { INCOMING_KEY, OUTGOING_KEY, RC4 } from './crypto';
 import { Packet } from './packet';
 import { PacketMap } from './packet-map';
-import { createPacket } from './create-packet';
 import { Reader } from './reader';
 import { Writer } from './writer';
+import { createPacket } from './create-packet';
+import { INCOMING_KEY, OUTGOING_KEY, RC4 } from './crypto/rc4';
 
 /**
- * The configuration for the RC4 ciphers used by this PacketIO.
+ * The configuration for the RC4 ciphers used by this PacketIO
  */
 export interface RC4Config {
   incomingKey: string;
@@ -17,12 +17,30 @@ export interface RC4Config {
 
 /**
  * An RC4 configuration which is suitable for
- * PacketIO instances being used as a client.
+ * PacketIO instances being used as a client
  */
-const DEFAULT_RC4: RC4Config = {
+export const DEFAULT_RC4: RC4Config = {
   incomingKey: INCOMING_KEY,
   outgoingKey: OUTGOING_KEY,
 };
+
+/**
+ * An incoming data configuration for when the
+ * PacketIO class is used for a proxy
+ */
+export const PROXY_INCOMING: RC4Config = {
+  incomingKey: INCOMING_KEY,
+  outgoingKey: INCOMING_KEY
+}
+
+/**
+ * An outgoing data configuration for when the
+ * PacketIO class is used for a proxy
+ */
+export const PROXY_OUTGOING: RC4Config = {
+  incomingKey: OUTGOING_KEY,
+  outgoingKey: OUTGOING_KEY
+}
 
 /**
  * A utility class which implements the RotMG messaging protocol on top of a `Socket`.
@@ -40,17 +58,17 @@ export class PacketIO extends EventEmitter {
   packetMap: PacketMap;
 
   /**
-   * The last packet which was received.
+   * The last packet which was received
    */
   get lastIncomingPacket(): Packet | undefined {
-    return this._lastIncomingPacket;
+    return this.lastIncoming;
   }
 
   /**
-   * The last packet which was sent.
+   * The last packet which was sent
    */
   get lastOutgoingPacket(): Packet | undefined {
-    return this._lastOutgoingPacket;
+    return this.lastOutgoing;
   }
 
   private sendRC4: RC4;
@@ -61,14 +79,12 @@ export class PacketIO extends EventEmitter {
   private writer: Writer;
   private reader: Reader;
   private eventHandlers: Map<string, (...args: any[]) => void>;
-  // tslint:disable:variable-name
-  private _lastIncomingPacket: Packet | undefined;
-  private _lastOutgoingPacket: Packet | undefined;
-  // tslint:enable:variable-name
+  private lastIncoming: Packet | undefined;
+  private lastOutgoing: Packet | undefined;
 
   /**
-   * Creates a new `PacketIO` instance.
-   * @param opts The options to use for this instance.
+   * Creates a new `PacketIO` instance
+   * @param opts The options to use for this instance
    */
   constructor(opts: { socket?: Socket, rc4?: RC4Config, packetMap?: PacketMap } = { rc4: DEFAULT_RC4, packetMap: {} }) {
     super();
@@ -149,11 +165,11 @@ export class PacketIO extends EventEmitter {
 
   /**
    * Takes packets from the outgoing queue and writes
-   * them to the socket.
+   * them to the socket
    */
   private async drainQueue() {
     const packet = this.outgoingQueue.shift()!;
-    this._lastOutgoingPacket = packet;
+    this.lastOutgoing = packet;
     this.writer.index = 5;
     const type = this.packetMap[packet?.type];
     packet.write(this.writer);
@@ -181,7 +197,7 @@ export class PacketIO extends EventEmitter {
    */
   emitPacket(packet: Packet): void {
     if (packet && typeof packet.type === 'string') {
-      this._lastIncomingPacket = packet;
+      this.lastIncoming = packet;
       this.emit(packet.type, packet);
     } else {
       throw new TypeError(`Parameter "packet" must be a Packet, not ${typeof packet}`);
@@ -232,12 +248,16 @@ export class PacketIO extends EventEmitter {
     try {
       const id = this.reader.buffer.readInt8(4);
       const type = this.packetMap[id];
+      this.reader.index = 5;
       if (!type) {
-        throw new Error(`No packet type for the id ${id}`);
+        // this.emit('error', new Error(
+        //   `Unmapped packet id ${id} received from server, buffer size: ${this.reader.length}\n\n` +
+        //   `${this.reader.readBytes(this.reader.length).toString()}`
+        //   ));
+        return undefined;
       }
       if (this.listenerCount(type) !== 0) {
         const packet = createPacket(type);
-        this.reader.index = 5;
         packet.read(this.reader);
         return packet;
       }
