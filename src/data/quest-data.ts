@@ -7,43 +7,43 @@ import { Writer } from '../writer';
  */
 export class QuestData implements DataPacket {
   /**
-   * The id of this quest
+   * The id of this quest.
    */
   id: string;
   /**
-   * The name of this quest
+   * The name of this quest.
    */
   name: string;
   /**
-   * The description of this quest
+   * The description of this quest.
    */
   description: string;
   /**
-   * The expiration time of this quest
+   * The expiration time of this quest.
    */
   expiration: string;
   /**
-   * The list of item IDs which are required to complete this quest
+   * The list of item IDs which are required to complete this quest.
    */
   requirements: number[];
   /**
-   * The list of item IDs which are awarded upon completion of this quest
+   * The list of item IDs which are awarded upon completion of this quest.
    */
   rewards: number[];
   /**
-   * Whether or not this quest has been completed
+   * Whether or not this quest has been completed.
    */
   completed: boolean;
   /**
-   * > Unknown
+   * > Unknown.
    */
   itemOfChoice: boolean;
   /**
-   * Whether or not the quest is repeatable
+   * Whether or not the quest is repeatable.
    */
   repeatable: boolean;
   /**
-   * The category of this quest
+   * The category of this quest.
    */
   category: number;
 
@@ -99,17 +99,5 @@ export class QuestData implements DataPacket {
     writer.writeBoolean(this.completed);
     writer.writeBoolean(this.itemOfChoice);
     writer.writeBoolean(this.repeatable);
-  }
-
-  toString(): string {
-    return `[QuestData] Name: ${this.name} - Id: ${this.id}\n
-    Description: ${this.description}\n
-    Expiration: ${this.expiration}\n
-    Category: ${this.category}\n
-    Requirements: ${this.requirements.toString()}\n
-    Rewards: ${this.rewards.toString()}\n
-    Completed: ${this.completed}\n
-    ItemOfChoice: ${this.itemOfChoice}\n
-    Repeatable: ${this.repeatable}`;
   }
 }

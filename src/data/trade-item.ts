@@ -5,19 +5,19 @@ import { DataPacket } from '../packet';
 export class TradeItem implements DataPacket {
 
   /**
-   * The item id
+   * The item id.
    */
   item: number;
   /**
-   * The slot type the item is stored in
+   * Unknown.
    */
   slotType: number;
   /**
-   * Whether or not the item is tradeable
+   * Whether or not the item is tradeable.
    */
   tradeable: boolean;
   /**
-   * Whether or not the item is included in an active trade
+   * Whether or not the item is included in an active trade.
    */
   included: boolean;
 
@@ -40,10 +40,5 @@ export class TradeItem implements DataPacket {
     writer.writeInt32(this.slotType);
     writer.writeBoolean(this.tradeable);
     writer.writeBoolean(this.included);
-  }
-
-  toString(): string {
-    return `[TradeItemData] Item - ${this.item} - SlotType: ${this.slotType}\n
-    Tradeable: ${this.tradeable} - Included: ${this.included}`;
   }
 }

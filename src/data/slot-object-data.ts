@@ -5,15 +5,15 @@ import { DataPacket } from '../packet';
 export class SlotObjectData implements DataPacket {
 
   /**
-   * The object id of the entity which owns the slot
+   * The object id of the entity which owns the slot.
    */
   objectId: number;
   /**
-   * The index of the slot - e.g. the 4th inventory slot has the slot id 3
+   * The index of the slot. E.g. The 4th inventory slot has the slot id `3`.
    */
   slotId: number;
   /**
-   * The item id of the item in the slot, or -1 if it is empty
+   * The item id of the item in the slot, or `-1` if it is empty.
    */
   objectType: number;
 
@@ -33,9 +33,5 @@ export class SlotObjectData implements DataPacket {
     writer.writeInt32(this.objectId);
     writer.writeInt32(this.slotId);
     writer.writeInt32(this.objectType);
-  }
-
-  toString(): string {
-    return `[SlotObjectData] ObjectId: ${this.objectId} - SlotId: ${this.slotId} - ObjectType: ${this.objectType}`;
   }
 }

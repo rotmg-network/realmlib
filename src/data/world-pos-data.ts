@@ -1,7 +1,7 @@
 import { Writer } from '../writer';
 import { Reader } from '../reader';
 import { DataPacket } from '../packet';
-import { Point } from '../models';
+import { Point } from '../models/point';
 
 export class WorldPosData implements DataPacket, Point {
   x: number;
@@ -9,8 +9,8 @@ export class WorldPosData implements DataPacket, Point {
 
   /**
    * Creates a new point at the origin or at the provided, x, y.
-   * @param x An x value for this point. Defaults to 0
-   * @param y A y value for this point. Defaults to 0
+   * @param x An x value for this point. Defaults to 0.
+   * @param y A y value for this point. Defaults to 0.
    */
   constructor(x?: number, y?: number) {
     this.x = x || 0;
@@ -25,10 +25,6 @@ export class WorldPosData implements DataPacket, Point {
   write(writer: Writer): void {
     writer.writeFloat(this.x);
     writer.writeFloat(this.y);
-  }
-
-  toString(): string {
-    return `[WorldPosData] X: ${this.x} Y: ${this.y}`;
   }
 
   /**
