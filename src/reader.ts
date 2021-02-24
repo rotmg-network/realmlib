@@ -1,32 +1,24 @@
 /**
- * A wrapper class which provides methods to
- * read data from the raw bytes of a buffer.
+ * A wrapper to add more options to read data from the raw bytes of a buffer
  */
 export class Reader {
-
   /**
-   * The default size when this reader is reset.
+   * The default size when this reader is reset
    */
   static readonly DEFAULT_SIZE: number = 4;
-  /**
-   * The current index of the buffer.
-   */
-  index: number;
-  /**
-   * The wrapped buffer.
-   */
-  buffer: Buffer;
 
   /**
-   * The length of the buffer.
+   * The current position of the pointer in the buffer
    */
+  index: number;
+
+  buffer: Buffer;
+
   get length(): number {
     return this._length;
   }
 
-  /**
-   * The number of bytes between the end of the buffer and the current index.
-   */
+
   get remaining(): number {
     return this._length - this.index;
   }
@@ -54,7 +46,7 @@ export class Reader {
   }
 
   /**
-   * Reads a 4 byte unsigned integer from the buffer.
+   * Reads a 4 byte unsigned integer from the buffer
    */
   readUInt32(): number {
     const result = this.buffer.readUInt32BE(this.index);
@@ -63,7 +55,7 @@ export class Reader {
   }
 
   /**
-   * Reads a 2 byte integer from the buffer.
+   * Reads a 2 byte integer from the buffer
    */
   readShort(): number {
     const result = this.buffer.readInt16BE(this.index);
@@ -72,7 +64,7 @@ export class Reader {
   }
 
   /**
-   * Reads a 2 byte unsigned integer from the buffer.
+   * Reads a 2 byte unsigned integer from the buffer
    */
   readUnsignedShort(): number {
     const result = this.buffer.readUInt16BE(this.index);
@@ -81,7 +73,7 @@ export class Reader {
   }
 
   /**
-   * Reads a 1 byte integer from the buffer.
+   * Reads a 1 byte integer from the buffer
    */
   readByte(): number {
     const result = this.buffer.readInt8(this.index);
@@ -90,7 +82,7 @@ export class Reader {
   }
 
   /**
-   * Reads a 1 byte unsigned integer from the buffer.
+   * Reads a 1 byte unsigned integer from the buffer
    */
   readUnsignedByte(): number {
     const result = this.buffer.readUInt8(this.index);
@@ -99,7 +91,7 @@ export class Reader {
   }
 
   /**
-   * Reads a single byte from the buffer, returns `true` if the byte is `1` and `false` otherwise.
+   * Reads a single byte from the buffer, returns `true` if the byte is `1` and `false` otherwise
    */
   readBoolean(): boolean {
     const result = this.readByte();
@@ -107,7 +99,7 @@ export class Reader {
   }
 
   /**
-   * Reads a 4 byte floating point number from the buffer.
+   * Reads a 4 byte floating point number from the buffer
    */
   readFloat(): number {
     const result = this.buffer.readFloatBE(this.index);
@@ -116,7 +108,7 @@ export class Reader {
   }
 
   /**
-   * Reads 2 bytes to get the length, then reads `length` bytes from the buffer.
+   * Reads 2 bytes to get the length, then reads `length` bytes from the buffer
    */
   readByteArray(): number[] {
     const arraylen = this.readShort();
@@ -128,8 +120,8 @@ export class Reader {
   }
 
   /**
-   * Reads `size` bytes from the buffer.
-   * @param size The number of bytes to read.
+   * Reads `size` bytes from the buffer
+   * @param size The number of bytes to read
    */
   readBytes(size: number): number[] {
     const result = new Array<number>(size);
@@ -141,7 +133,7 @@ export class Reader {
 
   /**
    * Reads 2 bytes to get the length, reads `length` bytes from the buffer, then converts
-   * the result to a utf8 string.
+   * the result to a utf8 string
    */
   readString(): string {
     const strlen = this.readShort();
@@ -150,7 +142,7 @@ export class Reader {
   }
 
   /**
-   * The same as `readString()`, but reads 4 bytes for the length.
+   * The same as `readString()`, but reads 4 bytes for the length
    */
   readStringUTF32(): string {
     const strlen = this.readInt32();
@@ -159,8 +151,8 @@ export class Reader {
   }
 
   /**
-   * Changes the size of the buffer without affecting the contents.
-   * @param newSize The new size of the buffer.
+   * Changes the size of the buffer without affecting the contents
+   * @param newSize The new size of the buffer
    */
   resizeBuffer(newSize: number): void {
     this._length = newSize;
@@ -170,7 +162,7 @@ export class Reader {
   }
 
   /**
-   * Resets the `bufferIndex` to `0` and allocates a fresh buffer of length `DEFAULT_SIZE` to the underlying buffer.
+   * Resets the `bufferIndex` to `0` and allocates a fresh buffer of length `DEFAULT_SIZE` to the underlying buffer
    */
   reset(): void {
     this.index = 0;

@@ -1,37 +1,23 @@
 {
-  "name": "@realmlib/net",
-  "version": "3.3.3",
-  "description": "A networking library for Realm of the Mad God.",
+  "name": "realmlib",
+  "version": "1.0.2",
+  "description": "A networking library for Realm of the Mad God in TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run compile && npm test",
-    "compile": "tsc -p .",
-    "lint": "tslint -p .",
-    "test": "mocha -r ts-node/register test/*.spec.ts",
-    "docs": "typedoc --options ./typedoc.json",
-    "index": "tsai --path src --overwrite"
+    "compile": "tsc -p ."
   },
   "files": [
-    "lib/",
-    "license.md"
+    "lib/"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thomas-crane/realmlib-net.git"
+    "url": "git+https://github.com/abrn/realmlib.git"
   },
-  "keywords": [
-    "rotmg",
-    "typescript",
-    "library",
-    "realmlib"
-  ],
-  "author": "tcrane",
-  "license": "MIT",
+  "author": "abrn",
   "bugs": {
-    "url": "https://github.com/thomas-crane/realmlib-net/issues"
+    "url": "https://github.com/abrn/realmlib/issues"
   },
-  "homepage": "https://github.com/thomas-crane/realmlib-net#readme",
   "devDependencies": {
     "@types/chai": "^4.2.13",
     "@types/mocha": "^5.2.7",
@@ -44,5 +30,9 @@
     "typedoc": "^0.15.8",
     "typescript": "^3.9.7"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/reflect-metadata": "^0.1.0",
+    "axios": "^0.21.0",
+    "chalk": "^4.1.0"
+  }
 }
