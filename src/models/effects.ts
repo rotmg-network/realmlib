@@ -138,5 +138,44 @@ export enum VisualEffect {
   CHAOS_BUFF = 29,
   THUNDER_BUFF = 30,
   STATUS_FLASH = 31,
-  FIRE_ORB_BUFF = 32
+  FIRE_ORB_BUFF = 32,
+  OVERLAY = 33
+}
+
+/**
+ * The types of particle effects that exist in the game
+ */
+export enum ParticleEffect {
+  CircleParticle = 0,
+  CustomParticle = 1,
+  ExplosionComplexParticle = 2,
+  FountainParticle = 3,
+  FountainSnowyParticle = 4,
+  HealParticle = 5,
+  HeartParticle = 6,
+  HitParticle = 7,
+  LevelUpParticle = 8,
+  RisingFuryParticle = 9,
+  ShockParticle = 10,
+  SkyBeamParticle = 11,
+  SnowflakeParticle = 12,
+  SparkerParticle = 13,
+  SparkParticle = 14,
+  StreamParticle = 15,
+  TeleportParticle = 16,
+  ThrownProjectile = 17,
+  ThrowParticle = 18,
+  VentParticle = 19,
+  VortexParticle = 20,
+  XmlParticle = 21,
+  FlowParticle = 22,
+  GildedParticle = 23,
+  AnimatedParticle = 24,
+  SkullParticle = 25,
+  MeteorParticle = 26,
+  HolyBeamParticle = 27,
+  CircleTelegraphParticle = 28,
+  SmokeCloudParticle = 29,
+  NoteParticle = 30,
+  LaserParticle = 31
 }
