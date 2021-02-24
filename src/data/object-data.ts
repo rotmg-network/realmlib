@@ -5,11 +5,11 @@ import { ObjectStatusData } from './object-status-data';
 
 export class ObjectData implements DataPacket {
   /**
-   * The type of this object.
+   * The type of this object
    */
   objectType: number;
   /**
-   * The status of this object.
+   * The status of this object
    */
   status: ObjectStatusData;
 
@@ -26,5 +26,10 @@ export class ObjectData implements DataPacket {
   write(writer: Writer): void {
     writer.writeUnsignedShort(this.objectType);
     this.status.write(writer);
+  }
+
+  toString(): string {
+    return `[ObjectData] Type: ${this.objectType} - Status:\n
+    ${this.status.toString()}`;
   }
 }

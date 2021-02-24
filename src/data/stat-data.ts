@@ -1,27 +1,32 @@
 import { Writer } from '../writer';
 import { Reader } from '../reader';
 import { DataPacket } from '../packet';
-import { read as compressedRead } from './compressed-int';
-import { StatType } from '../models/stat-type';
+import { CompressedInt } from './compressed-int';
+import { StatType } from '../models';
 
 export class StatData implements DataPacket {
   /**
-   * The type of stat.
+   * The type of stat
    */
   statType: number;
   /**
-   * The number value of this stat, if this is not a string stat.
+   * The number value of this stat, if this is not a string stat
    */
   statValue: number;
   /**
-   * The string value of this stat, if this is a string stat.
+   * The string value of this stat, if this is a string stat
    */
   stringStatValue: string;
+  /**
+   * Unknown, possibly a format checksum
+   */
+  magicByte: number;
 
   constructor() {
     this.statType = 0;
     this.statValue = 0;
     this.stringStatValue = '';
+    this.magicByte = 0;
   }
 
   read(reader: Reader): void {
@@ -29,8 +34,9 @@ export class StatData implements DataPacket {
     if (this.isStringStat()) {
       this.stringStatValue = reader.readString();
     } else {
-      this.statValue = compressedRead(reader);
+      this.statValue = new CompressedInt().read(reader);
     }
+    this.magicByte = reader.readByte();
   }
 
   write(writer: Writer): void {
@@ -38,10 +44,19 @@ export class StatData implements DataPacket {
     if (this.isStringStat()) {
       writer.writeString(this.stringStatValue);
     } else {
-      writer.writeInt32(this.statValue);
+      let compressed = new CompressedInt();
+      compressed.write(writer, this.statValue);
     }
+    writer.writeByte(this.magicByte);
   }
 
+  toString(): string {
+    return `[StatData] Type: ${this.statToName(this.statType)} - Value: ${this.statValue} (extra byte: ${this.magicByte})`;
+  }
+
+  /**
+   * Return whether or not the current stat has a string value
+   */
   isStringStat(): boolean {
     switch (this.statType) {
       case StatType.NAME_STAT:
@@ -53,6 +68,28 @@ export class StatData implements DataPacket {
         return true;
       default:
         return false;
+    }
+  }
+
+  /**
+   * Return the name of a current stat or another stat based on it's value
+   * @param statType The ID of the stat type (optional)
+   */
+  statToName(statType: number = null): string {
+    let keys = Object.keys(StatType).map(key => StatType[key]).filter(value => typeof value === 'string') as string[];
+    let values = Object.values(StatType);
+    let index: number;
+
+    if (statType === null) {
+      index = values.findIndex(value => value === this.statType);
+    } else {
+      index = values.findIndex(value => value === statType);
+    }
+
+    if (index == -1) {
+      return `Unknown ${(statType === null) ? this.statType : statType}`;
+    } else {
+      return keys[index];
     }
   }
 }
