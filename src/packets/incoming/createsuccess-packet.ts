@@ -4,13 +4,12 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received in response to a `CreatePacket`.
+ * Received in response to a `CreatePacket`
  */
 export class CreateSuccessPacket implements Packet {
 
   readonly type = PacketType.CREATE_SUCCESS;
 
-  //#region packet-specific members
   /**
    * The object id of the player's character.
    */
@@ -19,7 +18,6 @@ export class CreateSuccessPacket implements Packet {
    * The character id of the player's character.
    */
   charId: number;
-  //#endregion
 
   constructor() {
     this.objectId = 0;

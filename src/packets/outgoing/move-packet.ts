@@ -1,5 +1,5 @@
-import { MoveRecord } from '../../data/move-record';
-import { WorldPosData } from '../../data/world-pos-data';
+import { MoveRecord } from '../../data';
+import { WorldPosData } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
@@ -23,7 +23,7 @@ export class MovePacket implements Packet {
    */
   time: number;
   /**
-   * The current serer time in ms.
+   * The current server time in ms.
    */
   serverRealTimeMS: number;
   /**
