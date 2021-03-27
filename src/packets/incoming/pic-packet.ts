@@ -4,13 +4,12 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * A packet which contains a bitmap image.
+ * A packet which contains a bitmap image
  */
 export class PicPacket implements Packet {
 
   readonly type = PacketType.PIC;
 
-  //#region packet-specific members
   /**
    * The width of the image.
    */
@@ -23,7 +22,6 @@ export class PicPacket implements Packet {
    * The bitmap data of the image.
    */
   bitmapData: number[];
-  //#endregion
 
   constructor() {
     this.width = 0;
@@ -41,5 +39,10 @@ export class PicPacket implements Packet {
     writer.writeInt32(this.width);
     writer.writeInt32(this.height);
     writer.writeByteArray(this.bitmapData);
+  }
+
+  toString(): string {
+    return `[Pic] Width: ${this.width} - Height: ${this.height}\n
+    Bytes: ${this.bitmapData.toString()}`;
   }
 }

@@ -11,7 +11,6 @@ export class HelloPacket implements Packet {
 
   readonly type = PacketType.HELLO;
 
-  //#region packet-specific members
   /**
    * The current build version of RotMG.
    */
@@ -21,25 +20,9 @@ export class HelloPacket implements Packet {
    */
   gameId: number;
   /**
-   * The email of the account being used.
+   * The access token from the AppEngine used to login
    */
-  guid: string;
-  /**
-   * A random 32 bit integer value.
-   */
-  random1: number;
-  /**
-   * The password of the account being used.
-   */
-  password: string;
-  /**
-   * A random 32 bit integer value.
-   */
-  random2: number;
-  /**
-   * The client secret of the account being used.
-   */
-  secret: string;
+  accessToken: string;
   /**
    * The key time of the `key` being used.
    */
@@ -57,7 +40,7 @@ export class HelloPacket implements Packet {
    */
   entryTag: string;
   /**
-   * > Unknown.
+   *  The platform the game is played on
    */
   gameNet: string;
   /**
@@ -65,35 +48,26 @@ export class HelloPacket implements Packet {
    */
   gameNetUserId: string;
   /**
-   * > Unknown.
+   * The platform the game is played on
    */
   playPlatform: string;
   /**
-   * > Unknown.
+   * > Unknown
    */
   platformToken: string;
   /**
-   * > Unknown.
+   * > Unknown
    */
   userToken: string;
   /**
-   * A random string which is appended to the end of the hello packet.
+   * The client token (hwid) of the Unity client
    */
-  trailer: string;
-  /**
-   * The connection guid of the last map info packet.
-   */
-  previousConnectionGuid: string;
-  //#endregion
+  clientToken: string;
 
   constructor() {
     this.buildVersion = '';
     this.gameId = 0;
-    this.guid = '';
-    this.random1 = 0;
-    this.password = '';
-    this.random2 = 0;
-    this.secret = '';
+    this.accessToken = '';
     this.keyTime = 0;
     this.key = [];
     this.mapJSON = '';
@@ -103,18 +77,13 @@ export class HelloPacket implements Packet {
     this.playPlatform = '';
     this.platformToken = '';
     this.userToken = '';
-    this.trailer = '';
-    this.previousConnectionGuid = '';
+    this.clientToken = '';
   }
 
   write(writer: Writer): void {
     writer.writeString(this.buildVersion);
     writer.writeInt32(this.gameId);
-    writer.writeString(this.guid);
-    writer.writeInt32(this.random1);
-    writer.writeString(this.password);
-    writer.writeInt32(this.random2);
-    writer.writeString(this.secret);
+    writer.writeString(this.accessToken);
     writer.writeInt32(this.keyTime);
     writer.writeByteArray(this.key);
     writer.writeStringUTF32(this.mapJSON);
@@ -124,18 +93,13 @@ export class HelloPacket implements Packet {
     writer.writeString(this.playPlatform);
     writer.writeString(this.platformToken);
     writer.writeString(this.userToken);
-    writer.writeString(this.trailer);
-    writer.writeString(this.previousConnectionGuid);
+    writer.writeString(this.clientToken);
   }
 
   read(reader: Reader): void {
     this.buildVersion = reader.readString();
     this.gameId = reader.readInt32();
-    this.guid = reader.readString();
-    this.random1 = reader.readInt32();
-    this.password = reader.readString();
-    this.random2 = reader.readInt32();
-    this.secret = reader.readString();
+    this.accessToken = reader.readString();
     this.keyTime = reader.readInt32();
     this.key = reader.readByteArray();
     this.mapJSON = reader.readStringUTF32();
@@ -145,7 +109,22 @@ export class HelloPacket implements Packet {
     this.playPlatform = reader.readString();
     this.platformToken = reader.readString();
     this.userToken = reader.readString();
-    this.trailer = reader.readString();
-    this.previousConnectionGuid = reader.readString();
+    this.clientToken = reader.readString();
+  }
+
+  toString(): string {
+    return `[Hello - 1] BuildVersion: ${this.buildVersion}\n
+    GameId: ${this.gameId}\n
+    AccessToken: ${this.accessToken}\n
+    KeyTime: ${this.keyTime}\n
+    Key: ${this.key.toString()}\n
+    MapJSON: ${this.mapJSON}\n
+    EntryTag: ${this.entryTag}\n
+    GameNet: ${this.gameNet}\n
+    GameNetUserId: ${this.gameNetUserId}\n
+    PlayPlatform: ${this.playPlatform}\n
+    PlatformToken: ${this.platformToken}\n
+    UserToken: ${this.userToken}\n
+    ClientToken: ${this.clientToken}`
   }
 }

@@ -10,12 +10,10 @@ export class NewAbilityMessage implements Packet {
 
   readonly type = PacketType.NEW_ABILITY;
 
-  //#region packet-specific members
   /**
    * The type of ability which has been unlocked.
    */
   abilityType: number;
-  //#endregion
 
   constructor() {
     this.abilityType = 0;
@@ -27,5 +25,9 @@ export class NewAbilityMessage implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.abilityType);
+  }
+
+  toString(): string {
+    return `[NewAbilityMessage] Type: ${this.abilityType}`;
   }
 }

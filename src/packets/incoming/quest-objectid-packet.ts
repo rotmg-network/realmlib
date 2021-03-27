@@ -4,18 +4,16 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received to tell the player the object id of their current quest.
+ * Received to tell the player the object id of their current quest
  */
 export class QuestObjectIdPacket implements Packet {
 
   readonly type = PacketType.QUESTOBJID;
 
-  //#region packet-specific members
   /**
-   * The object id of the current quest.
+   * The object id of the current quest
    */
   objectId: number;
-  //#endregion
 
   constructor() {
     this.objectId = 0;
@@ -27,5 +25,9 @@ export class QuestObjectIdPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.objectId);
+  }
+
+  toString(): string {
+    return `[QuestObjectId] ObjectId: ${this.objectId}`;
   }
 }

@@ -4,23 +4,22 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received in response to the `HelloPacket`.
+ * Received in response to the `HelloPacket`
  */
 export class MapInfoPacket implements Packet {
 
   readonly type = PacketType.MAPINFO;
 
-  //#region packet-specific members
   /**
-   * The width of the map.
+   * The width of the map
    */
   width: number;
   /**
-   * The height of the map.
+   * The height of the map
    */
   height: number;
   /**
-   * The name of the map.
+   * The name of the map
    */
   name: string;
   /**
@@ -28,51 +27,37 @@ export class MapInfoPacket implements Packet {
    */
   displayName: string;
   /**
-   * The name of the realm.
+   * The name of the realm
    */
   realmName: string;
   /**
-   * The difficulty rating of the map.
+   * The difficulty rating of the map
    */
   difficulty: number;
   /**
-   * The seed value for the client's PRNG.
+   * The seed value for the client's PRNG
    */
   fp: number;
   /**
-   * > Unkown.
+   * > Unknown
    */
   background: number;
   /**
-   * Whether or not players can teleport in the map.
+   * Whether or not players can teleport in the map
    */
   allowPlayerTeleport: boolean;
   /**
-   * > Unkown.
+   * > Unknown
    */
   showDisplays: boolean;
   /**
-   * The number of players allowed in this map.
+   * The number of players allowed in this map
    */
   maxPlayers: number;
   /**
-   * The connection guid to use for the hello packet.
-   */
-  connectionGuid: string;
-  /**
-   * > Unkown.
-   */
-  clientXML: string[];
-  /**
-   * > Unkown.
-   */
-  extraXML: string[];
-
-  /**
-   * > Unknown.
+   * The time the connection to the game was started
    */
   gameOpenedTime: number;
-  //#endregion
 
   constructor() {
     this.width = 0;
@@ -86,9 +71,6 @@ export class MapInfoPacket implements Packet {
     this.allowPlayerTeleport = false;
     this.showDisplays = false;
     this.maxPlayers = 0;
-    this.connectionGuid = '';
-    this.clientXML = [];
-    this.extraXML = [];
     this.gameOpenedTime = 0;
   }
 
@@ -104,17 +86,7 @@ export class MapInfoPacket implements Packet {
     this.allowPlayerTeleport = reader.readBoolean();
     this.showDisplays = reader.readBoolean();
     this.maxPlayers = reader.readShort();
-    this.connectionGuid = reader.readString();
     this.gameOpenedTime = reader.readUInt32();
-    this.clientXML = new Array<string>(reader.readShort());
-    for (let i = 0; i < this.clientXML.length; i++) {
-      this.clientXML[i] = reader.readStringUTF32();
-    }
-    this.extraXML = new Array<string>(reader.readShort());
-    for (let i = 0; i < this.extraXML.length; i++) {
-      this.extraXML[i] = reader.readStringUTF32();
-    }
-
   }
 
   write(writer: Writer): void {
@@ -129,16 +101,21 @@ export class MapInfoPacket implements Packet {
     writer.writeBoolean(this.allowPlayerTeleport);
     writer.writeBoolean(this.showDisplays);
     writer.writeShort(this.maxPlayers);
-    writer.writeString(this.connectionGuid);
-    writer.writeShort(this.clientXML.length);
     writer.writeUInt32(this.gameOpenedTime);
-    for (const xml of this.clientXML) {
-      writer.writeStringUTF32(xml);
-    }
-    writer.writeShort(this.extraXML.length);
-    for (const xml of this.extraXML) {
-      writer.writeStringUTF32(xml);
-    }
+  }
 
+  toString(): string {
+    return `[MapInfo] Width: ${this.width}\n
+    Height: ${this.height}\n
+    Name: ${this.name}\n
+    DisplayName: ${this.displayName}\n
+    RealmName: ${this.realmName}\n
+    FP: ${this.fp}\n
+    Background: ${this.background}\n
+    Difficulty: ${this.difficulty}\n
+    AllowTeleport: ${this.allowPlayerTeleport}\n
+    ShowDisplays: ${this.showDisplays}\n
+    MaxPlayers: ${this.maxPlayers}\n
+    GameOpenedTime: ${this.gameOpenedTime}`
   }
 }

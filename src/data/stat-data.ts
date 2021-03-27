@@ -75,19 +75,20 @@ export class StatData implements DataPacket {
    * Return the name of a current stat or another stat based on it's value
    * @param statType The ID of the stat type (optional)
    */
-  statToName(statType: number = null): string {
+  statToName(statType: number = -1): string {
+    // @ts-ignore
     let keys = Object.keys(StatType).map(key => StatType[key]).filter(value => typeof value === 'string') as string[];
     let values = Object.values(StatType);
     let index: number;
 
-    if (statType === null) {
+    if (statType === -1) {
       index = values.findIndex(value => value === this.statType);
     } else {
       index = values.findIndex(value => value === statType);
     }
 
-    if (index == -1) {
-      return `Unknown ${(statType === null) ? this.statType : statType}`;
+    if (index === -1) {
+      return `Unknown ${(statType === -1) ? this.statType : statType}`;
     } else {
       return keys[index];
     }

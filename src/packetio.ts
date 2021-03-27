@@ -76,9 +76,9 @@ export class PacketIO extends EventEmitter {
 
   private outgoingQueue: Packet[];
 
-  private writer: Writer;
-  private reader: Reader;
-  private eventHandlers: Map<string, (...args: any[]) => void>;
+  private readonly writer: Writer;
+  private readonly reader: Reader;
+  private readonly eventHandlers: Map<string, (...args: any[]) => void>;
   private lastIncoming: Packet | undefined;
   private lastOutgoing: Packet | undefined;
 
@@ -109,8 +109,8 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
-   * Attaches this Packet IO to the `socket`.
-   * @param socket The socket to attach to.
+   * Attaches this Packet IO to the socket
+   * @param socket The socket to attach to
    */
   attach(socket: Socket): void {
     if (!(socket instanceof Socket)) {
@@ -119,8 +119,7 @@ export class PacketIO extends EventEmitter {
     if (this.socket) {
       this.detach();
     }
-    // we should reset the state here in
-    // case the socket is already connected.
+
     this.resetState();
     this.socket = socket;
     for (const [event, listener] of this.eventHandlers) {
@@ -129,7 +128,7 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
-   * Detaches this Packet IO from its `Socket`.
+   * Detaches this Packet IO from its socket
    */
   detach(): void {
     if (this.socket) {
@@ -141,12 +140,12 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
-   * Sends a packet.
-   * @param packet The packet to send.
+   * Sends a packet
+   * @param packet The packet to send
    */
   send(packet: Packet) {
     if (!this.socket || this.socket.destroyed) {
-      this.emit('error', new Error('Not attached to a socket.'));
+      //this.emit('error', new Error('Not attached to a socket.'));
       return;
     }
     const type = this.packetMap[packet.type];
@@ -205,7 +204,7 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
-   * Resets the reader buffer and the RC4 instances.
+   * Resets the reader buffer and the RC4 instances
    */
   private resetState(): void {
     this.resetBuffer();
@@ -214,8 +213,8 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
-   * Adds the data received from the socket to the reader buffer.
-   * @param data The data received.
+   * Adds the data received from the socket to the reader buffer
+   * @param data The data received
    */
   private onData(data: Buffer): void {
     let dataIdx = 0;
@@ -241,7 +240,7 @@ export class PacketIO extends EventEmitter {
   /**
    * Attempts to create a packet from the data contained
    * in the reader buffer. No packet will be created if
-   * there is no event listener for the packet type.
+   * there is no event listener for the packet type
    */
   private constructPacket(): Packet | undefined {
     this.receiveRC4.cipher(this.reader.buffer.slice(5, this.reader.length));
@@ -250,10 +249,10 @@ export class PacketIO extends EventEmitter {
       const type = this.packetMap[id];
       this.reader.index = 5;
       if (!type) {
-        // this.emit('error', new Error(
-        //   `Unmapped packet id ${id} received from server, buffer size: ${this.reader.length}\n\n` +
-        //   `${this.reader.readBytes(this.reader.length).toString()}`
-        //   ));
+        this.emit('error', new Error(
+          `Unmapped packet ID ${id} received - buffer size: ${this.reader.length}\n
+          ${this.reader.readBytes(this.reader.length)}`
+          ));
         return undefined;
       }
       if (this.listenerCount(type) !== 0) {
@@ -268,7 +267,7 @@ export class PacketIO extends EventEmitter {
 
   /**
    * Resets the incoming packet buffer so that it
-   * is ready to receive the next packet header.
+   * is ready to receive the next packet header
    */
   private resetBuffer(): void {
     this.reader.resizeBuffer(4);

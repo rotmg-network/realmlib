@@ -4,36 +4,34 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received when a chat message is sent by another player or NPC.
+ * Received when a chat message is sent by another player or NPC
  */
 export class TextPacket implements Packet {
 
   readonly type = PacketType.TEXT;
 
-  //#region packet-specific members
   /**
-   * The sender of the message.
+   * The sender of the message
    */
   name: string;
   /**
-   * The object id of the sender.
+   * The object id of the sender
    */
   objectId: number;
   /**
-   * The number of stars of the sender.
+   * The number of stars of the sender
    */
   numStars: number;
   /**
-   * The length of time to display the chat bubble for.
+   * The length of time to display the chat bubble for
    */
   bubbleTime: number;
   /**
-   * The recipient of the message. This is only used if the
-   * message is a private message.
+   * The recipient of the message
    */
   recipient: string;
   /**
-   * The content of the message.
+   * The content of the message
    */
   text: string;
   /**
@@ -41,14 +39,13 @@ export class TextPacket implements Packet {
    */
   cleanText: string;
   /**
-   * Whether or not the sender of the message is a supporter.
+   * Whether or not the sender of the message is a supporter
    */
   isSupporter: boolean;
   /**
    * The star background of the player
    */
   starBackground: number;
-  //#endregion
 
   constructor() {
     this.name = '';
@@ -65,7 +62,7 @@ export class TextPacket implements Packet {
   read(reader: Reader): void {
     this.name = reader.readString();
     this.objectId = reader.readInt32();
-    this.numStars = reader.readInt32();
+    this.numStars = reader.readShort();
     this.bubbleTime = reader.readUnsignedByte();
     this.recipient = reader.readString();
     this.text = reader.readString();
@@ -77,12 +74,24 @@ export class TextPacket implements Packet {
   write(writer: Writer): void {
     writer.writeString(this.name);
     writer.writeInt32(this.objectId);
-    writer.writeInt32(this.numStars);
+    writer.writeShort(this.numStars);
     writer.writeUnsignedByte(this.bubbleTime);
     writer.writeString(this.recipient);
     writer.writeString(this.text);
     writer.writeString(this.cleanText);
     writer.writeBoolean(this.isSupporter);
     writer.writeInt32(this.starBackground);
+  }
+
+  toString(): string {
+    return `[Text] Name: ${this.name}\n
+    ObjectId: ${this.objectId}\n
+    NumStars: ${this.numStars}\n
+    BubbleTime: ${this.bubbleTime}\n
+    Recipient: ${this.recipient}\n
+    Text: ${this.text}\n
+    CleanText: ${this.cleanText}\n
+    IsSupporter: ${this.isSupporter}\n
+    StarBg: ${this.starBackground}`;
   }
 }

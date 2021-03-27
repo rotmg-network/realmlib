@@ -5,38 +5,36 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received to tell the player to display an effect such as an AOE grenade.
+ * Received to tell the player to display an effect such as an AOE grenade
  */
 export class ShowEffectPacket implements Packet {
 
   readonly type = PacketType.SHOWEFFECT;
 
-  //#region packet-specific members
   /**
-   * The type of effect to display.
+   * The type of effect to display
    */
   effectType: number;
   /**
-   * > Unknown. Probably the start position of the effect.
+   * The objectId the effect is targeting
    */
   targetObjectId: number;
   /**
-   * > Unknown. Probably the end position of the effect.
+   * > Unknown. Probably the start position of the effect
    */
   pos1: WorldPosData;
   /**
-   * > Unknown.
+   * > Unknown. Probably the end position of the effect
    */
   pos2: WorldPosData;
   /**
-   * The color of the effect.
+   * The color of the effect
    */
   color: number;
   /**
-   * The duration of the effect.
+   * The duration of the effect
    */
   duration: number;
-  //#endregion
 
   constructor() {
     this.effectType = 0;
@@ -94,5 +92,14 @@ export class ShowEffectPacket implements Packet {
     this.pos2.write(writer);
     writer.writeInt32(this.color);
     writer.writeFloat(this.duration);
+  }
+
+  toString(): string {
+    return `[ShowEffect] Type: ${this.effectType}\n
+    TargetObjectId: ${this.targetObjectId}\n
+    PosOne: ${this.pos1.toString()}\n
+    PosTwo: ${this.pos2.toString()}\n
+    Color: ${this.color}\n
+    Duration: ${this.duration}`;
   }
 }

@@ -4,22 +4,20 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * > Unknown.
+ * > Unknown
  */
 export class QuestRedeemResponsePacket implements Packet {
 
   readonly type = PacketType.QUEST_REDEEM_RESPONSE;
 
-  //#region packet-specific members
   /**
-   * > Unknown.
+   * > Unknown
    */
   ok: boolean;
   /**
-   * > Unknown.
+   * > Unknown
    */
   message: string;
-  //#endregion
 
   constructor() {
     this.ok = false;
@@ -34,5 +32,10 @@ export class QuestRedeemResponsePacket implements Packet {
   write(writer: Writer): void {
     writer.writeBoolean(this.ok);
     writer.writeString(this.message);
+  }
+
+  toString(): string {
+    return `[QuestRedeemResponse] Success: ${this.ok}\n
+    Message: ${this.message}`;
   }
 }

@@ -1,4 +1,4 @@
-import { TradeResult } from '../../models/trade-result';
+import { TradeResult } from '../../models';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
@@ -6,22 +6,20 @@ import { Writer } from '../../writer';
 
 /**
  * Received when the active trade has completed, regardless of whether
- * it was accepted or cancelled.
+ * it was accepted or cancelled
  */
 export class TradeDonePacket implements Packet {
 
   readonly type = PacketType.TRADEDONE;
 
-  //#region packet-specific members
   /**
-   * The result of the trade.
+   * The result of the trade
    */
   code: TradeResult;
   /**
-   * > Unknown.
+   * > Unknown
    */
   description: string;
-  //#endregion
 
   constructor() {
     this.code = 0;
@@ -36,5 +34,10 @@ export class TradeDonePacket implements Packet {
   write(writer: Writer): void {
     writer.writeInt32(this.code);
     writer.writeString(this.description);
+  }
+
+  toString(): string {
+    return `[TradeDone] Result: ${this.code}\n
+    Description: ${this.description}`;
   }
 }

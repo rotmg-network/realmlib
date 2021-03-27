@@ -11,11 +11,11 @@ export class CreateSuccessPacket implements Packet {
   readonly type = PacketType.CREATE_SUCCESS;
 
   /**
-   * The object id of the player's character.
+   * The object id of the player's character
    */
   objectId: number;
   /**
-   * The character id of the player's character.
+   * The character id of the player's character
    */
   charId: number;
 
@@ -32,5 +32,9 @@ export class CreateSuccessPacket implements Packet {
   write(writer: Writer): void {
     writer.writeInt32(this.objectId);
     writer.writeInt32(this.charId);
+  }
+
+  toString(): string {
+    return `[CreateSuccess] ObjectId: ${this.objectId} - CharId: ${this.charId}`;
   }
 }

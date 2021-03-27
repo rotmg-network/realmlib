@@ -11,7 +11,6 @@ export class NewCharacterInfoPacket implements Packet {
   readonly type = PacketType.NEW_CHARACTER_INFORMATION;
 
   charXML: string;
-  //#endregion
 
   constructor() {
     this.charXML = "";
@@ -23,5 +22,9 @@ export class NewCharacterInfoPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeString(this.charXML);
+  }
+
+  toString(): string {
+    return `[NewCharacterInfo] CharXML ${this.charXML}`;
   }
 }

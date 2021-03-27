@@ -4,18 +4,16 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received occasionally by the server to prompt a response from the client.
+ * Received occasionally by the server to prompt a response from the client
  */
 export class PingPacket implements Packet {
 
   readonly type = PacketType.PING;
 
-  //#region packet-specific members
   /**
-   * A nonce value which is expected to be present in the reply.
+   * A nonce value which is expected to be present in the reply
    */
   serial: number;
-  //#endregion
 
   constructor() {
     this.serial = 0;
@@ -27,5 +25,9 @@ export class PingPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.serial);
+  }
+
+  toString(): string {
+    return `[Ping] Serial: ${this.serial}`;
   }
 }

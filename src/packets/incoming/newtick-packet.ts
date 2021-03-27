@@ -1,26 +1,22 @@
-import { ObjectStatusData } from '../../data/object-status-data';
+import { ObjectStatusData } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received to notify the player of a new game tick.
+ * Received to notify the player of a new game tick
  */
 export class NewTickPacket implements Packet {
 
   readonly type = PacketType.NEWTICK;
 
-  //#region packet-specific members
   /**
-   * The id of the tick.
+   * The id of the tick
    */
   tickId: number;
   /**
-   * The time between the last tick and this tick, in milliseconds.
-   *
-   * This is not always accurate, so it is better to calculate it manually
-   * if millisecond-level accuracy is required.
+   * The time between the last tick and this tick, in milliseconds
    */
   tickTime: number;
   /**
@@ -32,13 +28,9 @@ export class NewTickPacket implements Packet {
    */
   serverLastTimeRTTMS: number;
   /**
-   * An array of statuses for objects which are currently visible to the player.
-   *
-   * "visible" objects can include objects which would normally be off screen,
-   * such as players, which are always at least visible on the minimap.
+   * An array of statuses for objects which are currently visible to the player
    */
   statuses: ObjectStatusData[];
-  //#endregion
 
   constructor() {
     this.tickId = 0;
@@ -69,5 +61,12 @@ export class NewTickPacket implements Packet {
     for (const status of this.statuses) {
       status.write(writer);
     }
+  }
+
+  toString(): string {
+    return `[NewTick] TickId: ${this.tickId}\n
+    TickTime: ${this.tickTime}\n
+    ServerRealTime: ${this.serverRealTimeMS}\n
+    ServerLastTime: ${this.serverLastTimeRTTMS}`;
   }
 }

@@ -1,42 +1,40 @@
-import { WorldPosData } from '../../data/world-pos-data';
+import { WorldPosData } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received when another player shoots.
+ * Received when another player shoots
  */
 export class ServerPlayerShootPacket implements Packet {
 
   readonly type = PacketType.SERVERPLAYERSHOOT;
 
-  //#region packet-specific members
   /**
-   * The id of the bullet that was produced.
+   * The id of the bullet that was produced
    */
   bulletId: number;
   /**
-   * The object id of the player who fired the projectile.
+   * The object id of the player who fired the projectile
    */
   ownerId: number;
   /**
-   * The item id of the weapon used to fire the projectile.
+   * The item id of the weapon used to fire the projectile
    */
   containerType: number;
   /**
-   * The starting position of the projectile.
+   * The starting position of the projectile
    */
   startingPos: WorldPosData;
   /**
-   * The angle at which the projectile was fired.
+   * The angle at which the projectile was fired
    */
   angle: number;
   /**
-   * The damage which will be dealt by the projectile.
+   * The damage which will be dealt by the projectile
    */
   damage: number;
-  //#endregion
 
   constructor() {
     this.bulletId = 0;
@@ -63,5 +61,14 @@ export class ServerPlayerShootPacket implements Packet {
     this.startingPos.write(writer);
     writer.writeFloat(this.angle);
     writer.writeShort(this.damage);
+  }
+
+  toString(): string {
+    return `[ServerPlayerShoot] BulletId: ${this.bulletId}\n
+    OwnerId: ${this.ownerId}\n
+    ContainerType: ${this.containerType}\n
+    StartingPos: ${this.startingPos.toString()}\n
+    Angle: ${this.angle}\n
+    Damage: ${this.damage}`;
   }
 }

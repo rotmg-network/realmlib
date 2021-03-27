@@ -34,12 +34,12 @@ export class ForgeUnlockedBlueprints implements Packet {
   }
 
   toString(): string {
-    let str = `FORGE_UNLOCKED_BLUEPRINTS:\n`;
+    let str = `[ForgeUnlockedBlueprints]:\n`;
     if (this.unlockedBlueprints.length == 0) {
       return str + 'no unlocked blueprints'
     }
     for(let i = 0; i < this.unlockedBlueprints.length; i++) {
-      str += `[${i}] ${this.unlockedBlueprints[i]}`;
+      str += `[${i}] ${this.unlockedBlueprints[i]}\n`;
     }
     return str;
   }

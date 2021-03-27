@@ -1,28 +1,28 @@
 import { Packet } from "../../packet";
 import { PacketType } from "../../packet-type";
 import { Reader } from "../../reader";
-import { CompressedInt } from "../../data/compressed-int";
+import { CompressedInt } from '../../data';
 import { Writer } from "../../writer";
 
 /**
- * Received for information when the player enters the new vault
+ * Received when the player enters or updates their vault
  */
-export class VaultUpdatePacket implements Packet {
-  readonly type = PacketType.VAULT_UPDATE;
+export class VaultContentPacket implements Packet {
+  readonly type = PacketType.VAULT_CONTENT;
   /**
-   * Unknown.
+   * Unknown
    */
   unknownBool: boolean;
   /**
-   * The amount of items in the player vault.
+   * The amount of items in the player vault
    */
   vaultItemCount: number;
   /**
-   * The amount of items in the gift vault.
+   * The amount of items in the gift vault
    */
   giftItemCount: number;
   /**
-   * The amount of items in the potion vault.
+   * The amount of items in the potion vault
    */
   potionItemCount: number;
   /**
@@ -56,6 +56,9 @@ export class VaultUpdatePacket implements Packet {
 
   constructor() {
     this.unknownBool = false;
+    this.vaultItemCount = 0;
+    this.giftItemCount = 0;
+    this.potionItemCount = 0;
     this.vaultContents = [];
     this.giftContents = [];
     this.potionContents = [];

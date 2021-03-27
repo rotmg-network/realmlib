@@ -4,7 +4,7 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received when the active trade is accepted.
+ * Received when the active trade is accepted
  */
 export class TradeAcceptedPacket implements Packet {
 
@@ -15,17 +15,16 @@ export class TradeAcceptedPacket implements Packet {
    * A description of which items in the client's inventory are selected.
    * Items 0-3 are the hotbar items, and 4-12 are the 8 inventory slots.
    *
-   * If a value is `true`, then the item is selected.
+   * If a value is `true`, then the item is selected
    */
   clientOffer: boolean[];
   /**
    * A description of which items in the trade partner's inventory are selected.
    * Items 0-3 are the hotbar items, and 4-12 are the 8 inventory slots.
    *
-   * If a value is `true`, then the item is selected.
+   * If a value is `true`, then the item is selected
    */
   partnerOffer: boolean[];
-  //#endregion
 
   constructor() {
     this.clientOffer = [];
@@ -54,5 +53,11 @@ export class TradeAcceptedPacket implements Packet {
     for (const offer of this.partnerOffer) {
       writer.writeBoolean(offer);
     }
+  }
+
+  toString(): string {
+    return `[TradeAccepted] ClientOffers: ${this.clientOffer.length} - PartnerOffers: ${this.partnerOffer.length}\n
+    ClientOffer: ${this.clientOffer.toString()}\n
+    PartnerOffer: ${this.partnerOffer.toString()}`;
   }
 }

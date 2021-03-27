@@ -223,8 +223,8 @@ export function createPacket(type: PacketType): Packet {
       return new IncomingPackets.QueueInfoPacket();
     case PacketType.QUEUE_CANCEL:
       return new OutgoingPackets.QueueCancelPacket();
-    case PacketType.VAULT_UPDATE:
-      return new IncomingPackets.VaultUpdatePacket();
+    case PacketType.VAULT_CONTENT:
+      return new IncomingPackets.VaultContentPacket();
     case PacketType.EXALTATION_BONUS_CHANGED:
       return new IncomingPackets.ExaltationUpdatePacket();
     case PacketType.FORGE_REQUEST:

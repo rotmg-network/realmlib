@@ -4,22 +4,20 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received in response to a `ChooseNamePacket`.
+ * Received in response to a `ChooseNamePacket`
  */
 export class NameResultPacket implements Packet {
 
   readonly type = PacketType.NAMERESULT;
 
-  //#region packet-specific members
   /**
-   * Whether or not the name change was successful.
+   * Whether or not the name change was successful
    */
   success: boolean;
   /**
-   * The error which occurred, if the result was not successful.
+   * The error which occurred, if the result was not successful
    */
   errorText: string;
-  //#endregion
 
   constructor() {
     this.success = false;
@@ -34,5 +32,10 @@ export class NameResultPacket implements Packet {
   write(writer: Writer): void {
     writer.writeBoolean(this.success);
     writer.writeString(this.errorText);
+  }
+
+  toString(): string {
+    return `[NameResult] Success: ${this.success}\n
+    ErrorText: ${this.errorText}`;
   }
 }

@@ -19,8 +19,7 @@ export class QueueInfoPacket implements Packet {
      */
     maxPosition: number;
 
-    constructor()
-    {
+    constructor() {
         this.currentPosition = 0;
         this.maxPosition = 0;
     }
@@ -32,6 +31,10 @@ export class QueueInfoPacket implements Packet {
 
     write(writer: Writer): void {
         writer.writeUnsignedShort(this.currentPosition);
-        writer.writeUnsignedShort(this.maxPosition)
+        writer.writeUnsignedShort(this.maxPosition);
+    }
+
+    toString(): string {
+        return `[QueueInfo] CurrentPosition: ${this.currentPosition} - MaxPosition: ${this.maxPosition}`;
     }
 }

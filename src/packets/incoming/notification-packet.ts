@@ -4,26 +4,24 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received when a notification is received by the player.
+ * Received when a notification is received by the player
  */
 export class NotificationPacket implements Packet {
 
   readonly type = PacketType.NOTIFICATION;
 
-  //#region packet-specific members
   /**
    * The object id of the entity which the notification is for.
    */
   objectId: number;
   /**
-   * The notification message.
+   * The notification message
    */
   message: string;
   /**
-   * The color of the notification text.
+   * The color of the notification text
    */
   color: number;
-  //#endregion
 
   constructor() {
     this.objectId = 0;
@@ -41,5 +39,11 @@ export class NotificationPacket implements Packet {
     writer.writeInt32(this.objectId);
     writer.writeString(this.message);
     writer.writeInt32(this.color);
+  }
+
+  toString(): string {
+    return `[Notification] ObjectId: ${this.objectId}\n
+    Message: ${this.message}\n
+    Color: ${this.color}`;
   }
 }

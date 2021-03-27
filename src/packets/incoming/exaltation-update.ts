@@ -62,7 +62,7 @@ export class ExaltationUpdatePacket implements Packet {
   }
 
   toString(): string {
-    return `[ExaltationUpdate - 114] ObjectType: ${this.objType}` +
+    return `[ExaltationUpdate - 114] ObjectType: ${this.objType}\n` +
       `DEX: ${this.dexterityProgress}\n` +
       `SPD: ${this.speedProgress}\n` +
       `VIT: ${this.vitalityProgress}\n` +
