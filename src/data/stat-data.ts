@@ -18,15 +18,15 @@ export class StatData implements DataPacket {
    */
   stringStatValue: string;
   /**
-   * Unknown, possibly a format checksum
+   * The secondary stat value
    */
-  magicByte: number;
+  statValueTwo: number;
 
   constructor() {
     this.statType = 0;
     this.statValue = 0;
     this.stringStatValue = '';
-    this.magicByte = 0;
+    this.statValueTwo = 0;
   }
 
   read(reader: Reader): void {
@@ -36,7 +36,7 @@ export class StatData implements DataPacket {
     } else {
       this.statValue = new CompressedInt().read(reader);
     }
-    this.magicByte = reader.readByte();
+    this.statValueTwo = reader.readByte();
   }
 
   write(writer: Writer): void {
@@ -47,11 +47,11 @@ export class StatData implements DataPacket {
       let compressed = new CompressedInt();
       compressed.write(writer, this.statValue);
     }
-    writer.writeByte(this.magicByte);
+    writer.writeByte(this.statValueTwo);
   }
 
   toString(): string {
-    return `[StatData] Type: ${this.statToName(this.statType)} - Value: ${this.statValue} (extra byte: ${this.magicByte})`;
+    return `[StatData] Type: ${this.statToName(this.statType)} - Value: ${this.statValue} (extra byte: ${this.statValueTwo})`;
   }
 
   /**
@@ -76,7 +76,6 @@ export class StatData implements DataPacket {
    * @param statType The ID of the stat type (optional)
    */
   statToName(statType: number = -1): string {
-    // @ts-ignore
     let keys = Object.keys(StatType).map(key => StatType[key]).filter(value => typeof value === 'string') as string[];
     let values = Object.values(StatType);
     let index: number;

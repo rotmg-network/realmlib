@@ -11,8 +11,8 @@ export enum GuildRank {
 }
 
 /**
- * Return the readable rank name based from the rank ID
- * @param rank
+ * Return the name of a guild rank based on the numerical ID
+ * @param rank The rank ID
  */
 export function parseGuildRank(rank: number): string {
   switch(rank) {
