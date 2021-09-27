@@ -177,5 +177,6 @@ export enum ParticleEffect {
   CircleTelegraphParticle = 28,
   SmokeCloudParticle = 29,
   NoteParticle = 30,
-  LaserParticle = 31
+  LaserParticle = 31,
+  SummonerRingParticle = 32
 }
