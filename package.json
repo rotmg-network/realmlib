@@ -2,13 +2,13 @@
   "name": "realmlib",
   "version": "1.0.3",
   "description": "A networking library for Realm of the Mad God in TypeScript",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "compile": "tsc -p ."
   },
   "files": [
-    "lib/"
+    "build/"
   ],
   "repository": {
     "type": "git",
