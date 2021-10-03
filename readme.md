@@ -13,7 +13,7 @@ The credits for the original library go to [thomas-crane](https://github.com/tho
 
 ### Install
 
-Make sure you have [Nodejs 12+](https://nodejs.org/en/download/) installed then download the project:
+Make sure you have [Nodejs 16+](https://nodejs.org/en/download/current/) installed then download the project:
 
 ```bash
 git clone https://github.com/abrn/realmlib.git
