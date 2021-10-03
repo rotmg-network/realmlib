@@ -1,16 +1,7 @@
-# OS
-.DS_Store
-.thumbs.db
-
-# IDE
 .idea/
 .vscode/
-
-# compiled code
-build/
-*.tsbuildinfo
-
-# package management
 node_modules/
+lib/
+*.tsbuildinfo
 package-lock.json
 yarn.lock

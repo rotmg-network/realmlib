@@ -8,6 +8,7 @@ export class CompressedInt {
   /**
    * Pass a reader and read the compressed in
    * @param reader
+   * @deprecated This will be moved to Reader.ReadCompressedInt soon, there may be code brakeage with no updates
    */
   read(reader: Reader): number {
     let uByte = reader.readUnsignedByte();
@@ -31,6 +32,7 @@ export class CompressedInt {
    * Pass a writer and write the compressed as a number
    * @param writer
    * @param amount The value you wish to compress
+   * @deprecated This will be moved to Reader.ReadCompressedInt soon, there may be code brakeage with no updates
    */
   write(writer: Writer, amount: number): void {
     const isNegative = amount < 0;

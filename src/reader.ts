@@ -7,9 +7,7 @@ export class Reader {
    */
   static readonly DEFAULT_SIZE: number = 4;
 
-  /**
-   * The current position of the pointer in the buffer
-   */
+  /** The current position of the pointer in the buffer */
   index: number;
 
   buffer: Buffer;
@@ -25,8 +23,7 @@ export class Reader {
 
   private _length: number;
 
-  /**
-   * Creates a new `Reader` and initialises the
+  /** Creates a new `Reader` and initialises the
    * wrapped buffer to the given `size`.
    * @param size The size of the buffer.
    */
@@ -36,80 +33,62 @@ export class Reader {
     this._length = size;
   }
 
-  /**
-   * Reads a 4 byte integer from the buffer.
-   */
+  /** Reads a 4 byte integer from the buffer. */
   readInt32(): number {
     const result = this.buffer.readInt32BE(this.index);
     this.index += 4;
     return result;
   }
 
-  /**
-   * Reads a 4 byte unsigned integer from the buffer
-   */
+  /** Reads a 4 byte unsigned integer from the buffer */
   readUInt32(): number {
     const result = this.buffer.readUInt32BE(this.index);
     this.index += 4;
     return result;
   }
 
-  /**
-   * Reads a 2 byte integer from the buffer
-   */
+  /** Reads a 2 byte integer from the buffer */
   readShort(): number {
     const result = this.buffer.readInt16BE(this.index);
     this.index += 2;
     return result;
   }
 
-  /**
-   * Reads a 2 byte unsigned integer from the buffer
-   */
+  /** Reads a 2 byte unsigned integer from the buffer */
   readUnsignedShort(): number {
     const result = this.buffer.readUInt16BE(this.index);
     this.index += 2;
     return result;
   }
 
-  /**
-   * Reads a 1 byte integer from the buffer
-   */
+  /** Reads a 1 byte integer from the buffer */
   readByte(): number {
     const result = this.buffer.readInt8(this.index);
     this.index++;
     return result;
   }
 
-  /**
-   * Reads a 1 byte unsigned integer from the buffer
-   */
+  /** Reads a 1 byte unsigned integer from the buffer */
   readUnsignedByte(): number {
     const result = this.buffer.readUInt8(this.index);
     this.index++;
     return result;
   }
 
-  /**
-   * Reads a single byte from the buffer, returns `true` if the byte is `1` and `false` otherwise
-   */
+  /** Reads a single byte from the buffer, returns `true` if the byte is `1` and `false` otherwise */
   readBoolean(): boolean {
     const result = this.readByte();
     return result !== 0;
   }
 
-  /**
-   * Reads a 4 byte floating point number from the buffer
-   */
+  /** Reads a 4 byte floating point number from the buffer */
   readFloat(): number {
     const result = this.buffer.readFloatBE(this.index);
     this.index += 4;
     return result;
   }
 
-  /**
-   * Reads 2 bytes to get the length, then reads `length` bytes from the buffer
-   */
+  /** Reads 2 bytes to get the length, then reads `length` bytes from the buffer */
   readByteArray(): number[] {
     const arraylen = this.readShort();
     const result = new Array<number>(arraylen);
@@ -119,8 +98,7 @@ export class Reader {
     return result;
   }
 
-  /**
-   * Reads `size` bytes from the buffer
+  /** Reads `size` bytes from the buffer
    * @param size The number of bytes to read
    */
   readBytes(size: number): number[] {
@@ -131,8 +109,7 @@ export class Reader {
     return result;
   }
 
-  /**
-   * Reads 2 bytes to get the length, reads `length` bytes from the buffer, then converts
+  /** Reads 2 bytes to get the length, reads `length` bytes from the buffer, then converts
    * the result to a utf8 string
    */
   readString(): string {
@@ -141,17 +118,33 @@ export class Reader {
     return this.buffer.slice(this.index - strlen, this.index).toString('utf8');
   }
 
-  /**
-   * The same as `readString()`, but reads 4 bytes for the length
-   */
+  /** The same as `readString()`, but reads 4 bytes for the length */
   readStringUTF32(): string {
     const strlen = this.readInt32();
     this.index += strlen;
     return this.buffer.slice(this.index - strlen, this.index).toString('utf8');
   }
 
-  /**
-   * Changes the size of the buffer without affecting the contents
+  /** Reads a Kabam custom version of a compressed integer - always int32 */
+  readCompressedInt(): number {
+    let uByte = this.readUnsignedByte();
+    const isNegative = (uByte & 64) !== 0;
+    let shift = 6;
+    let value = uByte & 63;
+
+    while (uByte & 128) {
+      uByte = this.readUnsignedByte();
+      value = value | (uByte & 127) << shift;
+      shift += 7;
+    }
+
+    if (isNegative) {
+      value = -value;
+    }
+    return value;
+  }
+
+  /** Changes the size of the buffer without affecting the contents
    * @param newSize The new size of the buffer
    */
   resizeBuffer(newSize: number): void {
@@ -161,9 +154,7 @@ export class Reader {
     }
   }
 
-  /**
-   * Resets the `bufferIndex` to `0` and allocates a fresh buffer of length `DEFAULT_SIZE` to the underlying buffer
-   */
+  /** Resets the `bufferIndex` to `0` and allocates a fresh buffer of length `DEFAULT_SIZE` to the underlying buffer */
   reset(): void {
     this.index = 0;
     this.buffer = Buffer.alloc(Reader.DEFAULT_SIZE);

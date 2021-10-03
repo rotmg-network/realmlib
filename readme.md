@@ -1,41 +1,19 @@
-## realmlib 
-### Networking library and data framework for Realm of the Mad God  
+# realmlib
 
-![](https://img.shields.io/badge/Node.js-43853D?style=flat-square&logo=node.js&logoColor=white&logoWidth=18)
-![](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white&logoWidth=18)
-![](https://img.shields.io/badge/game%20version-2.0.2.0.0-007ACC?style=flat-square&logoWidth=15&logo=applearcade)  
- 
-  
-realmlib provides you with an interface for interacting with the game at the network level, meaning it can be used for creating bots, proxy servers, game clients or anything else you wish. 
+A networking library for Realm of the Mad God written in TypeScript
 
-#### Some example features:
-* The [`PacketIO`](https://github.com/abrn/realmlib/blob/master/src/packetio.ts#L48) class for receiving, sending and ciphering game packets
-* Built-in game packets and the structures for reading/writing them
+The credits for the original library go to [thomas-crane](https://github.com/thomas-crane/realmlib-net)
 
+### Contents
 
-### Table of Contents
++ [Install](#install)
++ [Use](#use)
+  + [Using the `PacketIO` class](#using-the-packetio-class)
+  + [Using in-game models and enums](
 
-+ [Requirements](#requirements)
-+ [Installing](#installing)
-+ [Usage](#usage)
-+ [Documentation](#documentation)
-+ [Credits](#credits)
+### Install
 
-## Requirements  
-
-* Node.js 12+ is required for using the library. You can [download the latest version here.](https://nodejs.org/en/download/)
-* TypeScript 4.x compiler for development only, check out [releases](https://github.com/abrn/realmlib/releases) for compiled JavaScript versions  
-
-## Installing  
-
- You can download compiled JavaScript versions [here](https://github.com/abrn/realmlib/releases) or to install manually:  
- ```bash
-git clone https://github.com/abrn/realmlib.git
-cd realmlib && tsc
- ```
-The `build` folder will now include the working Node.js module
-
-## Usage
+Make sure you have [Nodejs 16+](https://nodejs.org/en/download/current/) installed then download the project:
 
 ```bash
 git clone https://github.com/abrn/realmlib.git
@@ -51,6 +29,7 @@ tsc
 
 Your compiled code will be in the `lib` folder ready to use in a NodeJS project.
 
+### Use
 
 The realmlib networking module cannot be used on its own. It is designed to be used as a building block for other RotMG projects that require an implementation of the RotMG networking protocol such as:
 
@@ -121,8 +100,3 @@ Ideally, the `packetMap` should contain an entry for each property present in th
 #### Using in-game models and enums
 
 realmlib also has classes that contain useful game data structures and enums for data that map to numbers when used in the network protocol
-
-
-## Credits
-
-The credits for the original library go to [github.com/thomas-crane/realmlib-net](https://github.com/thomas-crane/realmlib-net). It has been heavily modified since to stay compatible with the game meaning this is no longer a fork.
