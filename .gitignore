@@ -5,3 +5,5 @@ lib/
 *.tsbuildinfo
 package-lock.json
 yarn.lock
+*.js
+src/.DS_Store
