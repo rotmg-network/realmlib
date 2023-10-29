@@ -32,21 +32,9 @@ export class HelloPacket implements Packet {
    */
   key: number[];
   /**
-   * > Unknown.
-   */
-  mapJSON: string;
-  /**
-   * > Unknown.
-   */
-  entryTag: string;
-  /**
    *  The platform the game is played on
    */
   gameNet: string;
-  /**
-   * > Unknown.
-   */
-  gameNetUserId: string;
   /**
    * The platform the game is played on
    */
@@ -70,10 +58,7 @@ export class HelloPacket implements Packet {
     this.accessToken = '';
     this.keyTime = 0;
     this.key = [];
-    this.mapJSON = '';
-    this.entryTag = '';
     this.gameNet = '';
-    this.gameNetUserId = '';
     this.playPlatform = '';
     this.platformToken = '';
     this.userToken = '';
@@ -86,10 +71,7 @@ export class HelloPacket implements Packet {
     writer.writeString(this.accessToken);
     writer.writeInt32(this.keyTime);
     writer.writeByteArray(this.key);
-    writer.writeStringUTF32(this.mapJSON);
-    writer.writeString(this.entryTag);
     writer.writeString(this.gameNet);
-    writer.writeString(this.gameNetUserId);
     writer.writeString(this.playPlatform);
     writer.writeString(this.platformToken);
     writer.writeString(this.userToken);
@@ -102,10 +84,7 @@ export class HelloPacket implements Packet {
     this.accessToken = reader.readString();
     this.keyTime = reader.readInt32();
     this.key = reader.readByteArray();
-    this.mapJSON = reader.readStringUTF32();
-    this.entryTag = reader.readString();
     this.gameNet = reader.readString();
-    this.gameNetUserId = reader.readString();
     this.playPlatform = reader.readString();
     this.platformToken = reader.readString();
     this.userToken = reader.readString();
@@ -118,10 +97,7 @@ export class HelloPacket implements Packet {
     AccessToken: ${this.accessToken}\n
     KeyTime: ${this.keyTime}\n
     Key: ${this.key.toString()}\n
-    MapJSON: ${this.mapJSON}\n
-    EntryTag: ${this.entryTag}\n
     GameNet: ${this.gameNet}\n
-    GameNetUserId: ${this.gameNetUserId}\n
     PlayPlatform: ${this.playPlatform}\n
     PlatformToken: ${this.platformToken}\n
     UserToken: ${this.userToken}\n
