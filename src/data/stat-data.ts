@@ -34,20 +34,19 @@ export class StatData implements DataPacket {
     if (this.isStringStat()) {
       this.stringStatValue = reader.readString();
     } else {
-      this.statValue = new CompressedInt().read(reader);
+      this.statValue = reader.readCompressedInt();
     }
-    this.statValueTwo = reader.readByte();
+    this.statValueTwo = reader.readCompressedInt();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.statType);
+    writer.writeUnsignedByte(this.statType);
     if (this.isStringStat()) {
       writer.writeString(this.stringStatValue);
     } else {
-      let compressed = new CompressedInt();
-      compressed.write(writer, this.statValue);
+      writer.writeCompressedInt(this.statValue);
     }
-    writer.writeByte(this.statValueTwo);
+    writer.writeCompressedInt(this.statValueTwo);
   }
 
   toString(): string {
@@ -65,6 +64,11 @@ export class StatData implements DataPacket {
       case StatType.ACCOUNT_ID_STAT:
       case StatType.OWNER_ACCOUNT_ID_STAT:
       case StatType.GRAVE_ACCOUNT_ID:
+      case StatType.TEXTURE_STAT:
+      case StatType.UNKNOWN128:
+      case StatType.UNKNOWN121:
+      case StatType.ENCHANTMENT:
+      case StatType.EXP_STAT:
         return true;
       default:
         return false;
