@@ -1,4 +1,4 @@
-import { GroundTileData, ObjectData, CompressedInt } from '../../data';
+import { GroundTileData, ObjectData, CompressedInt, WorldPosData } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
@@ -16,6 +16,14 @@ export class UpdatePacket implements Packet {
 
   //#region packet-specific members
   /**
+   * this is the position of the player???
+   */
+  pos: WorldPosData;
+  /**
+   * Lever type, No fucking idea
+   */
+  levelType: number;
+  /**
    * The new tiles which are visible.
    */
   tiles: GroundTileData[];
@@ -30,20 +38,26 @@ export class UpdatePacket implements Packet {
   //#endregion
 
   constructor() {
+    this.pos = new WorldPosData();
+    this.levelType = 0;
     this.tiles = [];
     this.newObjects = [];
     this.drops = [];
   }
 
   read(reader: Reader): void {
-    this.tiles = new Array<GroundTileData>(new CompressedInt().read(reader));
+    this.pos.read(reader);
+    this.levelType = reader.readByte();
+
+    const tilesLen = reader.readCompressedInt()
+    this.tiles = new Array<GroundTileData>(tilesLen);
     for (let i = 0; i < this.tiles.length; i++) {
       const gd = new GroundTileData();
       gd.read(reader);
       this.tiles[i] = gd;
     }
 
-    const newObjectsLen = new CompressedInt().read(reader);
+    const newObjectsLen = reader.readCompressedInt();
     this.newObjects = new Array<ObjectData>(newObjectsLen);
     for (let i = 0; i < newObjectsLen; i++) {
       const od = new ObjectData();
@@ -51,25 +65,25 @@ export class UpdatePacket implements Packet {
       this.newObjects[i] = od;
     }
 
-    const dropsLen = new CompressedInt().read(reader);
+    const dropsLen = reader.readCompressedInt();
     this.drops = new Array<number>(dropsLen);
     for (let i = 0; i < dropsLen; i++) {
-      this.drops[i] = new CompressedInt().read(reader);
+      this.drops[i] = reader.readCompressedInt();
     }
   }
 
   write(writer: Writer): void {
-    new CompressedInt().write(writer, this.tiles.length);
+    writer.writeCompressedInt(this.tiles.length);
     for (const tile of this.tiles) {
       tile.write(writer);
     }
-    new CompressedInt().write(writer, this.tiles.length);
+    writer.writeCompressedInt(this.newObjects.length);
     for (const obj of this.newObjects) {
       obj.write(writer);
     }
-    new CompressedInt().write(writer, this.tiles.length);
+    writer.writeCompressedInt(this.drops.length);
     for (const drop of this.drops) {
-      new CompressedInt().write(writer, drop);
+      writer.writeCompressedInt(drop);
     }
   }
 }

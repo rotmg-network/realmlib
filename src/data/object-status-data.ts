@@ -27,9 +27,9 @@ export class ObjectStatusData implements DataPacket {
   }
 
   read(reader: Reader): void {
-    this.objectId = new CompressedInt().read(reader);
+    this.objectId = reader.readCompressedInt();
     this.pos.read(reader);
-    const statLen = new CompressedInt().read(reader);
+    const statLen = reader.readCompressedInt();
     this.stats = new Array(statLen);
     for (let i = 0; i < statLen; i++) {
       const sd = new StatData();
@@ -39,10 +39,9 @@ export class ObjectStatusData implements DataPacket {
   }
 
   write(writer: Writer): void {
-    new CompressedInt().write(writer, this.objectId);
+    writer.writeCompressedInt(this.objectId);
     this.pos.write(writer);
-    new CompressedInt().write(writer, this.stats.length);
-    writer.writeShort(this.stats.length);
+    writer.writeCompressedInt(this.stats.length);
     for (const stat of this.stats) {
       stat.write(writer);
     }
