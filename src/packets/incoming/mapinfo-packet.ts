@@ -31,10 +31,6 @@ export class MapInfoPacket implements Packet {
    */
   realmName: string;
   /**
-   * The difficulty rating of the map
-   */
-  difficulty: number;
-  /**
    * The seed value for the client's PRNG
    */
   fp: number;
@@ -42,6 +38,10 @@ export class MapInfoPacket implements Packet {
    * > Unknown
    */
   background: number;
+  /**
+   * The difficulty rating of the map
+   */
+  difficulty: number;
   /**
    * Whether or not players can teleport in the map
    */
@@ -58,6 +58,22 @@ export class MapInfoPacket implements Packet {
    * The time the connection to the game was started
    */
   gameOpenedTime: number;
+  /**
+   * Some New Bool
+   */
+  newBool: boolean;
+  /**
+   * Build Version
+   */
+  buildVersion: string;
+  /**
+   * new Int 
+   */
+  newInt: number;
+  /**
+   * Dungeun modifiers
+   */
+  dungeonModifier: string;
 
   constructor() {
     this.width = 0;
@@ -72,6 +88,10 @@ export class MapInfoPacket implements Packet {
     this.showDisplays = false;
     this.maxPlayers = 0;
     this.gameOpenedTime = 0;
+    this.newBool = false;
+    this.buildVersion = '';
+    this.newInt = 0 
+    this.dungeonModifier = '';
   }
 
   read(reader: Reader): void {
@@ -82,11 +102,15 @@ export class MapInfoPacket implements Packet {
     this.realmName = reader.readString();
     this.fp = reader.readUInt32();
     this.background = reader.readInt32();
-    this.difficulty = reader.readInt32();
+    this.difficulty = reader.readFloat();
     this.allowPlayerTeleport = reader.readBoolean();
     this.showDisplays = reader.readBoolean();
+    this.newBool = reader.readBoolean();
     this.maxPlayers = reader.readShort();
     this.gameOpenedTime = reader.readUInt32();
+    this.buildVersion = reader.readString();
+    this.newInt = reader.readInt32();
+    this.dungeonModifier = reader.readString();
   }
 
   write(writer: Writer): void {
@@ -95,13 +119,17 @@ export class MapInfoPacket implements Packet {
     writer.writeString(this.name);
     writer.writeString(this.displayName);
     writer.writeString(this.realmName);
-    writer.writeInt32(this.fp);
+    writer.writeUInt32(this.fp);
     writer.writeInt32(this.background);
-    writer.writeInt32(this.difficulty);
+    writer.writeFloat(this.difficulty);
     writer.writeBoolean(this.allowPlayerTeleport);
     writer.writeBoolean(this.showDisplays);
+    writer.writeBoolean(this.newBool);
     writer.writeShort(this.maxPlayers);
     writer.writeUInt32(this.gameOpenedTime);
+    writer.writeString(this.buildVersion);
+    writer.writeInt32(this.newInt);
+    writer.writeString(this.dungeonModifier)
   }
 
   toString(): string {
