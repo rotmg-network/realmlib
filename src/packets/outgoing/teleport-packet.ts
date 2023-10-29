@@ -16,16 +16,20 @@ export class TeleportPacket implements Packet {
    */
   objectId: number;
   //#endregion
+  playerName: string
 
   constructor() {
     this.objectId = 0;
+    this.playerName = '';
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.objectId);
+    writer.writeString(this.playerName);
   }
 
   read(reader: Reader): void {
     this.objectId = reader.readInt32();
+    this.playerName = reader.readString();
   }
 }

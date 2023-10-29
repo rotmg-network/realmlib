@@ -18,20 +18,26 @@ export class CreateSuccessPacket implements Packet {
    * The character id of the player's character
    */
   charId: number;
-
+  /**
+   * some fucking stat i couldnt tell you which
+   */
+  PCStat: string;
   constructor() {
     this.objectId = 0;
     this.charId = 0;
+    this.PCStat = '';
   }
 
   read(reader: Reader): void {
     this.objectId = reader.readInt32();
     this.charId = reader.readInt32();
+    this.PCStat = reader.readString();
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.objectId);
     writer.writeInt32(this.charId);
+    writer.writeString(this.PCStat);
   }
 
   toString(): string {

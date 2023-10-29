@@ -11,6 +11,10 @@ export class ForgeUnlockedBlueprints implements Packet {
   readonly type = PacketType.FORGE_UNLOCKED_BLUEPRINTS;
 
   /**
+   * No fucking idea
+   */
+  unknownByte: number;
+  /**
    * The itemIds of unlocked blueprints in an array
    */
   unlockedBlueprints: number[];
@@ -20,16 +24,18 @@ export class ForgeUnlockedBlueprints implements Packet {
   }
 
   read(reader: Reader): void {
-    let count = reader.readByte();
+    this.unknownByte = reader.readByte();
+    let count = reader.readCompressedInt();
     for (let i = 0; i < count; i++) {
-      this.unlockedBlueprints.push(new CompressedInt().read(reader));
+      this.unlockedBlueprints.push(reader.readCompressedInt());
     }
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.unlockedBlueprints.length);
+    writer.writeByte(this.unknownByte);
+    writer.writeCompressedInt(this.unlockedBlueprints.length);
     for (let i = 0; i < this.unlockedBlueprints.length; i++) {
-      new CompressedInt().write(writer, (this.unlockedBlueprints[i]));
+      writer.writeCompressedInt(this.unlockedBlueprints[i]);
     }
   }
 

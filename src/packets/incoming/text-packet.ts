@@ -62,7 +62,7 @@ export class TextPacket implements Packet {
   read(reader: Reader): void {
     this.name = reader.readString();
     this.objectId = reader.readInt32();
-    this.numStars = reader.readShort();
+    this.numStars = reader.readUnsignedShort();
     this.bubbleTime = reader.readUnsignedByte();
     this.recipient = reader.readString();
     this.text = reader.readString();
@@ -74,7 +74,7 @@ export class TextPacket implements Packet {
   write(writer: Writer): void {
     writer.writeString(this.name);
     writer.writeInt32(this.objectId);
-    writer.writeShort(this.numStars);
+    writer.writeUnsignedShort(this.numStars);
     writer.writeUnsignedByte(this.bubbleTime);
     writer.writeString(this.recipient);
     writer.writeString(this.text);

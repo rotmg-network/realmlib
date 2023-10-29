@@ -14,17 +14,21 @@ export class VaultContentPacket implements Packet {
    */
   unknownBool: boolean;
   /**
-   * The amount of items in the player vault
+   * Object id of the main vault chest
    */
-  vaultItemCount: number;
+  chestObjectId: number;
   /**
-   * The amount of items in the gift vault
+   * object Id of the gift chest
    */
-  giftItemCount: number;
+  giftObjectId: number;
   /**
-   * The amount of items in the potion vault
+   * Object Id of the Potion Storage
    */
-  potionItemCount: number;
+  potionObjectId: number;
+  /**
+   * Sometype of info?
+   */
+  info: number;
   /**
    * The contents of the players vault, sent as an array of item object IDs or -1 if the slot is empty
    */
@@ -53,12 +57,17 @@ export class VaultContentPacket implements Packet {
    * The size of the player's potion vault after they purchase the current upgrade
    */
   nextPotionMax: number;
+  /**
+   * unkown ass bytes
+   */
+  unknownBytes: number[];
 
   constructor() {
     this.unknownBool = false;
-    this.vaultItemCount = 0;
-    this.giftItemCount = 0;
-    this.potionItemCount = 0;
+    this.chestObjectId = -1;
+    this.giftObjectId = -1;
+    this.potionObjectId = -1;
+    this.info = -1;
     this.vaultContents = [];
     this.giftContents = [];
     this.potionContents = [];
@@ -66,63 +75,67 @@ export class VaultContentPacket implements Packet {
     this.potionUpgradeCost = 0;
     this.currentPotionMax = 0;
     this.nextPotionMax = 0;
+    this.unknownBytes = [];
   }
 
   read(reader: Reader): void {
     this.unknownBool = reader.readBoolean();
-    this.vaultItemCount = new CompressedInt().read(reader);
-    this.giftItemCount = new CompressedInt().read(reader);
-    this.potionItemCount = new CompressedInt().read(reader);
+    this.chestObjectId = reader.readCompressedInt();
+    this.giftObjectId = reader.readCompressedInt();
+    this.potionObjectId = reader.readCompressedInt();
 
-    let counter = 0;
-    let itemCount = new CompressedInt().read(reader);
-    while (counter < itemCount) {
-      this.vaultContents.push(new CompressedInt().read(reader));
-      counter++;
+    let vaultCount = reader.readCompressedInt();
+      for (let i = 0; i < vaultCount; i++) {
+        this.vaultContents.push(reader.readCompressedInt());
+      }
+
+    let giftCount = reader.readCompressedInt();
+    for (let i = 0; i < giftCount; i++) {
+      this.giftContents.push(reader.readCompressedInt());
     }
 
-    let giftItemCount = new CompressedInt().read(reader);
-    counter = 0;
-    while (counter < giftItemCount) {
-      this.giftContents.push(new CompressedInt().read(reader));
-      counter++;
-    }
-
-    let potionCount = new CompressedInt().read(reader);
-    counter = 0;
-    while (counter < potionCount) {
-      this.potionContents.push(new CompressedInt().read(reader));
-      counter++;
+    let potionCount = reader.readCompressedInt();
+    for (let i = 0; i < potionCount; i++) {
+      this.potionContents.push(reader.readCompressedInt());
     }
 
     this.vaultUpgradeCost = reader.readShort();
     this.potionUpgradeCost = reader.readShort();
     this.currentPotionMax = reader.readShort();
     this.nextPotionMax = reader.readShort();
+
+    for (let i = 0; i < reader.remaining; i++){
+      this.unknownBytes.push(reader.readByte());
+    }
   }
 
   write(writer: Writer): void {
     writer.writeBoolean(this.unknownBool);
 
-    writer.writeInt32(this.vaultItemCount);
-    writer.writeInt32(this.giftItemCount);
-    writer.writeInt32(this.potionItemCount);
+    writer.writeCompressedInt(this.chestObjectId);
+    writer.writeCompressedInt(this.giftObjectId);
+    writer.writeCompressedInt(this.potionObjectId);
+    writer.writeCompressedInt(this.info)
 
-    writer.writeInt32(this.vaultContents.length);
+    writer.writeCompressedInt(this.vaultContents.length);
     for (const item of this.vaultContents) {
-      writer.writeInt32(item);
+      writer.writeCompressedInt(item);
     }
-    writer.writeInt32(this.giftContents.length);
+    writer.writeCompressedInt(this.giftContents.length);
     for (const item of this.giftContents) {
-      writer.writeInt32(item);
+      writer.writeCompressedInt(item);
     }
-    writer.writeInt32(this.potionContents.length);
+    writer.writeCompressedInt(this.potionContents.length);
     for (const item of this.potionContents) {
-      writer.writeInt32(item);
+      writer.writeCompressedInt(item);
     }
     writer.writeShort(this.vaultUpgradeCost);
     writer.writeShort(this.potionUpgradeCost);
     writer.writeShort(this.currentPotionMax);
     writer.writeShort(this.nextPotionMax);
+
+    for (let i = 0; i < this.unknownBytes.length; i++){
+      writer.writeByte(this.unknownBytes[i]);
+    }
   }
 }

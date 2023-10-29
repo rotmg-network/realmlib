@@ -8,31 +8,24 @@ import { Writer } from '../../writer';
  */
 export class ChangeAllyShootPacket implements Packet {
 
-  readonly type = PacketType.CHANGE_ALLYSHOOT;
+  readonly type = PacketType.SHOW_ALLY_SHOOT;
 
   //#region packet-specific members
   /**
-   * The name of the player whose rank will change.
+   * This is a toggle whether to show ally shoots or not 
    */
-  name: string;
-  /**
-   * The new rank of the player.
-   */
-  guildRank: number;
+  toggle: number;
   //#endregion
 
   constructor() {
-    this.name = '';
-    this.guildRank = 0;
+    this.toggle = 0;
   }
 
   write(writer: Writer): void {
-    writer.writeString(this.name);
-    writer.writeInt32(this.guildRank);
+    writer.writeInt32(this.toggle);
   }
 
   read(reader: Reader): void {
-    this.name = reader.readString();
-    this.guildRank = reader.readInt32();
+    this.toggle = reader.readInt32();
   }
 }

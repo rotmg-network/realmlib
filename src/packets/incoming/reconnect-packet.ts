@@ -34,10 +34,6 @@ export class ReconnectPacket implements Packet {
    * The `key` to send in the next `HelloPacket`
    */
   key: number[];
-  /**
-   * Whether or not the new host is from the arena
-   */
-  isFromArena: boolean;
 
   constructor() {
     this.name = '';
@@ -46,26 +42,23 @@ export class ReconnectPacket implements Packet {
     this.gameId = 0;
     this.keyTime = 0;
     this.key = [];
-    this.isFromArena = false;
   }
 
   read(reader: Reader): void {
     this.name = reader.readString();
     this.host = reader.readString();
-    this.port = reader.readInt32();
+    this.port = reader.readShort();
     this.gameId = reader.readInt32();
     this.keyTime = reader.readInt32();
-    this.isFromArena = reader.readBoolean();
     this.key = reader.readByteArray();
   }
 
   write(writer: Writer): void {
     writer.writeString(this.name);
     writer.writeString(this.host);
-    writer.writeInt32(this.port);
+    writer.writeShort(this.port);
     writer.writeInt32(this.gameId);
     writer.writeInt32(this.keyTime);
-    writer.writeBoolean(this.isFromArena);
     writer.writeByteArray(this.key);
   }
 
@@ -74,7 +67,6 @@ export class ReconnectPacket implements Packet {
     Host: ${this.host} - Port: ${this.port}\n
     GameId: ${this.gameId}\n
     KeyTime: ${this.keyTime}\n
-    FromArena: ${this.isFromArena}\n
     Key: ${this.key.toString()}`;
   }
 }

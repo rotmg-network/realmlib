@@ -27,12 +27,12 @@ export class PlayerHitPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeUnsignedByte(this.bulletId);
+    writer.writeShort(this.bulletId);
     writer.writeInt32(this.objectId);
   }
 
   read(reader: Reader): void {
-    this.bulletId = reader.readUnsignedByte();
+    this.bulletId = reader.readShort();
     this.objectId = reader.readInt32();
   }
 }

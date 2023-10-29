@@ -20,20 +20,27 @@ export class GotoPacket implements Packet {
    * The new position of the entity.
    */
   position: WorldPosData;
+  /**
+   * unknown ass int 
+   */
+  unknownInt: number;
   //#endregion
 
   constructor() {
     this.objectId = 0;
     this.position = new WorldPosData();
+    this.unknownInt = 0;
   }
 
   read(reader: Reader): void {
     this.objectId = reader.readInt32();
     this.position.read(reader);
+    this.unknownInt = reader.readInt32();
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.objectId);
     this.position.write(writer);
+    writer.writeInt32(this.unknownInt);
   }
 }

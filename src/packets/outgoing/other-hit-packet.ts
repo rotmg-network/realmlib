@@ -38,14 +38,14 @@ export class OtherHitPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.time);
-    writer.writeUnsignedByte(this.bulletId);
+    writer.writeShort(this.bulletId);
     writer.writeInt32(this.objectId);
     writer.writeInt32(this.targetId);
   }
 
   read(reader: Reader): void {
     this.time = reader.readInt32();
-    this.bulletId = reader.readUnsignedByte();
+    this.bulletId = reader.readShort();
     this.objectId = reader.readInt32();
     this.targetId = reader.readInt32();
   }

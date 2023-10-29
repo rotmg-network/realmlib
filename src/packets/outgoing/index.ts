@@ -2,7 +2,7 @@ export * from './accept-trade-packet';
 export * from './aoeack-packet';
 export * from './buy-packet';
 export * from './cancel-trade-packet';
-export * from './change-ally-shoot';
+export * from './show_ally_shoot';
 export * from './change-guild-rank-packet';
 export * from './change-trade-packet';
 export * from './check-credits-packet';

@@ -36,6 +36,10 @@ export class ShowEffectPacket implements Packet {
    */
   duration: number;
 
+  extra: boolean;
+
+  unknownByte: number;
+
   constructor() {
     this.effectType = 0;
     this.targetObjectId = 0;
@@ -43,13 +47,15 @@ export class ShowEffectPacket implements Packet {
     this.pos2 = new WorldPosData();
     this.color = 0;
     this.duration = 0;
+    this.extra = false
+    this.unknownByte = 0
   }
 
   read(reader: Reader): void {
     this.effectType = reader.readUnsignedByte();
     let loc2 = reader.readUnsignedByte();
     if (loc2 & 64) {
-      this.targetObjectId = new CompressedInt().read(reader);
+      this.targetObjectId = reader.readCompressedInt();
     } else {
       this.targetObjectId = 0;
     }
@@ -83,11 +89,16 @@ export class ShowEffectPacket implements Packet {
     } else {
       this.duration = 1;
     }
+
+    if (reader.remaining > 0) {
+      this.extra = true
+      this.unknownByte = reader.readByte();
+    }
   }
 
   write(writer: Writer): void {
     writer.writeUnsignedByte(this.effectType);
-    new CompressedInt().write(writer, this.targetObjectId);
+    writer.writeCompressedInt(this.targetObjectId);
     this.pos1.write(writer);
     this.pos2.write(writer);
     writer.writeInt32(this.color);

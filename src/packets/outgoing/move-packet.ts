@@ -23,17 +23,9 @@ export class MovePacket implements Packet {
    */
   time: number;
   /**
-   * The current server time in ms.
-   */
-  serverRealTimeMS: number;
-  /**
-   * The current client position.
-   */
-  newPosition: WorldPosData;
-  /**
    * The move records of the client.
    *
-   * This property can be an empty array.
+   * This property has to have atleast one moverecord in it.
    */
   records: MoveRecord[];
   //#endregion
@@ -41,16 +33,12 @@ export class MovePacket implements Packet {
   constructor() {
     this.tickId = 0;
     this.time = 0;
-    this.serverRealTimeMS = 0;
-    this.newPosition = new WorldPosData();
     this.records = [];
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.tickId);
-    writer.writeInt32(this.time);
-    writer.writeUInt32(this.serverRealTimeMS);
-    this.newPosition.write(writer);
+    writer.writeUInt32(this.time);
     writer.writeShort(this.records.length);
     for (const record of this.records) {
       record.write(writer);
@@ -59,8 +47,7 @@ export class MovePacket implements Packet {
 
   read(reader: Reader): void {
     this.tickId = reader.readInt32();
-    this.time = reader.readInt32();
-    this.newPosition.read(reader);
+    this.time = reader.readUInt32();
     this.records = new Array(reader.readShort());
     for (let i = 0; i < this.records.length; i++) {
       this.records[i] = new MoveRecord();

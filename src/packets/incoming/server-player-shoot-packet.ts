@@ -36,6 +36,16 @@ export class ServerPlayerShootPacket implements Packet {
    */
   damage: number;
 
+  unknownInt: number;
+
+  unknownByte: number;
+  
+  spellBomb: boolean;
+  
+  bulletCount: number;
+  
+  bulletAngle: number;
+
   constructor() {
     this.bulletId = 0;
     this.ownerId = 0;
@@ -43,24 +53,47 @@ export class ServerPlayerShootPacket implements Packet {
     this.startingPos = new WorldPosData();
     this.angle = 0;
     this.damage = 0;
+    this.unknownInt = 0;
+    this.unknownByte = 0;
+    this.spellBomb = false;
+    this.bulletCount = 0;
+    this.bulletAngle = 0;
   }
 
   read(reader: Reader): void {
-    this.bulletId = reader.readUnsignedByte();
+    this.bulletId = reader.readUnsignedShort();
     this.ownerId = reader.readInt32();
     this.containerType = reader.readInt32();
     this.startingPos.read(reader);
     this.angle = reader.readFloat();
     this.damage = reader.readShort();
+    this.unknownInt = reader.readInt32();
+    this.unknownByte = reader.readByte();
+
+    if (reader.remaining > 0) {
+      this.spellBomb = true;
+      this.bulletCount = reader.readByte();
+      this.bulletAngle = reader.readFloat();
+    } else {
+      this.bulletCount = 0;
+      this.bulletAngle = 0;
+    }
   }
 
   write(writer: Writer): void {
-    writer.writeUnsignedByte(this.bulletId);
+    writer.writeUnsignedShort(this.bulletId);
     writer.writeInt32(this.ownerId);
     writer.writeInt32(this.containerType);
     this.startingPos.write(writer);
     writer.writeFloat(this.angle);
     writer.writeShort(this.damage);
+    writer.writeInt32(this.unknownInt);
+    writer.writeByte(this.unknownByte);
+
+    if (this.spellBomb) {
+      writer.writeByte(this.bulletCount);
+      writer.writeFloat(this.bulletAngle);
+    }
   }
 
   toString(): string {
@@ -68,7 +101,11 @@ export class ServerPlayerShootPacket implements Packet {
     OwnerId: ${this.ownerId}\n
     ContainerType: ${this.containerType}\n
     StartingPos: ${this.startingPos.toString()}\n
-    Angle: ${this.angle}\n
-    Damage: ${this.damage}`;
+    Angle: ${this.angle}\nDamage: ${this.damage}\n
+    UnknownInt: ${this.unknownInt}\n
+    UnknownByte: ${this.unknownByte}\n
+    SpellBomb: ${this.spellBomb}\n
+    BulletCount: ${this.bulletCount}\n
+    BulletAngle: ${this.bulletAngle}`;
   }
 }
