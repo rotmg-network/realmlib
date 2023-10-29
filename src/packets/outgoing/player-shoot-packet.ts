@@ -21,13 +21,13 @@ export class PlayerShootPacket implements Packet {
      */
     bulletId: number;
     /**
-     * (work-in-progress)
-     */
-    unknownByte: number;
-    /**
      * The item id of the weapon used to fire the projectile.
      */
     containerType: number;
+    /**
+     * (work-in-progress)
+     */
+    unknownByte: number;
     /**
      * The position of the starting point where the projectile was fired.
      */
@@ -37,55 +37,53 @@ export class PlayerShootPacket implements Packet {
      */
     angle: number;
     /**
-     * The speed multiplier for the projectile.
-     */
-    speedMult: number;
-    /**
-     * The lifetime MS multiplier for the projectile.
-     */
-    lifeMult: number;
-    /**
      * If the projectile is related to a burst weapon projectile.
      */
     isBurst: boolean;
+    /**
+     * No Fucking idea
+     */
+    unknownShort: number;
+    /**
+     * The Player Position 
+     */
+    playerPos: WorldPosData;
 
     //#endregion
 
     constructor() {
         this.time = 0;
         this.bulletId = 0;
-        this.unknownByte = 0;
         this.containerType = 0;
+        this.unknownByte = 0;
         this.startingPos = new WorldPosData();
         this.angle = 0;
-        this.speedMult = 0;
-        this.lifeMult = 0;
         this.isBurst = false;
+        this.unknownShort = 0;
+        this.playerPos = new WorldPosData();
     }
 
     write(writer: Writer): void {
         writer.writeInt32(this.time);
-        writer.writeByte(this.bulletId);
-        writer.writeByte(this.unknownByte)
-        writer.writeShort(this.containerType);
+        writer.writeShort(this.bulletId);
+        writer.writeShort(this.unknownByte)
+        writer.writeByte(this.containerType);
         this.startingPos.write(writer);
         writer.writeFloat(this.angle);
-        // NB(thomas-crane): the client uses AS3's `int` function which is
-        // equivalent to `Math.floor` in JS.
-        writer.writeShort(Math.floor(this.speedMult * 1000));
-        writer.writeShort(Math.floor(this.lifeMult * 1000));
         writer.writeBoolean(this.isBurst);
+        writer.writeShort(this.unknownShort);
+        this.playerPos.write(writer)
     }
 
     read(reader: Reader): void {
         this.time = reader.readInt32();
         this.bulletId = reader.readByte();
-        this.unknownByte = reader.readByte();
         this.containerType = reader.readShort();
+        this.unknownByte = reader.readByte();
         this.startingPos.read(reader);
         this.angle = reader.readFloat();
-        this.speedMult = Math.floor(reader.readShort() / 1000);
-        this.lifeMult = Math.floor(reader.readShort() / 1000);
         this.isBurst = reader.readBoolean();
+        this.unknownShort = reader.readShort();
+        this.playerPos.read(reader);
     }
 }
