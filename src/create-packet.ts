@@ -231,8 +231,8 @@ export function createPacket(type: PacketType): Packet {
       return new OutgoingPackets.ForgeRequestPacket();
     case PacketType.FORGE_RESULT:
       return new IncomingPackets.ForgeResultPacket();
-    case PacketType.CHANGE_ALLYSHOOT:
-      return new OutgoingPackets.ChangeAllyShootPacket();
+    case PacketType.SHOW_ALLY_SHOOT:
+      return new OutgoingPackets.ShowAllyShootPacket();
   }
   throw new Error(`Unknown packet type: ${type}`);
 }

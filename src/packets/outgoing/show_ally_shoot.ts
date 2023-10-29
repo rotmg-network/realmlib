@@ -6,7 +6,7 @@ import { Writer } from '../../writer';
 /**
  * Sent to change the guild rank of a member in the player's guild.
  */
-export class ChangeAllyShootPacket implements Packet {
+export class ShowAllyShootPacket implements Packet {
 
   readonly type = PacketType.SHOW_ALLY_SHOOT;
 
