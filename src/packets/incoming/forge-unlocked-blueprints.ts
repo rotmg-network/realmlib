@@ -20,6 +20,7 @@ export class ForgeUnlockedBlueprints implements Packet {
   unlockedBlueprints: number[];
 
   constructor() {
+    this.unknownByte = 0;
     this.unlockedBlueprints = [];
   }
 

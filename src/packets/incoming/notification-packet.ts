@@ -65,8 +65,8 @@ export class NotificationPacket implements Packet {
     this.color = 0;
     this.pictureType = 0;
     this.emoteId = 0;
-    this.unknown1
-    this.unknown2
+    this.unknown1 = 0;
+    this.unknown2 = 0;
   }
 
   read(reader: Reader): void {
