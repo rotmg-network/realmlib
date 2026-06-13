@@ -173,15 +173,15 @@ export class PacketIO extends EventEmitter {
    * Takes packets from the outgoing queue and writes
    * them to the socket
    */
-  private async drainQueue() {
+  private drainQueue(): void {
     const packet = this.outgoingQueue.shift()!;
     this.lastOutgoing = packet;
     this.writer.index = 5;
     const type = this.packetMap[packet?.type];
     packet.write(this.writer);
     this.writer.writeHeader(type);
-    this.sendRC4.cipher(this.writer.buffer.slice(5, this.writer.index));
-    if (this.socket && !this.socket.write(this.writer.buffer.slice(0, this.writer.index))) {
+    this.sendRC4.cipher(this.writer.buffer.subarray(5, this.writer.index));
+    if (this.socket && !this.socket.write(this.writer.buffer.subarray(0, this.writer.index))) {
       this.socket.once('drain', () => {
         if (this.outgoingQueue.length > 0) {
           this.drainQueue();
@@ -255,7 +255,7 @@ export class PacketIO extends EventEmitter {
    * there is no event listener for the packet type
    */
   private constructPacket(): Packet | undefined {
-    this.receiveRC4.cipher(this.reader.buffer.slice(5, this.reader.length));
+    this.receiveRC4.cipher(this.reader.buffer.subarray(5, this.reader.length));
     try {
       const id = this.reader.buffer.readInt8(4);
       const type = this.packetMap[id];

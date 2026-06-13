@@ -115,14 +115,14 @@ export class Reader {
   readString(): string {
     const strlen = this.readUnsignedShort();
     this.index += strlen;
-    return this.buffer.slice(this.index - strlen, this.index).toString('utf8');
+    return this.buffer.subarray(this.index - strlen, this.index).toString('utf8');
   }
 
   /** The same as `readString()`, but reads 4 bytes for the length */
   readStringUTF32(): string {
     const strlen = this.readInt32();
     this.index += strlen;
-    return this.buffer.slice(this.index - strlen, this.index).toString('utf8');
+    return this.buffer.subarray(this.index - strlen, this.index).toString('utf8');
   }
 
   /** Reads a Kabam custom version of a compressed integer - always int32 */
