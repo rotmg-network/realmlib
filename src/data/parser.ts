@@ -45,7 +45,7 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
                 playerData.level = stat.statValue;
                 continue;
             case StatType.EXP_STAT:
-                playerData.exp = stat.statValue;
+                playerData.exp = parseInt(stat.stringStatValue, 10) || 0;
                 continue;
             case StatType.CURR_FAME_STAT:
                 playerData.currentFame = stat.statValue;
@@ -162,7 +162,7 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
                 playerData.xpBoostTime = stat.statValue;
                 continue;
             case StatType.TEXTURE_STAT:
-                playerData.texture = stat.statValue;
+                playerData.texture = parseInt(stat.stringStatValue, 10) || 0;
                 continue;
             case StatType.FORTUNE_TOKEN_STAT:
                 playerData.fortuneTokens = stat.statValue;
