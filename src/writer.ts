@@ -122,10 +122,10 @@ export class Writer {
      */
     writeByteArray(value: number[]): void {
         if (!Array.isArray(value)) {
-            this.writeShort(0);
+            this.writeUnsignedShort(0);
             return;
         }
-        this.writeShort(value.length);
+        this.writeUnsignedShort(value.length);
         this.checkCapacity(value.length);
         for (const byte of value) {
             this.buffer[this.index++] = byte;
@@ -137,11 +137,11 @@ export class Writer {
      */
     writeString(value: string): void {
         if (typeof value !== 'string') {
-            this.writeShort(0);
+            this.writeUnsignedShort(0);
             return;
         }
         const byteLength = Buffer.byteLength(value, 'utf8');
-        this.writeShort(byteLength);
+        this.writeUnsignedShort(byteLength);
         this.checkCapacity(byteLength);
         this.index += this.buffer.write(value, this.index, 'utf8');
     }
