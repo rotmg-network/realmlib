@@ -69,6 +69,12 @@ export class StatData implements DataPacket {
       case StatType.UNKNOWN121:
       case StatType.ENCHANTMENT:
       case StatType.EXP_STAT:
+      // String stats added in later builds. Referenced by id because the
+      // StatType enum still carries stale names at these values.
+      case 71:  // MATERIAL_AMOUNT
+      case 72:  // MATERIAL_CAP
+      case 147: // DUST_CAP
+      case 155: // blood ritual
         return true;
       default:
         return false;
