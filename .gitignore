@@ -2,6 +2,7 @@
 .vscode/
 node_modules/
 lib/
+build/
 *.tsbuildinfo
 package-lock.json
 yarn.lock

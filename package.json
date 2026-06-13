@@ -5,7 +5,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "compile": "tsc -p ."
+    "build": "tsc -p .",
+    "compile": "tsc -p .",
+    "prepare": "tsc -p ."
   },
   "files": [
     "lib/"

@@ -9,7 +9,7 @@
     "incremental": true,
     "pretty": true,
     "rootDir": "src",
-    "outDir": "build",
+    "outDir": "lib",
     "lib": ["ES2020"]
   },
   "include": ["src/**/*"]
