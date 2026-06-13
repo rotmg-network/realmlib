@@ -161,20 +161,18 @@ export class Writer {
         const isNegative = amount < 0;
         let value = isNegative ? -amount : amount;
         let byte = value & 63;
+        value >>= 6;
         if (isNegative) {
             byte |= 64;
         }
-        value >>= 6;
-
-        const isPositive = amount > 0;
-        if (isPositive) {
+        if (value !== 0) {
             byte |= 128;
         }
         this.writeUnsignedByte(byte);
-        while (isPositive) {
+        while (value !== 0) {
             byte = value & 127;
             value >>= 7;
-            if (isPositive) {
+            if (value !== 0) {
                 byte |= 128;
             }
             this.writeUnsignedByte(byte);
