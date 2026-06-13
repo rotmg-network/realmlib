@@ -1,7 +1,7 @@
 /**
  * The object types of all classes in the game
  */
-export declare enum Classes {
+export enum Classes {
     Rogue = 768,
     Archer = 775,
     Wizard = 782,

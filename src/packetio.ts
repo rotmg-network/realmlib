@@ -259,7 +259,16 @@ export class PacketIO extends EventEmitter {
           const packet = this.constructPacket();
           this.resetBuffer();
           if (packet) {
-            this.emitPacket(packet);
+            // A throwing packet listener must not abort the read loop: doing
+            // so would drop every later packet buffered in this chunk along
+            // with their required ACKs (server replies with IgnoredAck / 21).
+            try {
+              this.emitPacket(packet);
+            } catch (err) {
+              if (this.listenerCount('error') !== 0) {
+                this.emit('error', err);
+              }
+            }
           }
         }
       }
