@@ -58,23 +58,21 @@ export class StatData implements DataPacket {
    */
   isStringStat(): boolean {
     switch (this.statType) {
+      case StatType.EXP_STAT:
       case StatType.NAME_STAT:
-      case StatType.GUILD_NAME_STAT:
-      case StatType.PET_NAME_STAT:
       case StatType.ACCOUNT_ID_STAT:
       case StatType.OWNER_ACCOUNT_ID_STAT:
+      case StatType.GUILD_NAME_STAT:
+      case StatType.MATERIAL_AMOUNT_STAT:
+      case StatType.MATERIAL_CAP_STAT:
+      case StatType.ENCHANTMENTS_STAT:
+      case StatType.PET_NAME_STAT:
       case StatType.GRAVE_ACCOUNT_ID:
-      case StatType.TEXTURE_STAT:
-      case StatType.UNKNOWN128:
       case StatType.UNKNOWN121:
-      case StatType.ENCHANTMENT:
-      case StatType.EXP_STAT:
-      // String stats added in later builds. Referenced by id because the
-      // StatType enum still carries stale names at these values.
-      case 71:  // MATERIAL_AMOUNT
-      case 72:  // MATERIAL_CAP
-      case 147: // DUST_CAP
-      case 155: // blood ritual
+      case StatType.DUST_AMOUNT_STAT:
+      case StatType.CRUCIBLE_STAT:
+      case StatType.DUST_CAP_STAT:
+      case StatType.UNKNOWN155:
         return true;
       default:
         return false;

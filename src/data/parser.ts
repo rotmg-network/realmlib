@@ -162,7 +162,7 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
                 playerData.xpBoostTime = stat.statValue;
                 continue;
             case StatType.TEXTURE_STAT:
-                playerData.texture = parseInt(stat.stringStatValue, 10) || 0;
+                playerData.texture = stat.statValue;
                 continue;
             case StatType.FORTUNE_TOKEN_STAT:
                 playerData.fortuneTokens = stat.statValue;
