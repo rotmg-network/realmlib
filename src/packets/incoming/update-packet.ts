@@ -73,6 +73,8 @@ export class UpdatePacket implements Packet {
   }
 
   write(writer: Writer): void {
+    this.pos.write(writer);
+    writer.writeByte(this.levelType);
     writer.writeCompressedInt(this.tiles.length);
     for (const tile of this.tiles) {
       tile.write(writer);
