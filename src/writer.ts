@@ -140,18 +140,20 @@ export class Writer {
             this.writeShort(0);
             return;
         }
-        this.writeShort(value.length);
-        this.checkCapacity(value.length);
-        this.index += this.buffer.write(value, this.index, value.length, 'utf8');
+        const byteLength = Buffer.byteLength(value, 'utf8');
+        this.writeShort(byteLength);
+        this.checkCapacity(byteLength);
+        this.index += this.buffer.write(value, this.index, 'utf8');
     }
 
     /** The same as `writeString()`, but writes 4 bytes for the length.
      * @param value The int value to write.
      */
     writeStringUTF32(value: string): void {
-        this.writeInt32(value.length);
-        this.checkCapacity(value.length);
-        this.index += this.buffer.write(value, this.index, value.length, 'utf8');
+        const byteLength = Buffer.byteLength(value, 'utf8');
+        this.writeInt32(byteLength);
+        this.checkCapacity(byteLength);
+        this.index += this.buffer.write(value, this.index, 'utf8');
     }
 
     /** Writes a Kabam custom version of a compressed integer
