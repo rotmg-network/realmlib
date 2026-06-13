@@ -194,6 +194,9 @@ export class PacketIO extends EventEmitter {
     const type = this.packetMap[packet?.type];
     packet.write(this.writer);
     this.writer.writeHeader(type);
+    if (this.listenerCount('sentPacket') !== 0) {
+      this.emit('sentPacket', { id: type, type: packet.type, size: this.writer.index });
+    }
     this.sendRC4.cipher(this.writer.buffer.subarray(5, this.writer.index));
     if (this.socket && !this.socket.write(this.writer.buffer.subarray(0, this.writer.index))) {
       this.socket.once('drain', () => {
