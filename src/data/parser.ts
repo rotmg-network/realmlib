@@ -214,9 +214,10 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
                 continue;
             default:
                 if (stat.statType >= StatType.INVENTORY_0_STAT && stat.statType <= StatType.INVENTORY_11_STAT) {
-                    playerData.inventory[stat.statType - 8] = stat.statValue;
+                    playerData.inventory[stat.statType - StatType.INVENTORY_0_STAT] = stat.statValue;
                 } else if (stat.statType >= StatType.BACKPACK_0_STAT && stat.statType <= StatType.BACKPACK_7_STAT) {
-                    playerData.inventory[stat.statType - 59] = stat.statValue;
+                    const inventorySlots = StatType.INVENTORY_11_STAT - StatType.INVENTORY_0_STAT + 1;
+                    playerData.inventory[inventorySlots + stat.statType - StatType.BACKPACK_0_STAT] = stat.statValue;
                 }
         }
     }
