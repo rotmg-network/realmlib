@@ -1,4 +1,5 @@
 export * from './create-packet';
+export * from './debug';
 export * from './packet-map';
 export * from './packet-type';
 export * from './packet';

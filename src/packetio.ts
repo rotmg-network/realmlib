@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events';
 import { Socket } from 'net';
 import { Packet } from './packet';
-import { PacketMap } from './packet-map';
+import { DEFAULT_PACKET_MAP, PacketMap } from './packet-map';
+import { PacketType } from './packet-type';
 import { Reader } from './reader';
 import { Writer } from './writer';
 import { createPacket } from './create-packet';
@@ -13,6 +14,19 @@ import { INCOMING_KEY, OUTGOING_KEY, RC4 } from './crypto/rc4';
 export interface RC4Config {
   incomingKey: string;
   outgoingKey: string;
+}
+
+/**
+ * The payload of the `rawPacket` debug event: the deciphered bytes of an
+ * incoming packet along with its id and mapped type (if any).
+ */
+export interface RawPacket {
+  /** The numeric packet id. */
+  id: number;
+  /** The mapped packet type, or `undefined` if the id is not in the map. */
+  type: PacketType | undefined;
+  /** The deciphered packet body (everything after the 5 byte header). */
+  payload: Buffer;
 }
 
 /**
@@ -93,7 +107,7 @@ export class PacketIO extends EventEmitter {
    * Creates a new `PacketIO` instance
    * @param opts The options to use for this instance
    */
-  constructor(opts: { socket?: Socket, rc4?: RC4Config, packetMap?: PacketMap } = { rc4: DEFAULT_RC4, packetMap: {} }) {
+  constructor(opts: { socket?: Socket, rc4?: RC4Config, packetMap?: PacketMap } = { rc4: DEFAULT_RC4 }) {
     super();
     if (!opts.rc4) {
       opts.rc4 = DEFAULT_RC4;
@@ -103,7 +117,7 @@ export class PacketIO extends EventEmitter {
     this.outgoingQueue = [];
     this.sendRC4 = new RC4(opts.rc4.outgoingKey);
     this.receiveRC4 = new RC4(opts.rc4.incomingKey);
-    this.packetMap = opts.packetMap || {};
+    this.packetMap = opts.packetMap || DEFAULT_PACKET_MAP;
 
     this.eventHandlers = new Map([
       ['data', this.onData.bind(this)],
@@ -260,11 +274,20 @@ export class PacketIO extends EventEmitter {
       const id = this.reader.buffer.readInt8(4);
       const type = this.packetMap[id];
       this.reader.index = 5;
+
+      // Debug hook: surface the raw bytes of every incoming packet (mapped
+      // or not) so consumers can log/inspect them. Only built when observed.
+      if (this.listenerCount('rawPacket') !== 0) {
+        const rawPacket: RawPacket = {
+          id,
+          type,
+          payload: Buffer.from(this.reader.buffer.subarray(5, this.reader.length)),
+        };
+        this.emit('rawPacket', rawPacket);
+      }
+
       if (!type) {
-        this.emit('error', new Error(
-          `Unmapped packet ID ${id} received - buffer size: ${this.reader.length}\n
-          ${this.reader.readBytes(this.reader.length)}`
-          ));
+        this.emit('unknownPacket', { id, size: this.reader.length });
         return undefined;
       }
       if (this.listenerCount(type) !== 0) {
