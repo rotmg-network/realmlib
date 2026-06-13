@@ -5,6 +5,125 @@ import * as IncomingPackets from './packets/incoming';
 import * as OutgoingPackets from './packets/outgoing';
 
 /**
+ * A factory which constructs a new packet instance.
+ */
+type PacketFactory = () => Packet;
+
+/**
+ * Maps each packet type to a factory for the matching packet class.
+ */
+const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
+  [PacketType.FAILURE]: () => new IncomingPackets.FailurePacket(),
+  [PacketType.ACCEPT_ARENA_DEATH]: () => new OutgoingPackets.AcceptArenaDeathPacket(),
+  [PacketType.LOAD]: () => new OutgoingPackets.LoadPacket(),
+  [PacketType.QUEST_REDEEM_RESPONSE]: () => new IncomingPackets.QuestRedeemResponsePacket(),
+  [PacketType.TRADEACCEPTED]: () => new IncomingPackets.TradeAcceptedPacket(),
+  [PacketType.GOTOACK]: () => new OutgoingPackets.GotoAckPacket(),
+  [PacketType.PET_CHANGE_FORM_MSG]: () => new OutgoingPackets.ReskinPetPacket(),
+  [PacketType.GUILDREMOVE]: () => new OutgoingPackets.GuildRemovePacket(),
+  [PacketType.TRADEDONE]: () => new IncomingPackets.TradeDonePacket(),
+  [PacketType.HELLO]: () => new OutgoingPackets.HelloPacket(),
+  [PacketType.MOVE]: () => new OutgoingPackets.MovePacket(),
+  [PacketType.CHATTOKEN]: () => new IncomingPackets.ChatToken(),
+  [PacketType.SETCONDITION]: () => new OutgoingPackets.SetConditionPacket(),
+  [PacketType.ACTIVEPETUPDATE]: () => new IncomingPackets.ActivePetPacket(),
+  [PacketType.PONG]: () => new OutgoingPackets.PongPacket(),
+  [PacketType.CANCELTRADE]: () => new OutgoingPackets.CancelTradePacket(),
+  [PacketType.OTHERHIT]: () => new OutgoingPackets.OtherHitPacket(),
+  [PacketType.IMMINENT_ARENA_WAVE]: () => new IncomingPackets.ImminentArenaWavePacket(),
+  [PacketType.GLOBAL_NOTIFICATION]: () => new IncomingPackets.GlobalNotificationPacket(),
+  [PacketType.TRADECHANGED]: () => new IncomingPackets.TradeChangedPacket(),
+  [PacketType.PETYARDUPDATE]: () => new IncomingPackets.PetYardUpdate(),
+  [PacketType.DAMAGE]: () => new IncomingPackets.DamagePacket(),
+  [PacketType.CREATE_SUCCESS]: () => new IncomingPackets.CreateSuccessPacket(),
+  [PacketType.QUEST_FETCH_ASK]: () => new OutgoingPackets.QuestFetchAskPacket(),
+  [PacketType.TELEPORT]: () => new OutgoingPackets.TeleportPacket(),
+  [PacketType.EVOLVE_PET]: () => new IncomingPackets.EvolvedPetMessage(),
+  [PacketType.UPDATEACK]: () => new OutgoingPackets.UpdateAckPacket(),
+  [PacketType.UPDATE]: () => new IncomingPackets.UpdatePacket(),
+  [PacketType.INVITEDTOGUILD]: () => new IncomingPackets.InvitedToGuildPacket(),
+  [PacketType.USEITEM]: () => new OutgoingPackets.UseItemPacket(),
+  [PacketType.TRADESTART]: () => new IncomingPackets.TradeStartPacket(),
+  [PacketType.CLAIM_LOGIN_REWARD_MSG]: () => new OutgoingPackets.ClaimDailyRewardMessage(),
+  [PacketType.SHOWEFFECT]: () => new IncomingPackets.ShowEffectPacket(),
+  [PacketType.DEATH]: () => new IncomingPackets.DeathPacket(),
+  [PacketType.RESKIN]: () => new OutgoingPackets.ReskinPacket(),
+  [PacketType.PLAYERTEXT]: () => new OutgoingPackets.PlayerTextPacket(),
+  [PacketType.DELETE_PET]: () => new IncomingPackets.DeletePetMessage(),
+  [PacketType.QUEST_REDEEM]: () => new OutgoingPackets.QuestRedeemPacket(),
+  [PacketType.USEPORTAL]: () => new OutgoingPackets.UsePortalPacket(),
+  [PacketType.KEY_INFO_RESPONSE]: () => new IncomingPackets.KeyInfoResponsePacket(),
+  [PacketType.ACCEPTTRADE]: () => new OutgoingPackets.AcceptTradePacket(),
+  [PacketType.RECONNECT]: () => new IncomingPackets.ReconnectPacket(),
+  [PacketType.BUYRESULT]: () => new IncomingPackets.BuyResultPacket(),
+  [PacketType.REQUESTTRADE]: () => new OutgoingPackets.RequestTradePacket(),
+  [PacketType.PETUPGRADEREQUEST]: () => new OutgoingPackets.PetUpgradeRequestPacket(),
+  [PacketType.SHOOTACK]: () => new OutgoingPackets.ShootAckPacket(),
+  [PacketType.PLAYERHIT]: () => new OutgoingPackets.PlayerHitPacket(),
+  [PacketType.ACTIVE_PET_UPDATE_REQUEST]: () => new OutgoingPackets.ActivePetUpdateRequestPacket(),
+  [PacketType.PLAYSOUND]: () => new IncomingPackets.PlaySoundPacket(),
+  [PacketType.PLAYERSHOOT]: () => new OutgoingPackets.PlayerShootPacket(),
+  [PacketType.ESCAPE]: () => new OutgoingPackets.EscapePacket(),
+  [PacketType.GUILDRESULT]: () => new IncomingPackets.GuildResultPacket(),
+  [PacketType.NOTIFICATION]: () => new IncomingPackets.NotificationPacket(),
+  [PacketType.VERIFY_EMAIL]: () => new IncomingPackets.VerifyEmailPacket(),
+  [PacketType.GOTO]: () => new IncomingPackets.GotoPacket(),
+  [PacketType.MAPINFO]: () => new IncomingPackets.MapInfoPacket(),
+  [PacketType.INVDROP]: () => new OutgoingPackets.InvDropPacket(),
+  [PacketType.ARENA_DEATH]: () => new IncomingPackets.ArenaDeathPacket(),
+  [PacketType.ALLYSHOOT]: () => new IncomingPackets.AllyShootPacket(),
+  [PacketType.SERVERPLAYERSHOOT]: () => new IncomingPackets.ServerPlayerShootPacket(),
+  [PacketType.PASSWORD_PROMPT]: () => new IncomingPackets.PasswordPromptPacket(),
+  [PacketType.FILE]: () => new IncomingPackets.FilePacket(),
+  [PacketType.KEY_INFO_REQUEST]: () => new OutgoingPackets.KeyInfoRequestPacket(),
+  [PacketType.QUEST_ROOM_MSG]: () => new OutgoingPackets.GoToQuestRoomPacket(),
+  [PacketType.CHECKCREDITS]: () => new OutgoingPackets.CheckCreditsPacket(),
+  [PacketType.ENEMYHIT]: () => new OutgoingPackets.EnemyHitPacket(),
+  [PacketType.CREATE]: () => new OutgoingPackets.CreatePacket(),
+  [PacketType.GUILDINVITE]: () => new OutgoingPackets.GuildInvitePacket(),
+  [PacketType.ENTER_ARENA]: () => new OutgoingPackets.EnterArenaPacket(),
+  [PacketType.PING]: () => new IncomingPackets.PingPacket(),
+  [PacketType.EDITACCOUNTLIST]: () => new OutgoingPackets.EditAccountListPacket(),
+  [PacketType.AOE]: () => new IncomingPackets.AoePacket(),
+  [PacketType.ACCOUNTLIST]: () => new IncomingPackets.AccountListPacket(),
+  [PacketType.BUY]: () => new OutgoingPackets.BuyPacket(),
+  [PacketType.INVSWAP]: () => new OutgoingPackets.InvSwapPacket(),
+  [PacketType.AOEACK]: () => new OutgoingPackets.AoeAckPacket(),
+  [PacketType.PIC]: () => new IncomingPackets.PicPacket(),
+  [PacketType.INVRESULT]: () => new IncomingPackets.InvResultPacket(),
+  [PacketType.LOGIN_REWARD_MSG]: () => new IncomingPackets.ClaimDailyRewardResponse(),
+  [PacketType.CHANGETRADE]: () => new OutgoingPackets.ChangeTradePacket(),
+  [PacketType.TEXT]: () => new IncomingPackets.TextPacket(),
+  [PacketType.QUESTOBJID]: () => new IncomingPackets.QuestObjectIdPacket(),
+  [PacketType.QUEST_FETCH_RESPONSE]: () => new IncomingPackets.QuestFetchResponsePacket(),
+  [PacketType.TRADEREQUESTED]: () => new IncomingPackets.TradeRequestedPacket(),
+  [PacketType.HATCH_PET]: () => new IncomingPackets.HatchPetMessage(),
+  [PacketType.GROUNDDAMAGE]: () => new OutgoingPackets.GroundDamagePacket(),
+  [PacketType.ENEMYSHOOT]: () => new IncomingPackets.EnemyShootPacket(),
+  [PacketType.CHOOSENAME]: () => new OutgoingPackets.ChooseNamePacket(),
+  [PacketType.CLIENTSTAT]: () => new IncomingPackets.ClientStatPacket(),
+  [PacketType.RESKIN_UNLOCK]: () => new IncomingPackets.ReskinUnlockPacket(),
+  [PacketType.NAMERESULT]: () => new IncomingPackets.NameResultPacket(),
+  [PacketType.JOINGUILD]: () => new OutgoingPackets.JoinGuildPacket(),
+  [PacketType.NEWTICK]: () => new IncomingPackets.NewTickPacket(),
+  [PacketType.SQUAREHIT]: () => new OutgoingPackets.SquareHitPacket(),
+  [PacketType.CHANGEGUILDRANK]: () => new OutgoingPackets.ChangeGuildRankPacket(),
+  [PacketType.NEW_ABILITY]: () => new IncomingPackets.NewAbilityMessage(),
+  [PacketType.CREATEGUILD]: () => new OutgoingPackets.CreateGuildPacket(),
+  [PacketType.PET_CHANGE_SKIN_MSG]: () => new OutgoingPackets.ChangePetSkinPacket(),
+  [PacketType.REALM_HERO_LEFT_MSG]: () => new IncomingPackets.RealmHeroesLeftPacket(),
+  [PacketType.RESET_DAILY_QUESTS]: () => new OutgoingPackets.ResetDailyQuestsPacket(),
+  [PacketType.NEW_CHARACTER_INFORMATION]: () => new IncomingPackets.NewCharacterInfoPacket(),
+  [PacketType.QUEUE_INFORMATION]: () => new IncomingPackets.QueueInfoPacket(),
+  [PacketType.QUEUE_CANCEL]: () => new OutgoingPackets.QueueCancelPacket(),
+  [PacketType.VAULT_CONTENT]: () => new IncomingPackets.VaultContentPacket(),
+  [PacketType.EXALTATION_BONUS_CHANGED]: () => new IncomingPackets.ExaltationUpdatePacket(),
+  [PacketType.FORGE_REQUEST]: () => new OutgoingPackets.ForgeRequestPacket(),
+  [PacketType.FORGE_RESULT]: () => new IncomingPackets.ForgeResultPacket(),
+  [PacketType.SHOW_ALLY_SHOOT]: () => new OutgoingPackets.ShowAllyShootPacket(),
+};
+
+/**
  * Creates the correct packet object for the given type.
  * @param type The type of packet to create
  * @throws {Error} if the packet cannot be created
@@ -13,226 +132,9 @@ export function createPacket(type: PacketType): Packet {
   if (typeof type !== 'string') {
     throw new TypeError(`Parameter "type" must be a string, not ${typeof type}`);
   }
-  if (!PacketType[type]) {
-    throw new Error(`Parameter "type" must be a valid packet type, not "${type}"`);
+  const factory = PACKET_FACTORIES[type];
+  if (!factory) {
+    throw new Error(`Unknown packet type: ${type}`);
   }
-  switch (type) {
-    case PacketType.FAILURE:
-      return new IncomingPackets.FailurePacket();
-    case PacketType.ACCEPT_ARENA_DEATH:
-      return new OutgoingPackets.AcceptArenaDeathPacket();
-    case PacketType.LOAD:
-      return new OutgoingPackets.LoadPacket();
-    case PacketType.QUEST_REDEEM_RESPONSE:
-      return new IncomingPackets.QuestRedeemResponsePacket();
-    case PacketType.TRADEACCEPTED:
-      return new IncomingPackets.TradeAcceptedPacket();
-    case PacketType.GOTOACK:
-      return new OutgoingPackets.GotoAckPacket();
-    case PacketType.PET_CHANGE_FORM_MSG:
-      return new OutgoingPackets.ReskinPetPacket();
-    case PacketType.GUILDREMOVE:
-      return new OutgoingPackets.GuildRemovePacket();
-    case PacketType.TRADEDONE:
-      return new IncomingPackets.TradeDonePacket();
-    case PacketType.HELLO:
-      return new OutgoingPackets.HelloPacket();
-    case PacketType.MOVE:
-      return new OutgoingPackets.MovePacket();
-    case PacketType.CHATTOKEN:
-      return new IncomingPackets.ChatToken();
-    case PacketType.SETCONDITION:
-      return new OutgoingPackets.SetConditionPacket();
-    case PacketType.ACTIVEPETUPDATE:
-      return new IncomingPackets.ActivePetPacket();
-    case PacketType.PONG:
-      return new OutgoingPackets.PongPacket();
-    case PacketType.CANCELTRADE:
-      return new OutgoingPackets.CancelTradePacket();
-    case PacketType.OTHERHIT:
-      return new OutgoingPackets.OtherHitPacket();
-    case PacketType.IMMINENT_ARENA_WAVE:
-      return new IncomingPackets.ImminentArenaWavePacket();
-    case PacketType.GLOBAL_NOTIFICATION:
-      return new IncomingPackets.GlobalNotificationPacket();
-    case PacketType.TRADECHANGED:
-      return new IncomingPackets.TradeChangedPacket();
-    case PacketType.PETYARDUPDATE:
-      return new IncomingPackets.PetYardUpdate();
-    case PacketType.DAMAGE:
-      return new IncomingPackets.DamagePacket();
-    case PacketType.CREATE_SUCCESS:
-      return new IncomingPackets.CreateSuccessPacket();
-    case PacketType.QUEST_FETCH_ASK:
-      return new OutgoingPackets.QuestFetchAskPacket();
-    case PacketType.TELEPORT:
-      return new OutgoingPackets.TeleportPacket();
-    case PacketType.EVOLVE_PET:
-      return new IncomingPackets.EvolvedPetMessage();
-    case PacketType.UPDATEACK:
-      return new OutgoingPackets.UpdateAckPacket();
-    case PacketType.UPDATE:
-      return new IncomingPackets.UpdatePacket();
-    case PacketType.INVITEDTOGUILD:
-      return new IncomingPackets.InvitedToGuildPacket();
-    case PacketType.USEITEM:
-      return new OutgoingPackets.UseItemPacket();
-    case PacketType.TRADESTART:
-      return new IncomingPackets.TradeStartPacket();
-    case PacketType.CLAIM_LOGIN_REWARD_MSG:
-      return new OutgoingPackets.ClaimDailyRewardMessage();
-    case PacketType.SHOWEFFECT:
-      return new IncomingPackets.ShowEffectPacket();
-    case PacketType.DEATH:
-      return new IncomingPackets.DeathPacket();
-    case PacketType.RESKIN:
-      return new OutgoingPackets.ReskinPacket();
-    case PacketType.PLAYERTEXT:
-      return new OutgoingPackets.PlayerTextPacket();
-    case PacketType.DELETE_PET:
-      return new IncomingPackets.DeletePetMessage();
-    case PacketType.QUEST_REDEEM:
-      return new OutgoingPackets.QuestRedeemPacket();
-    case PacketType.USEPORTAL:
-      return new OutgoingPackets.UsePortalPacket();
-    case PacketType.KEY_INFO_RESPONSE:
-      return new IncomingPackets.KeyInfoResponsePacket();
-    case PacketType.ACCEPTTRADE:
-      return new OutgoingPackets.AcceptTradePacket();
-    case PacketType.RECONNECT:
-      return new IncomingPackets.ReconnectPacket();
-    case PacketType.BUYRESULT:
-      return new IncomingPackets.BuyResultPacket();
-    case PacketType.REQUESTTRADE:
-      return new OutgoingPackets.RequestTradePacket();
-    case PacketType.PETUPGRADEREQUEST:
-      return new OutgoingPackets.PetUpgradeRequestPacket();
-    case PacketType.SHOOTACK:
-      return new OutgoingPackets.ShootAckPacket();
-    case PacketType.PLAYERHIT:
-      return new OutgoingPackets.PlayerHitPacket();
-    case PacketType.ACTIVE_PET_UPDATE_REQUEST:
-      return new OutgoingPackets.ActivePetUpdateRequestPacket();
-    case PacketType.PLAYSOUND:
-      return new IncomingPackets.PlaySoundPacket();
-    case PacketType.PLAYERSHOOT:
-      return new OutgoingPackets.PlayerShootPacket();
-    case PacketType.ESCAPE:
-      return new OutgoingPackets.EscapePacket();
-    case PacketType.GUILDRESULT:
-      return new IncomingPackets.GuildResultPacket();
-    case PacketType.NOTIFICATION:
-      return new IncomingPackets.NotificationPacket();
-    case PacketType.VERIFY_EMAIL:
-      return new IncomingPackets.VerifyEmailPacket();
-    case PacketType.GOTO:
-      return new IncomingPackets.GotoPacket();
-    case PacketType.MAPINFO:
-      return new IncomingPackets.MapInfoPacket();
-    case PacketType.INVDROP:
-      return new OutgoingPackets.InvDropPacket();
-    case PacketType.ARENA_DEATH:
-      return new IncomingPackets.ArenaDeathPacket();
-    case PacketType.ALLYSHOOT:
-      return new IncomingPackets.AllyShootPacket();
-    case PacketType.SERVERPLAYERSHOOT:
-      return new IncomingPackets.ServerPlayerShootPacket();
-    case PacketType.PASSWORD_PROMPT:
-      return new IncomingPackets.PasswordPromptPacket();
-    case PacketType.FILE:
-      return new IncomingPackets.FilePacket();
-    case PacketType.KEY_INFO_REQUEST:
-      return new OutgoingPackets.KeyInfoRequestPacket();
-    case PacketType.QUEST_ROOM_MSG:
-      return new OutgoingPackets.GoToQuestRoomPacket();
-    case PacketType.CHECKCREDITS:
-      return new OutgoingPackets.CheckCreditsPacket();
-    case PacketType.ENEMYHIT:
-      return new OutgoingPackets.EnemyHitPacket();
-    case PacketType.CREATE:
-      return new OutgoingPackets.CreatePacket();
-    case PacketType.GUILDINVITE:
-      return new OutgoingPackets.GuildInvitePacket();
-    case PacketType.ENTER_ARENA:
-      return new OutgoingPackets.EnterArenaPacket();
-    case PacketType.PING:
-      return new IncomingPackets.PingPacket();
-    case PacketType.EDITACCOUNTLIST:
-      return new OutgoingPackets.EditAccountListPacket();
-    case PacketType.AOE:
-      return new IncomingPackets.AoePacket();
-    case PacketType.ACCOUNTLIST:
-      return new IncomingPackets.AccountListPacket();
-    case PacketType.BUY:
-      return new OutgoingPackets.BuyPacket();
-    case PacketType.INVSWAP:
-      return new OutgoingPackets.InvSwapPacket();
-    case PacketType.AOEACK:
-      return new OutgoingPackets.AoeAckPacket();
-    case PacketType.PIC:
-      return new IncomingPackets.PicPacket();
-    case PacketType.INVRESULT:
-      return new IncomingPackets.InvResultPacket();
-    case PacketType.LOGIN_REWARD_MSG:
-      return new IncomingPackets.ClaimDailyRewardResponse();
-    case PacketType.CHANGETRADE:
-      return new OutgoingPackets.ChangeTradePacket();
-    case PacketType.TEXT:
-      return new IncomingPackets.TextPacket();
-    case PacketType.QUESTOBJID:
-      return new IncomingPackets.QuestObjectIdPacket();
-    case PacketType.QUEST_FETCH_RESPONSE:
-      return new IncomingPackets.QuestFetchResponsePacket();
-    case PacketType.TRADEREQUESTED:
-      return new IncomingPackets.TradeRequestedPacket();
-    case PacketType.HATCH_PET:
-      return new IncomingPackets.HatchPetMessage();
-    case PacketType.GROUNDDAMAGE:
-      return new OutgoingPackets.GroundDamagePacket();
-    case PacketType.ENEMYSHOOT:
-      return new IncomingPackets.EnemyShootPacket();
-    case PacketType.CHOOSENAME:
-      return new OutgoingPackets.ChooseNamePacket();
-    case PacketType.CLIENTSTAT:
-      return new IncomingPackets.ClientStatPacket();
-    case PacketType.RESKIN_UNLOCK:
-      return new IncomingPackets.ReskinUnlockPacket();
-    case PacketType.NAMERESULT:
-      return new IncomingPackets.NameResultPacket();
-    case PacketType.JOINGUILD:
-      return new OutgoingPackets.JoinGuildPacket();
-    case PacketType.NEWTICK:
-      return new IncomingPackets.NewTickPacket();
-    case PacketType.SQUAREHIT:
-      return new OutgoingPackets.SquareHitPacket();
-    case PacketType.CHANGEGUILDRANK:
-      return new OutgoingPackets.ChangeGuildRankPacket();
-    case PacketType.NEW_ABILITY:
-      return new IncomingPackets.NewAbilityMessage();
-    case PacketType.CREATEGUILD:
-      return new OutgoingPackets.CreateGuildPacket();
-    case PacketType.PET_CHANGE_SKIN_MSG:
-      return new OutgoingPackets.ChangePetSkinPacket();
-    case PacketType.REALM_HERO_LEFT_MSG:
-      return new IncomingPackets.RealmHeroesLeftPacket();
-    case PacketType.RESET_DAILY_QUESTS:
-      return new OutgoingPackets.ResetDailyQuestsPacket();
-    case PacketType.NEW_CHARACTER_INFORMATION:
-      return new IncomingPackets.NewCharacterInfoPacket();
-    case PacketType.QUEUE_INFORMATION:
-      return new IncomingPackets.QueueInfoPacket();
-    case PacketType.QUEUE_CANCEL:
-      return new OutgoingPackets.QueueCancelPacket();
-    case PacketType.VAULT_CONTENT:
-      return new IncomingPackets.VaultContentPacket();
-    case PacketType.EXALTATION_BONUS_CHANGED:
-      return new IncomingPackets.ExaltationUpdatePacket();
-    case PacketType.FORGE_REQUEST:
-      return new OutgoingPackets.ForgeRequestPacket();
-    case PacketType.FORGE_RESULT:
-      return new IncomingPackets.ForgeResultPacket();
-    case PacketType.SHOW_ALLY_SHOOT:
-      return new OutgoingPackets.ShowAllyShootPacket();
-  }
-  throw new Error(`Unknown packet type: ${type}`);
+  return factory();
 }
