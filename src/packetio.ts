@@ -48,6 +48,13 @@ export const PROXY_OUTGOING: RC4Config = {
 export class PacketIO extends EventEmitter {
 
   /**
+   * The largest packet size (in bytes, including the 5 byte header) which
+   * will be accepted. Anything outside `[5, MAX_PACKET_SIZE]` is treated as
+   * a corrupt length prefix.
+   */
+  static readonly MAX_PACKET_SIZE = 0x1000000;
+
+  /**
    * The socket this packet interface is attached to.
    */
   socket: Socket | undefined;
@@ -225,6 +232,11 @@ export class PacketIO extends EventEmitter {
       if (this.reader.remaining === 0) {
         if (this.reader.length === 4) {
           const newSize = this.reader.buffer.readInt32BE(0);
+          if (newSize < 5 || newSize > PacketIO.MAX_PACKET_SIZE) {
+            this.emit('error', new Error(`Invalid packet size: ${newSize}`));
+            this.socket?.destroy();
+            return;
+          }
           this.reader.resizeBuffer(newSize);
         } else {
           const packet = this.constructPacket();
