@@ -20,11 +20,11 @@ git clone https://github.com/abrn/realmlib.git
 cd realmlib
 ```
 
-Install the TypeScript compiler then compile the source:
+Install the dependencies and build the source:
 
 ```bash
-npm install -g typescript
-tsc
+npm install
+npm run build
 ```
 
 Your compiled code will be in the `lib` folder ready to use in a NodeJS project.

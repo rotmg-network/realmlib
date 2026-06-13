@@ -5,10 +5,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc -p .",
-    "compile": "tsc -p .",
-    "prepare": "tsc -p .",
-    "test": "mocha"
+    "clean": "node -e \"require('fs').rmSync('lib', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p .",
+    "test": "mocha",
+    "prepare": "npm run build"
   },
   "files": [
     "lib/"
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.22",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^16.10.0",
+    "@types/node": "^16.18.126",
     "chai": "^4.3.4",
     "mocha": "^11.7.6",
     "ts-node": "^10.9.2",
