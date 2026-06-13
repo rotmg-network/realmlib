@@ -66,8 +66,8 @@ export class HelloPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeString(this.buildVersion);
     writer.writeInt32(this.gameId);
+    writer.writeString(this.buildVersion);
     writer.writeString(this.accessToken);
     writer.writeInt32(this.keyTime);
     writer.writeByteArray(this.key);
@@ -79,8 +79,8 @@ export class HelloPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.buildVersion = reader.readString();
     this.gameId = reader.readInt32();
+    this.buildVersion = reader.readString();
     this.accessToken = reader.readString();
     this.keyTime = reader.readInt32();
     this.key = reader.readByteArray();
