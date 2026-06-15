@@ -24,37 +24,43 @@ export class AllyShootPacket implements Packet {
    */
   containerType: number;
   /**
+   * > Unknown
+   */
+  unknownByte: number;
+  /**
    * The angle at which the projectile was fired.
    */
   angle: number;
-
   /**
-   * Whether or not the shot is affected by the 'Inspired' buff (presumably).
+   * > Unknown
    */
-  bard: boolean;
+  unknownShort: number;
   //#endregion
 
   constructor() {
     this.bulletId = 0;
     this.ownerId = 0;
     this.containerType = 0;
+    this.unknownByte = 0;
     this.angle = 0;
-    this.bard = false;
+    this.unknownShort = 0;
   }
 
   read(reader: Reader): void {
-    this.bulletId = reader.readUnsignedByte();
+    this.bulletId = reader.readUnsignedShort();
     this.ownerId = reader.readInt32();
     this.containerType = reader.readShort();
+    this.unknownByte = reader.readByte();
     this.angle = reader.readFloat();
-    this.bard = reader.readBoolean();
+    this.unknownShort = reader.readShort();
   }
 
   write(writer: Writer): void {
-    writer.writeUnsignedByte(this.bulletId);
+    writer.writeUnsignedShort(this.bulletId);
     writer.writeInt32(this.ownerId);
     writer.writeShort(this.containerType);
+    writer.writeByte(this.unknownByte);
     writer.writeFloat(this.angle);
-    writer.writeBoolean(this.bard);
+    writer.writeShort(this.unknownShort);
   }
 }

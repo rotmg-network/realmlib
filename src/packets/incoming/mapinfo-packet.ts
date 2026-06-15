@@ -67,13 +67,27 @@ export class MapInfoPacket implements Packet {
    */
   buildVersion: string;
   /**
-   * new Int 
+   * The tile radius visible to the player.
+   */
+  viewRadius: number;
+  /**
+   * new Int
    */
   newInt: number;
   /**
-   * Dungeun modifiers
+   * Dungeon modifiers, separated by ';'.
    */
   dungeonModifier: string;
+  /** > Unknown (usually 0). */
+  unknownShort1: number;
+  /** > Unknown */
+  unknownBool: boolean;
+  /** > Unknown */
+  unknownShort2: number;
+  /** Max realm score (only present in realms). */
+  maxRealmScore: number;
+  /** Current realm score (only present in realms). */
+  curRealmScore: number;
 
   constructor() {
     this.width = 0;
@@ -90,8 +104,14 @@ export class MapInfoPacket implements Packet {
     this.gameOpenedTime = 0;
     this.newBool = false;
     this.buildVersion = '';
-    this.newInt = 0 
+    this.viewRadius = 0;
+    this.newInt = 0;
     this.dungeonModifier = '';
+    this.unknownShort1 = 0;
+    this.unknownBool = false;
+    this.unknownShort2 = 0;
+    this.maxRealmScore = 0;
+    this.curRealmScore = 0;
   }
 
   read(reader: Reader): void {
@@ -109,8 +129,16 @@ export class MapInfoPacket implements Packet {
     this.maxPlayers = reader.readShort();
     this.gameOpenedTime = reader.readUInt32();
     this.buildVersion = reader.readString();
+    this.viewRadius = reader.readShort();
     this.newInt = reader.readInt32();
     this.dungeonModifier = reader.readString();
+    this.unknownShort1 = reader.readShort();
+    this.unknownBool = reader.readBoolean();
+    this.unknownShort2 = reader.readShort();
+    if (reader.remaining > 0) {
+      this.maxRealmScore = reader.readInt32();
+      this.curRealmScore = reader.readInt32();
+    }
   }
 
   write(writer: Writer): void {
@@ -128,8 +156,14 @@ export class MapInfoPacket implements Packet {
     writer.writeShort(this.maxPlayers);
     writer.writeUInt32(this.gameOpenedTime);
     writer.writeString(this.buildVersion);
+    writer.writeShort(this.viewRadius);
     writer.writeInt32(this.newInt);
-    writer.writeString(this.dungeonModifier)
+    writer.writeString(this.dungeonModifier);
+    writer.writeShort(this.unknownShort1);
+    writer.writeBoolean(this.unknownBool);
+    writer.writeShort(this.unknownShort2);
+    writer.writeInt32(this.maxRealmScore);
+    writer.writeInt32(this.curRealmScore);
   }
 
   toString(): string {

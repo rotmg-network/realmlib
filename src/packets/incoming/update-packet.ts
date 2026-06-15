@@ -35,6 +35,10 @@ export class UpdatePacket implements Packet {
    * The visible objects which have left the map (become invisible).
    */
   drops: number[];
+  /**
+   * Trailing byte present in recent builds. Purpose unknown; defaults to 0.
+   */
+  unknownByte: number;
   //#endregion
 
   constructor() {
@@ -43,6 +47,7 @@ export class UpdatePacket implements Packet {
     this.tiles = [];
     this.newObjects = [];
     this.drops = [];
+    this.unknownByte = 0;
   }
 
   read(reader: Reader): void {
@@ -70,6 +75,10 @@ export class UpdatePacket implements Packet {
     for (let i = 0; i < dropsLen; i++) {
       this.drops[i] = reader.readCompressedInt();
     }
+
+    if (reader.remaining > 0) {
+      this.unknownByte = reader.readUnsignedByte();
+    }
   }
 
   write(writer: Writer): void {
@@ -87,5 +96,6 @@ export class UpdatePacket implements Packet {
     for (const drop of this.drops) {
       writer.writeCompressedInt(drop);
     }
+    writer.writeUnsignedByte(this.unknownByte);
   }
 }

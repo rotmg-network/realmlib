@@ -24,13 +24,9 @@ export class DamagePacket implements Packet {
    */
   damageAmount: number;
   /**
-   * Whether or not the damage resulted in killing the entity.
+   * Damage flags (kill, armor pierce, etc.) packed into a single byte.
    */
-  kill: boolean;
-  /**
-   * Whether or not the damage was armor piercing.
-   */
-  armorPierce: boolean;
+  info: number;
   /**
    * The id of the bullet which caused the damage.
    */
@@ -45,8 +41,7 @@ export class DamagePacket implements Packet {
     this.targetId = 0;
     this.effects = [];
     this.damageAmount = 0;
-    this.kill = false;
-    this.armorPierce = false;
+    this.info = 0;
     this.bulletId = 0;
     this.objectId = 0;
   }
@@ -59,9 +54,8 @@ export class DamagePacket implements Packet {
       this.effects[i] = reader.readUnsignedByte();
     }
     this.damageAmount = reader.readUnsignedShort();
-    this.kill = reader.readBoolean();
-    this.armorPierce = reader.readBoolean();
-    this.bulletId = reader.readUnsignedByte();
+    this.info = reader.readByte();
+    this.bulletId = reader.readUnsignedShort();
     this.objectId = reader.readInt32();
   }
 
@@ -72,9 +66,8 @@ export class DamagePacket implements Packet {
       writer.writeUnsignedByte(effect);
     }
     writer.writeUnsignedShort(this.damageAmount);
-    writer.writeBoolean(this.kill);
-    writer.writeBoolean(this.armorPierce);
-    writer.writeUnsignedByte(this.bulletId);
+    writer.writeByte(this.info);
+    writer.writeUnsignedShort(this.bulletId);
     writer.writeInt32(this.objectId);
   }
 }

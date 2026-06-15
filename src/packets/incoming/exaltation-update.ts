@@ -39,26 +39,26 @@ export class ExaltationUpdatePacket implements Packet {
 
   read(reader: Reader): void {
     this.objType = reader.readShort();
-    this.dexterityProgress = reader.readByte();
-    this.speedProgress = reader.readByte();
-    this.vitalityProgress = reader.readByte();
-    this.wisdomProgress = reader.readByte();
-    this.defenseProgress = reader.readByte();
-    this.attackProgress = reader.readByte();
-    this.manaProgress = reader.readByte();
-    this.healthProgress = reader.readByte();
+    this.dexterityProgress = reader.readCompressedInt();
+    this.speedProgress = reader.readCompressedInt();
+    this.vitalityProgress = reader.readCompressedInt();
+    this.wisdomProgress = reader.readCompressedInt();
+    this.defenseProgress = reader.readCompressedInt();
+    this.attackProgress = reader.readCompressedInt();
+    this.manaProgress = reader.readCompressedInt();
+    this.healthProgress = reader.readCompressedInt();
   }
 
   write(writer: Writer): void {
     writer.writeShort(this.objType);
-    writer.writeByte(this.dexterityProgress);
-    writer.writeByte(this.speedProgress);
-    writer.writeByte(this.vitalityProgress);
-    writer.writeByte(this.wisdomProgress);
-    writer.writeByte(this.defenseProgress);
-    writer.writeByte(this.attackProgress);
-    writer.writeByte(this.manaProgress);
-    writer.writeByte(this.healthProgress);
+    writer.writeCompressedInt(this.dexterityProgress);
+    writer.writeCompressedInt(this.speedProgress);
+    writer.writeCompressedInt(this.vitalityProgress);
+    writer.writeCompressedInt(this.wisdomProgress);
+    writer.writeCompressedInt(this.defenseProgress);
+    writer.writeCompressedInt(this.attackProgress);
+    writer.writeCompressedInt(this.manaProgress);
+    writer.writeCompressedInt(this.healthProgress);
   }
 
   toString(): string {

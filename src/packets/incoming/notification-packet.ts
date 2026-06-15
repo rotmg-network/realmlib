@@ -84,7 +84,6 @@ export class NotificationPacket implements Packet {
       this.message = reader.readString();
       this.uiExtra = reader.readShort();
     } else if (this.effect === 5) { // Queue
-      this.message = reader.readString();
       this.objectId = reader.readInt32();
       this.queuePos = reader.readShort();
     } else if (this.effect === 6) { // ObjectText/json
@@ -123,7 +122,6 @@ export class NotificationPacket implements Packet {
       writer.writeString(this.message);
       writer.writeShort(this.uiExtra);
     } else if (this.effect === 5) { // Queue
-      writer.writeString(this.message);
       writer.writeInt32(this.objectId);
       writer.writeShort(this.queuePos);
     } else if (this.effect === 6) { // ObjectText/json

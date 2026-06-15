@@ -1,4 +1,5 @@
 export * from './compressed-int';
+export * from './fame-data';
 export * from './ground-tile-data';
 export * from './move-record';
 export * from './object-data';

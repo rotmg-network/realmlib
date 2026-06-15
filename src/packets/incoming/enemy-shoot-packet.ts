@@ -59,7 +59,7 @@ export class EnemyShootPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.bulletId = reader.readUnsignedByte();
+    this.bulletId = reader.readUnsignedShort();
     this.ownerId = reader.readInt32();
     this.bulletType = reader.readUnsignedByte();
     this.startingPos.read(reader);
@@ -75,7 +75,7 @@ export class EnemyShootPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeUnsignedByte(this.bulletId);
+    writer.writeUnsignedShort(this.bulletId);
     writer.writeInt32(this.ownerId);
     writer.writeUnsignedByte(this.bulletType);
     this.startingPos.write(writer);
