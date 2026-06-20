@@ -32,7 +32,7 @@ add it as a file dependency:
 realmlib is a **building block**, not a standalone app. It's meant to power
 projects that speak the RotMG protocol, such as:
 
-- clientless clients (e.g. [headless-client](../headless-client), nrelay)
+- clientless clients (e.g. [headless-client](https://github.com/rotmg-network/headless-client), nrelay)
 - MITM proxies (KRelay / JRelay style)
 - packet sniffers and analysers
 
