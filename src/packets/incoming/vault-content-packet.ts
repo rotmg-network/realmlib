@@ -11,8 +11,8 @@ import { Writer } from "../../writer";
 export class VaultContentPacket implements Packet {
   readonly type = PacketType.VAULT_CONTENT;
 
-  /** Unknown leading flag. */
-  unknownBool: boolean;
+  /** If this is the last vault packet. */
+  lastVaultPacket: boolean;
   /** Object id of the main vault chest. */
   chestObjectId: number;
   /** Object id of the material storage. */
@@ -50,7 +50,7 @@ export class VaultContentPacket implements Packet {
   unknownBytes: number[];
 
   constructor() {
-    this.unknownBool = false;
+    this.lastVaultPacket = false;
     this.chestObjectId = -1;
     this.materialObjectId = -1;
     this.giftObjectId = -1;
@@ -86,7 +86,7 @@ export class VaultContentPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.unknownBool = reader.readBoolean();
+    this.lastVaultPacket = reader.readBoolean();
     this.chestObjectId = reader.readCompressedInt();
     this.materialObjectId = reader.readCompressedInt();
     this.giftObjectId = reader.readCompressedInt();
@@ -112,7 +112,7 @@ export class VaultContentPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeBoolean(this.unknownBool);
+    writer.writeBoolean(this.lastVaultPacket);
     writer.writeCompressedInt(this.chestObjectId);
     writer.writeCompressedInt(this.materialObjectId);
     writer.writeCompressedInt(this.giftObjectId);
