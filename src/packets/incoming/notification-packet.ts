@@ -14,7 +14,7 @@ export class NotificationPacket implements Packet {
    */
   effect: number;
   /**
-   * dont really know 
+   * unknown 
    */
   extra: number;
   /**
@@ -42,17 +42,25 @@ export class NotificationPacket implements Packet {
    */
   pictureType: number;
   /**
-  * Type of the emote to display
-  */
-  emoteId: number;
-  /**
    * I have no idea wtf this is
    */
-  unknown1: number;
+  senderObjectId: number;
   /**
    * I have no idea what this is either
    */
-  unknown2: number;
+  numberOfStars: number;
+  /**
+   * I have no idea wtf this is
+   */
+  progressMax: number;
+  /**
+   * I have no idea what this is either
+   */
+  progressValue: number;
+  /**
+   * I have no idea what this is either
+   */
+  emoteType: number;
 
   constructor() {
     this.effect = 0;
@@ -64,9 +72,11 @@ export class NotificationPacket implements Packet {
     this.queuePos = 0;
     this.color = 0;
     this.pictureType = 0;
-    this.emoteId = 0;
-    this.unknown1 = 0;
-    this.unknown2 = 0;
+    this.senderObjectId = 0;
+    this.numberOfStars = 0;
+    this.progressMax = 0;
+    this.progressValue = 0;
+    this.emoteType = 0
   }
 
   read(reader: Reader): void {
@@ -98,11 +108,11 @@ export class NotificationPacket implements Packet {
       this.pictureType = reader.readInt32();
     } else if (this.effect === 10) { // DungeonCall
       this.message = reader.readString();
-      this.unknown1 = reader.readInt32();
-      this.unknown2 = reader.readShort();
+      this.senderObjectId = reader.readInt32();
+      this.numberOfStars = reader.readShort();
     } else if (this.effect === 13) { // Emote
       this.objectId = reader.readInt32();
-      this.emoteId = reader.readInt32();
+      this.emoteType = reader.readInt32();
     } 
   }
 
@@ -136,17 +146,18 @@ export class NotificationPacket implements Packet {
       writer.writeInt32(this.pictureType);
     } else if (this.effect === 10) { // DungeonCall
       writer.writeString(this.message);
-      writer.writeInt32(this.unknown1);
-      writer.writeShort(this.unknown2);
+      writer.writeInt32(this.senderObjectId);
+      writer.writeShort(this.numberOfStars);
     } else if (this.effect === 13) { // Emote
       writer.writeInt32(this.objectId);
-      writer.writeInt32(this.emoteId);
+      writer.writeInt32(this.emoteType);
     }
   }
 
   toString(): string {
     return `[Notification] ObjectId: ${this.objectId}\n
     Message: ${this.message}\n
-    Color: ${this.color}`;
+    Color: ${this.color}\n\n
+    ${this}`;
   }
 }
