@@ -4,11 +4,11 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to change the guild rank of a member in the player's guild.
+ * Sent to enable or disable ally shoots. This is a client-side only packet and does not affect the server.
  */
-export class ShowAllyShootPacket implements Packet {
+export class ChangeAllyShootPacket implements Packet {
 
-  readonly type = PacketType.SHOW_ALLY_SHOOT;
+  readonly type = PacketType.CHANGE_ALLY_SHOOT;
 
   //#region packet-specific members
   /**

@@ -120,7 +120,14 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.EXALTATION_BONUS_CHANGED]: () => new IncomingPackets.ExaltationUpdatePacket(),
   [PacketType.FORGE_REQUEST]: () => new OutgoingPackets.ForgeRequestPacket(),
   [PacketType.FORGE_RESULT]: () => new IncomingPackets.ForgeResultPacket(),
-  [PacketType.SHOW_ALLY_SHOOT]: () => new OutgoingPackets.ShowAllyShootPacket(),
+  [PacketType.CHANGE_ALLY_SHOOT]: () => new OutgoingPackets.ChangeAllyShootPacket(),
+  [PacketType.GET_PLAYERS_LIST_MESSAGE]: () => new OutgoingPackets.GetPlayersListPacket(),
+  [PacketType.MODERATOR_ACTION_MESSAGE]: () => new OutgoingPackets.ModeratorActionMessagePacket(),
+  [PacketType.CREEP_MOVE_MESSAGE]: () => new OutgoingPackets.CreepMoveMessagePacket(),
+  [PacketType.PLAYER_CALLOUT]: () => new OutgoingPackets.PlayerCalloutPacket(),
+  [PacketType.DASH]: () => new OutgoingPackets.DashPacket(),
+  [PacketType.DASH_ACK]: () => new OutgoingPackets.DashAckPacket(),
+  [PacketType.FAVOUR_PET]: () => new OutgoingPackets.FavourPetPacket(),
 };
 
 /**

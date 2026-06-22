@@ -4,25 +4,18 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to create a new character.
+ * Unknown. More debugging required. Possibly admin only.
  */
 export class GetPlayersListPacket implements Packet {
 
-  readonly type = PacketType.GET_PLAYER_LIST_MESSAGE;
+  readonly type = PacketType.GET_PLAYERS_LIST_MESSAGE;
 
   //#region packet-specific members
-  /**
-   * The class to use for the new character.
-   */
+  /** Provisional: character class id. */
   classType: number;
-  /**
-   * The skin id to use for the new character.
-   * The default skin id is `0`.
-   */
+  /** Provisional: skin id. */
   skinType: number;
-  /**
-   * Whether or not the character is in challenger mode.
-   */
+  /** Provisional: challenger-mode flag. */
   isChallenger: boolean;
   //#endregion
 

@@ -4,28 +4,32 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Presumably received when the player needs moderation.
+ * Admin-only packet sent to the server to request a moderator action on a player.
  */
-export class ModeratorActionMessage implements Packet {
+export class ModeratorActionMessagePacket implements Packet {
 
   readonly type = PacketType.MODERATOR_ACTION_MESSAGE;
 
   //#region packet-specific members
-  /**
-   * The moderation message.
-   */
-  message: string;
+  /** The type of moderator action requested (enum ordinal). */
+  // todo: add action code types
+  actionCode: number;
+  /** The message associated with the action. */
+  actionMessage: string;
   //#endregion
 
   constructor() {
-    this.message = ''
+    this.actionCode = 0;
+    this.actionMessage = '';
   }
 
   write(writer: Writer): void {
-    writer.writeString(this.message);
+    writer.writeInt32(this.actionCode);
+    writer.writeString(this.actionMessage);
   }
 
   read(reader: Reader): void {
-    this.message = reader.readString()
+    this.actionCode = reader.readInt32();
+    this.actionMessage = reader.readString();
   }
 }
