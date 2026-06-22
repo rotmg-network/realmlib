@@ -115,10 +115,6 @@ export enum PacketType {
   FORGE_UNLOCKED_BLUEPRINTS = 'FORGE_UNLOCKED_BLUEPRINTS',
   CHANGE_ALLY_SHOOT = 'CHANGE_ALLYSHOOT',
   CONVERT_SEASONAL_CHARACTER = 'CONVERT_SEASONAL_CHARACTER',
-
-  // New packets reconciled with RealmShark (build a4ff424). Their numeric ids
-  // live in packet-map.ts; structures for the implemented subset are in
-  // packets/outgoing. Ids ≥123 are stable across the recent builds.
   GET_PLAYERS_LIST_MESSAGE = 'GET_PLAYERS_LIST_MESSAGE',
   MODERATOR_ACTION_MESSAGE = 'MODERATOR_ACTION_MESSAGE',
   CREEP_MOVE_MESSAGE = 'CREEP_MOVE_MESSAGE',
@@ -127,9 +123,9 @@ export enum PacketType {
   DASH_ACK = 'DASH_ACK',
   FAVOUR_PET = 'FAVOUR_PET',
 
-  // Remaining a4ff424 types. These are registered in packet-map.ts (so they are
-  // recognized and name<->id mapped) but do not yet have packet structures, so
-  // they are intentionally absent from create-packet.ts until implemented.
+  // These packets are registered in packet-map.ts 
+  // (so they are recognized and name<->id mapped) but do not 
+  // yet have packet structures, so they are temporarily unusable..
   CUSTOM_MAP_DELETE = 'CUSTOM_MAP_DELETE',
   CUSTOM_MAP_LIST = 'CUSTOM_MAP_LIST',
   CREEP_HIT = 'CREEP_HIT',
