@@ -30,6 +30,14 @@ export interface RawPacket {
 }
 
 /**
+ * The payload of raw outgoing packet debug events.
+ */
+export interface RawOutgoingPacket extends RawPacket {
+  /** Total packet size including the 5 byte header. */
+  size: number;
+}
+
+/**
  * An RC4 configuration which is suitable for
  * PacketIO instances being used as a client
  */
@@ -184,6 +192,37 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
+   * Sends a raw packet body with an explicit numeric id. This is intended for
+   * protocol research around packets that are mapped but not yet modeled.
+   * The payload must be the unencrypted body bytes, excluding the 5 byte header.
+   */
+  sendRaw(id: number, payload: Buffer | number[] = []): void {
+    if (!this.socket || this.socket.destroyed) {
+      return;
+    }
+    if (!Number.isInteger(id) || id < 0 || id > 255) {
+      this.emit('error', new Error(`Raw packet id must be in [0,255], got ${id}`));
+      return;
+    }
+    const body = Buffer.isBuffer(payload) ? Buffer.from(payload) : Buffer.from(payload);
+    const frame = Buffer.alloc(5 + body.length);
+    frame.writeInt32BE(frame.length, 0);
+    frame.writeUInt8(id, 4);
+    body.copy(frame, 5);
+    const type = this.packetMap[id];
+    if (this.listenerCount('sentRawPacket') !== 0) {
+      this.emit('sentRawPacket', {
+        id,
+        type,
+        payload: Buffer.from(body),
+        size: frame.length,
+      } as RawOutgoingPacket);
+    }
+    this.sendRC4.cipher(frame.subarray(5));
+    this.socket.write(frame);
+  }
+
+  /**
    * Takes packets from the outgoing queue and writes
    * them to the socket
    */
@@ -194,8 +233,17 @@ export class PacketIO extends EventEmitter {
     const type = this.packetMap[packet?.type];
     packet.write(this.writer);
     this.writer.writeHeader(type);
+    const payload = Buffer.from(this.writer.buffer.subarray(5, this.writer.index));
     if (this.listenerCount('sentPacket') !== 0) {
       this.emit('sentPacket', { id: type, type: packet.type, size: this.writer.index });
+    }
+    if (this.listenerCount('sentRawPacket') !== 0) {
+      this.emit('sentRawPacket', {
+        id: type,
+        type: packet.type,
+        payload,
+        size: this.writer.index,
+      } as RawOutgoingPacket);
     }
     this.sendRC4.cipher(this.writer.buffer.subarray(5, this.writer.index));
     if (this.socket && !this.socket.write(this.writer.buffer.subarray(0, this.writer.index))) {
@@ -283,7 +331,7 @@ export class PacketIO extends EventEmitter {
   private constructPacket(): Packet | undefined {
     this.receiveRC4.cipher(this.reader.buffer.subarray(5, this.reader.length));
     try {
-      const id = this.reader.buffer.readInt8(4);
+      const id = this.reader.buffer.readUInt8(4);
       const type = this.packetMap[id];
       this.reader.index = 5;
 
