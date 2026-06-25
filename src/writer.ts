@@ -24,7 +24,7 @@ export class Writer {
      */
     writeHeader(id: number): void {
         this.buffer.writeInt32BE(this.index, 0);
-        this.buffer.writeInt8(id, 4);
+        this.buffer.writeUInt8(id & 0xff, 4);
     }
 
     /** Writes a 4 byte integer to the buffer.

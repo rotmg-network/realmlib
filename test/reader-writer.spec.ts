@@ -34,6 +34,15 @@ describe('Reader/Writer primitives', () => {
     expect(r.readBoolean()).to.equal(false);
     expect(r.readFloat()).to.equal(3.5);
   });
+
+  it('writes packet ids as unsigned bytes in headers', () => {
+    const w = new Writer();
+    w.index = 5;
+    w.writeHeader(200);
+
+    expect(w.buffer.readInt32BE(0)).to.equal(5);
+    expect(w.buffer.readUInt8(4)).to.equal(200);
+  });
 });
 
 describe('compressed integers', () => {
