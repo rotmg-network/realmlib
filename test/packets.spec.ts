@@ -4,6 +4,7 @@ import { Writer } from '../src/writer';
 import { GroundTileData, StatData, WorldPosData } from '../src/data';
 import { StatType } from '../src/models';
 import { UpdatePacket } from '../src/packets/incoming/update-packet';
+import { createPacket, ForgeUnlockedBlueprints, PacketType, Unknown165Packet } from '../src';
 
 /** Builds a Reader positioned at 0 over the bytes a Writer has produced. */
 function toReader(writer: Writer): Reader {
@@ -70,5 +71,44 @@ describe('UpdatePacket', () => {
     expect(out.tiles).to.have.length(1);
     expect(out.tiles[0].type).to.equal(300);
     expect(out.drops).to.deep.equal([1, 200000, -5]);
+  });
+});
+
+describe('packet factory coverage', () => {
+  it('constructs the seasonal conversion packet', () => {
+    expect(createPacket(PacketType.CONVERT_SEASONAL_CHARACTER).type).to.equal(PacketType.CONVERT_SEASONAL_CHARACTER);
+  });
+
+  it('constructs the chat hello packet', () => {
+    expect(createPacket(PacketType.CHATHELLO).type).to.equal(PacketType.CHATHELLO);
+  });
+
+  it('constructs mapped but previously unhandled incoming packets', () => {
+    expect(createPacket(PacketType.FORGE_UNLOCKED_BLUEPRINTS).type).to.equal(PacketType.FORGE_UNLOCKED_BLUEPRINTS);
+    expect(createPacket(PacketType.UNKNOWN165).type).to.equal(PacketType.UNKNOWN165);
+  });
+});
+
+describe('captured modern packet payloads', () => {
+  it('parses ForgeUnlockedBlueprints payload 0100', () => {
+    const reader = new Reader(2);
+    Buffer.from('0100', 'hex').copy(reader.buffer);
+    const packet = new ForgeUnlockedBlueprints();
+    packet.read(reader);
+    expect(packet.unknownByte).to.equal(1);
+    expect(packet.unlockedBlueprints).to.deep.equal([]);
+  });
+
+  it('parses UNKNOWN165 as pool string entries', () => {
+    const reader = new Reader(50);
+    Buffer.from('0030706f6f6c2f35303a35353a3130333a313738323430303738307c35303a35363a3230333a313738323430303738307c23', 'hex').copy(reader.buffer);
+    const packet = new Unknown165Packet();
+    packet.read(reader);
+    expect(packet.value).to.equal('pool/50:55:103:1782400780|50:56:203:1782400780|#');
+    expect(packet.prefix).to.equal('pool');
+    expect(packet.entries).to.deep.equal([
+      { raw: '50:55:103:1782400780', values: [50, 55, 103, 1782400780] },
+      { raw: '50:56:203:1782400780', values: [50, 56, 203, 1782400780] },
+    ]);
   });
 });

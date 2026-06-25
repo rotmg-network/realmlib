@@ -46,6 +46,7 @@ export * from './trade-done-packet';
 export * from './trade-requested-packet';
 export * from './trade-start-packet';
 export * from './update-packet';
+export * from './unknown-165-packet';
 export * from './vault-content-packet';
 export * from './verify-email-packet';
 export * from './arena/index';
