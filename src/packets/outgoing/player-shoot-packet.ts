@@ -65,19 +65,19 @@ export class PlayerShootPacket implements Packet {
 
     write(writer: Writer): void {
         writer.writeInt32(this.time);
-        writer.writeShort(this.bulletId);
-        writer.writeShort(this.unknownByte)
-        writer.writeByte(this.containerType);
+        writer.writeUnsignedShort(this.bulletId);
+        writer.writeShort(this.containerType);
+        writer.writeByte(this.unknownByte);
         this.startingPos.write(writer);
         writer.writeFloat(this.angle);
         writer.writeBoolean(this.isBurst);
         writer.writeShort(this.unknownShort);
-        this.playerPos.write(writer)
+        this.playerPos.write(writer);
     }
 
     read(reader: Reader): void {
         this.time = reader.readInt32();
-        this.bulletId = reader.readByte();
+        this.bulletId = reader.readUnsignedShort();
         this.containerType = reader.readShort();
         this.unknownByte = reader.readByte();
         this.startingPos.read(reader);
