@@ -1,13 +1,11 @@
 # realmlib
 
-A TypeScript networking library for **Realm of the Mad God**. It implements the
-RotMG wire protocol — packet framing, RC4 encryption, and typed read/write for
-every packet — so you can build clientless apps, MITM proxies, and packet
-sniffers without reimplementing the protocol.
+A TypeScript networking library for **Realm of the Mad God**. It handles packet
+framing, RC4 encryption, and binary read/write for the game's packets, so
+clientless apps, MITM proxies, and packet sniffers do not need to reimplement
+the protocol.
 
-realmlib is reconciled to the **current game build (6.11)**: the packet id map,
-`StatType` enum, and incoming packet structures are diffed against a known-good
-client and covered by round-trip tests.
+realmlib is updated for **game build 6.11**
 
 ## Install
 
@@ -20,8 +18,8 @@ npm install
 npm run build      # compiles to lib/
 ```
 
-The compiled output lands in `lib/`. To consume it from another local project,
-add it as a file dependency:
+The build writes compiled files to `lib/`. To use it from another local
+project, add it as a file dependency:
 
 ```json
 { "dependencies": { "realmlib": "file:../realmlib" } }
@@ -29,20 +27,20 @@ add it as a file dependency:
 
 ## Overview
 
-realmlib is a **building block**, not a standalone app. It's meant to power
-projects that speak the RotMG protocol, such as:
+realmlib is a **library**, not a standalone app. Use it when you need to read,
+write, or inspect RotMG packets, for example in:
 
 - clientless clients (e.g. [headless-client](https://github.com/rotmg-network/headless-client), nrelay)
 - MITM proxies (KRelay / JRelay style)
 - packet sniffers and analysers
 
-The core pieces, all exported from the package root:
+The main exports are available from the package root:
 
 | export | purpose |
 |--------|---------|
-| `PacketIO` | event-based send/receive over a socket, with RC4 + framing |
-| `Reader` / `Writer` | typed binary cursors used by every packet's `read`/`write` |
-| `RC4` | the cipher, with the current `INCOMING_KEY` / `OUTGOING_KEY` |
+| `PacketIO` | event-based packet send/receive over a socket |
+| `Reader` / `Writer` | binary readers and writers used by packet classes |
+| `RC4` | the cipher and current `INCOMING_KEY` / `OUTGOING_KEY` values |
 | `PacketType` | string enum of every packet |
 | `DEFAULT_PACKET_MAP` | bidirectional id ↔ type map for the current build |
 | `Packet` subclasses | one class per packet (`packets/`) |
@@ -50,17 +48,17 @@ The core pieces, all exported from the package root:
 
 ## Using `PacketIO`
 
-`PacketIO` gives you an event-based API for sending and receiving packets — it
-encrypts/decrypts and turns raw bytes into typed packet instances.
+`PacketIO` sends and receives packets over a socket. It handles
+encryption/decryption, packet framing, and parsing frames into packet classes.
 
 The constructor takes an object with three optional properties:
 
 - `socket` — a [`net.Socket`](https://nodejs.org/api/net.html#net_class_net_socket).
   Optional; you can `attach()` a socket later instead.
-- `rc4` — `{ incomingKey, outgoingKey }`. Defaults to the current RotMG keys,
-  set up for a **clientless** application.
-- `packetMap` — id ↔ type map. Defaults to `DEFAULT_PACKET_MAP`, so you usually
-  don't pass one.
+- `rc4` — `{ incomingKey, outgoingKey }`. Defaults to the current RotMG keys for
+  a **clientless** application.
+- `packetMap` — id ↔ type map. Defaults to `DEFAULT_PACKET_MAP`; most projects
+  can leave it unset.
 
 ```typescript
 import { PacketIO, PacketType, UpdatePacket } from 'realmlib';
@@ -75,8 +73,8 @@ io.on(PacketType.UPDATE, (update: UpdatePacket) => {
 
 ### RC4 configuration for proxies
 
-The default keys suit a clientless client. For a **MITM proxy**, each direction
-uses one key for both ends:
+The default keys are for a clientless client. For a **MITM proxy**, configure
+each side with the key for the traffic it reads and writes:
 
 ```typescript
 import { PacketIO, INCOMING_KEY, OUTGOING_KEY } from 'realmlib';
@@ -101,32 +99,31 @@ const packetMap: PacketMap = {
 };
 ```
 
-It should cover every member of the [`PacketType` enum](src/packet-type.ts);
-`DEFAULT_PACKET_MAP` already does. Missing entries mean those packets can't be
-sent, and an incoming one can't be instantiated — a proxy will log it, but a
+It should cover every member of the [`PacketType` enum](src/packet-type.ts).
+`DEFAULT_PACKET_MAP` already does. Missing entries mean those packets cannot be
+sent, and matching incoming packets cannot be parsed. A proxy will log them; a
 client app may disconnect.
 
 ## Game models, enums, and data
 
-realmlib ships the in-game data structures and enums that map to numbers on the
-wire — `StatType`, `PortalType`, `GameId`, `FailureCode`, `FameData`, object
-stat data, and more. Import them from the package root alongside the packets.
+realmlib also exports the game data structures and enums used by packets:
+`StatType`, `PortalType`, `GameId`, `FailureCode`, `FameData`, object stat
+data, and more. Import them from the package root alongside the packets.
 
 ## Debugging
 
 - `hexdump(buffer)` — pretty-print raw packet bytes.
-- `PacketIO` emits a **`rawPacket`** event with every frame (and
-  **`unknownPacket`** for ids not in the map), handy for sniffing and for
-  discovering protocol drift.
+- `PacketIO` emits a **`rawPacket`** event for every frame, and an
+  **`unknownPacket`** event for ids not in the map. These are useful for
+  sniffing traffic or checking what changed after a game update.
 
 ## Credits
 
 The original library is by
-[thomas-crane](https://github.com/thomas-crane/realmlib-net); this fork hardens
-it and reconciles the protocol to the current build. Packet structures were
-cross-checked against [pyrelay](https://github.com/Maxi35/pyrelay) (current
-Python client) and [RealmShark](https://github.com/X-com/RealmShark) (pcap
-sniffer).
+[thomas-crane](https://github.com/thomas-crane/realmlib-net). This fork updates
+the protocol for the current build. Packet structures were cross-checked against
+[pyrelay](https://github.com/Maxi35/pyrelay) and
+[RealmShark](https://github.com/X-com/RealmShark).
 
 Realm of the Mad God is a trademark of its respective owners. This is an
 independent, educational protocol implementation, not affiliated with or
