@@ -3,6 +3,7 @@ export * from './containers';
 export * from './effects';
 export * from './failures';
 export * from './forge-properties';
+export * from './game-id';
 export * from './guild-rank';
 export * from './payment-type';
 export * from './pets';
