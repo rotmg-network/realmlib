@@ -3,6 +3,7 @@ import {
   Reader,
   Writer,
   WorldPosData,
+  SlotObjectData,
   FameData,
   AllyShootPacket,
   EnemyShootPacket,
@@ -12,6 +13,16 @@ import {
   MapInfoPacket,
   NotificationPacket,
   UpdatePacket,
+  QuestObjectIdPacket,
+  ReskinUnlockPacket,
+  TradeStartPacket,
+  UseItemPacket,
+  InvDropPacket,
+  SquareHitPacket,
+  PlayerCalloutPacket,
+  ForgeRequestPacket,
+  QueueCancelPacket,
+  EnemyHitPacket,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the bytes a Writer has produced. */
@@ -166,5 +177,109 @@ describe('reconciled packet round trips (build 6.11)', () => {
     expect(out.levelType).to.equal(4);
     expect(out.drops).to.deep.equal([1, 2, 3]);
     expect(out.unknownByte).to.equal(9);
+  });
+});
+
+describe('RealmShark-reconciled packet round trips', () => {
+  it('QuestObjectIdPacket (with list)', () => {
+    const p = new QuestObjectIdPacket();
+    p.objectId = 4242;
+    p.list = [10, 20, 30];
+    const out = roundTrip(p, new QuestObjectIdPacket());
+    expect(out.objectId).to.equal(4242);
+    expect(out.list).to.deep.equal([10, 20, 30]);
+  });
+
+  it('ReskinUnlockPacket (type + id)', () => {
+    const p = new ReskinUnlockPacket();
+    p.unlockType = 2;
+    p.unlockId = 987654;
+    const out = roundTrip(p, new ReskinUnlockPacket());
+    expect(out.unlockType).to.equal(2);
+    expect(out.unlockId).to.equal(987654);
+  });
+
+  it('TradeStartPacket (trailing objectId + byte)', () => {
+    const p = new TradeStartPacket();
+    p.clientItems = [];
+    p.partnerName = 'partner';
+    p.partnerItems = [];
+    p.objectId = 55555;
+    p.unknownByte = 3;
+    const out = roundTrip(p, new TradeStartPacket());
+    expect(out.partnerName).to.equal('partner');
+    expect(out.objectId).to.equal(55555);
+    expect(out.unknownByte).to.equal(3);
+  });
+
+  it('UseItemPacket (trailing flag)', () => {
+    const p = new UseItemPacket();
+    p.time = 1000;
+    p.slotObject = new SlotObjectData();
+    p.itemUsePos = new WorldPosData(1.5, 2.5);
+    p.useType = 1;
+    p.useItemFlag = 77;
+    const out = roundTrip(p, new UseItemPacket());
+    expect(out.useType).to.equal(1);
+    expect(out.useItemFlag).to.equal(77);
+  });
+
+  it('InvDropPacket (quick slot)', () => {
+    const p = new InvDropPacket();
+    p.slotObject = new SlotObjectData();
+    p.quickSlot = 4;
+    const out = roundTrip(p, new InvDropPacket());
+    expect(out.quickSlot).to.equal(4);
+  });
+
+  it('SquareHitPacket (bulletId short)', () => {
+    const p = new SquareHitPacket();
+    p.time = 500;
+    p.bulletId = 30000; // > 255, must be a short
+    p.objectId = 8888;
+    const out = roundTrip(p, new SquareHitPacket());
+    expect(out.bulletId).to.equal(30000);
+    expect(out.objectId).to.equal(8888);
+  });
+
+  it('PlayerCalloutPacket (type before objectId)', () => {
+    const p = new PlayerCalloutPacket();
+    p.calloutType = 1;
+    p.playerObjId = 246810;
+    const out = roundTrip(p, new PlayerCalloutPacket());
+    expect(out.calloutType).to.equal(1);
+    expect(out.playerObjId).to.equal(246810);
+  });
+
+  it('ForgeRequestPacket (dismantled item array)', () => {
+    const p = new ForgeRequestPacket();
+    p.resultItemType = 1234;
+    p.dismantledItems = [new SlotObjectData(), new SlotObjectData()];
+    const out = roundTrip(p, new ForgeRequestPacket());
+    expect(out.resultItemType).to.equal(1234);
+    expect(out.dismantledItems.length).to.equal(2);
+  });
+
+  it('QueueCancelPacket (guild string)', () => {
+    const p = new QueueCancelPacket();
+    p.guild = 'MyGuild';
+    const out = roundTrip(p, new QueueCancelPacket());
+    expect(out.guild).to.equal('MyGuild');
+  });
+
+  it('EnemyHitPacket (shooter + main ids, short bulletId)', () => {
+    const p = new EnemyHitPacket();
+    p.time = 700;
+    p.bulletId = 20000; // short
+    p.shooterId = 111;
+    p.targetId = 222;
+    p.kill = true;
+    p.mainId = 333;
+    const out = roundTrip(p, new EnemyHitPacket());
+    expect(out.bulletId).to.equal(20000);
+    expect(out.shooterId).to.equal(111);
+    expect(out.targetId).to.equal(222);
+    expect(out.kill).to.equal(true);
+    expect(out.mainId).to.equal(333);
   });
 });
