@@ -11,23 +11,30 @@ export class ReskinUnlockPacket implements Packet {
   readonly type = PacketType.RESKIN_UNLOCK;
 
   /**
-   * The id of the skin that was unlocked
+   * The kind of unlock (RealmShark: `unlockType`).
    */
-  skinId: number;
+  unlockType: number;
+  /**
+   * The id of the skin that was unlocked (RealmShark: `unlockId`).
+   */
+  unlockId: number;
 
   constructor() {
-    this.skinId = 0;
+    this.unlockType = 0;
+    this.unlockId = 0;
   }
 
   read(reader: Reader): void {
-    this.skinId = reader.readInt32();
+    this.unlockType = reader.readByte();
+    this.unlockId = reader.readInt32();
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.skinId);
+    writer.writeByte(this.unlockType);
+    writer.writeInt32(this.unlockId);
   }
 
   toString(): string {
-    return `[ReskinUnlock] SkinId: ${this.skinId}`;
+    return `[ReskinUnlock] type: ${this.unlockType}, unlockId: ${this.unlockId}`;
   }
 }

@@ -25,11 +25,21 @@ export class TradeStartPacket implements Packet {
    * hotbar items, and 4-12 are the 8 inventory slots
    */
   partnerItems: TradeItem[];
+  /**
+   * The trade partner's object id (RealmShark: `objectId`).
+   */
+  objectId: number;
+  /**
+   * Trailing byte (RealmShark: `unknown`).
+   */
+  unknownByte: number;
 
   constructor() {
     this.clientItems = [];
     this.partnerName = '';
     this.partnerItems = [];
+    this.objectId = 0;
+    this.unknownByte = 0;
   }
 
   read(reader: Reader): void {
@@ -48,6 +58,8 @@ export class TradeStartPacket implements Packet {
       item.read(reader);
       this.partnerItems[i] = item;
     }
+    this.objectId = reader.readInt32();
+    this.unknownByte = reader.readByte();
   }
 
   write(writer: Writer): void {
@@ -60,5 +72,7 @@ export class TradeStartPacket implements Packet {
     for (const item of this.partnerItems) {
       item.write(writer);
     }
+    writer.writeInt32(this.objectId);
+    writer.writeByte(this.unknownByte);
   }
 }
