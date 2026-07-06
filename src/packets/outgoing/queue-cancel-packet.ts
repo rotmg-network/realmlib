@@ -4,47 +4,31 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent when the clients position in the queue should be cancelled
+ * Sent when the client's position in the queue should be cancelled.
  */
 export class QueueCancelPacket implements Packet {
   readonly type = PacketType.QUEUE_CANCEL;
 
-  bufferMax: number;
-  bufferSize: number;
-  byteString: string;
-  bytes: number[];
+  //#region packet-specific members
+  /**
+   * The guild whose queue is being cancelled (RealmShark: `guild`).
+   */
+  guild: string;
+  //#endregion
 
   constructor() {
-    this.bufferMax = 0;
-    this.bufferSize = 0;
-    this.byteString = '';
-    this.bytes = [];
+    this.guild = '';
   }
 
   read(reader: Reader): void {
-    this.bufferMax = reader.buffer.byteLength;
-    console.log(`[QueueCancel] Buffer max: ${this.bufferMax}`);
-
-    this.bufferSize = reader.buffer.length;
-    console.log(`[QueueCancel] Buffer size: ${this.bufferSize}`);
-
-    this.byteString = reader.buffer.toString();
-    console.log(`[QueueCancel] To string: ${this.byteString}`);
-
-    console.log(`[QueueCancel] Bytes:`);
-    let position = 0;
-    let byteString = '';
-    while (position < this.bufferSize) {
-      let byte = reader.readByte();
-      byteString += byte;
-      this.bytes.push(byte);
-
-      position++;
-    }
-    console.log(byteString);
+    this.guild = reader.readString();
   }
 
   write(writer: Writer): void {
-    console.log(writer.buffer.length); // this is just debug filler
+    writer.writeString(this.guild);
+  }
+
+  toString(): string {
+    return `[QueueCancel] guild: "${this.guild}"`;
   }
 }

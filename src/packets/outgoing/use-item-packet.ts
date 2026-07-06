@@ -29,6 +29,10 @@ export class UseItemPacket implements Packet {
    * The type of item usage.
    */
   useType: number;
+  /**
+   * Trailing flag (RealmShark: `useItemFlag`).
+   */
+  useItemFlag: number;
   //#endregion
 
   constructor() {
@@ -36,6 +40,7 @@ export class UseItemPacket implements Packet {
     this.slotObject = new SlotObjectData();
     this.itemUsePos = new WorldPosData();
     this.useType = 0;
+    this.useItemFlag = 0;
   }
 
   write(writer: Writer): void {
@@ -43,6 +48,7 @@ export class UseItemPacket implements Packet {
     this.slotObject.write(writer);
     this.itemUsePos.write(writer);
     writer.writeByte(this.useType);
+    writer.writeInt32(this.useItemFlag);
   }
 
   read(reader: Reader): void {
@@ -50,5 +56,6 @@ export class UseItemPacket implements Packet {
     this.slotObject.read(reader);
     this.itemUsePos.read(reader);
     this.useType = reader.readByte();
+    this.useItemFlag = reader.readInt32();
   }
 }

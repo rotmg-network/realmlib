@@ -33,13 +33,13 @@ export class SquareHitPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.time);
-    writer.writeByte(this.bulletId);
+    writer.writeShort(this.bulletId); // RealmShark: bulletId is a short, not a byte
     writer.writeInt32(this.objectId);
   }
 
   read(reader: Reader): void {
     this.time = reader.readInt32();
-    this.bulletId = reader.readByte();
+    this.bulletId = reader.readShort();
     this.objectId = reader.readInt32();
   }
 }

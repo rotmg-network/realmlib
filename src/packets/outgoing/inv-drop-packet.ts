@@ -16,17 +16,24 @@ export class InvDropPacket implements Packet {
    * The slot to drop the item from.
    */
   slotObject: SlotObjectData;
+  /**
+   * The quick slot the item was dropped from (RealmShark: `quickSlot`).
+   */
+  quickSlot: number;
   //#endregion
 
   constructor() {
     this.slotObject = new SlotObjectData();
+    this.quickSlot = 0;
   }
 
   write(writer: Writer): void {
     this.slotObject.write(writer);
+    writer.writeByte(this.quickSlot);
   }
 
   read(reader: Reader): void {
     this.slotObject.read(reader);
+    this.quickSlot = reader.readByte();
   }
 }

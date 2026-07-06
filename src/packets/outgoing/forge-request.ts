@@ -10,26 +10,35 @@ export class ForgeRequestPacket implements Packet {
   readonly type = PacketType.FORGE_REQUEST;
 
   /**
-   * The object id of the item to forge.
+   * The item type produced by the forge (RealmShark: `resultItemType`).
    */
-  objectId: number;
+  resultItemType: number;
   /**
-   * The items to dismantle.
+   * The items dismantled to forge it (RealmShark: `dismantledItems`).
    */
-  slotsUsed: SlotObjectData;
+  dismantledItems: SlotObjectData[];
 
   constructor() {
-    this.objectId = 0;
-    this.slotsUsed = new SlotObjectData();
+    this.resultItemType = 0;
+    this.dismantledItems = [];
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.objectId);
-    this.slotsUsed.write(writer);
+    writer.writeInt32(this.resultItemType);
+    writer.writeInt32(this.dismantledItems.length);
+    for (const slot of this.dismantledItems) {
+      slot.write(writer);
+    }
   }
 
   read(reader: Reader): void {
-    this.objectId = reader.readInt32();
-    this.slotsUsed.read(reader)
+    this.resultItemType = reader.readInt32();
+    const count = reader.readInt32();
+    this.dismantledItems = new Array<SlotObjectData>(count);
+    for (let i = 0; i < count; i++) {
+      const slot = new SlotObjectData();
+      slot.read(reader);
+      this.dismantledItems[i] = slot;
+    }
   }
 }
