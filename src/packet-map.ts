@@ -1,11 +1,16 @@
 import { PacketType } from './packet-type';
 
 /**
- * A bidirectional map of packet types and their IDs.
+ * A bidirectional map between packet types and their numeric ids. A numeric
+ * key resolves to the `PacketType` for that id; a `PacketType` (string) key
+ * resolves to its numeric id. Either lookup is `undefined` when the map has no
+ * entry for it.
  */
 export interface PacketMap {
-  [key: number]: any;
-  [key: string]: any;
+  /** numeric id -> packet type */
+  [id: number]: PacketType | undefined;
+  /** packet type (string) -> numeric id */
+  [type: string]: number | PacketType | undefined;
 }
 
 /**

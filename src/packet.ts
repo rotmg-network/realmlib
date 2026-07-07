@@ -26,7 +26,8 @@ export interface DataPacket {
 
 export interface Packet extends DataPacket {
   /**
-   * The type of packet
+   * The type of packet. Readonly: each packet class fixes its own type and it
+   * must stay in sync with the class, so it should never be reassigned.
    */
-  type: PacketType;
+  readonly type: PacketType;
 }
