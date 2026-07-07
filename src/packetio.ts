@@ -7,6 +7,7 @@ import { Reader } from './reader';
 import { Writer } from './writer';
 import { createPacket } from './create-packet';
 import { INCOMING_KEY, OUTGOING_KEY, RC4 } from './crypto/rc4';
+import { RealmlibError } from './errors';
 
 /**
  * The configuration for the RC4 ciphers used by this PacketIO
@@ -169,17 +170,29 @@ export class PacketIO extends EventEmitter {
   }
 
   /**
+   * Emits an `error` event, but only when a listener is attached. Node's
+   * EventEmitter throws on an unhandled `'error'` event, which for a library
+   * would crash any consumer that hasn't attached a handler — so a single
+   * corrupt packet or missing mapping must never do that. Consumers that want
+   * to observe these (all recoverable) errors should listen on `'error'`.
+   */
+  private emitError(error: unknown): void {
+    if (this.listenerCount('error') !== 0) {
+      this.emit('error', error);
+    }
+  }
+
+  /**
    * Sends a packet
    * @param packet The packet to send
    */
   send(packet: Packet) {
     if (!this.socket || this.socket.destroyed) {
-      //this.emit('error', new Error('Not attached to a socket.'));
       return;
     }
     const type = this.packetMap[packet.type];
     if (type === undefined) {
-      this.emit('error', new Error(`Mapper is missing an id for the packet type ${packet.type}`));
+      this.emitError(new RealmlibError('MISSING_MAPPING', `Mapper is missing an id for the packet type ${packet.type}`));
       return;
     }
 
@@ -201,7 +214,7 @@ export class PacketIO extends EventEmitter {
       return;
     }
     if (!Number.isInteger(id) || id < 0 || id > 255) {
-      this.emit('error', new Error(`Raw packet id must be in [0,255], got ${id}`));
+      this.emitError(new RealmlibError('INVALID_RAW_ID', `Raw packet id must be in [0,255], got ${id}`));
       return;
     }
     const body = Buffer.isBuffer(payload) ? Buffer.from(payload) : Buffer.from(payload);
@@ -230,10 +243,11 @@ export class PacketIO extends EventEmitter {
     const packet = this.outgoingQueue.shift()!;
     this.lastOutgoing = packet;
     this.writer.index = 5;
-    const type = this.packetMap[packet?.type];
+    // send() already validated the mapping exists for this type, so the id is
+    // present and numeric here.
+    const type = this.packetMap[packet.type] as number;
     packet.write(this.writer);
     this.writer.writeHeader(type);
-    const payload = Buffer.from(this.writer.buffer.subarray(5, this.writer.index));
     if (this.listenerCount('sentPacket') !== 0) {
       this.emit('sentPacket', { id: type, type: packet.type, size: this.writer.index });
     }
@@ -241,7 +255,8 @@ export class PacketIO extends EventEmitter {
       this.emit('sentRawPacket', {
         id: type,
         type: packet.type,
-        payload,
+        // Copy only when observed — this runs on every send.
+        payload: Buffer.from(this.writer.buffer.subarray(5, this.writer.index)),
         size: this.writer.index,
       } as RawOutgoingPacket);
     }
@@ -298,7 +313,7 @@ export class PacketIO extends EventEmitter {
         if (this.reader.length === 4) {
           const newSize = this.reader.buffer.readInt32BE(0);
           if (newSize < 5 || newSize > PacketIO.MAX_PACKET_SIZE) {
-            this.emit('error', new Error(`Invalid packet size: ${newSize}`));
+            this.emitError(new RealmlibError('FRAME_TOO_LARGE', `Invalid packet size: ${newSize}`));
             this.socket?.destroy();
             return;
           }
@@ -313,9 +328,7 @@ export class PacketIO extends EventEmitter {
             try {
               this.emitPacket(packet);
             } catch (err) {
-              if (this.listenerCount('error') !== 0) {
-                this.emit('error', err);
-              }
+              this.emitError(err);
             }
           }
         }
@@ -356,7 +369,7 @@ export class PacketIO extends EventEmitter {
         return packet;
       }
     } catch (error) {
-      this.emit('error', error);
+      this.emitError(error);
     }
   }
 
