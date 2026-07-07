@@ -4,6 +4,7 @@
   "description": "A networking library for Realm of the Mad God in TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "sideEffects": false,
   "scripts": {
     "clean": "node -e \"require('fs').rmSync('lib', { recursive: true, force: true })\"",
     "build": "npm run clean && tsc -p .",
@@ -30,10 +31,5 @@
     "ts-node": "^10.9.2",
     "typedoc": "^0.22.5",
     "typescript": "^4.4.3"
-  },
-  "dependencies": {
-    "@types/reflect-metadata": "^0.1.0",
-    "axios": ">=0.21.2",
-    "chalk": "^4.1.2"
   }
 }
