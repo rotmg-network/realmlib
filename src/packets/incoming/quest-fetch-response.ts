@@ -19,10 +19,16 @@ export class QuestFetchResponsePacket implements Packet {
    * The cost in gold of the next quest refresh
    */
   nextRefreshPrice: number;
+  /**
+   * A trailing int32 following `nextRefreshPrice` added in the current build
+   * (observed value 2). Purpose not yet confirmed.
+   */
+  unknownInt: number;
 
   constructor() {
     this.quests = [];
     this.nextRefreshPrice = 0;
+    this.unknownInt = 0;
   }
 
   read(reader: Reader): void {
@@ -33,6 +39,7 @@ export class QuestFetchResponsePacket implements Packet {
       this.quests[i].read(reader);
     }
     this.nextRefreshPrice = reader.readShort();
+    this.unknownInt = reader.readInt32();
   }
 
   write(writer: Writer): void {
@@ -41,6 +48,7 @@ export class QuestFetchResponsePacket implements Packet {
       quest.write(writer);
     }
     writer.writeShort(this.nextRefreshPrice);
+    writer.writeInt32(this.unknownInt);
   }
 
   toString(): string {
