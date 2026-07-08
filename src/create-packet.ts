@@ -137,6 +137,11 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.CRUCIBLE_RESPONSE]: () => new IncomingPackets.CrucibleResponsePacket(),
   [PacketType.BLACKSMITH_REQUEST]: () => new OutgoingPackets.BlacksmithRequestPacket(),
   [PacketType.BLACKSMITH_DISMANTLE]: () => new IncomingPackets.BlacksmithDismantlePacket(),
+  [PacketType.REROLL_ALL_ENCHANTMENTS]: () => new OutgoingPackets.RerollAllEnchantmentsPacket(),
+  [PacketType.ENCHANT]: () => new IncomingPackets.EnchantPacket(),
+  [PacketType.SELECT_ENTRANCE]: () => new OutgoingPackets.SelectEntrancePacket(),
+  [PacketType.BUY_EMOTE]: () => new OutgoingPackets.BuyEmotePacket(),
+  [PacketType.UNKNOWN224]: () => new OutgoingPackets.Unknown224Packet(),
 };
 
 /**
