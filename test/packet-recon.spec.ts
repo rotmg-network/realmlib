@@ -32,6 +32,11 @@ import {
   BlacksmithDismantlePacket,
   QuestFetchResponsePacket,
   QuestData,
+  RerollAllEnchantmentsPacket,
+  EnchantPacket,
+  SelectEntrancePacket,
+  BuyEmotePacket,
+  Unknown224Packet,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the given hex bytes. */
@@ -486,5 +491,84 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.quests[0].itemOfChoice).to.equal(true);
     expect(out.nextRefreshPrice).to.equal(100);
     expect(out.unknownInt).to.equal(2);
+  });
+
+  it('RerollAllEnchantmentsPacket reads byte/short/short/byte (no leftover)', () => {
+    const reader = hexReader('010003ffff00');
+    const p = new RerollAllEnchantmentsPacket();
+    p.read(reader);
+    expect(p.unknownByte).to.equal(1);
+    expect(p.unknownShort).to.equal(3);
+    expect(p.unknownShort2).to.equal(-1);
+    expect(p.unknownByte2).to.equal(0);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('RerollAllEnchantmentsPacket round trips', () => {
+    const p = new RerollAllEnchantmentsPacket();
+    p.unknownByte = 1;
+    p.unknownShort = 3;
+    p.unknownShort2 = -1;
+    p.unknownByte2 = 0;
+    const out = roundTrip(p, new RerollAllEnchantmentsPacket());
+    expect(out.unknownByte).to.equal(1);
+    expect(out.unknownShort).to.equal(3);
+    expect(out.unknownShort2).to.equal(-1);
+    expect(out.unknownByte2).to.equal(0);
+  });
+
+  it('EnchantPacket reads a single success byte (no leftover)', () => {
+    const reader = hexReader('01');
+    const p = new EnchantPacket();
+    p.read(reader);
+    expect(p.success).to.equal(true);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('SelectEntrancePacket reads a single int32 (no leftover)', () => {
+    const reader = hexReader('ffffffff');
+    const p = new SelectEntrancePacket();
+    p.read(reader);
+    expect(p.entranceId).to.equal(-1);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('BuyEmotePacket reads the emote type (no leftover)', () => {
+    const reader = hexReader('00001432');
+    const p = new BuyEmotePacket();
+    p.read(reader);
+    expect(p.emoteType).to.equal(5170);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('Unknown224Packet reads a single int32 (no leftover)', () => {
+    const reader = hexReader('00000033');
+    const p = new Unknown224Packet();
+    p.read(reader);
+    expect(p.unknownInt).to.equal(51);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('NotificationPacket effect 18 consumes int32 + short (no leftover)', () => {
+    const reader = hexReader('1228000000330001');
+    const p = new NotificationPacket();
+    p.read(reader);
+    expect(p.effect).to.equal(18);
+    expect(p.extra).to.equal(40);
+    expect(p.unknownInt).to.equal(51);
+    expect(p.uiExtra).to.equal(1);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('NotificationPacket effect 18 round trips', () => {
+    const p = new NotificationPacket();
+    p.effect = 18;
+    p.extra = 40;
+    p.unknownInt = 51;
+    p.uiExtra = 1;
+    const out = roundTrip(p, new NotificationPacket());
+    expect(out.effect).to.equal(18);
+    expect(out.unknownInt).to.equal(51);
+    expect(out.uiExtra).to.equal(1);
   });
 });
