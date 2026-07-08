@@ -72,7 +72,7 @@ export class StatData implements DataPacket {
       case StatType.DUST_AMOUNT_STAT:
       case StatType.CRUCIBLE_STAT:
       case StatType.DUST_CAP_STAT:
-      case StatType.UNKNOWN155:
+      case StatType.UNKNOWN_155:
         return true;
       default:
         return false;

@@ -61,6 +61,11 @@ export class NotificationPacket implements Packet {
    * I have no idea what this is either
    */
   emoteType: number;
+  /**
+   * An int32 carried by effect-18 notifications; echoes the value the client
+   * sent in the preceding packet 224 (`Unknown224Packet`).
+   */
+  unknownInt: number;
 
   constructor() {
     this.effect = 0;
@@ -76,7 +81,8 @@ export class NotificationPacket implements Packet {
     this.numberOfStars = 0;
     this.progressMax = 0;
     this.progressValue = 0;
-    this.emoteType = 0
+    this.emoteType = 0;
+    this.unknownInt = 0;
   }
 
   read(reader: Reader): void {
@@ -110,10 +116,19 @@ export class NotificationPacket implements Packet {
       this.message = reader.readString();
       this.senderObjectId = reader.readInt32();
       this.numberOfStars = reader.readShort();
+    } else if (this.effect === 11) { // reverse-engineered from a single sample
+      // e.g. message "Alien Invasion Adept - Boss", pictureType 1, uiExtra 1
+      this.message = reader.readString();
+      this.pictureType = reader.readInt32();
+      this.uiExtra = reader.readShort();
     } else if (this.effect === 13) { // Emote
       this.objectId = reader.readInt32();
       this.emoteType = reader.readInt32();
-    } 
+    } else if (this.effect === 18) { // reverse-engineered from a single sample
+      // int32 echoes the value sent in the preceding packet 224.
+      this.unknownInt = reader.readInt32();
+      this.uiExtra = reader.readShort();
+    }
   }
 
   write(writer: Writer): void {
@@ -148,9 +163,16 @@ export class NotificationPacket implements Packet {
       writer.writeString(this.message);
       writer.writeInt32(this.senderObjectId);
       writer.writeShort(this.numberOfStars);
+    } else if (this.effect === 11) { // reverse-engineered from a single sample
+      writer.writeString(this.message);
+      writer.writeInt32(this.pictureType);
+      writer.writeShort(this.uiExtra);
     } else if (this.effect === 13) { // Emote
       writer.writeInt32(this.objectId);
       writer.writeInt32(this.emoteType);
+    } else if (this.effect === 18) { // reverse-engineered from a single sample
+      writer.writeInt32(this.unknownInt);
+      writer.writeShort(this.uiExtra);
     }
   }
 

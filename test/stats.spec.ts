@@ -40,7 +40,7 @@ describe('StatData.isStringStat (current build)', () => {
     StatType.DUST_AMOUNT_STAT,
     StatType.CRUCIBLE_STAT,
     StatType.DUST_CAP_STAT,
-    StatType.UNKNOWN155,
+    StatType.UNKNOWN_155,
   ];
   const numericStats = [
     StatType.MAX_HP_STAT,

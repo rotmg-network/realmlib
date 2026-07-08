@@ -75,7 +75,11 @@ export class MapInfoPacket implements Packet {
    */
   newInt: number;
   /**
-   * Dungeon modifiers, separated by ';'.
+   * Dungeon modifiers, separated by ';' (e.g.
+   * `EXPERIENCED;DRAINED_4;STONEBOSS_4;HEROICDAMAGE;` in a Lost Halls boss
+   * room). Empty in the nexus and most maps. Read after `unknownShort1` /
+   * `unknownBool`; reading it before them (as older builds did) mis-sliced any
+   * non-empty modifier.
    */
   dungeonModifier: string;
   /** > Unknown (usually 0). */
@@ -131,9 +135,9 @@ export class MapInfoPacket implements Packet {
     this.buildVersion = reader.readString();
     this.viewRadius = reader.readShort();
     this.newInt = reader.readInt32();
-    this.dungeonModifier = reader.readString();
     this.unknownShort1 = reader.readShort();
     this.unknownBool = reader.readBoolean();
+    this.dungeonModifier = reader.readString();
     this.unknownShort2 = reader.readShort();
     if (reader.remaining > 0) {
       this.maxRealmScore = reader.readInt32();
@@ -158,9 +162,9 @@ export class MapInfoPacket implements Packet {
     writer.writeString(this.buildVersion);
     writer.writeShort(this.viewRadius);
     writer.writeInt32(this.newInt);
-    writer.writeString(this.dungeonModifier);
     writer.writeShort(this.unknownShort1);
     writer.writeBoolean(this.unknownBool);
+    writer.writeString(this.dungeonModifier);
     writer.writeShort(this.unknownShort2);
     writer.writeInt32(this.maxRealmScore);
     writer.writeInt32(this.curRealmScore);
