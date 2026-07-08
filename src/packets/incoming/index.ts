@@ -10,6 +10,7 @@ export * from './create-success-packet';
 export * from './crucible-response-packet';
 export * from './damage-packet';
 export * from './death-packet';
+export * from './enchant-packet';
 export * from './enemy-shoot-packet';
 export * from './exaltation-update';
 export * from './failure-packet';

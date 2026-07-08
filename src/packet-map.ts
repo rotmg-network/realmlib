@@ -174,11 +174,11 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   185: PacketType.UPGRADE_ENCHANTER,
   187: PacketType.UPGRADE_ENCHANTMENT,
   189: PacketType.REROLL_ALL_ENCHANTMENTS,
-  190: PacketType.UNKNOWN190,
+  190: PacketType.ENCHANT,
   191: PacketType.RESET_ENCHANTMENT_REROLL_COUNT,
   195: PacketType.BLACKSMITH_REQUEST,
   196: PacketType.BLACKSMITH_DISMANTLE,
-  197: PacketType.UNKNOWN197,
+  197: PacketType.SELECT_ENTRANCE,
   200: PacketType.CREATE_PARTY_MESSAGE,
   204: PacketType.PARTY_ACTION_RESULT,
   207: PacketType.PARTY_ACTION,
@@ -191,6 +191,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   217: PacketType.PARTY_REQUEST_RESPONSE,
   218: PacketType.FOR_RECONNECT,
   222: PacketType.LOADING_SCREEN,
+  224: PacketType.UNKNOWN224,
   1000: PacketType.IP_ADDRESS,
 };
 
