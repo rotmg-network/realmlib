@@ -16,7 +16,9 @@ export class ChangeGuildRankPacket implements Packet {
    */
   name: string;
   /**
-   * The new rank of the player.
+   * The new rank of the player. A single byte in the current build (guild rank
+   * tiers such as 0 = initiate, 10 = member); previously read as an int32,
+   * which overran the packet.
    */
   guildRank: number;
   //#endregion
@@ -28,11 +30,11 @@ export class ChangeGuildRankPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeString(this.name);
-    writer.writeInt32(this.guildRank);
+    writer.writeByte(this.guildRank);
   }
 
   read(reader: Reader): void {
     this.name = reader.readString();
-    this.guildRank = reader.readInt32();
+    this.guildRank = reader.readByte();
   }
 }
