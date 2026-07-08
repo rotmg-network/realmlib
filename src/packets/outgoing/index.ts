@@ -1,5 +1,6 @@
 export * from './accept-trade-packet';
 export * from './aoeack-packet';
+export * from './blacksmith-request-packet';
 export * from './buy-packet';
 export * from './cancel-trade-packet';
 export * from './change-ally-shoot';

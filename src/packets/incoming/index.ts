@@ -1,5 +1,6 @@
 export * from './account-list-packet';
 export * from './ally-shoot-packet';
+export * from './blacksmith-dismantle-packet';
 export * from './aoe-packet';
 export * from './buy-result-packet';
 export * from './chat-token';

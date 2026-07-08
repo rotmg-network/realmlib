@@ -135,6 +135,8 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.REALM_SCORE_UPDATE]: () => new IncomingPackets.RealmScoreUpdatePacket(),
   [PacketType.CRUCIBLE_REQUEST]: () => new OutgoingPackets.CrucibleRequestPacket(),
   [PacketType.CRUCIBLE_RESPONSE]: () => new IncomingPackets.CrucibleResponsePacket(),
+  [PacketType.BLACKSMITH_REQUEST]: () => new OutgoingPackets.BlacksmithRequestPacket(),
+  [PacketType.BLACKSMITH_DISMANTLE]: () => new IncomingPackets.BlacksmithDismantlePacket(),
 };
 
 /**

@@ -28,6 +28,10 @@ import {
   RealmScoreUpdatePacket,
   CrucibleRequestPacket,
   CrucibleResponsePacket,
+  BlacksmithRequestPacket,
+  BlacksmithDismantlePacket,
+  QuestFetchResponsePacket,
+  QuestData,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the given hex bytes. */
@@ -416,5 +420,71 @@ describe('current-build packets reconciled from captured bytes', () => {
     const out = roundTrip(p, new CrucibleResponsePacket());
     expect(out.indices).to.deep.equal([0, 1, 2]);
     expect(out.data).to.deep.equal(['{"array": []}', '{"a": 1}', '{}']);
+  });
+
+  it('BlacksmithRequestPacket reads a byte + slot object (no leftover)', () => {
+    const reader = hexReader('010000024b000000030000200d');
+    const p = new BlacksmithRequestPacket();
+    p.read(reader);
+    expect(p.unknownByte).to.equal(1);
+    expect(p.slotObject.objectId).to.equal(587);
+    expect(p.slotObject.slotId).to.equal(3);
+    expect(p.slotObject.objectType).to.equal(0x0000200d);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('BlacksmithRequestPacket round trips', () => {
+    const p = new BlacksmithRequestPacket();
+    p.unknownByte = 1;
+    p.slotObject.objectId = 587;
+    p.slotObject.slotId = 5;
+    p.slotObject.objectType = 19264;
+    const out = roundTrip(p, new BlacksmithRequestPacket());
+    expect(out.unknownByte).to.equal(1);
+    expect(out.slotObject.objectId).to.equal(587);
+    expect(out.slotObject.slotId).to.equal(5);
+    expect(out.slotObject.objectType).to.equal(19264);
+  });
+
+  it('BlacksmithDismantlePacket reads two bytes + emptied slot (no leftover)', () => {
+    const reader = hexReader('01010000024b00000003ffffffff');
+    const p = new BlacksmithDismantlePacket();
+    p.read(reader);
+    expect(p.unknownByte).to.equal(1);
+    expect(p.unknownByte2).to.equal(1);
+    expect(p.slotObject.objectId).to.equal(587);
+    expect(p.slotObject.slotId).to.equal(3);
+    expect(p.slotObject.objectType).to.equal(0xffffffff); // -1 -> empty slot
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('QuestFetchResponsePacket round trips the new int fields', () => {
+    const quest = new QuestData();
+    quest.id = '6608868294033408';
+    quest.name = 'Celestial Model K999 Pet Stone Garment';
+    quest.description = 'Exchange 40 Celestial Stones.';
+    quest.expiration = '';
+    quest.category = 9095;
+    quest.unknownInt = 7;
+    quest.requirements = [24772, 24772];
+    quest.rewards = [50703];
+    quest.completed = false;
+    quest.itemOfChoice = true;
+    quest.repeatable = false;
+
+    const p = new QuestFetchResponsePacket();
+    p.quests = [quest];
+    p.nextRefreshPrice = 100;
+    p.unknownInt = 2;
+
+    const out = roundTrip(p, new QuestFetchResponsePacket());
+    expect(out.quests).to.have.length(1);
+    expect(out.quests[0].category).to.equal(9095);
+    expect(out.quests[0].unknownInt).to.equal(7);
+    expect(out.quests[0].requirements).to.deep.equal([24772, 24772]);
+    expect(out.quests[0].rewards).to.deep.equal([50703]);
+    expect(out.quests[0].itemOfChoice).to.equal(true);
+    expect(out.nextRefreshPrice).to.equal(100);
+    expect(out.unknownInt).to.equal(2);
   });
 });
