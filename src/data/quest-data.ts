@@ -46,6 +46,11 @@ export class QuestData implements DataPacket {
    * The category of this quest
    */
   category: number;
+  /**
+   * An int32 following `category` added in the current build (observed values
+   * 0-7). Purpose not yet confirmed; likely a quest type/sub-category.
+   */
+  unknownInt: number;
 
   constructor() {
     this.id = '';
@@ -58,6 +63,7 @@ export class QuestData implements DataPacket {
     this.itemOfChoice = false;
     this.repeatable = false;
     this.category = 0;
+    this.unknownInt = 0;
   }
 
   read(reader: Reader): void {
@@ -66,6 +72,7 @@ export class QuestData implements DataPacket {
     this.description = reader.readString();
     this.expiration = reader.readString();
     this.category = reader.readInt32();
+    this.unknownInt = reader.readInt32();
     const requirementsLen = reader.readShort();
     this.requirements = new Array(requirementsLen);
     for (let i = 0; i < requirementsLen; i++) {
@@ -88,6 +95,7 @@ export class QuestData implements DataPacket {
     writer.writeString(this.description);
     writer.writeString(this.expiration);
     writer.writeInt32(this.category);
+    writer.writeInt32(this.unknownInt);
     writer.writeShort(this.requirements.length);
     for (const requirement of this.requirements) {
       writer.writeInt32(requirement);
