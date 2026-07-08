@@ -11,6 +11,7 @@ export * from './choose-name-packet';
 export * from './claim-daily-reward-message';
 export * from './create-guild-packet';
 export * from './create-packet';
+export * from './crucible-request-packet';
 export * from './convert-seasonal-character-packet';
 export * from './creep-move-message-packet';
 export * from './dash-ack-packet';

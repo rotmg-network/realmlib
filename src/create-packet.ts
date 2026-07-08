@@ -132,6 +132,9 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.DASH]: () => new OutgoingPackets.DashPacket(),
   [PacketType.DASH_ACK]: () => new OutgoingPackets.DashAckPacket(),
   [PacketType.FAVOUR_PET]: () => new OutgoingPackets.FavourPetPacket(),
+  [PacketType.REALM_SCORE_UPDATE]: () => new IncomingPackets.RealmScoreUpdatePacket(),
+  [PacketType.CRUCIBLE_REQUEST]: () => new OutgoingPackets.CrucibleRequestPacket(),
+  [PacketType.CRUCIBLE_RESPONSE]: () => new IncomingPackets.CrucibleResponsePacket(),
 };
 
 /**

@@ -23,7 +23,21 @@ import {
   ForgeRequestPacket,
   QueueCancelPacket,
   EnemyHitPacket,
+  ShootAckPacket,
+  FavourPetPacket,
+  RealmScoreUpdatePacket,
+  CrucibleRequestPacket,
+  CrucibleResponsePacket,
 } from '../src';
+
+/** Builds a Reader positioned at 0 over the given hex bytes. */
+function hexReader(hex: string): Reader {
+  const buffer = Buffer.from(hex, 'hex');
+  const reader = new Reader(buffer.length);
+  buffer.copy(reader.buffer, 0, 0, buffer.length);
+  reader.index = 0;
+  return reader;
+}
 
 /** Builds a Reader positioned at 0 over the bytes a Writer has produced. */
 function toReader(writer: Writer): Reader {
@@ -281,5 +295,126 @@ describe('RealmShark-reconciled packet round trips', () => {
     expect(out.targetId).to.equal(222);
     expect(out.kill).to.equal(true);
     expect(out.mainId).to.equal(333);
+  });
+});
+
+describe('current-build packets reconciled from captured bytes', () => {
+  it('ShootAckPacket reads the trailing short (no leftover)', () => {
+    const reader = hexReader('00024d7d0001');
+    const p = new ShootAckPacket();
+    p.read(reader);
+    expect(p.time).to.equal(0x00024d7d);
+    expect(p.unknownShort).to.equal(1);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('ShootAckPacket round trips', () => {
+    const p = new ShootAckPacket();
+    p.time = 987654;
+    p.unknownShort = 2;
+    const out = roundTrip(p, new ShootAckPacket());
+    expect(out.time).to.equal(987654);
+    expect(out.unknownShort).to.equal(2);
+  });
+
+  it('FavourPetPacket reads the leading byte then a signed pet id', () => {
+    const reader = hexReader('00ffffffff');
+    const p = new FavourPetPacket();
+    p.read(reader);
+    expect(p.unknownByte).to.equal(0);
+    expect(p.petId).to.equal(-1);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('FavourPetPacket round trips', () => {
+    const p = new FavourPetPacket();
+    p.unknownByte = 1;
+    p.petId = 123456;
+    const out = roundTrip(p, new FavourPetPacket());
+    expect(out.unknownByte).to.equal(1);
+    expect(out.petId).to.equal(123456);
+  });
+
+  it('NotificationPacket effect 11 consumes message + int + short (no leftover)', () => {
+    const reader = hexReader(
+      '0b2a001b416c69656e20496e766173696f6e204164657074202d20426f7373000000010001',
+    );
+    const p = new NotificationPacket();
+    p.read(reader);
+    expect(p.effect).to.equal(11);
+    expect(p.message).to.equal('Alien Invasion Adept - Boss');
+    expect(p.pictureType).to.equal(1);
+    expect(p.uiExtra).to.equal(1);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('NotificationPacket effect 11 round trips', () => {
+    const p = new NotificationPacket();
+    p.effect = 11;
+    p.extra = 42;
+    p.message = 'Boss';
+    p.pictureType = 3;
+    p.uiExtra = 5;
+    const out = roundTrip(p, new NotificationPacket());
+    expect(out.effect).to.equal(11);
+    expect(out.message).to.equal('Boss');
+    expect(out.pictureType).to.equal(3);
+    expect(out.uiExtra).to.equal(5);
+  });
+
+  it('RealmScoreUpdatePacket reads a single int32 (no leftover)', () => {
+    const reader = hexReader('00010510');
+    const p = new RealmScoreUpdatePacket();
+    p.read(reader);
+    expect(p.realmScore).to.equal(0x00010510);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('CrucibleRequestPacket reads the index array (no leftover)', () => {
+    const reader = hexReader('0003000000000000000100000002');
+    const p = new CrucibleRequestPacket();
+    p.read(reader);
+    expect(p.indices).to.deep.equal([0, 1, 2]);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('CrucibleRequestPacket round trips', () => {
+    const p = new CrucibleRequestPacket();
+    p.indices = [0, 1, 2];
+    const out = roundTrip(p, new CrucibleRequestPacket());
+    expect(out.indices).to.deep.equal([0, 1, 2]);
+  });
+
+  it('CrucibleResponsePacket parses echoed indices + JSON strings (no leftover)', () => {
+    const hex =
+      '0003000000000000000100000002000302287b226172726179223a205b7b226964223a20223636343636323637373630323330343022' +
+      '2c20227469746c65223a20224465782066726f6d204265796f6e64222c202264657363223a2022536561736f6e20323920437275636962' +
+      '6c65222c20226372756369626c65223a207b22736561736f6e616c6f6e6c79223a206e756c6c2c20226c656176656c696d69746174696f' +
+      '6e223a206e756c6c2c20227374617274223a20313738303339303830302c2022656e64223a20313738353833343030302c202274726961' +
+      '6c73223a205b5d2c20227265737472696374696f6e73223a205b7b2274797065223a20322c202273746174223a2022444558222c202270' +
+      '657263656e74223a20312c202276616c7565223a20312e357d2c207b2274797065223a20322c202273746174223a2022415454222c2022' +
+      '70657263656e74223a20312c202276616c7565223a20302e37357d2c207b2274797065223a20322c202273746174223a20224d41584d50' +
+      '222c202270657263656e74223a20312c202276616c7565223a20302e387d5d2c2022626f6e75736573223a205b7b2274797065223a2031' +
+      '2c2022616d6f756e74223a20312e31352c202270657263656e74223a20317d2c207b2274797065223a20322c2022616d6f756e74223a20' +
+      '312e312c202270657263656e74223a20312c202266616d65223a20317d2c207b2274797065223a20332c202270657263656e74223a2031' +
+      '2c2022616d6f756e74223a20312e317d5d7d7d5d7d000d7b226172726179223a205b5d7d000d7b226172726179223a205b5d7d';
+    const reader = hexReader(hex);
+    const p = new CrucibleResponsePacket();
+    p.read(reader);
+    expect(p.indices).to.deep.equal([0, 1, 2]);
+    expect(p.data).to.have.length(3);
+    expect(p.data[1]).to.equal('{"array": []}');
+    expect(p.data[2]).to.equal('{"array": []}');
+    expect(JSON.parse(p.data[0]).array[0].title).to.equal('Dex from Beyond');
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('CrucibleResponsePacket round trips', () => {
+    const p = new CrucibleResponsePacket();
+    p.indices = [0, 1, 2];
+    p.data = ['{"array": []}', '{"a": 1}', '{}'];
+    const out = roundTrip(p, new CrucibleResponsePacket());
+    expect(out.indices).to.deep.equal([0, 1, 2]);
+    expect(out.data).to.deep.equal(['{"array": []}', '{"a": 1}', '{}']);
   });
 });
