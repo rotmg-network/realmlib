@@ -142,6 +142,16 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.SELECT_ENTRANCE]: () => new OutgoingPackets.SelectEntrancePacket(),
   [PacketType.BUY_EMOTE]: () => new OutgoingPackets.BuyEmotePacket(),
   [PacketType.UNKNOWN224]: () => new OutgoingPackets.Unknown224Packet(),
+  [PacketType.CLAIM_MISSION]: () => new OutgoingPackets.ClaimMissionPacket(),
+  [PacketType.UNKNOWN164]: () => new IncomingPackets.Unknown164Packet(),
+  [PacketType.CLAIM_REWARDS_INFO_PROMPT]: () => new IncomingPackets.ClaimRewardsInfoPromptPacket(),
+  [PacketType.REDEEM_VOUCHER]: () => new OutgoingPackets.RedeemVoucherPacket(),
+  [PacketType.VOUCHER_RESULT]: () => new IncomingPackets.VoucherResultPacket(),
+  [PacketType.UNKNOWN232]: () => new OutgoingPackets.Unknown232Packet(),
+  [PacketType.UNKNOWN233]: () => new IncomingPackets.Unknown233Packet(),
+  [PacketType.UNKNOWN234]: () => new OutgoingPackets.Unknown234Packet(),
+  [PacketType.UNKNOWN235]: () => new IncomingPackets.Unknown235Packet(),
+  [PacketType.UNKNOWN239]: () => new OutgoingPackets.Unknown239Packet(),
 };
 
 /**

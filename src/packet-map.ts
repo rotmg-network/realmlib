@@ -190,8 +190,15 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   215: PacketType.PARTY_JOIN_REQUEST,
   217: PacketType.PARTY_REQUEST_RESPONSE,
   218: PacketType.FOR_RECONNECT,
+  219: PacketType.REDEEM_VOUCHER,
+  220: PacketType.VOUCHER_RESULT,
   222: PacketType.LOADING_SCREEN,
   224: PacketType.UNKNOWN224,
+  232: PacketType.UNKNOWN232,
+  233: PacketType.UNKNOWN233,
+  234: PacketType.UNKNOWN234,
+  235: PacketType.UNKNOWN235,
+  239: PacketType.UNKNOWN239,
   1000: PacketType.IP_ADDRESS,
 };
 

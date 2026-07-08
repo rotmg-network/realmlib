@@ -37,6 +37,17 @@ import {
   SelectEntrancePacket,
   BuyEmotePacket,
   Unknown224Packet,
+  ChangeGuildRankPacket,
+  ClaimMissionPacket,
+  ClaimRewardsInfoPromptPacket,
+  RedeemVoucherPacket,
+  VoucherResultPacket,
+  Unknown232Packet,
+  Unknown233Packet,
+  Unknown234Packet,
+  Unknown235Packet,
+  Unknown239Packet,
+  Unknown164Packet,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the given hex bytes. */
@@ -570,5 +581,126 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.effect).to.equal(18);
     expect(out.unknownInt).to.equal(51);
     expect(out.uiExtra).to.equal(1);
+  });
+
+  it('ChangeGuildRankPacket reads a byte rank (no leftover)', () => {
+    const reader = hexReader('00034268610a'); // "Bha", rank 10
+    const p = new ChangeGuildRankPacket();
+    p.read(reader);
+    expect(p.name).to.equal('Bha');
+    expect(p.guildRank).to.equal(10);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('ChangeGuildRankPacket round trips', () => {
+    const p = new ChangeGuildRankPacket();
+    p.name = 'Vault';
+    p.guildRank = 0;
+    const out = roundTrip(p, new ChangeGuildRankPacket());
+    expect(out.name).to.equal('Vault');
+    expect(out.guildRank).to.equal(0);
+  });
+
+  it('ClaimMissionPacket reads int/int/byte/short (no leftover)', () => {
+    const reader = hexReader('000000320000000201ffff');
+    const p = new ClaimMissionPacket();
+    p.read(reader);
+    expect(p.unknownInt).to.equal(50);
+    expect(p.unknownInt2).to.equal(2);
+    expect(p.unknownByte).to.equal(1);
+    expect(p.unknownShort).to.equal(-1);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('ClaimRewardsInfoPromptPacket reads id + byte + int array (no leftover)', () => {
+    const reader = hexReader('0000ff2a02000300009411000094160000941b');
+    const p = new ClaimRewardsInfoPromptPacket();
+    p.read(reader);
+    expect(p.promptId).to.equal(0x0000ff2a);
+    expect(p.unknownByte).to.equal(2);
+    expect(p.items).to.deep.equal([0x9411, 0x9416, 0x941b]);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('Unknown239Packet round trips the prompt id', () => {
+    const reader = hexReader('0000ff2a');
+    const p = new Unknown239Packet();
+    p.read(reader);
+    expect(p.promptId).to.equal(0x0000ff2a);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('RedeemVoucherPacket / VoucherResultPacket parse the voucher flow (no leftover)', () => {
+    const req = hexReader('000c766f75636865725f636f6465'); // "voucher_code"
+    const rp = new RedeemVoucherPacket();
+    rp.read(req);
+    expect(rp.code).to.equal('voucher_code');
+    expect(req.remaining).to.equal(0);
+
+    const res = hexReader('000018566f7563686572732e566f75636865724e6f744578697374000c766f75636865725f636f6465');
+    const vp = new VoucherResultPacket();
+    vp.read(res);
+    expect(vp.success).to.equal(false);
+    expect(vp.result).to.equal('Vouchers.VoucherNotExist');
+    expect(vp.code).to.equal('voucher_code');
+    expect(res.remaining).to.equal(0);
+  });
+
+  it('Unknown232Packet / Unknown233Packet parse the redeem catalogue entry', () => {
+    const req = hexReader('0002312c0000000b'); // "1,", seq 11
+    const p232 = new Unknown232Packet();
+    p232.read(req);
+    expect(p232.value).to.equal('1,');
+    expect(p232.sequence).to.equal(11);
+    expect(req.remaining).to.equal(0);
+
+    const res = hexReader('010b00146974656d3a426567696e6e657220576561706f6e'); // "item:Beginner Weapon"
+    const p233 = new Unknown233Packet();
+    p233.read(res);
+    expect(p233.unknownByte).to.equal(1);
+    expect(p233.sequence).to.equal(11);
+    expect(p233.descriptor).to.equal('item:Beginner Weapon');
+    expect(res.remaining).to.equal(0);
+  });
+
+  it('Unknown234Packet / Unknown235Packet parse the XML reward claim', () => {
+    const req = hexReader('01');
+    const p234 = new Unknown234Packet();
+    p234.read(req);
+    expect(p234.unknownByte).to.equal(1);
+    expect(req.remaining).to.equal(0);
+
+    const res = hexReader('01000b3c53756363657373202f3e0000'); // byte + "<Success />" + short
+    const p235 = new Unknown235Packet();
+    p235.read(res);
+    expect(p235.unknownByte).to.equal(1);
+    expect(p235.xml).to.equal('<Success />');
+    expect(p235.unknownShort).to.equal(0);
+    expect(res.remaining).to.equal(0);
+  });
+
+  it('MapInfoPacket parses a Lost Halls boss room with dungeon modifiers (no leftover)', () => {
+    const reader = hexReader(
+      '0000010000000100000a4c6f73742048616c6c73000a4c6f73742048616c6c7300054e6578757340d57516' +
+      '000000004100000000000000326a4e85c8000a362e31322e302e302e30000f000f0000000000003145585045' +
+      '5249454e4345443b445241494e45445f343b53544f4e45424f53535f343b4845524f494344414d4147453b7c53ffff',
+    );
+    const p = new MapInfoPacket();
+    p.read(reader);
+    expect(p.name).to.equal('Lost Halls');
+    expect(p.buildVersion).to.equal('6.12.0.0.0');
+    expect(p.viewRadius).to.equal(15);
+    expect(p.dungeonModifier).to.equal('EXPERIENCED;DRAINED_4;STONEBOSS_4;HEROICDAMAGE;|S');
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('Unknown164Packet reads byte/byte/short (no leftover)', () => {
+    const reader = hexReader('01010000');
+    const p = new Unknown164Packet();
+    p.read(reader);
+    expect(p.unknownByte).to.equal(1);
+    expect(p.unknownByte2).to.equal(1);
+    expect(p.unknownShort).to.equal(0);
+    expect(reader.remaining).to.equal(0);
   });
 });
