@@ -13,23 +13,23 @@ export class InvResultPacket implements Packet {
 
   //#region packet-specific members
   /**
-   * > Unknown.
+   * > If the swap was successful.
    */
-  unknownBool: boolean;
+  success: boolean;
 
-  unknownByte: number;
+  unknownByte: number; // always 0
 
   fromSlot: SlotObjectData;
 
   toSlot: SlotObjectData;
 
-  unknownInt1: number;
+  unknownInt1: number; // always 0
 
-  unknownInt2: number;
+  unknownInt2: number; // always 0
   //#endregion
 
   constructor() {
-    this.unknownBool = false; // Probable success bool
+    this.success = false; // Probable success bool
     this.unknownByte = 0;
     this.fromSlot = new SlotObjectData();
     this.toSlot = new SlotObjectData();
@@ -38,7 +38,7 @@ export class InvResultPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.unknownBool = reader.readBoolean();
+    this.success = reader.readBoolean();
     this.unknownByte = reader.readByte();
     this.fromSlot.read(reader);
     this.toSlot.read(reader);
@@ -47,7 +47,7 @@ export class InvResultPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeBoolean(this.unknownBool);
+    writer.writeBoolean(this.success);
     writer.writeByte(this.unknownByte);
     this.fromSlot.write(writer);
     this.toSlot.write(writer);
