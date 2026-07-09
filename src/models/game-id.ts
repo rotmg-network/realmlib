@@ -20,5 +20,10 @@ export enum GameId {
  */
 export const GAME_ID = {
   NEXUS: GameId.Nexus,
+  NEXUS_EXPLANATION: GameId.NexusExplanation,
+  NEXUS_TUTORIAL: GameId.NexusTutorial,
   TUTORIAL: GameId.Tutorial,
+  QUEST_ROOM: GameId.QuestRoom,
+  VAULT: GameId.Vault,
+  VAULT_EXPLANATION: GameId.VaultExplanation,
 };

@@ -33,7 +33,11 @@ export enum FailureCode {
   /**
    * Received when the server the client enters has a queue
    */
-  ServerQueue = 15
+  ServerQueue = 15,
+  /**
+   * Server is currently undergoing maintenance
+   */
+  ServerMaintenance = 16
 }
 
 /**
