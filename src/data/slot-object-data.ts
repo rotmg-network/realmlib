@@ -26,7 +26,10 @@ export class SlotObjectData implements DataPacket {
   read(reader: Reader): void {
     this.objectId = reader.readInt32();
     this.slotId = reader.readInt32();
-    this.objectType = reader.readUInt32();
+    // Signed: an empty slot is -1 on the wire. Reading it unsigned (4294967295)
+    // then writing it back with writeInt32 (below) throws "out of range", so an
+    // empty slot could not round-trip. Item ids are positive, so signed is safe.
+    this.objectType = reader.readInt32();
   }
 
   write(writer: Writer): void {
