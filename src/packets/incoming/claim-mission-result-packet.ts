@@ -4,16 +4,18 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Current build packet 164 (server -> client). Reverse-engineered from a
- * single 4-byte sample (`01 01 0000`); read as two bytes and a short. Field
- * meanings are not yet confirmed.
+ * Received (server -> client) in response to a {@link ClaimMissionPacket}
+ * (`CLAIM_MISSION`, id 163) — captured arriving immediately after the client
+ * claimed a mission. Reverse-engineered from a single 4-byte sample
+ * (`01 01 0000`); read as two bytes and a short. The leading byte is likely a
+ * success flag, but field meanings are not yet confirmed.
  */
-export class Unknown164Packet implements Packet {
+export class ClaimMissionResultPacket implements Packet {
 
-  readonly type = PacketType.UNKNOWN164;
+  readonly type = PacketType.CLAIM_MISSION_RESULT;
 
   //#region packet-specific members
-  /** A leading byte (observed as 1). */
+  /** A leading byte (observed as 1) — probably a success flag. */
   unknownByte: number;
   /** A second byte (observed as 1). */
   unknownByte2: number;

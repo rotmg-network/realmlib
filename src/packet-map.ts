@@ -156,7 +156,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   160: PacketType.BUY_EMOTE,
   162: PacketType.SET_TRACKED_SEASON,
   163: PacketType.CLAIM_MISSION,
-  164: PacketType.UNKNOWN164,
+  164: PacketType.CLAIM_MISSION_RESULT,
   165: PacketType.UNKNOWN165,
   166: PacketType.STASIS,
   167: PacketType.SET_DISCOVERABLE,
