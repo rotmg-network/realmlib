@@ -136,4 +136,85 @@ export enum StatType {
   UNKNOWN_148 = 148, // 0, related to pet
   UNKNOWN_155 = 155,
   UNKNOWN_158 = 158, // always 0
+
+  // Enemy-only stats seen throughout the Oryx Sanctuary/Castle/Cellar
+  // captures, always as a pair, never on the player. 125 varies over an
+  // object's lifetime between a small set of recurring signed-int values
+  // (shared across many objects); 126 is ~9.1M-9.8M and climbs with spawn
+  // order. Likely a server-side per-spawn tag (encounter/wave id + counter),
+  // unconfirmed. statValueTwo is always -1.
+  UNKNOWN_125 = 125,
+  UNKNOWN_126 = 126,
+  // Rare timer-like stats. 122 observed 1500/6000/9500 on assorted objects;
+  // 73 observed 800 on one enemy type. Sits in the material/potion stat gap.
+  UNKNOWN_73 = 73,
+  UNKNOWN_122 = 122,
+
+  // Observed on players in captured sessions but not yet named. Values noted
+  // are from a level-1 seasonal Rogue and a level-20 Wizard (cults capture).
+  UNKNOWN_23 = 23, // observed 1
+  UNKNOWN_75 = 75, // observed 0
+  UNKNOWN_124 = 124, // observed 151
+  UNKNOWN_129 = 129, // observed -1
+  UNKNOWN_130 = 130, // observed 0
+  UNKNOWN_139 = 139, // observed -1; 139-146 sit right after BACKPACK_7 and are
+  UNKNOWN_140 = 140, // all -1 like empty slots — possibly a second slot bank
+  UNKNOWN_141 = 141,
+  UNKNOWN_142 = 142,
+  UNKNOWN_143 = 143,
+  UNKNOWN_144 = 144,
+  UNKNOWN_145 = 145,
+  UNKNOWN_146 = 146,
+  UNKNOWN_149 = 149, // observed -1
+  UNKNOWN_152 = 152, // observed 86
+  UNKNOWN_153 = 153, // observed 14735788
+  UNKNOWN_154 = 154, // observed 0
+  UNKNOWN_156 = 156, // observed 9
+  UNKNOWN_157 = 157, // observed 0
+}
+
+/**
+ * The number of main inventory slots (equipment + inventory) carried in the
+ * `INVENTORY_0..11` stats.
+ */
+export const INVENTORY_SLOT_COUNT = 12;
+/**
+ * The number of backpack slots carried in the `BACKPACK_0..7` stats.
+ */
+export const BACKPACK_SLOT_COUNT = 8;
+
+/**
+ * Whether `statType` carries an inventory or backpack slot's item id.
+ */
+export function isInventoryStat(statType: number): boolean {
+  return inventorySlotIndex(statType) !== null;
+}
+
+/**
+ * Maps an inventory-carrying stat type to a flat slot index:
+ * `INVENTORY_0..11` -> 0..11, `BACKPACK_0..7` -> 12..19.
+ * Returns `null` for any other stat type.
+ */
+export function inventorySlotIndex(statType: number): number | null {
+  if (statType >= StatType.INVENTORY_0_STAT && statType <= StatType.INVENTORY_11_STAT) {
+    return statType - StatType.INVENTORY_0_STAT;
+  }
+  if (statType >= StatType.BACKPACK_0_STAT && statType <= StatType.BACKPACK_7_STAT) {
+    return INVENTORY_SLOT_COUNT + (statType - StatType.BACKPACK_0_STAT);
+  }
+  return null;
+}
+
+/**
+ * Inverse of {@link inventorySlotIndex}: maps a flat slot index (0..19) back
+ * to its stat type. Returns `null` for out-of-range indices.
+ */
+export function slotIndexToStatType(slotIndex: number): StatType | null {
+  if (slotIndex >= 0 && slotIndex < INVENTORY_SLOT_COUNT) {
+    return StatType.INVENTORY_0_STAT + slotIndex;
+  }
+  if (slotIndex >= INVENTORY_SLOT_COUNT && slotIndex < INVENTORY_SLOT_COUNT + BACKPACK_SLOT_COUNT) {
+    return StatType.BACKPACK_0_STAT + (slotIndex - INVENTORY_SLOT_COUNT);
+  }
+  return null;
 }
