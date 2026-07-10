@@ -112,6 +112,8 @@ export class NotificationPacket implements Packet {
     } else if (this.effect === 8) { // DungeonOpened
       this.message = reader.readString();
       this.pictureType = reader.readInt32();
+    } else if (this.effect === 9) { // JSON-key message, e.g. {"k":"s.teleport_target_not_found"}
+      this.message = reader.readString();
     } else if (this.effect === 10) { // DungeonCall
       this.message = reader.readString();
       this.senderObjectId = reader.readInt32();
@@ -159,6 +161,8 @@ export class NotificationPacket implements Packet {
     } else if (this.effect === 8) { // DungeonOpened
       writer.writeString(this.message);
       writer.writeInt32(this.pictureType);
+    } else if (this.effect === 9) { // JSON-key message
+      writer.writeString(this.message);
     } else if (this.effect === 10) { // DungeonCall
       writer.writeString(this.message);
       writer.writeInt32(this.senderObjectId);
