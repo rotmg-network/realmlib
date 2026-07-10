@@ -5,9 +5,13 @@ import { Writer } from '../../writer';
 
 /**
  * Received in response to an enchantment action (e.g. a
- * `RerollAllEnchantmentsPacket`), typically followed by a `VAULT_CONTENT`
- * refresh. The body is a single byte, observed as `1` — likely a success
- * flag.
+ * `RerollAllEnchantmentsPacket`). The body is a single byte, observed as `1` —
+ * a success flag.
+ *
+ * Observed chain (all within the same server tick):
+ * `REROLL_ALL_ENCHANTMENTS (C->S)` → `ENCHANT (S->C, success)` →
+ * `VAULT_CONTENT (S->C, refresh)`. The client learns the new enchantments
+ * from the VAULT_CONTENT that follows, not from this packet.
  */
 export class EnchantPacket implements Packet {
 
