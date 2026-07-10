@@ -122,6 +122,8 @@ export enum StatType {
   FORGEFIRE = 120,
   UNKNOWN121 = 121,
   UNKNOWN123 = 123,
+  // String stat: the player's enchantment dust by tier, formatted
+  // "tier:amount,tier:amount,..." e.g. "1:1876,2:0,3:0,4:80,5:1014".
   DUST_AMOUNT_STAT = 127,
   CRUCIBLE_STAT = 128,
   BACKPACK_0_STAT = 131,
