@@ -9,8 +9,17 @@ export interface Unknown165PoolEntry {
 }
 
 /**
- * Current build packet 165. Observed in Nexus as a string payload such as:
- * `pool/50:55:103:1782400780|50:56:203:1782400780|#`.
+ * Current build packet 165 (S->C). A single length-prefixed string of the
+ * form `<prefix>/<payload>`, sent a few times per session (nexus and inside
+ * dungeons). Two prefixes observed:
+ *
+ * - `pool/50:55:103:1782400780|50:56:203:1782400780|#` — `|`-separated
+ *   entries, each a `:`-separated tuple.
+ * - `prog/51,1002,1` — a single `,`-separated tuple (progress-like).
+ *
+ * The payload is parsed leniently: split on `|` into entries, then each entry
+ * on either `:` or `,` into numeric `values`. Semantics unconfirmed, so the
+ * raw `value` is preserved and round-trips exactly.
  */
 export class Unknown165Packet implements Packet {
   readonly type = PacketType.UNKNOWN165;
@@ -42,7 +51,7 @@ export class Unknown165Packet implements Packet {
       .filter((part) => part.length > 0 && part !== '#')
       .map((part) => ({
         raw: part,
-        values: part.split(':').map((value) => Number(value)).filter((value) => Number.isFinite(value)),
+        values: part.split(/[:,]/).map((value) => Number(value)).filter((value) => Number.isFinite(value)),
       }));
   }
 
