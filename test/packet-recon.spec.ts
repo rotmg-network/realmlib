@@ -46,8 +46,12 @@ import {
   Unknown233Packet,
   Unknown234Packet,
   Unknown235Packet,
-  Unknown239Packet,
-  Unknown164Packet,
+  ClaimRewardsInfoRequestPacket,
+  ClaimMissionResultPacket,
+  CreatePacket,
+  EmotePacket,
+  StatsPacket,
+  InvResultPacket,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the given hex bytes. */
@@ -470,7 +474,7 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.unknownByte2).to.equal(1);
     expect(p.slotObject.objectId).to.equal(587);
     expect(p.slotObject.slotId).to.equal(3);
-    expect(p.slotObject.objectType).to.equal(0xffffffff); // -1 -> empty slot
+    expect(p.slotObject.objectType).to.equal(-1); // empty slot (0xffffffff read signed)
     expect(reader.remaining).to.equal(0);
   });
 
@@ -622,11 +626,24 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(reader.remaining).to.equal(0);
   });
 
-  it('Unknown239Packet round trips the prompt id', () => {
-    const reader = hexReader('0000ff2a');
-    const p = new Unknown239Packet();
+  it('ClaimRewardsInfoRequestPacket round trips the prompt id', () => {
+    // Captured C->S request; the server echoed 0x230c back in packet 170.
+    const reader = hexReader('0000230c');
+    const p = new ClaimRewardsInfoRequestPacket();
     p.read(reader);
-    expect(p.promptId).to.equal(0x0000ff2a);
+    expect(p.promptId).to.equal(0x230c);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('ClaimRewardsInfoPromptPacket parses a captured prompt (echoed id)', () => {
+    // Captured S->C response to a request for prompt 0xffd1: category byte 2,
+    // three near-sequential reward ids.
+    const reader = hexReader('0000ffd10200030000ffd60000ffd70000ffd8');
+    const p = new ClaimRewardsInfoPromptPacket();
+    p.read(reader);
+    expect(p.promptId).to.equal(0xffd1);
+    expect(p.unknownByte).to.equal(2);
+    expect(p.items).to.deep.equal([0xffd6, 0xffd7, 0xffd8]);
     expect(reader.remaining).to.equal(0);
   });
 
@@ -694,13 +711,116 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(reader.remaining).to.equal(0);
   });
 
-  it('Unknown164Packet reads byte/byte/short (no leftover)', () => {
+  it('ClaimMissionResultPacket (id 164) reads byte/byte/short (no leftover)', () => {
     const reader = hexReader('01010000');
-    const p = new Unknown164Packet();
+    const p = new ClaimMissionResultPacket();
     p.read(reader);
     expect(p.unknownByte).to.equal(1);
     expect(p.unknownByte2).to.equal(1);
     expect(p.unknownShort).to.equal(0);
     expect(reader.remaining).to.equal(0);
+  });
+
+  it('CreatePacket reads the seasonal + trailing bytes (no leftover)', () => {
+    // Captured C->S CREATE for a seasonal character: class 782, skin 0,
+    // isChallenger=false, then the two trailing bytes 01 01.
+    const reader = hexReader('030e0000000101');
+    const p = new CreatePacket();
+    p.read(reader);
+    expect(p.classType).to.equal(0x030e);
+    expect(p.skinType).to.equal(0);
+    expect(p.isChallenger).to.equal(false);
+    expect(p.isSeasonal).to.equal(true);
+    expect(p.unknownByte).to.equal(1);
+    expect(reader.remaining).to.equal(0);
+    // round-trips byte-for-byte
+    const w = new Writer(); p.write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('030e0000000101');
+  });
+
+  it('SlotObjectData round-trips an empty slot (objectType -1)', () => {
+    // Empty slot is -1 on the wire; must read as -1 and write back the same
+    // bytes (reading it unsigned then writing signed used to throw).
+    const hex = '0000024900000002ffffffff'; // objectId=585, slotId=2, objectType=-1
+    const reader = hexReader(hex);
+    const s = new SlotObjectData();
+    s.read(reader);
+    expect(s.objectType).to.equal(-1);
+    const w = new Writer(); s.write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
+  });
+
+  it('NotificationPacket effect 9 reads a JSON-key message (no leftover)', () => {
+    // Captured S->C: effect 9, extra 2, then the JSON string. Previously
+    // unhandled, so 37 bytes were left unread.
+    const json = '{"k":"s.teleport_target_not_found"}';
+    const w = new Writer();
+    w.writeByte(9); w.writeByte(2); w.writeString(json);
+    const reader = hexReader(w.buffer.subarray(0, w.index).toString('hex'));
+    const p = new NotificationPacket();
+    p.read(reader);
+    expect(p.effect).to.equal(9);
+    expect(p.message).to.equal(json);
+    expect(reader.remaining).to.equal(0);
+  });
+
+  it('EmotePacket (id 159) reads int32/int32/byte (no leftover)', () => {
+    const reader = hexReader('00001432000ab8d501');
+    const p = new EmotePacket();
+    p.read(reader);
+    expect(p.emoteType).to.equal(0x1432);
+    expect(p.time).to.equal(0x000ab8d5);
+    expect(p.unknownByte).to.equal(1);
+    expect(reader.remaining).to.equal(0);
+    const w = new Writer(); p.write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('00001432000ab8d501');
+  });
+
+  it('StatsPacket (id 139) reads compressed id + two int32 (no leftover)', () => {
+    const reader = hexReader('a395180000000000000000');
+    const p = new StatsPacket();
+    p.read(reader);
+    expect(p.objectId).to.equal(197987);
+    expect(p.unknownInt1).to.equal(0);
+    expect(p.unknownInt2).to.equal(0);
+    expect(reader.remaining).to.equal(0);
+    const w = new Writer(); p.write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('a395180000000000000000');
+  });
+
+  it('InvResultPacket: a swap acknowledgement (ackType 0)', () => {
+    // Captured S->C ack of a client swap: item 2991 into obj 55602 slot 4.
+    const hex = '01000000d93300000000ffffffff0000d9320000000400000baf0000000000000000';
+    const reader = hexReader(hex);
+    const p = new InvResultPacket();
+    p.read(reader);
+    expect(p.success).to.equal(true);
+    expect(p.ackType).to.equal(0);
+    expect(p.fromSlot.objectId).to.equal(55603);
+    expect(p.toSlot.objectId).to.equal(55602);
+    expect(p.toSlot.objectType).to.equal(2991);
+    expect(p.flags).to.equal(0);
+    expect(reader.remaining).to.equal(0);
+    const w = new Writer(); p.write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
+  });
+
+  it('InvResultPacket: a use acknowledgement (ackType 1, flags 0x1000)', () => {
+    // Captured S->C ack of a USEITEM: the Rogue cloak (item 2648, obj 1194
+    // slot 1) was activated. toSlot is the null slot but flags != 0 marks the
+    // use as non-consuming — the cloak stays equipped.
+    const hex = '0101000004aa0000000100000a580000000000000000000000000000100000000000';
+    const reader = hexReader(hex);
+    const p = new InvResultPacket();
+    p.read(reader);
+    expect(p.success).to.equal(true);
+    expect(p.ackType).to.equal(1);
+    expect(p.fromSlot.objectId).to.equal(1194);
+    expect(p.fromSlot.objectType).to.equal(2648);
+    expect(p.toSlot.objectId).to.equal(0); // null slot: "item left the slot"
+    expect(p.flags).to.equal(0x1000); // ...but non-consuming, so it didn't
+    expect(reader.remaining).to.equal(0);
+    const w = new Writer(); p.write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
   });
 });

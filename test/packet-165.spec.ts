@@ -1,0 +1,53 @@
+import { expect } from 'chai';
+import { Reader, StatType, Unknown165Packet, Writer } from '../src';
+
+/** Builds a Reader over a UTF-16-length-prefixed string body. */
+function stringBody(value: string): Reader {
+  const w = new Writer();
+  w.writeString(value);
+  const reader = new Reader(w.index);
+  w.buffer.copy(reader.buffer, 0, 0, w.index);
+  reader.index = 0;
+  return reader;
+}
+
+describe('Unknown165Packet (prog/pool payloads)', () => {
+  it('parses the captured prog/ payload (comma-delimited)', () => {
+    const p = new Unknown165Packet();
+    p.read(stringBody('prog/51,1002,1'));
+    expect(p.prefix).to.equal('prog');
+    expect(p.entries).to.have.length(1);
+    expect(p.entries[0].values).to.deep.equal([51, 1002, 1]);
+  });
+
+  it('parses the documented pool/ payload (colon-delimited, pipe entries)', () => {
+    const p = new Unknown165Packet();
+    p.read(stringBody('pool/50:55:103:1782400780|50:56:203:1782400780|#'));
+    expect(p.prefix).to.equal('pool');
+    expect(p.entries).to.have.length(2);
+    expect(p.entries[0].values).to.deep.equal([50, 55, 103, 1782400780]);
+    expect(p.entries[1].values).to.deep.equal([50, 56, 203, 1782400780]);
+  });
+
+  it('round-trips the raw string exactly', () => {
+    const p = new Unknown165Packet();
+    p.read(stringBody('prog/51,1002,1'));
+    const w = new Writer();
+    p.write(w);
+    const echo = new Unknown165Packet();
+    echo.read(stringBody(p.value));
+    expect(echo.value).to.equal('prog/51,1002,1');
+  });
+});
+
+describe('newly mapped stat types (Oryx captures)', () => {
+  it('names the enemy-pair and timer stats', () => {
+    expect(StatType.UNKNOWN_125).to.equal(125);
+    expect(StatType.UNKNOWN_126).to.equal(126);
+    expect(StatType.UNKNOWN_73).to.equal(73);
+    expect(StatType.UNKNOWN_122).to.equal(122);
+    // they must not collide with named neighbours
+    expect(StatType[125]).to.equal('UNKNOWN_125');
+    expect(StatType[127]).to.equal('DUST_AMOUNT_STAT');
+  });
+});
