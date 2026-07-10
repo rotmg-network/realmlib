@@ -176,6 +176,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   189: PacketType.REROLL_ALL_ENCHANTMENTS,
   190: PacketType.ENCHANT,
   191: PacketType.RESET_ENCHANTMENT_REROLL_COUNT,
+  192: PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT,
   195: PacketType.BLACKSMITH_REQUEST,
   196: PacketType.BLACKSMITH_DISMANTLE,
   197: PacketType.SELECT_ENTRANCE,
@@ -198,6 +199,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   233: PacketType.UNKNOWN233,
   234: PacketType.UNKNOWN234,
   235: PacketType.UNKNOWN235,
+  237: PacketType.CLAIM_DAILY_ITEM,
   239: PacketType.CLAIM_REWARDS_INFO_REQUEST,
   1000: PacketType.IP_ADDRESS,
 };

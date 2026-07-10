@@ -53,6 +53,7 @@ export * from './quest-fetch-ask';
 export * from './queue-cancel-packet';
 export * from './request-trade-packet';
 export * from './reroll-all-enchantments-packet';
+export * from './reset-enchantment-reroll-count-packet';
 export * from './reset-daily-quests-packet';
 export * from './reskin-packet';
 export * from './select-entrance-packet';

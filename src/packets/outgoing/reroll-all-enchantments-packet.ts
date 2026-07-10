@@ -5,10 +5,13 @@ import { Writer } from '../../writer';
 
 /**
  * Sent to reroll all enchantments on an item. The server acknowledges with an
- * `EnchantPacket` followed by a `VAULT_CONTENT` refresh.
+ * `EnchantPacket` (success) followed by a `VAULT_CONTENT` refresh, all in the
+ * same tick.
  *
- * All captured samples were the identical 6 bytes `01 0003 ffff 00`, so the
- * field meanings are not yet confirmed.
+ * Captured samples: `01 0003 ffff 00` and `01 0000 ffff 00`. The first short
+ * therefore varies (3 and 0) — likely the target item's slot/container id —
+ * while the leading byte (1), the second short (-1) and the trailing byte (0)
+ * are constant. Field meanings still unconfirmed.
  */
 export class RerollAllEnchantmentsPacket implements Packet {
 

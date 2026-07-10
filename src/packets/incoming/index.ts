@@ -17,6 +17,8 @@ export * from './crucible-response-packet';
 export * from './damage-packet';
 export * from './death-packet';
 export * from './enchant-packet';
+export * from './reset-enchantment-reroll-count-result-packet';
+export * from './claim-daily-item-packet';
 export * from './enemy-shoot-packet';
 export * from './exaltation-update';
 export * from './failure-packet';
