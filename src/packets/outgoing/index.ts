@@ -7,7 +7,7 @@ export * from './emote-packet';
 export * from './redeem-voucher-packet';
 export * from './unknown-232-packet';
 export * from './unknown-234-packet';
-export * from './unknown-239-packet';
+export * from './claim-rewards-info-request-packet';
 export * from './buy-packet';
 export * from './cancel-trade-packet';
 export * from './change-ally-shoot';

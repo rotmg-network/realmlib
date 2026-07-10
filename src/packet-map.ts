@@ -198,7 +198,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   233: PacketType.UNKNOWN233,
   234: PacketType.UNKNOWN234,
   235: PacketType.UNKNOWN235,
-  239: PacketType.UNKNOWN239,
+  239: PacketType.CLAIM_REWARDS_INFO_REQUEST,
   1000: PacketType.IP_ADDRESS,
 };
 

@@ -153,7 +153,7 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.UNKNOWN233]: () => new IncomingPackets.Unknown233Packet(),
   [PacketType.UNKNOWN234]: () => new OutgoingPackets.Unknown234Packet(),
   [PacketType.UNKNOWN235]: () => new IncomingPackets.Unknown235Packet(),
-  [PacketType.UNKNOWN239]: () => new OutgoingPackets.Unknown239Packet(),
+  [PacketType.CLAIM_REWARDS_INFO_REQUEST]: () => new OutgoingPackets.ClaimRewardsInfoRequestPacket(),
 };
 
 /**
