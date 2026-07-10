@@ -45,10 +45,18 @@ export type InventoryEvent =
    */
   | { kind: 'use-ack'; result: InvResultPacket }
   /**
-   * A use-shaped ack (`ackType = 1`) with no matching `UseItemPacket` fed
-   * via {@link applyUseItem} — either uses aren't being fed to the tracker,
-   * or the server really did clear a slot unprompted. Only the latter is a
-   * desync signal, so this event is only meaningful when uses are fed.
+   * A use ack with `success = false` — the server *rejected* the use. Seen
+   * when the client spam-uses a container slot (e.g. potions from storage)
+   * and a use lands on a slot a prior use already emptied; the ack reports an
+   * empty `fromSlot`. Not a desync — the client's own use simply failed.
+   */
+  | { kind: 'use-rejected'; result: InvResultPacket }
+  /**
+   * A *successful* use-shaped ack (`ackType = 1`) with no matching
+   * `UseItemPacket` fed via {@link applyUseItem} — either uses aren't being
+   * fed to the tracker, or the server really did clear a slot unprompted.
+   * Only the latter is a desync signal, so this event is only meaningful when
+   * uses are fed. Rejected uses are reported as `use-rejected` instead.
    */
   | { kind: 'unmatched-use-ack'; result: InvResultPacket };
 
@@ -130,6 +138,12 @@ export class InventoryTracker {
   applyInvResult(result: InvResultPacket): InventoryEvent[] {
     if (!result.isUseItemAck()) {
       return [{ kind: 'swap-ack', result }];
+    }
+    // A rejected use: the server reports an empty fromSlot and success=false.
+    // Consume one pending use of any item if we can't match by type (the ack
+    // no longer carries the item id), so a following real ack still matches.
+    if (!result.success) {
+      return [{ kind: 'use-rejected', result }];
     }
     const item = result.fromSlot.objectType;
     const pending = this.pendingUses.get(item) ?? 0;
