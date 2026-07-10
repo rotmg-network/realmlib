@@ -4,19 +4,28 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received to describe a set of claimable rewards. The body is an int32 prompt
- * id, a single byte, then a short-length-prefixed array of int32 reward/item
- * ids. The prompt id matches the value the client sent in the preceding
- * packet 239 (`Unknown239Packet`).
+ * Received to describe a set of claimable rewards, in response to the
+ * client's `ClaimRewardsInfoRequestPacket` (id 239). The body is an int32
+ * prompt id, a single byte, then a short-length-prefixed array of int32
+ * reward/item ids.
+ *
+ * The request/response pairing is confirmed: in captures every prompt echoed
+ * the id the client had just requested (4/4, one RTT apart). Observed prompt
+ * ids can coincide with item ids in the gift chest (42345 was both), so the
+ * id likely names a claimable package item and `items` its contents.
  */
 export class ClaimRewardsInfoPromptPacket implements Packet {
 
   readonly type = PacketType.CLAIM_REWARDS_INFO_PROMPT;
 
   //#region packet-specific members
-  /** The prompt id (echoes the value sent in packet 239). */
+  /** The prompt id (echoes the `ClaimRewardsInfoRequestPacket`'s value). */
   promptId: number;
-  /** A byte (observed as 2-3). Purpose not yet confirmed. */
+  /**
+   * A byte, observed 2 or 3. With 3 the ids look like item ids (incl. the
+   * seasonal token 2991 and gift-chest items); with 2 they are near-
+   * sequential (campaign/mission-like). Likely a reward-category discriminator.
+   */
   unknownByte: number;
   /** The reward/item ids offered by this prompt. */
   items: number[];
