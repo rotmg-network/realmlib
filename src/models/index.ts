@@ -1,4 +1,5 @@
 export * from './account-list';
+export * from './character-data';
 export * from './classes';
 export * from './containers';
 export * from './effects';

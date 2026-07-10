@@ -1,10 +1,13 @@
+import { CharacterData, parseCharacterXml } from '../../models/character-data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * > Unknown
+ * Received when the server pushes a character's information — a single `<Char>`
+ * XML document (the same schema the AppEngine `/char/list` returns). Use
+ * {@link character} to parse it into structured {@link CharacterData}.
  */
 export class NewCharacterInfoPacket implements Packet {
 
@@ -14,6 +17,11 @@ export class NewCharacterInfoPacket implements Packet {
 
   constructor() {
     this.charXML = "";
+  }
+
+  /** The parsed character, or `undefined` if `charXML` has no `<Char>` block. */
+  get character(): CharacterData | undefined {
+    return parseCharacterXml(this.charXML);
   }
 
   read(reader: Reader): void {
