@@ -3,6 +3,12 @@
  */
 export enum FailureCode {
   /**
+   * A generic rejection with an empty description. Observed when the server
+   * refuses an action outright — e.g. a CREATE while the character slot is
+   * still occupied (the client retried and succeeded after the slot freed).
+   */
+  GenericRejection = 0,
+  /**
    * Received when the game version sent in the HelloPacket is not updated
    */
   IncorrectVersion = 4,
