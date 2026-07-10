@@ -254,6 +254,17 @@ describe('InventoryTracker', () => {
     expect(events.map((e) => e.kind)).to.deep.equal(['unmatched-use-ack']);
   });
 
+  it('reports a success=false use-ack as a rejected use, not unmatched', () => {
+    // Captured biglog shape: ackType 1, success false, empty fromSlot on a
+    // container — a use that hit an already-emptied slot.
+    const tracker = new InventoryTracker();
+    tracker.applyMapInfo(mapInfo('Vault'));
+    const rejected = fromHex(new InvResultPacket(), '00010000024d00000001ffffffff0000000000000000000000000000000000000000');
+    expect(rejected.success).to.equal(false);
+    expect(rejected.isUseItemAck()).to.equal(true);
+    expect(tracker.applyInvResult(rejected).map((e) => e.kind)).to.deep.equal(['use-rejected']);
+  });
+
   it('resets pending uses on map change', () => {
     const tracker = new InventoryTracker();
     tracker.applyMapInfo(mapInfo('Cultist Hideout'));
@@ -279,6 +290,7 @@ describe('InventoryTracker', () => {
     use.slotObject = SlotObjectData.from(99, 4, 2991);
     tracker.applyUseItem(use);
     const result = new InvResultPacket();
+    result.success = true;
     result.ackType = 1;
     result.fromSlot = SlotObjectData.from(99, 4, 2991);
     result.toSlot = SlotObjectData.from(0, 0, 0);
