@@ -3,6 +3,7 @@ export * from './ally-shoot-packet';
 export * from './blacksmith-dismantle-packet';
 export * from './claim-mission-result-packet';
 export * from './claim-rewards-info-prompt-packet';
+export * from './stats-packet';
 export * from './unknown-233-packet';
 export * from './unknown-235-packet';
 export * from './voucher-result-packet';

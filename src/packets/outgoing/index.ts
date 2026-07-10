@@ -3,6 +3,7 @@ export * from './aoeack-packet';
 export * from './blacksmith-request-packet';
 export * from './buy-emote-packet';
 export * from './claim-mission-packet';
+export * from './emote-packet';
 export * from './redeem-voucher-packet';
 export * from './unknown-232-packet';
 export * from './unknown-234-packet';
