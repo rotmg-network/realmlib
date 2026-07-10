@@ -39,7 +39,11 @@ export class ForgeResultPacket implements Packet {
   write(writer: Writer): void {
     writer.writeBoolean(this.success);
 
-    for (let i = 0; this.results.length; i++) {
+    // read() reads a byte count then that many slots; write() must mirror it.
+    // The previous loop condition (`this.results.length`) never terminated for
+    // a non-empty result set and skipped the count byte entirely.
+    writer.writeByte(this.results.length);
+    for (let i = 0; i < this.results.length; i++) {
       this.results[i].write(writer);
     }
   }
