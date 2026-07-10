@@ -5,6 +5,8 @@ export * from './failures';
 export * from './forge-properties';
 export * from './game-id';
 export * from './guild-rank';
+export * from './inv-result';
+export * from './object-type';
 export * from './payment-type';
 export * from './pets';
 export * from './player-data';
