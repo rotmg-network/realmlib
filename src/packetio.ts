@@ -217,7 +217,9 @@ export class PacketIO extends EventEmitter {
       this.emitError(new RealmlibError('INVALID_RAW_ID', `Raw packet id must be in [0,255], got ${id}`));
       return;
     }
-    const body = Buffer.isBuffer(payload) ? Buffer.from(payload) : Buffer.from(payload);
+    // Buffer.from copies a Buffer and materializes a number[], so one call
+    // handles both input shapes (and always gives us an owned copy to cipher).
+    const body = Buffer.from(payload as Buffer);
     const frame = Buffer.alloc(5 + body.length);
     frame.writeInt32BE(frame.length, 0);
     frame.writeUInt8(id, 4);

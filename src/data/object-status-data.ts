@@ -1,10 +1,15 @@
 import { Writer } from '../writer';
 import { Reader } from '../reader';
 import { DataPacket } from '../packet';
-import { CompressedInt } from './compressed-int';
 import { WorldPosData } from './world-pos-data';
 import { StatData } from './stat-data';
 
+/**
+ * The per-object status carried by UPDATE (with an object type) and NEWTICK
+ * (without one): the object id, its world position, and a list of {@link
+ * StatData} deltas. This is how the server streams inventory/HP/name/etc.
+ * changes for every visible entity.
+ */
 export class ObjectStatusData implements DataPacket {
 
   /**

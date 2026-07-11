@@ -4,9 +4,8 @@
  * packets, discriminated by its `ackType` byte: `InvSwapPacket` and
  * `UseItemPacket`.
  *
- * Empirical basis: across four captures every `ackType = 1` INVRESULT arrived
- * one RTT after a `USEITEM` of the same item — they are use acknowledgements,
- * not server-initiated inventory corrections.
+ * Every `ackType = 1` INVRESULT arrived one RTT after a `USEITEM` of the 
+ * same item — they are use acknowledgements, not server-initiated inventory corrections.
  */
 
 /**

@@ -1,9 +1,14 @@
 import { Writer } from '../writer';
 import { Reader } from '../reader';
 import { DataPacket } from '../packet';
-import { CompressedInt } from './compressed-int';
 import { StatType } from '../models';
 
+/**
+ * One entry in an object's stat list: a {@link StatType}, its value, and a
+ * secondary value. Whether the value is a string or a compressed int is decided
+ * by the stat type ({@link isStringStat}) — the wire format has no type tag, so
+ * read and write must agree on which stats are strings.
+ */
 export class StatData implements DataPacket {
   /**
    * The type of stat
@@ -68,7 +73,7 @@ export class StatData implements DataPacket {
       case StatType.ENCHANTMENTS_STAT:
       case StatType.PET_NAME_STAT:
       case StatType.GRAVE_ACCOUNT_ID:
-      case StatType.UNKNOWN121:
+      case StatType.MODIFIERS_STAT:
       case StatType.DUST_AMOUNT_STAT:
       case StatType.CRUCIBLE_STAT:
       case StatType.DUST_CAP_STAT:

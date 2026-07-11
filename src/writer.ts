@@ -19,8 +19,15 @@ export class Writer {
         this.buffer = Buffer.alloc(this.size);
     }
 
-    /** Writes a packet header to the first 5 bytes of this writer's buffer.
-     * @param id The id to write to the header.
+    /**
+     * Writes the 5-byte packet header into the first 5 bytes of the buffer:
+     * a 4-byte big-endian total length (the current `index`, which the caller
+     * must have advanced past the body) followed by the 1-byte packet id.
+     *
+     * Call this AFTER writing the body, and only when the body was written
+     * starting at index 5 (i.e. the first 5 bytes were reserved for the
+     * header) — otherwise this overwrites body bytes. See `PacketIO.drainQueue`.
+     * @param id The packet id to write to the header.
      */
     writeHeader(id: number): void {
         this.buffer.writeInt32BE(this.index, 0);
@@ -156,7 +163,11 @@ export class Writer {
         this.index += this.buffer.write(value, this.index, 'utf8');
     }
 
-    /** Writes a Kabam custom version of a compressed integer
+    /**
+     * Writes a signed integer in DECA's variable-length "compressed int" form.
+     * The first byte holds the sign (bit `0x40`) and 6 magnitude bits; bit
+     * `0x80` flags that more bytes follow, each adding 7 magnitude bits. Inverse
+     * of {@link Reader.readCompressedInt}.
      * @param amount The int value to write.
      */
     writeCompressedInt(amount: number): void {

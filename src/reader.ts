@@ -151,7 +151,13 @@ export class Reader {
     return this.buffer.subarray(this.index - strlen, this.index).toString('utf8');
   }
 
-  /** Reads a Kabam custom version of a compressed integer - always int32 */
+  /**
+   * Reads DECA's variable-length signed integer ("compressed int"). The first
+   * byte carries the sign in bit 6 (`0x40`) and the low 6 magnitude bits; bit 7
+   * (`0x80`) is the "more bytes follow" flag. Each subsequent byte adds 7
+   * magnitude bits (little-endian) and its own continuation flag. Mirrors
+   * {@link Writer.writeCompressedInt}. Values are int32-range.
+   */
   readCompressedInt(): number {
     let uByte = this.readUnsignedByte();
     const isNegative = (uByte & 64) !== 0;
