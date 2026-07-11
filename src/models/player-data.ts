@@ -139,10 +139,16 @@ export interface PlayerData {
      */
     vitBoost: number;
     /**
-     * The condition flags for this entity.
-     * The number itself will be meaningless, the effects are represented with individual bits of the number
+     * The condition flags for this entity (first word, CONDITION_STAT).
+     * The number itself will be meaningless, the effects are represented with individual bits of the number.
+     * Test bits against `ConditionEffectBits`.
      */
     condition: number;
+    /**
+     * The second condition-flags word for this entity (NEW_CON_STAT), holding
+     * effect indices 32-59. Test bits against `ConditionEffectBits2`.
+     */
+    condition2: number;
     /**
      * The number of HP potions this player has stored
      */

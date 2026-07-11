@@ -107,6 +107,9 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
             case StatType.CONDITION_STAT:
                 playerData.condition = stat.statValue;
                 continue;
+            case StatType.NEW_CON_STAT:
+                playerData.condition2 = stat.statValue;
+                continue;
             case StatType.WISDOM_STAT:
                 playerData.wis = stat.statValue;
                 continue;
