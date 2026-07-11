@@ -120,8 +120,8 @@ export enum StatType {
   POTION_THREE_TYPE = 118,
   POTION_BELT = 119,
   FORGEFIRE = 120,
-  UNKNOWN121 = 121,
-  UNKNOWN123 = 123,
+  MODIFIERS_STAT = 121, // string stat: comma-separated modifier list (see isStringStat)
+  OBJECT_IS_ACTIVE_STAT = 123,
   // String stat: the player's enchantment dust by tier, formatted
   // "tier:amount,tier:amount,..." e.g. "1:1876,2:0,3:0,4:80,5:1014".
   DUST_AMOUNT_STAT = 127,
@@ -139,34 +139,32 @@ export enum StatType {
   UNKNOWN_155 = 155,
   UNKNOWN_158 = 158, // always 0
 
-  // Enemy-only stats seen throughout the Oryx Sanctuary/Castle/Cellar
-  // captures, always as a pair, never on the player. 125 varies over an
-  // object's lifetime between a small set of recurring signed-int values
-  // (shared across many objects); 126 is ~9.1M-9.8M and climbs with spawn
-  // order. Likely a server-side per-spawn tag (encounter/wave id + counter),
-  // unconfirmed. statValueTwo is always -1.
-  UNKNOWN_125 = 125,
-  UNKNOWN_126 = 126,
-  // Rare timer-like stats. 122 observed 1500/6000/9500 on assorted objects;
-  // 73 observed 800 on one enemy type. Sits in the material/potion stat gap.
+  // Resolved via RealmShark/ProdMafia. 125 varies over an object's lifetime
+  // between a small set of recurring signed-int values; 126 is ~9.1M-9.8M and
+  // climbs with spawn order — consistent with an animation state + timestamp.
+  ANIMATION_STAT = 125,
+  ANIMATION_TIMESTAMP_STAT = 126,
+  // 122 observed 1500/6000/9500 on assorted objects (encounter difficulty);
+  // 73 observed 800 on one enemy type, still unnamed.
   UNKNOWN_73 = 73,
-  UNKNOWN_122 = 122,
+  DIFFICULTY_STAT = 122,
 
-  // Observed on players in captured sessions but not yet named. Values noted
-  // are from a level-1 seasonal Rogue and a level-20 Wizard (cults capture).
-  UNKNOWN_23 = 23, // observed 1
+  // Resolved (RealmShark/ProdMafia). Values noted are from a level-1 seasonal
+  // Rogue and a level-20 Wizard (cults capture).
+  DISCOVERABLE_STAT = 23, // observed 1
   UNKNOWN_75 = 75, // observed 0
-  UNKNOWN_124 = 124, // observed 151
-  UNKNOWN_129 = 129, // observed -1
-  UNKNOWN_130 = 130, // observed 0
-  UNKNOWN_139 = 139, // observed -1; 139-146 sit right after BACKPACK_7 and are
-  UNKNOWN_140 = 140, // all -1 like empty slots — possibly a second slot bank
-  UNKNOWN_141 = 141,
-  UNKNOWN_142 = 142,
-  UNKNOWN_143 = 143,
-  UNKNOWN_144 = 144,
-  UNKNOWN_145 = 145,
-  UNKNOWN_146 = 146,
+  POWER_LEVEL_STAT = 124, // observed 151
+  SHADER_STAT = 129, // observed -1
+  BACKPACK_SLOTS_STAT = 130, // observed 0
+  // 139-146 sit right after BACKPACK_7 — a second (8-slot) backpack bank.
+  BACKPACK_8_STAT = 139,
+  BACKPACK_9_STAT = 140,
+  BACKPACK_10_STAT = 141,
+  BACKPACK_11_STAT = 142,
+  BACKPACK_12_STAT = 143,
+  BACKPACK_13_STAT = 144,
+  BACKPACK_14_STAT = 145,
+  BACKPACK_15_STAT = 146,
   UNKNOWN_149 = 149, // observed -1
   UNKNOWN_152 = 152, // observed 86
   UNKNOWN_153 = 153, // observed 14735788
