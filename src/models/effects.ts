@@ -66,13 +66,19 @@ export declare enum ConditionEffect {
 }
 
 /**
- * The bitmask value for each condition effect
+ * The bitmask for each condition effect in the FIRST condition word (effect
+ * indices 1-31), delivered by CONDITION_STAT (29). bit = 1 << (index - 1).
+ * Test these against PlayerData.condition.
+ *
+ * NOTE: the previous values for DEAD..BLIND were wrong (0x10..0x80 with
+ * DEAD/SICK, QUIET/DAZED etc. colliding). The game packs one bit per effect
+ * starting at bit 0 (DEAD = 0x1); corrected below from the live client tables.
  */
 export enum ConditionEffectBits {
-  DEAD = 0x10,
-  QUIET = 0x20,
-  WEAK = 0x40,
-  SLOWED = 0x80,
+  DEAD = 0x1,
+  QUIET = 0x2,
+  WEAK = 0x4,
+  SLOWED = 0x8,
   SICK = 0x10,
   DAZED = 0x20,
   STUNNED = 0x40,
@@ -100,6 +106,43 @@ export enum ConditionEffectBits {
   NINJA_SPEEDY = 0x10000000,
   UNSTABLE = 0x20000000,
   DARKNESS = 0x40000000
+}
+
+/**
+ * The bitmask for each condition effect in the SECOND condition word (effect
+ * indices 32-59), delivered by NEW_CON_STAT (96). bit = 1 << (index - 32).
+ * These occupy a separate uint from ConditionEffectBits and must be tested
+ * against PlayerData.condition2, not PlayerData.condition.
+ */
+export enum ConditionEffectBits2 {
+  SLOWED_IMMUNE = 0x1,
+  DAZED_IMMUNE = 0x2,
+  PARALYZED_IMMUNE = 0x4,
+  PETRIFIED = 0x8,
+  PETRIFIED_IMMUNE = 0x10,
+  PET_EFFECT_ICON = 0x20,
+  CURSE = 0x40,
+  CURSE_IMMUNE = 0x80,
+  HP_BOOST = 0x100,
+  MP_BOOST = 0x200,
+  ATT_BOOST = 0x400,
+  DEF_BOOST = 0x800,
+  SPD_BOOST = 0x1000,
+  VIT_BOOST = 0x2000,
+  WIS_BOOST = 0x4000,
+  DEX_BOOST = 0x8000,
+  SILENCED = 0x10000,
+  EXPOSED = 0x20000,
+  ENERGIZED = 0x40000,
+  HP_DEBUFF = 0x80000,
+  MP_DEBUFF = 0x100000,
+  ATT_DEBUFF = 0x200000,
+  DEF_DEBUFF = 0x400000,
+  SPD_DEBUFF = 0x800000,
+  VIT_DEBUFF = 0x1000000,
+  WIS_DEBUFF = 0x2000000,
+  DEX_DEBUFF = 0x4000000,
+  INSPIRED = 0x8000000
 }
 
 /**
