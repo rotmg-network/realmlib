@@ -42,10 +42,10 @@ import {
   ClaimRewardsInfoPromptPacket,
   RedeemVoucherPacket,
   VoucherResultPacket,
-  Unknown232Packet,
-  Unknown233Packet,
-  Unknown234Packet,
-  Unknown235Packet,
+  ClaimAccountLevelRewardPacket,
+  ClaimAccountLevelRewardResultPacket,
+  ClaimRewardPacket,
+  ClaimRewardResultPacket,
   ClaimRewardsInfoRequestPacket,
   ClaimMissionResultPacket,
   CreatePacket,
@@ -663,32 +663,32 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(res.remaining).to.equal(0);
   });
 
-  it('Unknown232Packet / Unknown233Packet parse the redeem catalogue entry', () => {
+  it('account-level reward packets parse the captured claim', () => {
     const req = hexReader('0002312c0000000b'); // "1,", seq 11
-    const p232 = new Unknown232Packet();
+    const p232 = new ClaimAccountLevelRewardPacket();
     p232.read(req);
-    expect(p232.value).to.equal('1,');
-    expect(p232.sequence).to.equal(11);
+    expect(p232.selectedChoiceSlots).to.equal('1,');
+    expect(p232.accountLevel).to.equal(11);
     expect(req.remaining).to.equal(0);
 
     const res = hexReader('010b00146974656d3a426567696e6e657220576561706f6e'); // "item:Beginner Weapon"
-    const p233 = new Unknown233Packet();
+    const p233 = new ClaimAccountLevelRewardResultPacket();
     p233.read(res);
-    expect(p233.unknownByte).to.equal(1);
-    expect(p233.sequence).to.equal(11);
-    expect(p233.descriptor).to.equal('item:Beginner Weapon');
+    expect(p233.success).to.equal(true);
+    expect(p233.accountLevel).to.equal(11);
+    expect(p233.grantedRewardDescription).to.equal('item:Beginner Weapon');
     expect(res.remaining).to.equal(0);
   });
 
-  it('Unknown234Packet / Unknown235Packet parse the XML reward claim', () => {
+  it('ClaimRewardPacket / ClaimRewardResultPacket parse the XML reward claim', () => {
     const req = hexReader('01');
-    const p234 = new Unknown234Packet();
+    const p234 = new ClaimRewardPacket();
     p234.read(req);
     expect(p234.unknownByte).to.equal(1);
     expect(req.remaining).to.equal(0);
 
     const res = hexReader('01000b3c53756363657373202f3e0000'); // byte + "<Success />" + short
-    const p235 = new Unknown235Packet();
+    const p235 = new ClaimRewardResultPacket();
     p235.read(res);
     expect(p235.unknownByte).to.equal(1);
     expect(p235.xml).to.equal('<Success />');

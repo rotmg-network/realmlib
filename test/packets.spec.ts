@@ -4,7 +4,7 @@ import { Writer } from '../src/writer';
 import { GroundTileData, StatData, WorldPosData } from '../src/data';
 import { StatType } from '../src/models';
 import { UpdatePacket } from '../src/packets/incoming/update-packet';
-import { createPacket, ForgeUnlockedBlueprints, PacketType, Unknown165Packet } from '../src';
+import { createPacket, ForgeUnlockedBlueprints, PacketType, ProgressUpdatePacket } from '../src';
 
 /** Builds a Reader positioned at 0 over the bytes a Writer has produced. */
 function toReader(writer: Writer): Reader {
@@ -85,7 +85,14 @@ describe('packet factory coverage', () => {
 
   it('constructs mapped but previously unhandled incoming packets', () => {
     expect(createPacket(PacketType.FORGE_UNLOCKED_BLUEPRINTS).type).to.equal(PacketType.FORGE_UNLOCKED_BLUEPRINTS);
-    expect(createPacket(PacketType.UNKNOWN165).type).to.equal(PacketType.UNKNOWN165);
+    expect(createPacket(PacketType.PROGRESS_UPDATE).type).to.equal(PacketType.PROGRESS_UPDATE);
+  });
+
+  it('constructs all captured reward claim packets', () => {
+    expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD).type).to.equal(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD);
+    expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT).type).to.equal(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT);
+    expect(createPacket(PacketType.CLAIM_REWARD).type).to.equal(PacketType.CLAIM_REWARD);
+    expect(createPacket(PacketType.CLAIM_REWARD_RESULT).type).to.equal(PacketType.CLAIM_REWARD_RESULT);
   });
 });
 
@@ -99,10 +106,10 @@ describe('captured modern packet payloads', () => {
     expect(packet.unlockedBlueprints).to.deep.equal([]);
   });
 
-  it('parses UNKNOWN165 as pool string entries', () => {
+  it('parses PROGRESS_UPDATE as pool string entries', () => {
     const reader = new Reader(50);
     Buffer.from('0030706f6f6c2f35303a35353a3130333a313738323430303738307c35303a35363a3230333a313738323430303738307c23', 'hex').copy(reader.buffer);
-    const packet = new Unknown165Packet();
+    const packet = new ProgressUpdatePacket();
     packet.read(reader);
     expect(packet.value).to.equal('pool/50:55:103:1782400780|50:56:203:1782400780|#');
     expect(packet.prefix).to.equal('pool');

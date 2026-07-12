@@ -5,12 +5,12 @@ import { Writer } from '../../writer';
 
 /**
  * Current build packet 234 (client -> server). The body is a single byte
- * (observed as 1); the server replies with a `Unknown235Packet` carrying an
+ * (observed as 1); the server replies with a `ClaimRewardResultPacket` carrying an
  * XML reward payload, so this appears to be a claim/confirm request.
  */
-export class Unknown234Packet implements Packet {
+export class ClaimRewardPacket implements Packet {
 
-  readonly type = PacketType.UNKNOWN234;
+  readonly type = PacketType.CLAIM_REWARD;
 
   //#region packet-specific members
   /** A single byte (observed as 1). Purpose not yet confirmed. */

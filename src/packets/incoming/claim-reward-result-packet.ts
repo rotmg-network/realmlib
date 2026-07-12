@@ -5,13 +5,13 @@ import { Writer } from '../../writer';
 
 /**
  * Current build packet 235 (server -> client), sent in response to
- * `Unknown234Packet`. The body is a leading byte followed by a string holding
+ * `ClaimRewardPacket`. The body is a leading byte followed by a string holding
  * an XML reward payload, e.g.
  * `<Success><Tier>1</Tier><Rewards><Item><Id>3177</Id>...`.
  */
-export class Unknown235Packet implements Packet {
+export class ClaimRewardResultPacket implements Packet {
 
-  readonly type = PacketType.UNKNOWN235;
+  readonly type = PacketType.CLAIM_REWARD_RESULT;
 
   //#region packet-specific members
   /** A leading byte (observed as 1). Likely a success flag. */

@@ -3,7 +3,7 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
-export interface Unknown165PoolEntry {
+export interface ProgressUpdateEntry {
   raw: string;
   values: number[];
 }
@@ -21,12 +21,12 @@ export interface Unknown165PoolEntry {
  * on either `:` or `,` into numeric `values`. Semantics unconfirmed, so the
  * raw `value` is preserved and round-trips exactly.
  */
-export class Unknown165Packet implements Packet {
-  readonly type = PacketType.UNKNOWN165;
+export class ProgressUpdatePacket implements Packet {
+  readonly type: PacketType = PacketType.PROGRESS_UPDATE;
 
   value: string;
   prefix: string;
-  entries: Unknown165PoolEntry[];
+  entries: ProgressUpdateEntry[];
 
   constructor() {
     this.value = '';
@@ -56,6 +56,6 @@ export class Unknown165Packet implements Packet {
   }
 
   toString(): string {
-    return `[Unknown165] ${this.value}`;
+    return `[ProgressUpdate] ${this.value}`;
   }
 }

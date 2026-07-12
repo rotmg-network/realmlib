@@ -123,7 +123,7 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.VAULT_CONTENT]: () => new IncomingPackets.VaultContentPacket(),
   [PacketType.EXALTATION_BONUS_CHANGED]: () => new IncomingPackets.ExaltationUpdatePacket(),
   [PacketType.FORGE_UNLOCKED_BLUEPRINTS]: () => new IncomingPackets.ForgeUnlockedBlueprints(),
-  [PacketType.UNKNOWN165]: () => new IncomingPackets.Unknown165Packet(),
+  [PacketType.PROGRESS_UPDATE]: () => new IncomingPackets.ProgressUpdatePacket(),
   [PacketType.FORGE_REQUEST]: () => new OutgoingPackets.ForgeRequestPacket(),
   [PacketType.FORGE_RESULT]: () => new IncomingPackets.ForgeResultPacket(),
   [PacketType.CHANGE_ALLY_SHOOT]: () => new OutgoingPackets.ChangeAllyShootPacket(),
@@ -155,10 +155,10 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.CLAIM_REWARDS_INFO_PROMPT]: () => new IncomingPackets.ClaimRewardsInfoPromptPacket(),
   [PacketType.REDEEM_VOUCHER]: () => new OutgoingPackets.RedeemVoucherPacket(),
   [PacketType.VOUCHER_RESULT]: () => new IncomingPackets.VoucherResultPacket(),
-  [PacketType.UNKNOWN232]: () => new OutgoingPackets.Unknown232Packet(),
-  [PacketType.UNKNOWN233]: () => new IncomingPackets.Unknown233Packet(),
-  [PacketType.UNKNOWN234]: () => new OutgoingPackets.Unknown234Packet(),
-  [PacketType.UNKNOWN235]: () => new IncomingPackets.Unknown235Packet(),
+  [PacketType.CLAIM_ACCOUNT_LEVEL_REWARD]: () => new OutgoingPackets.ClaimAccountLevelRewardPacket(),
+  [PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT]: () => new IncomingPackets.ClaimAccountLevelRewardResultPacket(),
+  [PacketType.CLAIM_REWARD]: () => new OutgoingPackets.ClaimRewardPacket(),
+  [PacketType.CLAIM_REWARD_RESULT]: () => new IncomingPackets.ClaimRewardResultPacket(),
   [PacketType.CLAIM_REWARDS_INFO_REQUEST]: () => new OutgoingPackets.ClaimRewardsInfoRequestPacket(),
 };
 

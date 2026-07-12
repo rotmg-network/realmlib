@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Reader, StatType, Unknown165Packet, Writer } from '../src';
+import { ProgressUpdatePacket, Reader, StatType, Writer } from '../src';
 
 /** Builds a Reader over a UTF-16-length-prefixed string body. */
 function stringBody(value: string): Reader {
@@ -11,9 +11,9 @@ function stringBody(value: string): Reader {
   return reader;
 }
 
-describe('Unknown165Packet (prog/pool payloads)', () => {
+describe('ProgressUpdatePacket (prog/pool payloads)', () => {
   it('parses the captured prog/ payload (comma-delimited)', () => {
-    const p = new Unknown165Packet();
+    const p = new ProgressUpdatePacket();
     p.read(stringBody('prog/51,1002,1'));
     expect(p.prefix).to.equal('prog');
     expect(p.entries).to.have.length(1);
@@ -21,7 +21,7 @@ describe('Unknown165Packet (prog/pool payloads)', () => {
   });
 
   it('parses the documented pool/ payload (colon-delimited, pipe entries)', () => {
-    const p = new Unknown165Packet();
+    const p = new ProgressUpdatePacket();
     p.read(stringBody('pool/50:55:103:1782400780|50:56:203:1782400780|#'));
     expect(p.prefix).to.equal('pool');
     expect(p.entries).to.have.length(2);
@@ -30,11 +30,11 @@ describe('Unknown165Packet (prog/pool payloads)', () => {
   });
 
   it('round-trips the raw string exactly', () => {
-    const p = new Unknown165Packet();
+    const p = new ProgressUpdatePacket();
     p.read(stringBody('prog/51,1002,1'));
     const w = new Writer();
     p.write(w);
-    const echo = new Unknown165Packet();
+    const echo = new ProgressUpdatePacket();
     echo.read(stringBody(p.value));
     expect(echo.value).to.equal('prog/51,1002,1');
   });
