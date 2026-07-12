@@ -8,6 +8,10 @@ Every file present in the directory at the final analysis pass was inventoried.
 Every NDJSON record was streamed, JSON-decoded, and—where it was a game packet—
 reparsed from its raw body using the updated realmlib.
 
+Subsequent capture update: `realmproxy-newest.ndjson` is analyzed separately in
+`EXALT_NEWEST_LOG_FINDINGS_2026-07-12.md`. It provides the controlled CREATE
+contrast missing below and proves that stat 80 is overloaded by a pet format.
+
 ## Corpus and integrity
 
 - 27 files were present: 19 packet captures, five AppEngine captures, and three
@@ -176,10 +180,11 @@ remain unnamed until their render semantics are controlled or recovered.
 
 ## Consolidated confirmed findings
 
-- CREATE is always seven bytes in all 19 samples: two shorts followed by three
-  flag bytes. Captured class types are 768, 782, and 797; every observed tail is
-  `00 01 01`. This supports the current three-byte representation but still does
-  not independently identify all flag names because no contrasting tail exists.
+- CREATE is seven bytes: two shorts followed by three flag bytes. The subsequent
+  `realmproxy-newest` capture adds otherwise equivalent `00 00 01` and `00 01 01`
+  requests whose returned XML is respectively seasonal false and true. The
+  middle byte is therefore definitively `isSeasonal`; the other flags remain
+  unidentified.
 - Account-level reward IDs 232/233 are confirmed by 35 request/response pairs:
   UTF selected-choice slots + int32 account level, then bool success + compressed
   account level + UTF granted description.
@@ -200,7 +205,10 @@ remain unnamed until their render semantics are controlled or recovered.
   `AccountLvl` and `ALXPCurrent` concepts.
 - Stat 80 enchantment strings use a three-byte header, declared slot count,
   little-endian uint16 IDs, `0xfffd` empties, and optional suffix bytes. The full
-  corpus validates decoding without consuming suffixes as enchantments.
+  original corpus validates decoding without consuming suffixes as enchantments.
+  The subsequent capture proves stat 80 is overloaded: a pet sends a distinct
+  `00 01 ...` blob. Only complete `00 02 <count>` blobs may be decoded as
+  equipment enchantments.
 - NEW_CHARACTER_INFORMATION strings may be XML fragments with siblings after
   `</Char>` and must be parsed under a synthetic root. Equipment preserves an
   optional `#uniqueItemId` component; quickslots use item/count pairs.
