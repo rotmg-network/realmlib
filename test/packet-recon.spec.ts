@@ -32,6 +32,7 @@ import {
   BlacksmithDismantlePacket,
   QuestFetchResponsePacket,
   QuestData,
+  QuestRedeemPacket,
   RerollAllEnchantmentsPacket,
   EnchantPacket,
   SelectEntrancePacket,
@@ -442,39 +443,35 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.data).to.deep.equal(['{"array": []}', '{"a": 1}', '{}']);
   });
 
-  it('BlacksmithRequestPacket reads a byte + slot object (no leftover)', () => {
+  it('BlacksmithRequestPacket reads a count + slot objects (no leftover)', () => {
     const reader = hexReader('010000024b000000030000200d');
     const p = new BlacksmithRequestPacket();
     p.read(reader);
-    expect(p.unknownByte).to.equal(1);
-    expect(p.slotObject.objectId).to.equal(587);
-    expect(p.slotObject.slotId).to.equal(3);
-    expect(p.slotObject.objectType).to.equal(0x0000200d);
+    expect(p.slots).to.have.length(1);
+    expect(p.slots[0].objectId).to.equal(587);
+    expect(p.slots[0].slotId).to.equal(3);
+    expect(p.slots[0].objectType).to.equal(0x0000200d);
     expect(reader.remaining).to.equal(0);
   });
 
   it('BlacksmithRequestPacket round trips', () => {
     const p = new BlacksmithRequestPacket();
-    p.unknownByte = 1;
-    p.slotObject.objectId = 587;
-    p.slotObject.slotId = 5;
-    p.slotObject.objectType = 19264;
+    p.slots = [SlotObjectData.from(587, 5, 19264)];
     const out = roundTrip(p, new BlacksmithRequestPacket());
-    expect(out.unknownByte).to.equal(1);
-    expect(out.slotObject.objectId).to.equal(587);
-    expect(out.slotObject.slotId).to.equal(5);
-    expect(out.slotObject.objectType).to.equal(19264);
+    expect(out.slots[0].objectId).to.equal(587);
+    expect(out.slots[0].slotId).to.equal(5);
+    expect(out.slots[0].objectType).to.equal(19264);
   });
 
-  it('BlacksmithDismantlePacket reads two bytes + emptied slot (no leftover)', () => {
+  it('BlacksmithDismantlePacket reads success + count + emptied slots (no leftover)', () => {
     const reader = hexReader('01010000024b00000003ffffffff');
     const p = new BlacksmithDismantlePacket();
     p.read(reader);
-    expect(p.unknownByte).to.equal(1);
-    expect(p.unknownByte2).to.equal(1);
-    expect(p.slotObject.objectId).to.equal(587);
-    expect(p.slotObject.slotId).to.equal(3);
-    expect(p.slotObject.objectType).to.equal(-1); // empty slot (0xffffffff read signed)
+    expect(p.success).to.equal(true);
+    expect(p.slots).to.have.length(1);
+    expect(p.slots[0].objectId).to.equal(587);
+    expect(p.slots[0].slotId).to.equal(3);
+    expect(p.slots[0].objectType).to.equal(-1); // empty slot (0xffffffff read signed)
     expect(reader.remaining).to.equal(0);
   });
 
@@ -530,6 +527,18 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.unknownShort).to.equal(3);
     expect(out.unknownShort2).to.equal(-1);
     expect(out.unknownByte2).to.equal(0);
+  });
+
+  it('RerollAllEnchantmentsPacket reads its optional mode byte', () => {
+    const reader = hexReader('010008ffff0100');
+    const p = new RerollAllEnchantmentsPacket();
+    p.read(reader);
+    expect(p.optionalByte).to.equal(1);
+    expect(p.unknownByte2).to.equal(0);
+    expect(reader.remaining).to.equal(0);
+    const writer = new Writer();
+    p.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal('010008ffff0100');
   });
 
   it('EnchantPacket reads a single success byte (no leftover)', () => {
@@ -633,6 +642,24 @@ describe('current-build packets reconciled from captured bytes', () => {
     p.read(reader);
     expect(p.promptId).to.equal(0x230c);
     expect(reader.remaining).to.equal(0);
+  });
+
+  it('QuestRedeemPacket parses item, slots, and current tail', () => {
+    const hex = '0010363437353732323537393830343136300000b9090001000000d400000004000087ae0000';
+    const reader = hexReader(hex);
+    const p = new QuestRedeemPacket();
+    p.read(reader);
+    expect(p.questId).to.equal('6475722579804160');
+    expect(p.item).to.equal(47369);
+    expect(p.slots).to.have.length(1);
+    expect(p.slots[0].objectId).to.equal(212);
+    expect(p.slots[0].slotId).to.equal(4);
+    expect(p.slots[0].objectType).to.equal(34734);
+    expect(p.unknownShort).to.equal(0);
+    expect(reader.remaining).to.equal(0);
+    const writer = new Writer();
+    p.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
   });
 
   it('ClaimRewardsInfoPromptPacket parses a captured prompt (echoed id)', () => {

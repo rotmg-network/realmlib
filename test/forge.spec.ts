@@ -59,13 +59,29 @@ describe('forge / blacksmith packets (dupe log)', () => {
 
   it('BLACKSMITH_REQUEST / DISMANTLE round-trip the captured dismantle', () => {
     const req = fromHex(new BlacksmithRequestPacket(), '010000024b0000000e00005cf2');
-    expect(req.slotObject.objectId).to.equal(587);
-    expect(req.slotObject.slotId).to.equal(14);
-    expect(req.slotObject.objectType).to.equal(23794);
+    expect(req.slots).to.have.length(1);
+    expect(req.slots[0].objectId).to.equal(587);
+    expect(req.slots[0].slotId).to.equal(14);
+    expect(req.slots[0].objectType).to.equal(23794);
     roundTripsTo(req, '010000024b0000000e00005cf2');
 
     const res = fromHex(new BlacksmithDismantlePacket(), '01010000024b0000000effffffff');
-    expect(res.slotObject.objectType).to.equal(-1); // dismantled -> empty
+    expect(res.success).to.equal(true);
+    expect(res.slots[0].objectType).to.equal(-1); // dismantled -> empty
     roundTripsTo(res, '01010000024b0000000effffffff');
+  });
+
+  it('BLACKSMITH_REQUEST / DISMANTLE support multiple slots', () => {
+    const requestHex = '03000002490000000400000253000002490000000700000253000002490000000500005195';
+    const req = fromHex(new BlacksmithRequestPacket(), requestHex);
+    expect(req.slots.map((slot) => slot.slotId)).to.deep.equal([4, 7, 5]);
+    roundTripsTo(req, requestHex);
+
+    const resultHex = '01030000024900000004ffffffff0000024900000007ffffffff0000024900000005ffffffff';
+    const res = fromHex(new BlacksmithDismantlePacket(), resultHex);
+    expect(res.success).to.equal(true);
+    expect(res.slots.map((slot) => slot.slotId)).to.deep.equal([4, 7, 5]);
+    expect(res.slots.every((slot) => slot.objectType === -1)).to.equal(true);
+    roundTripsTo(res, resultHex);
   });
 });

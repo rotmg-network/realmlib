@@ -46,9 +46,8 @@ export class ShowEffectPacket implements Packet {
    */
   flags: number;
 
-  extra: boolean;
-
-  unknownByte: number;
+  /** Effect size percentage when flags bit 7 is set; otherwise 100. */
+  size: number;
 
   constructor() {
     this.effectType = 0;
@@ -58,8 +57,7 @@ export class ShowEffectPacket implements Packet {
     this.color = 0;
     this.duration = 0;
     this.flags = 0;
-    this.extra = false
-    this.unknownByte = 0
+    this.size = 100
   }
 
   read(reader: Reader): void {
@@ -102,10 +100,7 @@ export class ShowEffectPacket implements Packet {
       this.duration = 1;
     }
 
-    if (reader.remaining > 0) {
-      this.extra = true
-      this.unknownByte = reader.readByte();
-    }
+    this.size = loc2 & 128 ? reader.readByte() : 100;
   }
 
   write(writer: Writer): void {
@@ -136,9 +131,7 @@ export class ShowEffectPacket implements Packet {
     if (this.flags & 32) {
       writer.writeFloat(this.duration);
     }
-    if (this.extra) {
-      writer.writeByte(this.unknownByte);
-    }
+    if (this.flags & 128) writer.writeByte(this.size);
   }
 
   toString(): string {

@@ -6,9 +6,8 @@ import { Writer } from '../../writer';
 
 /**
  * Received from the blacksmith in response to a `BlacksmithRequestPacket`.
- * The body is two leading bytes followed by the affected
- * {@link SlotObjectData}; after a dismantle the slot's `objectType` is `-1`
- * (empty), while its `objectId`/`slotId` echo the request.
+ * The body is a success flag, an unsigned byte count, and that many affected
+ * {@link SlotObjectData} entries. Dismantled slots have `objectType = -1`.
  */
 export class BlacksmithDismantlePacket implements Packet {
 
@@ -18,33 +17,31 @@ export class BlacksmithDismantlePacket implements Packet {
   /**
    * A leading byte (observed as 1). Purpose not yet confirmed.
    */
-  unknownByte: number;
+  success: boolean;
   /**
    * A second leading byte (observed as 1). Purpose not yet confirmed.
    */
-  unknownByte2: number;
-  /**
-   * The affected inventory slot. After a dismantle `objectType` is `-1`.
-   */
-  slotObject: SlotObjectData;
+  slots: SlotObjectData[];
   //#endregion
 
   constructor() {
-    this.unknownByte = 0;
-    this.unknownByte2 = 0;
-    this.slotObject = new SlotObjectData();
+    this.success = false;
+    this.slots = [];
   }
 
   read(reader: Reader): void {
-    this.unknownByte = reader.readByte();
-    this.unknownByte2 = reader.readByte();
-    this.slotObject = new SlotObjectData();
-    this.slotObject.read(reader);
+    this.success = reader.readBoolean();
+    const count = reader.readUnsignedByte();
+    this.slots = new Array(count);
+    for (let i = 0; i < count; i++) {
+      this.slots[i] = new SlotObjectData();
+      this.slots[i].read(reader);
+    }
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.unknownByte);
-    writer.writeByte(this.unknownByte2);
-    this.slotObject.write(writer);
+    writer.writeBoolean(this.success);
+    writer.writeUnsignedByte(this.slots.length);
+    for (const slot of this.slots) slot.write(writer);
   }
 }

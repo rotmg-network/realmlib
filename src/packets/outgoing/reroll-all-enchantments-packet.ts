@@ -35,6 +35,8 @@ export class RerollAllEnchantmentsPacket implements Packet {
    * A trailing byte (observed as 0). Purpose not yet confirmed.
    */
   unknownByte2: number;
+  /** Optional byte observed before the final byte for one reroll mode. */
+  optionalByte: number | undefined;
   //#endregion
 
   constructor() {
@@ -42,12 +44,14 @@ export class RerollAllEnchantmentsPacket implements Packet {
     this.unknownShort = 0;
     this.unknownShort2 = 0;
     this.unknownByte2 = 0;
+    this.optionalByte = undefined;
   }
 
   read(reader: Reader): void {
     this.unknownByte = reader.readByte();
     this.unknownShort = reader.readShort();
     this.unknownShort2 = reader.readShort();
+    if (reader.remaining > 1) this.optionalByte = reader.readByte();
     this.unknownByte2 = reader.readByte();
   }
 
@@ -55,6 +59,7 @@ export class RerollAllEnchantmentsPacket implements Packet {
     writer.writeByte(this.unknownByte);
     writer.writeShort(this.unknownShort);
     writer.writeShort(this.unknownShort2);
+    if (this.optionalByte !== undefined) writer.writeByte(this.optionalByte);
     writer.writeByte(this.unknownByte2);
   }
 }

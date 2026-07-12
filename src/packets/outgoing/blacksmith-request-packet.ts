@@ -5,9 +5,8 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to the blacksmith to act on the item in a given inventory slot
- * (e.g. to dismantle/craft it). The body is a single leading byte followed
- * by the target {@link SlotObjectData}.
+ * Sent to dismantle one or more blacksmith items. The body is an unsigned
+ * byte count followed by that many {@link SlotObjectData} entries.
  */
 export class BlacksmithRequestPacket implements Packet {
 
@@ -17,27 +16,24 @@ export class BlacksmithRequestPacket implements Packet {
   /**
    * A leading byte (observed as 1). Purpose not yet confirmed.
    */
-  unknownByte: number;
-  /**
-   * The inventory slot the request targets. `objectType` is the item being
-   * acted on.
-   */
-  slotObject: SlotObjectData;
+  slots: SlotObjectData[];
   //#endregion
 
   constructor() {
-    this.unknownByte = 0;
-    this.slotObject = new SlotObjectData();
+    this.slots = [];
   }
 
   read(reader: Reader): void {
-    this.unknownByte = reader.readByte();
-    this.slotObject = new SlotObjectData();
-    this.slotObject.read(reader);
+    const count = reader.readUnsignedByte();
+    this.slots = new Array(count);
+    for (let i = 0; i < count; i++) {
+      this.slots[i] = new SlotObjectData();
+      this.slots[i].read(reader);
+    }
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.unknownByte);
-    this.slotObject.write(writer);
+    writer.writeUnsignedByte(this.slots.length);
+    for (const slot of this.slots) slot.write(writer);
   }
 }

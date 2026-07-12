@@ -63,4 +63,13 @@ describe('read/write round-trip fixes', () => {
     expect(back.color).to.equal(4294967295); // sentinel from read()
     expect(back.duration).to.equal(1); // sentinel from read()
   });
+
+  it('ShowEffectPacket decodes the size flag', () => {
+    const fx = new ShowEffectPacket();
+    fx.effectType = 35;
+    fx.flags = 128;
+    fx.size = 75;
+    const back = roundTrip(fx, new ShowEffectPacket());
+    expect(back.size).to.equal(75);
+  });
 });
