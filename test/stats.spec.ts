@@ -36,7 +36,7 @@ describe('StatData.isStringStat (current build)', () => {
     StatType.ENCHANTMENTS_STAT,
     StatType.PET_NAME_STAT,
     StatType.GRAVE_ACCOUNT_ID,
-    StatType.UNKNOWN121,
+    StatType.MODIFIERS_STAT,
     StatType.DUST_AMOUNT_STAT,
     StatType.CRUCIBLE_STAT,
     StatType.DUST_CAP_STAT,

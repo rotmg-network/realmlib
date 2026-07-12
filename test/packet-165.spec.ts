@@ -41,13 +41,13 @@ describe('Unknown165Packet (prog/pool payloads)', () => {
 });
 
 describe('newly mapped stat types (Oryx captures)', () => {
-  it('names the enemy-pair and timer stats', () => {
-    expect(StatType.UNKNOWN_125).to.equal(125);
-    expect(StatType.UNKNOWN_126).to.equal(126);
+  it('names the animation, difficulty and timer stats', () => {
+    expect(StatType.ANIMATION_STAT).to.equal(125);
+    expect(StatType.ANIMATION_TIMESTAMP_STAT).to.equal(126);
     expect(StatType.UNKNOWN_73).to.equal(73);
-    expect(StatType.UNKNOWN_122).to.equal(122);
+    expect(StatType.DIFFICULTY_STAT).to.equal(122);
     // they must not collide with named neighbours
-    expect(StatType[125]).to.equal('UNKNOWN_125');
+    expect(StatType[125]).to.equal('ANIMATION_STAT');
     expect(StatType[127]).to.equal('DUST_AMOUNT_STAT');
   });
 });

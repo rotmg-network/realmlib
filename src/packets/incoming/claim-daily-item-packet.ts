@@ -4,15 +4,15 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Current build packet 237 (S->C). Structure is `byte + string + string`,
- * verified byte-exact on all captured samples (zero leftover).
+ * Current build packet 237 - structure is `byte + string + string`
  *
- * The first string is a base64-encoded Google Cloud Datastore key/cursor — one
- * captured value decodes to a key path through `Account` → `DailyLoginData` —
+ * The first string is a base64-encoded Google Cloud Datastore key/cursor
+ * one captured value decodes to a key path through `Account` → `DailyLoginData`
+ * 
  * and the second is a category label (`"nonconsecutive"`, `"all"`). It appears
- * to carry daily-login / login-calendar state, alongside the
- * `CLAIM_LOGIN_REWARD_MSG` flow. Named as unknown pending confirmation; the
- * three fields decode and round-trip regardless.
+ * to carry daily-login / login-calendar state, alongside the `CLAIM_LOGIN_REWARD_MSG` flow. 
+ * 
+ * Named as unknown pending confirmation; the three fields decode and round-trip regardless.
  */
 export class ClaimDailyItemPacket implements Packet {
 
