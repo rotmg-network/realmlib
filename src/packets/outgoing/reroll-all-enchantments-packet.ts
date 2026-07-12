@@ -23,8 +23,7 @@ export class RerollAllEnchantmentsPacket implements Packet {
    */
   unknownByte: number;
   /**
-   * A short following the leading byte (observed as 3) — possibly the slot id
-   * of the item being rerolled.
+   * Slot ID of the item being rerolled.
    */
   itemSlotId: number;
   /**

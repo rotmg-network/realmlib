@@ -4,19 +4,21 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Current build packet 232 (client -> server). Observed as a string followed
- * by an int32 that increments across a burst (a request/sequence id); the
- * server replies per entry with a `ClaimAccountLevelRewardResultPacket` carrying a reward
- * descriptor string. Appears to walk a redeemable-reward catalogue.
+ * Claims one account-level reward. The server replies with a
+ * `ClaimAccountLevelRewardResultPacket` carrying the same reward ID and a
+ * description of the grants applied to the account.
  */
 export class ClaimAccountLevelRewardPacket implements Packet {
 
   readonly type = PacketType.CLAIM_ACCOUNT_LEVEL_REWARD;
 
   //#region packet-specific members
-  /** A short string payload (observed values like "1", "1,", "1,2"). */
+  /**
+   * Comma-separated selected choice positions. Empty positions are meaningful;
+   * captured values include `,1` and `1,,` as well as `1`, `1,2`, and `1,2,3`.
+   */
   selectedChoiceSlots: string;
-  /** An int32 sequence/request id (increments across a burst). */
+  /** Account-level reward ID (equal to the level in current reward config). */
   rewardId: number;
   //#endregion
 

@@ -2,16 +2,19 @@
  * Parsing for the `ENCHANTMENTS_STAT` (stat 80) string value — the item
  * enchantment data.
  *
- * The stat value is a comma-separated list with one entry per equipment slot.
- * Each entry is a base64url-encoded blob that starts with the bytes
- * `00 02 04` (`AAIE...`) — an apparent version marker plus a max-slot count.
- * An unenchanted slot is the sentinel `AAIE_f_9__3__f8FAA==`. The exact
- * per-enchant id layout inside a populated blob is not yet fully decoded, so
- * this parser exposes the decoded bytes rather than guessing at ids.
+ * On players, the stat value is a comma-separated list with one entry per
+ * equipment slot. Confirmed equipment blobs start `00 02 <count>`, followed by
+ * exactly `count` little-endian uint16 enchantment IDs. Stat 80 is overloaded:
+ * pets can send a different `00 01 ...` blob, which must not be interpreted as
+ * equipment enchantments. Every result therefore identifies its format and
+ * always preserves the raw decoded bytes.
  */
 
 /** The base64url value of an equipment slot with no enchantments. */
 export const EMPTY_ENCHANTMENT = 'AAIE_f_9__3__f8FAA==';
+
+/** Formats currently distinguished for a stat-80 blob. */
+export type EnchantmentBlobFormat = 'equipment-v2' | 'unknown';
 
 /** One equipment slot's parsed enchantment entry. */
 export interface SlotEnchantments {
@@ -21,13 +24,22 @@ export interface SlotEnchantments {
   raw: string;
   /** The base64url-decoded bytes, or an empty buffer if `raw` is blank. */
   bytes: Buffer;
-  /** Whether this slot has no enchantments (matches {@link EMPTY_ENCHANTMENT}). */
-  isEmpty: boolean;
-  /** Declared enchantment slot count from header byte 2. */
-  slotCount: number;
+  /** First three decoded bytes, or the entire blob when shorter than three. */
+  header: Buffer;
+  /** Header byte 1 when present. Equipment enchantments currently use version 2. */
+  version: number | undefined;
+  /** Whether this is the confirmed equipment-enchantment format. */
+  format: EnchantmentBlobFormat;
+  /**
+   * Whether a recognized equipment blob has no populated enchantments.
+   * `undefined` means the blob format is unknown, not that the slot is enchanted.
+   */
+  isEmpty: boolean | undefined;
+  /** Declared equipment enchantment-slot count, undefined for unknown formats. */
+  slotCount: number | undefined;
   /** Non-empty uint16 little-endian enchantment type ids. */
   enchantmentTypeIds: number[];
-  /** Bytes following the declared enchantment slots. */
+  /** Bytes following declared slots; empty for unknown formats. */
   suffix: Buffer;
 }
 
@@ -41,9 +53,10 @@ function decodeBlob(raw: string): Buffer {
 }
 
 /**
- * Parses an `ENCHANTMENTS_STAT` string value into per-slot entries. Blank
- * entries (trailing empty CSV fields) are skipped. Returns [] for an empty or
- * missing value.
+ * Parses a stat-80 string into per-entry blobs. Blank CSV fields are skipped.
+ * Only a complete `00 02 <count>` blob is decoded as equipment enchantments;
+ * truncated, version-1 (pet), and otherwise unknown blobs retain their bytes
+ * but return no enchantment IDs. Returns [] for an empty or missing value.
  */
 export function parseEnchantments(value: string | undefined): SlotEnchantments[] {
   if (!value) {
@@ -57,21 +70,30 @@ export function parseEnchantments(value: string | undefined): SlotEnchantments[]
       continue; // trailing empty slots
     }
     const bytes = decodeBlob(raw);
-    const slotCount = bytes.length >= 3 ? bytes[2] : 0;
+    const version = bytes.length >= 2 ? bytes[1] : undefined;
+    const declaredCount = bytes.length >= 3 ? bytes[2] : undefined;
+    const requiredLength = declaredCount === undefined ? Infinity : 3 + declaredCount * 2;
+    const recognized = bytes.length >= 3 && bytes[0] === 0 && version === 2 && bytes.length >= requiredLength;
+    const slotCount = recognized ? declaredCount : undefined;
     const enchantmentTypeIds: number[] = [];
-    for (let offset = 3, i = 0; i < slotCount && offset + 1 < bytes.length; i++, offset += 2) {
-      const id = bytes.readUInt16LE(offset);
-      if (id !== 0xfffd) enchantmentTypeIds.push(id);
+    if (recognized) {
+      for (let offset = 3, i = 0; i < slotCount!; i++, offset += 2) {
+        const id = bytes.readUInt16LE(offset);
+        if (id !== 0xfffd) enchantmentTypeIds.push(id);
+      }
     }
-    const suffixOffset = Math.min(bytes.length, 3 + slotCount * 2);
+    const suffix = recognized ? bytes.subarray(requiredLength) : Buffer.alloc(0);
     result.push({
       slot,
       raw,
       bytes,
-      isEmpty: enchantmentTypeIds.length === 0,
+      header: bytes.subarray(0, Math.min(3, bytes.length)),
+      version,
+      format: recognized ? 'equipment-v2' : 'unknown',
+      isEmpty: recognized ? enchantmentTypeIds.length === 0 : undefined,
       slotCount,
       enchantmentTypeIds,
-      suffix: bytes.subarray(suffixOffset),
+      suffix,
     });
   }
   return result;

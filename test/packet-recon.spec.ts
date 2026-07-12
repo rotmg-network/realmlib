@@ -510,7 +510,7 @@ describe('current-build packets reconciled from captured bytes', () => {
     const p = new RerollAllEnchantmentsPacket();
     p.read(reader);
     expect(p.unknownByte).to.equal(1);
-    expect(p.unknownShort).to.equal(3);
+    expect(p.itemSlotId).to.equal(3);
     expect(p.unknownShort2).to.equal(-1);
     expect(p.unknownByte2).to.equal(0);
     expect(reader.remaining).to.equal(0);
@@ -519,12 +519,12 @@ describe('current-build packets reconciled from captured bytes', () => {
   it('RerollAllEnchantmentsPacket round trips', () => {
     const p = new RerollAllEnchantmentsPacket();
     p.unknownByte = 1;
-    p.unknownShort = 3;
+    p.itemSlotId = 3;
     p.unknownShort2 = -1;
     p.unknownByte2 = 0;
     const out = roundTrip(p, new RerollAllEnchantmentsPacket());
     expect(out.unknownByte).to.equal(1);
-    expect(out.unknownShort).to.equal(3);
+    expect(out.itemSlotId).to.equal(3);
     expect(out.unknownShort2).to.equal(-1);
     expect(out.unknownByte2).to.equal(0);
   });
@@ -695,14 +695,14 @@ describe('current-build packets reconciled from captured bytes', () => {
     const p232 = new ClaimAccountLevelRewardPacket();
     p232.read(req);
     expect(p232.selectedChoiceSlots).to.equal('1,');
-    expect(p232.accountLevel).to.equal(11);
+    expect(p232.rewardId).to.equal(11);
     expect(req.remaining).to.equal(0);
 
     const res = hexReader('010b00146974656d3a426567696e6e657220576561706f6e'); // "item:Beginner Weapon"
     const p233 = new ClaimAccountLevelRewardResultPacket();
     p233.read(res);
     expect(p233.success).to.equal(true);
-    expect(p233.accountLevel).to.equal(11);
+    expect(p233.rewardId).to.equal(11);
     expect(p233.grantedRewardDescription).to.equal('item:Beginner Weapon');
     expect(res.remaining).to.equal(0);
   });
@@ -748,21 +748,32 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(reader.remaining).to.equal(0);
   });
 
-  it('CreatePacket reads the seasonal + trailing bytes (no leftover)', () => {
-    // Captured C->S CREATE for a seasonal character: class 782, skin 0,
-    // isChallenger=false, then the two trailing bytes 01 01.
-    const reader = hexReader('030e0000000101');
-    const p = new CreatePacket();
-    p.read(reader);
-    expect(p.classType).to.equal(0x030e);
-    expect(p.skinType).to.equal(0);
-    expect(p.isChallenger).to.equal(false);
-    expect(p.isSeasonal).to.equal(true);
-    expect(p.unknownByte).to.equal(1);
-    expect(reader.remaining).to.equal(0);
-    // round-trips byte-for-byte
-    const w = new Writer(); p.write(w);
-    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('030e0000000101');
+  it('CreatePacket distinguishes confirmed seasonal and non-seasonal flags', () => {
+    const vectors = [
+      // Rogue, default skin => returned <Seasonal>False</Seasonal>, Texture 0.
+      { hex: '03000000000001', classType: 0x0300, skinType: 0, seasonal: false },
+      // Rogue, default skin => returned <Seasonal>True</Seasonal>, Texture 0.
+      { hex: '03000000000101', classType: 0x0300, skinType: 0, seasonal: true },
+      // Wizard, custom skin => returned Seasonal false, Texture 30942 (0x78de).
+      { hex: '030e78de000001', classType: 0x030e, skinType: 0x78de, seasonal: false },
+      // Same class/skin with only flag1 changed => Seasonal true.
+      { hex: '030e78de000101', classType: 0x030e, skinType: 0x78de, seasonal: true },
+    ];
+
+    for (const vector of vectors) {
+      const reader = hexReader(vector.hex);
+      const packet = new CreatePacket();
+      packet.read(reader);
+      expect(packet.classType).to.equal(vector.classType);
+      expect(packet.skinType).to.equal(vector.skinType);
+      expect(packet.unknownFlag).to.equal(false);
+      expect(packet.isSeasonal).to.equal(vector.seasonal);
+      expect(packet.unknownFlag2).to.equal(1);
+      expect(reader.remaining).to.equal(0);
+      const writer = new Writer();
+      packet.write(writer);
+      expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(vector.hex);
+    }
   });
 
   it('SlotObjectData round-trips an empty slot (objectType -1)', () => {

@@ -21,43 +21,45 @@ export class CreatePacket implements Packet {
    */
   skinType: number;
   /**
-   * Whether or not the character is in challenger mode.
+   * First flag after the class and skin. It was previously called challenger,
+   * but every captured CREATE sends zero and no contrasting result establishes
+   * that meaning. Kept raw until a controlled capture identifies it.
    */
-  isChallenger: boolean;
+  unknownFlag: boolean;
   /**
-   * Whether the new character is a seasonal character. Added in a recent build;
-   * confirmed against the `<Seasonal>True</Seasonal>` a seasonal creation
-   * produced in the following `NewCharacterInformation`.
+   * Whether the new character is seasonal. Confirmed by paired CREATE captures
+   * which differ only here (`00 00 01` versus `00 01 01`) and return matching
+   * `<Seasonal>False</Seasonal>` / `<Seasonal>True</Seasonal>` character XML.
    */
   isSeasonal: boolean;
   /**
-   * A trailing byte added alongside `isSeasonal` (observed as 1). Meaning not
-   * yet confirmed; read as a raw byte so any value round-trips.
+   * Final flag byte. All current captures send 1, so its meaning is unknown.
+   * It remains numeric rather than boolean to preserve any future raw value.
    */
-  unknownByte: number;
+  unknownFlag2: number;
   //#endregion
 
   constructor() {
     this.classType = 0;
     this.skinType = 0;
-    this.isChallenger = false;
+    this.unknownFlag = false;
     this.isSeasonal = false;
-    this.unknownByte = 0;
+    this.unknownFlag2 = 0;
   }
 
   write(writer: Writer): void {
     writer.writeShort(this.classType);
     writer.writeShort(this.skinType);
-    writer.writeBoolean(this.isChallenger);
+    writer.writeBoolean(this.unknownFlag);
     writer.writeBoolean(this.isSeasonal);
-    writer.writeByte(this.unknownByte);
+    writer.writeByte(this.unknownFlag2);
   }
 
   read(reader: Reader): void {
     this.classType = reader.readShort();
     this.skinType = reader.readShort();
-    this.isChallenger = reader.readBoolean();
+    this.unknownFlag = reader.readBoolean();
     this.isSeasonal = reader.readBoolean();
-    this.unknownByte = reader.readByte();
+    this.unknownFlag2 = reader.readByte();
   }
 }

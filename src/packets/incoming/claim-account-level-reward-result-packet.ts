@@ -6,7 +6,7 @@ import { Writer } from '../../writer';
 /**
  * Current build packet 233 (server -> client), sent in response to
  * `ClaimAccountLevelRewardPacket`. The body is a success flag, compressed
- * account level, and a descriptor string such as
+ * reward ID, and a descriptor string such as
  * `boost_exp:3`, `item:Beginner Weapon`, `char_start_with:all:1:T1`,
  * `fame:200`.
  */
@@ -17,7 +17,7 @@ export class ClaimAccountLevelRewardResultPacket implements Packet {
   //#region packet-specific members
   /** If the reward claim was successful. */
   success: boolean;
-  /** The sequence id (matches the int32 sent in packet 232). */
+  /** Reward ID matching the int32 sent in packet 232. */
   rewardId: number;
   /** A reward/entry descriptor string (e.g. `fame:200`). */
   grantedRewardDescription: string;

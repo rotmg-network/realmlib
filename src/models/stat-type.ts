@@ -80,11 +80,10 @@ export enum StatType {
   MATERIAL_CAP_STAT = 72,
   HASBACKPACK_STAT = 79,
   /**
-   * Item enchantment data (string stat). A comma-separated list with one entry
-   * per equipment slot, each entry a base64url-encoded blob that begins
-   * `AAIE...` (bytes `00 02 04` — apparent version 2, 4 max enchant slots). An
-   * unenchanted slot is the sentinel `AAIE_f_9__3__f8FAA==`; enchanted slots
-   * carry the enchant ids in the trailing bytes. See `parseEnchantments()`.
+   * Base64url blob data. On players this is a comma-separated equipment
+   * enchantment list using `00 02 <count>` blobs. Pets can carry a distinct
+   * version-1 format in the same stat, so consumers must inspect the parsed
+   * format before using enchantment IDs. See `parseEnchantments()`.
    */
   ENCHANTMENTS_STAT = 80,
   PET_INSTANCEID_STAT = 81,
