@@ -1,4 +1,4 @@
-import { WorldPosData, CompressedInt } from '../../data';
+import { WorldPosData } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
@@ -36,6 +36,16 @@ export class ShowEffectPacket implements Packet {
    */
   duration: number;
 
+  /**
+   * The presence bitmask (second byte on the wire). Each bit says whether an
+   * optional field follows, so absent fields aren't sent. Preserved here so
+   * write() can reproduce exactly what was read:
+   * `1`=color, `2`=pos1.x, `4`=pos1.y, `8`=pos2.x, `16`=pos2.y, `32`=duration,
+   * `64`=targetObjectId. When building a packet by hand, set the bits for the
+   * fields you populate.
+   */
+  flags: number;
+
   extra: boolean;
 
   unknownByte: number;
@@ -47,13 +57,15 @@ export class ShowEffectPacket implements Packet {
     this.pos2 = new WorldPosData();
     this.color = 0;
     this.duration = 0;
+    this.flags = 0;
     this.extra = false
     this.unknownByte = 0
   }
 
   read(reader: Reader): void {
     this.effectType = reader.readUnsignedByte();
-    let loc2 = reader.readUnsignedByte();
+    const loc2 = reader.readUnsignedByte();
+    this.flags = loc2;
     if (loc2 & 64) {
       this.targetObjectId = reader.readCompressedInt();
     } else {
@@ -97,12 +109,36 @@ export class ShowEffectPacket implements Packet {
   }
 
   write(writer: Writer): void {
+    // Mirror read(): a presence bitmask, then only the fields whose bit is set,
+    // in the same order. (The previous implementation wrote every field
+    // unconditionally and never emitted the bitmask, so a re-encoded packet
+    // could not be read back.)
     writer.writeUnsignedByte(this.effectType);
-    writer.writeCompressedInt(this.targetObjectId);
-    this.pos1.write(writer);
-    this.pos2.write(writer);
-    writer.writeInt32(this.color);
-    writer.writeFloat(this.duration);
+    writer.writeUnsignedByte(this.flags);
+    if (this.flags & 64) {
+      writer.writeCompressedInt(this.targetObjectId);
+    }
+    if (this.flags & 2) {
+      writer.writeFloat(this.pos1.x);
+    }
+    if (this.flags & 4) {
+      writer.writeFloat(this.pos1.y);
+    }
+    if (this.flags & 8) {
+      writer.writeFloat(this.pos2.x);
+    }
+    if (this.flags & 16) {
+      writer.writeFloat(this.pos2.y);
+    }
+    if (this.flags & 1) {
+      writer.writeInt32(this.color);
+    }
+    if (this.flags & 32) {
+      writer.writeFloat(this.duration);
+    }
+    if (this.extra) {
+      writer.writeByte(this.unknownByte);
+    }
   }
 
   toString(): string {

@@ -1,4 +1,4 @@
-import { GroundTileData, ObjectData, CompressedInt, WorldPosData } from '../../data';
+import { GroundTileData, ObjectData, WorldPosData } from '../../data';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';

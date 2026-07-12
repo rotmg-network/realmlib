@@ -2,7 +2,6 @@ import { Reader } from "../../reader";
 import { Writer } from "../../writer";
 import { Packet } from "../../packet";
 import { PacketType } from "../../packet-type";
-import { CompressedInt } from '../../data';
 
 /**
  * Received when the player enters the nexus

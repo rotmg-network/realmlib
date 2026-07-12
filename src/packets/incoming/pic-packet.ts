@@ -32,13 +32,20 @@ export class PicPacket implements Packet {
   read(reader: Reader): void {
     this.width = reader.readInt32();
     this.height = reader.readInt32();
+    // The bitmap is a raw RGBA byte run whose length is derived from the
+    // dimensions — there is NO length prefix on the wire.
     this.bitmapData = reader.readBytes(this.width * this.height * 4);
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.width);
     writer.writeInt32(this.height);
-    writer.writeByteArray(this.bitmapData);
+    // Must mirror read(): write the raw bytes with no length prefix.
+    // (writeByteArray() would prepend a 2-byte length that read() never
+    // consumes, corrupting the frame on round-trip.)
+    for (const byte of this.bitmapData) {
+      writer.writeUnsignedByte(byte);
+    }
   }
 
   toString(): string {
