@@ -56,6 +56,8 @@ export * from './reroll-all-enchantments-packet';
 export * from './reset-enchantment-reroll-count-packet';
 export * from './reset-daily-quests-packet';
 export * from './reskin-packet';
+export * from './retitle-packet';
+export * from './claim-chest-reward-packet';
 export * from './select-entrance-packet';
 export * from './set-condition-packet';
 export * from './shootack-packet';

@@ -19,6 +19,7 @@ export * from './death-packet';
 export * from './enchant-packet';
 export * from './reset-enchantment-reroll-count-result-packet';
 export * from './claim-daily-item-packet';
+export * from './chest-reward-result-packet';
 export * from './enemy-shoot-packet';
 export * from './exaltation-update';
 export * from './failure-packet';
