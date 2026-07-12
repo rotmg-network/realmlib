@@ -23,6 +23,12 @@ export interface SlotEnchantments {
   bytes: Buffer;
   /** Whether this slot has no enchantments (matches {@link EMPTY_ENCHANTMENT}). */
   isEmpty: boolean;
+  /** Declared enchantment slot count from header byte 2. */
+  slotCount: number;
+  /** Non-empty uint16 little-endian enchantment type ids. */
+  enchantmentTypeIds: number[];
+  /** Bytes following the declared enchantment slots. */
+  suffix: Buffer;
 }
 
 /** Decodes a single base64url blob (tolerating missing padding). */
@@ -50,11 +56,22 @@ export function parseEnchantments(value: string | undefined): SlotEnchantments[]
     if (raw.length === 0) {
       continue; // trailing empty slots
     }
+    const bytes = decodeBlob(raw);
+    const slotCount = bytes.length >= 3 ? bytes[2] : 0;
+    const enchantmentTypeIds: number[] = [];
+    for (let offset = 3, i = 0; i < slotCount && offset + 1 < bytes.length; i++, offset += 2) {
+      const id = bytes.readUInt16LE(offset);
+      if (id !== 0xfffd) enchantmentTypeIds.push(id);
+    }
+    const suffixOffset = Math.min(bytes.length, 3 + slotCount * 2);
     result.push({
       slot,
       raw,
-      bytes: decodeBlob(raw),
-      isEmpty: raw === EMPTY_ENCHANTMENT,
+      bytes,
+      isEmpty: enchantmentTypeIds.length === 0,
+      slotCount,
+      enchantmentTypeIds,
+      suffix: bytes.subarray(suffixOffset),
     });
   }
   return result;

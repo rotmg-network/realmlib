@@ -18,6 +18,10 @@ export interface PlayerData {
      * The name of the player
      */
     name: string;
+    /** Optional title/name-decoration token appended to NAME_STAT. */
+    nameTitle?: string;
+    /** Optional name-background token appended to NAME_STAT. */
+    nameBackground?: string;
     /**
      * The level of the player
      */
@@ -26,6 +30,14 @@ export interface PlayerData {
      * The total XP points of the player
      */
     exp: number;
+    /** Account-wide BXP (stat 61). */
+    bxp: number;
+    /** Whether this character is seasonal (stat 24). */
+    seasonal: boolean;
+    /** Account level (stat 152). */
+    accountLevel: number;
+    /** Account-level XP / ALXPCurrent (stat 153). */
+    accountLevelExp: number;
     /**
      * The current character fame of the player
      */

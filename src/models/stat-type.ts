@@ -64,7 +64,8 @@ export enum StatType {
   NEXT_CLASS_QUEST_FAME_STAT = 58,
   LEGENDARY_RANK_STAT = 59,
   SINK_LEVEL_STAT = 60,
-  ALT_TEXTURE_STAT = 61,
+  /** Account-wide battle/account experience. */
+  BXP_STAT = 61,
   GUILD_NAME_STAT = 62,
   GUILD_RANK_STAT = 63,
   BREATH_STAT = 64,
@@ -173,8 +174,8 @@ export enum StatType {
   BACKPACK_14_STAT = 145,
   BACKPACK_15_STAT = 146,
   UNKNOWN_149 = 149, // observed -1
-  UNKNOWN_152 = 152, // observed 86
-  UNKNOWN_153 = 153, // observed 14735788
+  ACCOUNT_LEVEL_STAT = 152,
+  ACCOUNT_LEVEL_EXP_STAT = 153,
   UNKNOWN_154 = 154, // observed 0
   UNKNOWN_156 = 156, // observed 9
   UNKNOWN_157 = 157, // observed 0

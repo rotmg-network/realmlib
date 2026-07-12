@@ -39,13 +39,30 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
     for (const stat of stats) {
         switch (stat.statType) {
             case StatType.NAME_STAT:
-                playerData.name = stat.stringStatValue;
+                // Current Exalt may append title/background metadata as hex tokens.
+                // Keep the visible name separate while retaining those raw tokens.
+                const [name, title, background, ...rest] = stat.stringStatValue.split(',');
+                playerData.name = name;
+                playerData.nameTitle = title;
+                playerData.nameBackground = [background, ...rest].filter(Boolean).join(',') || undefined;
                 continue;
             case StatType.LEVEL_STAT:
                 playerData.level = stat.statValue;
                 continue;
             case StatType.EXP_STAT:
                 playerData.exp = parseInt(stat.stringStatValue, 10) || 0;
+                continue;
+            case StatType.SEASONAL_CHARACTER_STAT:
+                playerData.seasonal = stat.statValue !== 0;
+                continue;
+            case StatType.BXP_STAT:
+                playerData.bxp = stat.statValue;
+                continue;
+            case StatType.ACCOUNT_LEVEL_STAT:
+                playerData.accountLevel = stat.statValue;
+                continue;
+            case StatType.ACCOUNT_LEVEL_EXP_STAT:
+                playerData.accountLevelExp = stat.statValue;
                 continue;
             case StatType.CURR_FAME_STAT:
                 playerData.currentFame = stat.statValue;

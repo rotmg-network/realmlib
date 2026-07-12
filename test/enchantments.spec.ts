@@ -18,4 +18,15 @@ describe('parseEnchantments (ENCHANTMENTS_STAT)', () => {
     expect(parseEnchantments(undefined)).to.deep.equal([]);
     expect(parseEnchantments('')).to.deep.equal([]);
   });
+
+  it('reads declared little-endian ids and does not consume suffix bytes', () => {
+    const [slot] = parseEnchantments('AAIEzAQZAf3__f8FAA==');
+    expect(slot.slotCount).to.equal(4);
+    expect(slot.enchantmentTypeIds).to.deep.equal([0x04cc, 0x0119]);
+    expect([...slot.suffix]).to.deep.equal([5, 0]);
+
+    const [empty] = parseEnchantments(EMPTY_ENCHANTMENT);
+    expect(empty.enchantmentTypeIds).to.deep.equal([]);
+    expect([...empty.suffix]).to.deep.equal([5, 0]);
+  });
 });

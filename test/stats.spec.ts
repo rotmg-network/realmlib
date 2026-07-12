@@ -77,6 +77,10 @@ describe('processStatData (current build ids)', () => {
       statData(StatType.BACKPACK_0_STAT, 999), // id 131 -> inventory slot 12
       statData(StatType.NAME_STAT, 0, 'Wizard'), // string stat
       statData(StatType.EXP_STAT, 0, '9814'), // string stat parsed to a number
+      statData(StatType.BXP_STAT, 14561542),
+      statData(StatType.SEASONAL_CHARACTER_STAT, 1),
+      statData(StatType.ACCOUNT_LEVEL_STAT, 35),
+      statData(StatType.ACCOUNT_LEVEL_EXP_STAT, 406026),
     ]);
 
     expect(playerData.maxHP).to.equal(444);
@@ -88,6 +92,17 @@ describe('processStatData (current build ids)', () => {
     expect(playerData.inventory[12]).to.equal(999);
     expect(playerData.name).to.equal('Wizard');
     expect(playerData.exp).to.equal(9814);
+    expect(playerData.bxp).to.equal(14561542);
+    expect(playerData.seasonal).to.equal(true);
+    expect(playerData.accountLevel).to.equal(35);
+    expect(playerData.accountLevelExp).to.equal(406026);
+  });
+
+  it('separates name decoration metadata from the visible name', () => {
+    const playerData = processStatData([statData(StatType.NAME_STAT, 0, 'FaZeRaptor,a19d,fe3')]);
+    expect(playerData.name).to.equal('FaZeRaptor');
+    expect(playerData.nameTitle).to.equal('a19d');
+    expect(playerData.nameBackground).to.equal('fe3');
   });
 });
 
