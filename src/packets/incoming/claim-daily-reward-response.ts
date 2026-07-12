@@ -20,7 +20,7 @@ export class ClaimDailyRewardResponse implements Packet {
    */
   quantity: number;
   /**
-   * Unknown.
+   * Unknown - possibly amount of gold received?
    */
   gold: number;
   //#endregion

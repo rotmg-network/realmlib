@@ -26,7 +26,7 @@ export class RerollAllEnchantmentsPacket implements Packet {
    * A short following the leading byte (observed as 3) — possibly the slot id
    * of the item being rerolled.
    */
-  unknownShort: number;
+  itemSlotId: number;
   /**
    * A second short (observed as -1). Purpose not yet confirmed.
    */
@@ -41,7 +41,7 @@ export class RerollAllEnchantmentsPacket implements Packet {
 
   constructor() {
     this.unknownByte = 0;
-    this.unknownShort = 0;
+    this.itemSlotId = 0;
     this.unknownShort2 = 0;
     this.unknownByte2 = 0;
     this.optionalByte = undefined;
@@ -49,7 +49,7 @@ export class RerollAllEnchantmentsPacket implements Packet {
 
   read(reader: Reader): void {
     this.unknownByte = reader.readByte();
-    this.unknownShort = reader.readShort();
+    this.itemSlotId = reader.readShort();
     this.unknownShort2 = reader.readShort();
     if (reader.remaining > 1) this.optionalByte = reader.readByte();
     this.unknownByte2 = reader.readByte();
@@ -57,7 +57,7 @@ export class RerollAllEnchantmentsPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeByte(this.unknownByte);
-    writer.writeShort(this.unknownShort);
+    writer.writeShort(this.itemSlotId);
     writer.writeShort(this.unknownShort2);
     if (this.optionalByte !== undefined) writer.writeByte(this.optionalByte);
     writer.writeByte(this.unknownByte2);

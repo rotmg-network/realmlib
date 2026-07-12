@@ -15,11 +15,11 @@ export class BlacksmithDismantlePacket implements Packet {
 
   //#region packet-specific members
   /**
-   * A leading byte (observed as 1). Purpose not yet confirmed.
+   * If the dismantle attempt was successful.
    */
   success: boolean;
   /**
-   * A second leading byte (observed as 1). Purpose not yet confirmed.
+   * The items to dismantle.
    */
   slots: SlotObjectData[];
   //#endregion

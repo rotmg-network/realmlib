@@ -17,22 +17,22 @@ export class ClaimAccountLevelRewardPacket implements Packet {
   /** A short string payload (observed values like "1", "1,", "1,2"). */
   selectedChoiceSlots: string;
   /** An int32 sequence/request id (increments across a burst). */
-  accountLevel: number;
+  rewardId: number;
   //#endregion
 
   constructor() {
     this.selectedChoiceSlots = '';
-    this.accountLevel = 0;
+    this.rewardId = 0;
   }
 
   read(reader: Reader): void {
     this.selectedChoiceSlots = reader.readString();
-    this.accountLevel = reader.readInt32();
+    this.rewardId = reader.readInt32();
   }
 
   write(writer: Writer): void {
     writer.writeString(this.selectedChoiceSlots);
-    writer.writeInt32(this.accountLevel);
+    writer.writeInt32(this.rewardId);
   }
 
 }

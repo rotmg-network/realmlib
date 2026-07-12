@@ -19,15 +19,19 @@ export class ClaimDailyItemPacket implements Packet {
   readonly type = PacketType.CLAIM_DAILY_ITEM;
 
   //#region packet-specific members
+
   /** A leading flag byte (observed `1`). */
   flag: number;
+
   /**
    * A base64-encoded datastore key/cursor (observed decoding to an
    * `Account`/`DailyLoginData` key path). May be empty.
    */
   key: string;
+
   /** A category label — observed `"nonconsecutive"` and `"all"`. */
   category: string;
+  
   //#endregion
 
   constructor() {
