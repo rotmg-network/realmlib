@@ -175,16 +175,18 @@ named more strongly from a single occurrence.
 Presence-mask bit `0x80` means a signed byte `size`; the default when absent is
 100. It is no longer represented as a generic extra byte. Across 124,403 frames,
 effect IDs observed were 1–8, 10–23, 25–26, 31, 33, and 35–40. ID 35 is the
-client-confirmed Summoner Magic Circle. IDs 36–40 are represented explicitly but
-remain unnamed until their render semantics are controlled or recovered.
+client-confirmed Summoner Magic Circle. The July 13 Kensei capture identifies
+IDs 36/37 as the dash trail and channel-dash activation; IDs 38–40 remain
+unnamed.
 
 ## Consolidated confirmed findings
 
 - CREATE is seven bytes: two shorts followed by three flag bytes. The subsequent
   `realmproxy-newest` capture adds otherwise equivalent `00 00 01` and `00 01 01`
   requests whose returned XML is respectively seasonal false and true. The
-  middle byte is therefore definitively `isSeasonal`; the other flags remain
-  unidentified.
+  middle byte is therefore definitively `isSeasonal`. The final byte is
+  `isUpgraded`, controlling upgraded starter gear; current-build captures
+  contain both 0 and 1. Only the first flag remains unidentified.
 - Account-level reward IDs 232/233 are confirmed by 35 request/response pairs:
   UTF selected-choice slots + int32 account level, then bool success + compressed
   account level + UTF granted description.
@@ -230,7 +232,7 @@ to name:
 - Stats 156/157 correlate with player class/object types but span 9–19 and 0–10.
 - Stat 158 is not “always zero”: 120,935 samples include 0, 3,000, 4,000, 5,000,
   6,000, 7,000, and 10,000 across many entity types.
-- SHOWEFFECT IDs 36–40 and the optional REROLL_ALL_ENCHANTMENTS mode byte need
+- SHOWEFFECT IDs 38–40 and the optional REROLL_ALL_ENCHANTMENTS mode byte need
   controlled captures or authoritative client behavior before semantic naming.
 - Packet 224 remains structurally known as one int32 but semantically unknown;
   the corpus contains one sample.
@@ -262,5 +264,25 @@ tokens.
    stat/BXP/account-level, enchantment, XML fragment, and name-decoration fixes.
 7. Added captured-vector and round-trip tests for every new correction.
 
-Final verification: 143 tests pass, TypeScript compilation succeeds, and a
-post-build replay of the full packet corpus reports zero unresolved frames.
+## July 13 implementation addendum
+
+- Renamed CREATE's final boolean to `isUpgraded` and retained Exalt's default
+  value of true. Fixtures cover a captured false value as well.
+- Generalized `INVRESULT` acknowledgement type 0 from swap-only to inventory
+  mutation (`INVSWAP` or `INVDROP`) and added a captured drop fixture.
+- Corrected notification effect 11 to its progress-bar structure: the message
+  is conditional on `extra & 3`, and the trailing max/value pair is optional.
+  This accepts all 43 formerly failing short notifications.
+- Added the one-int32 `UNLOCK_INFORMATION` packet model and the only confirmed
+  constant, `VAULT = 2`.
+- Named SHOWEFFECT 36/37 for Kensei and added captured DASH/DASH_ACK fixtures.
+- Documented packet 139's provisional Kensei ability-state 256-step pattern
+  without assigning unproven gameplay meaning.
+- Clarified that SHOWEFFECT THROW duration is the physical time until its
+  matching AOE, while effects 38–40 and type 16 remain outside any inferred
+  AOE threat model.
+
+Final verification on July 13: 151 tests pass, TypeScript compilation succeeds,
+and a post-build replay of all 2,271,699 packet records across the 37 corpus
+inputs reports zero unresolved frames. All 36,933 notifications and both raw
+vault-unlock occurrences parse cleanly.
