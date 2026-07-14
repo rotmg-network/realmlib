@@ -86,6 +86,7 @@ describe('packet factory coverage', () => {
   it('constructs mapped but previously unhandled incoming packets', () => {
     expect(createPacket(PacketType.FORGE_UNLOCKED_BLUEPRINTS).type).to.equal(PacketType.FORGE_UNLOCKED_BLUEPRINTS);
     expect(createPacket(PacketType.PROGRESS_UPDATE).type).to.equal(PacketType.PROGRESS_UPDATE);
+    expect(createPacket(PacketType.UNLOCK_INFORMATION).type).to.equal(PacketType.UNLOCK_INFORMATION);
   });
 
   it('constructs all captured reward claim packets', () => {

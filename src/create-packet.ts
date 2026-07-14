@@ -118,6 +118,7 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.REALM_HERO_LEFT_MSG]: () => new IncomingPackets.RealmHeroesLeftPacket(),
   [PacketType.RESET_DAILY_QUESTS]: () => new OutgoingPackets.ResetDailyQuestsPacket(),
   [PacketType.NEW_CHARACTER_INFORMATION]: () => new IncomingPackets.NewCharacterInfoPacket(),
+  [PacketType.UNLOCK_INFORMATION]: () => new IncomingPackets.UnlockInformationPacket(),
   [PacketType.QUEUE_INFORMATION]: () => new IncomingPackets.QueueInfoPacket(),
   [PacketType.QUEUE_CANCEL]: () => new OutgoingPackets.QueueCancelPacket(),
   [PacketType.VAULT_CONTENT]: () => new IncomingPackets.VaultContentPacket(),

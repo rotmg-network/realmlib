@@ -17,3 +17,4 @@ export * from './point';
 export * from './portal-types';
 export * from './stat-type';
 export * from './trade-result';
+export * from './unlock-information';

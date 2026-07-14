@@ -59,6 +59,7 @@ export * from './trade-done-packet';
 export * from './trade-requested-packet';
 export * from './trade-start-packet';
 export * from './update-packet';
+export * from './unlock-information-packet';
 export * from './progress-update-packet';
 export * from './vault-content-packet';
 export * from './verify-email-packet';
