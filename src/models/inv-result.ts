@@ -1,8 +1,8 @@
 /**
  * Semantics of the `INVRESULT` packet, reverse-engineered from captured
- * sessions (see `InvResultPacket`). `INVRESULT` acknowledges *two* client
- * packets, discriminated by its `ackType` byte: `InvSwapPacket` and
- * `UseItemPacket`.
+ * sessions (see `InvResultPacket`). `INVRESULT` acknowledges inventory
+ * mutations and item uses, discriminated by its `ackType` byte. Mutation
+ * acknowledgements cover both `InvSwapPacket` and `InvDropPacket`.
  *
  * Every `ackType = 1` INVRESULT arrived one RTT after a `USEITEM` of the 
  * same item — they are use acknowledgements, not server-initiated inventory corrections.
@@ -12,8 +12,8 @@
  * Which client packet an `InvResultPacket` acknowledges.
  */
 export enum InvResultOrigin {
-  /** Acknowledges the client's `InvSwapPacket`. */
-  SwapAck = 0,
+  /** Acknowledges a client `InvSwapPacket` or `InvDropPacket`. */
+  InventoryMutationAck = 0,
   /**
    * Acknowledges the client's `UseItemPacket`. `toSlot` is always the null
    * slot (objectId 0, objectType 0) regardless of whether the item was

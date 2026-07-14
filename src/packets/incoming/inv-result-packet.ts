@@ -9,9 +9,11 @@ import { Writer } from '../../writer';
  * Received to acknowledge an inventory-affecting client packet. This is
  * **dual-purpose**, discriminated by `ackType`:
  *
- * 1. `ackType = 0`: acknowledges the client's {@link InvSwapPacket} —
- *    `fromSlot`/`toSlot` echo the swap's slots with the items in their new
- *    places.
+ * 1. `ackType = 0`: acknowledges a general inventory mutation. Captures
+ *    prove this is used by both {@link InvSwapPacket} and `InvDropPacket`.
+ *    `fromSlot`/`toSlot` are the server's authoritative resulting slots, so
+ *    consumers should match their identities to a pending mutation rather
+ *    than assuming every type-0 result belongs to a swap.
  * 2. `ackType = 1`: acknowledges the client's `UseItemPacket` — `fromSlot`
  *    is the used item's slot and `toSlot` is always the **null slot**
  *    (objectId 0, objectType 0). The null `toSlot` does **not** mean the item
@@ -34,8 +36,8 @@ export class InvResultPacket implements Packet {
   /** Whether the operation succeeded (true for use acks too). */
   success: boolean;
   /**
-   * Which client packet this acknowledges: 0 = `InvSwapPacket`,
-   * 1 = `UseItemPacket` (see {@link InvResultOrigin} and the class docs).
+   * Which operation this acknowledges: 0 = inventory mutation (`INVSWAP` or
+   * `INVDROP`), 1 = `UseItemPacket` (see {@link InvResultOrigin}).
    */
   ackType: number;
   /** The slot the item moved from (for a use ack, the used item's slot). */
@@ -46,9 +48,10 @@ export class InvResultPacket implements Packet {
    */
   toSlot: SlotObjectData;
   /**
-   * Always 0 on swap acks. On use acks it is a **bitfield** whose meaning is
-   * not yet decoded — crucially it does *not* indicate consumption: the same
-   * ability (e.g. item 2608) is acked with `0x0`, `0x20000`, `0x60000`,
+   * Observed as 0 on swap/drop mutation acks. On use acks it is a **bitfield**
+   * whose meaning is not yet decoded — crucially it does *not* indicate
+   * consumption: the same ability (e.g. item 2608) is acked with `0x0`,
+   * `0x20000`, `0x60000`,
    * `0x100000`, ... on different uses while never leaving its slot, and a
    * consumed potion can carry `0x20000` too. Bits combine
    * (`0x60000 = 0x20000 | 0x40000`). See `InvResultFlags` for the observed
@@ -75,9 +78,14 @@ export class InvResultPacket implements Packet {
     return this.ackType as InvResultOrigin;
   }
 
+  /** Whether this acknowledges an `INVSWAP` or `INVDROP` mutation. */
+  isInventoryMutationAck(): boolean {
+    return this.ackType === InvResultOrigin.InventoryMutationAck;
+  }
+
   /**
    * Whether this acknowledges a `UseItemPacket` rather than an
-   * `InvSwapPacket`.
+   * inventory mutation.
    */
   isUseItemAck(): boolean {
     return this.ackType === InvResultOrigin.UseItemAck;
