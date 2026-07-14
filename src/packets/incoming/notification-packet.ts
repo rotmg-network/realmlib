@@ -3,23 +3,19 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
-/**
- * Received when a notification is received by the player
- */
+/** Received when the server displays a player or UI notification. */
 export class NotificationPacket implements Packet {
 
   readonly type = PacketType.NOTIFICATION;
-  /**
-   *  specifies which type of notification it is
-   */
+  /** Selects the per-effect payload layout. */
   effect: number;
   /**
-   * unknown 
+   * Per-effect flags. For effect 11, bits 0-1 indicate that a leading
+   * progress-bar message is present; captures also contain message-less
+   * progress updates with both bits clear.
    */
   extra: number;
-  /**
-   * The notification message
-   */
+  /** Optional notification/localization message. */
   message: string;
   /**
    * The object id of the entity which the notification is for.
@@ -30,7 +26,7 @@ export class NotificationPacket implements Packet {
    */
   uiExtra: number;
   /**
-   * The position in the Que that you are in.
+   * The player's position in the realm queue.
    */
   queuePos: number;
     /**
@@ -41,25 +37,19 @@ export class NotificationPacket implements Packet {
    * Picture to show for the type of notification
    */
   pictureType: number;
-  /**
-   * I have no idea wtf this is
-   */
+  /** Object id of the player who issued a dungeon call. */
   senderObjectId: number;
-  /**
-   * I have no idea what this is either
-   */
+  /** Star count displayed with a dungeon call. */
   numberOfStars: number;
-  /**
-   * I have no idea wtf this is
-   */
+  /** Effect-11 progress-bar maximum. */
   progressMax: number;
-  /**
-   * I have no idea what this is either
-   */
+  /** Effect-11 progress-bar current value. */
   progressValue: number;
-  /**
-   * I have no idea what this is either
-   */
+  /** Whether effect 11 carried its trailing int32 maximum. */
+  hasProgressMax: boolean;
+  /** Whether effect 11 carried its trailing int16 current value. */
+  hasProgressValue: boolean;
+  /** Effect-13 emote type. */
   emoteType: number;
   /**
    * An int32 carried by effect-18 notifications; echoes the value the client
@@ -81,6 +71,8 @@ export class NotificationPacket implements Packet {
     this.numberOfStars = 0;
     this.progressMax = 0;
     this.progressValue = 0;
+    this.hasProgressMax = false;
+    this.hasProgressValue = false;
     this.emoteType = 0;
     this.unknownInt = 0;
   }
@@ -118,11 +110,22 @@ export class NotificationPacket implements Packet {
       this.message = reader.readString();
       this.senderObjectId = reader.readInt32();
       this.numberOfStars = reader.readShort();
-    } else if (this.effect === 11) { // reverse-engineered from a single sample
-      // e.g. message "Alien Invasion Adept - Boss", pictureType 1, uiExtra 1
-      this.message = reader.readString();
-      this.pictureType = reader.readInt32();
-      this.uiExtra = reader.readShort();
+    } else if (this.effect === 11) { // ProgressBar
+      // `extra & 3` controls only the optional message. Captures include both
+      // full boss labels (extra 0x2a) and message-less updates (extra 0x28).
+      if ((this.extra & 3) !== 0 && reader.remaining >= 2) {
+        this.message = reader.readString();
+      }
+      // Some effect-11 frames are only the effect/extra pair, so preserve the
+      // presence of each trailing field instead of manufacturing zero bytes.
+      if (reader.remaining >= 4) {
+        this.progressMax = reader.readInt32();
+        this.hasProgressMax = true;
+      }
+      if (reader.remaining >= 2) {
+        this.progressValue = reader.readShort();
+        this.hasProgressValue = true;
+      }
     } else if (this.effect === 13) { // Emote
       this.objectId = reader.readInt32();
       this.emoteType = reader.readInt32();
@@ -167,10 +170,16 @@ export class NotificationPacket implements Packet {
       writer.writeString(this.message);
       writer.writeInt32(this.senderObjectId);
       writer.writeShort(this.numberOfStars);
-    } else if (this.effect === 11) { // reverse-engineered from a single sample
-      writer.writeString(this.message);
-      writer.writeInt32(this.pictureType);
-      writer.writeShort(this.uiExtra);
+    } else if (this.effect === 11) { // ProgressBar
+      if ((this.extra & 3) !== 0) {
+        writer.writeString(this.message);
+      }
+      if (this.hasProgressMax || this.progressMax !== 0) {
+        writer.writeInt32(this.progressMax);
+      }
+      if (this.hasProgressValue || this.progressValue !== 0) {
+        writer.writeShort(this.progressValue);
+      }
     } else if (this.effect === 13) { // Emote
       writer.writeInt32(this.objectId);
       writer.writeInt32(this.emoteType);
