@@ -5,7 +5,9 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to acknowledge an `AoePacket`.
+ * Sent to acknowledge an `AoePacket`. Captured Exalt traffic has a one-to-one
+ * invariant: every parsed AOE receives exactly one acknowledgement, including
+ * damage events that immediately cause a nexus/escape decision.
  */
 export class AoeAckPacket implements Packet {
 

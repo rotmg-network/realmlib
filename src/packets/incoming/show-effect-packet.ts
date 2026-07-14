@@ -32,7 +32,9 @@ export class ShowEffectPacket implements Packet {
    */
   color: number;
   /**
-   * The duration of the effect
+   * The duration of the effect in seconds. For `VisualEffect.THROW`, captures
+   * show that the matching AOE lands after this wire duration; callers should
+   * not add an extra display/retention interval to the physical impact time.
    */
   duration: number;
 
