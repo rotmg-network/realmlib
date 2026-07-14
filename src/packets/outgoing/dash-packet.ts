@@ -4,14 +4,16 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Confirms a Kensei dash to specific coordinates.
+ * Starts a Kensei dash along the supplied world-space segment. Captured
+ * clients send this after the equipped ability's channel time, then send one
+ * {@link DashAckPacket} when local travel is complete.
  */
 export class DashPacket implements Packet {
 
   readonly type = PacketType.DASH;
 
   //#region packet-specific members
-  /** The current client time. */
+  /** Client time at dash start, in milliseconds. */
   time: number;
   /** World position the dash started from. */
   startX: number;

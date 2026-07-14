@@ -4,14 +4,15 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Acknowledges a dash. Carries only the current client time.
+ * Acknowledges completion of a Kensei dash. Captures show one acknowledgement
+ * per {@link DashPacket}, sent after the local distance/speed travel time.
  */
 export class DashAckPacket implements Packet {
 
   readonly type = PacketType.DASH_ACK;
 
   //#region packet-specific members
-  /** The current client time. */
+  /** Client time at local dash completion, in milliseconds. */
   time: number;
   //#endregion
 
