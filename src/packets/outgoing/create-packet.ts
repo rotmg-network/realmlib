@@ -33,10 +33,11 @@ export class CreatePacket implements Packet {
    */
   isSeasonal: boolean;
   /**
-   * Final flag byte. All current captures send 1, so its meaning is unknown.
-   * It remains numeric rather than boolean to preserve any future raw value.
+   * Whether the character is created with its upgraded starter equipment.
+   * Exalt sends this as `true` by default, but current-build captures contain
+   * both `0` and `1`, including the same class with each value.
    */
-  unknownFlag2: number;
+  isUpgraded: boolean;
   //#endregion
 
   constructor() {
@@ -44,7 +45,7 @@ export class CreatePacket implements Packet {
     this.skinType = 0;
     this.unknownFlag = false;
     this.isSeasonal = false;
-    this.unknownFlag2 = 0;
+    this.isUpgraded = true;
   }
 
   write(writer: Writer): void {
@@ -52,7 +53,7 @@ export class CreatePacket implements Packet {
     writer.writeShort(this.skinType);
     writer.writeBoolean(this.unknownFlag);
     writer.writeBoolean(this.isSeasonal);
-    writer.writeByte(this.unknownFlag2);
+    writer.writeBoolean(this.isUpgraded);
   }
 
   read(reader: Reader): void {
@@ -60,6 +61,6 @@ export class CreatePacket implements Packet {
     this.skinType = reader.readShort();
     this.unknownFlag = reader.readBoolean();
     this.isSeasonal = reader.readBoolean();
-    this.unknownFlag2 = reader.readByte();
+    this.isUpgraded = reader.readBoolean();
   }
 }
