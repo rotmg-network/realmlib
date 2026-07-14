@@ -53,6 +53,11 @@ import {
   EmotePacket,
   StatsPacket,
   InvResultPacket,
+  DashPacket,
+  DashAckPacket,
+  UnlockInformationPacket,
+  UnlockInformationType,
+  VisualEffect,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the given hex bytes. */
@@ -360,7 +365,7 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.petId).to.equal(123456);
   });
 
-  it('NotificationPacket effect 11 consumes message + int + short (no leftover)', () => {
+  it('NotificationPacket effect 11 consumes message + progress values', () => {
     const reader = hexReader(
       '0b2a001b416c69656e20496e766173696f6e204164657074202d20426f7373000000010001',
     );
@@ -368,8 +373,10 @@ describe('current-build packets reconciled from captured bytes', () => {
     p.read(reader);
     expect(p.effect).to.equal(11);
     expect(p.message).to.equal('Alien Invasion Adept - Boss');
-    expect(p.pictureType).to.equal(1);
-    expect(p.uiExtra).to.equal(1);
+    expect(p.progressMax).to.equal(1);
+    expect(p.progressValue).to.equal(1);
+    expect(p.hasProgressMax).to.equal(true);
+    expect(p.hasProgressValue).to.equal(true);
     expect(reader.remaining).to.equal(0);
   });
 
@@ -378,13 +385,40 @@ describe('current-build packets reconciled from captured bytes', () => {
     p.effect = 11;
     p.extra = 42;
     p.message = 'Boss';
-    p.pictureType = 3;
-    p.uiExtra = 5;
+    p.progressMax = 3;
+    p.progressValue = 5;
     const out = roundTrip(p, new NotificationPacket());
     expect(out.effect).to.equal(11);
     expect(out.message).to.equal('Boss');
-    expect(out.pictureType).to.equal(3);
-    expect(out.uiExtra).to.equal(5);
+    expect(out.progressMax).to.equal(3);
+    expect(out.progressValue).to.equal(5);
+  });
+
+  it('NotificationPacket effect 11 reads a message-less progress update', () => {
+    // extra 0x28 has neither low message bit, followed by max=10/current=4.
+    const hex = '0b280000000a0004';
+    const reader = hexReader(hex);
+    const p = new NotificationPacket();
+    p.read(reader);
+    expect(p.message).to.equal('');
+    expect(p.progressMax).to.equal(10);
+    expect(p.progressValue).to.equal(4);
+    expect(reader.remaining).to.equal(0);
+    const writer = new Writer(); p.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
+  });
+
+  it('NotificationPacket effect 11 accepts an empty payload', () => {
+    const hex = '0b00';
+    const reader = hexReader(hex);
+    const p = new NotificationPacket();
+    p.read(reader);
+    expect(p.message).to.equal('');
+    expect(p.hasProgressMax).to.equal(false);
+    expect(p.hasProgressValue).to.equal(false);
+    expect(reader.remaining).to.equal(0);
+    const writer = new Writer(); p.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
   });
 
   it('RealmScoreUpdatePacket reads a single int32 (no leftover)', () => {
@@ -751,13 +785,15 @@ describe('current-build packets reconciled from captured bytes', () => {
   it('CreatePacket distinguishes confirmed seasonal and non-seasonal flags', () => {
     const vectors = [
       // Rogue, default skin => returned <Seasonal>False</Seasonal>, Texture 0.
-      { hex: '03000000000001', classType: 0x0300, skinType: 0, seasonal: false },
+      { hex: '03000000000001', classType: 0x0300, skinType: 0, seasonal: false, upgraded: true },
       // Rogue, default skin => returned <Seasonal>True</Seasonal>, Texture 0.
-      { hex: '03000000000101', classType: 0x0300, skinType: 0, seasonal: true },
+      { hex: '03000000000101', classType: 0x0300, skinType: 0, seasonal: true, upgraded: true },
       // Wizard, custom skin => returned Seasonal false, Texture 30942 (0x78de).
-      { hex: '030e78de000001', classType: 0x030e, skinType: 0x78de, seasonal: false },
+      { hex: '030e78de000001', classType: 0x030e, skinType: 0x78de, seasonal: false, upgraded: true },
       // Same class/skin with only flag1 changed => Seasonal true.
-      { hex: '030e78de000101', classType: 0x030e, skinType: 0x78de, seasonal: true },
+      { hex: '030e78de000101', classType: 0x030e, skinType: 0x78de, seasonal: true, upgraded: true },
+      // Current-build capture with starter gear disabled.
+      { hex: '03240000000100', classType: 0x0324, skinType: 0, seasonal: true, upgraded: false },
     ];
 
     for (const vector of vectors) {
@@ -768,7 +804,7 @@ describe('current-build packets reconciled from captured bytes', () => {
       expect(packet.skinType).to.equal(vector.skinType);
       expect(packet.unknownFlag).to.equal(false);
       expect(packet.isSeasonal).to.equal(vector.seasonal);
-      expect(packet.unknownFlag2).to.equal(1);
+      expect(packet.isUpgraded).to.equal(vector.upgraded);
       expect(reader.remaining).to.equal(0);
       const writer = new Writer();
       packet.write(writer);
@@ -814,19 +850,20 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('00001432000ab8d501');
   });
 
-  it('StatsPacket (id 139) reads compressed id + two int32 (no leftover)', () => {
-    const reader = hexReader('a395180000000000000000');
+  it('StatsPacket (id 139) exposes the captured Kensei 256-step pattern', () => {
+    const reader = hexReader('8fc0200000020000000000');
     const p = new StatsPacket();
     p.read(reader);
-    expect(p.objectId).to.equal(197987);
-    expect(p.unknownInt1).to.equal(0);
+    expect(p.objectId).to.equal(266255);
+    expect(p.unknownInt1).to.equal(512);
+    expect(p.abilityStateUnits).to.equal(2);
     expect(p.unknownInt2).to.equal(0);
     expect(reader.remaining).to.equal(0);
     const w = new Writer(); p.write(w);
-    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('a395180000000000000000');
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('8fc0200000020000000000');
   });
 
-  it('InvResultPacket: a swap acknowledgement (ackType 0)', () => {
+  it('InvResultPacket: an inventory mutation acknowledgement (ackType 0)', () => {
     // Captured S->C ack of a client swap: item 2991 into obj 55602 slot 4.
     const hex = '01000000d93300000000ffffffff0000d9320000000400000baf0000000000000000';
     const reader = hexReader(hex);
@@ -834,6 +871,7 @@ describe('current-build packets reconciled from captured bytes', () => {
     p.read(reader);
     expect(p.success).to.equal(true);
     expect(p.ackType).to.equal(0);
+    expect(p.isInventoryMutationAck()).to.equal(true);
     expect(p.fromSlot.objectId).to.equal(55603);
     expect(p.toSlot.objectId).to.equal(55602);
     expect(p.toSlot.objectType).to.equal(2991);
@@ -843,10 +881,28 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
   });
 
+  it('InvResultPacket: INVDROP also receives a type-0 mutation ack', () => {
+    // Dropping item 2743 from player 585 slot 4 created bag object 594. The
+    // authoritative source and destination slots are returned with ackType 0.
+    const hex = '01000000024900000004ffffffff0000025200000000ffffffff0000000000000000';
+    const reader = hexReader(hex);
+    const p = new InvResultPacket();
+    p.read(reader);
+    expect(p.success).to.equal(true);
+    expect(p.isInventoryMutationAck()).to.equal(true);
+    expect(p.fromSlot.objectId).to.equal(585);
+    expect(p.fromSlot.slotId).to.equal(4);
+    expect(p.fromSlot.objectType).to.equal(-1);
+    expect(p.toSlot.objectId).to.equal(594);
+    expect(p.toSlot.slotId).to.equal(0);
+    expect(p.toSlot.objectType).to.equal(-1);
+    expect(reader.remaining).to.equal(0);
+  });
+
   it('InvResultPacket: a use acknowledgement (ackType 1, flags 0x1000)', () => {
     // Captured S->C ack of a USEITEM: the Rogue cloak (item 2648, obj 1194
-    // slot 1) was activated. toSlot is the null slot but flags != 0 marks the
-    // use as non-consuming — the cloak stays equipped.
+    // slot 1) was activated. The null toSlot and opaque flags do not say
+    // whether an item was consumed; inventory stats are authoritative.
     const hex = '0101000004aa0000000100000a580000000000000000000000000000100000000000';
     const reader = hexReader(hex);
     const p = new InvResultPacket();
@@ -855,10 +911,44 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.ackType).to.equal(1);
     expect(p.fromSlot.objectId).to.equal(1194);
     expect(p.fromSlot.objectType).to.equal(2648);
-    expect(p.toSlot.objectId).to.equal(0); // null slot: "item left the slot"
-    expect(p.flags).to.equal(0x1000); // ...but non-consuming, so it didn't
+    expect(p.toSlot.objectId).to.equal(0);
+    expect(p.flags).to.equal(0x1000);
     expect(reader.remaining).to.equal(0);
     const w = new Writer(); p.write(w);
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
+  });
+
+  it('decodes the captured vault unlock information', () => {
+    const reader = hexReader('00000002');
+    const p = new UnlockInformationPacket();
+    p.read(reader);
+    expect(p.unlockType).to.equal(UnlockInformationType.VAULT);
+    expect(reader.remaining).to.equal(0);
+    const writer = new Writer(); p.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal('00000002');
+  });
+
+  it('round-trips captured Kensei DASH and DASH_ACK vectors', () => {
+    const dashHex = '0007ea7d42c6aca3430358c542cb1d1b430004e6';
+    const dashReader = hexReader(dashHex);
+    const dash = new DashPacket();
+    dash.read(dashReader);
+    expect(dash.time).to.equal(518781);
+    expect(dashReader.remaining).to.equal(0);
+    const dashWriter = new Writer(); dash.write(dashWriter);
+    expect(dashWriter.buffer.subarray(0, dashWriter.index).toString('hex')).to.equal(dashHex);
+
+    const ackHex = '0007eaca';
+    const ackReader = hexReader(ackHex);
+    const ack = new DashAckPacket();
+    ack.read(ackReader);
+    expect(ack.time).to.equal(518858);
+    expect(ack.time - dash.time).to.equal(77);
+    expect(ackReader.remaining).to.equal(0);
+  });
+
+  it('names the confirmed Kensei SHOWEFFECT values', () => {
+    expect(VisualEffect.KENSEI_DASH_TRAIL).to.equal(36);
+    expect(VisualEffect.KENSEI_CHANNEL_DASH).to.equal(37);
   });
 });
