@@ -83,7 +83,8 @@ export enum StatType {
    * Base64url blob data. On players this is a comma-separated equipment
    * enchantment list using `00 02 <count>` blobs. Pets can carry a distinct
    * version-1 format in the same stat, so consumers must inspect the parsed
-   * format before using enchantment IDs. See `parseEnchantments()`.
+   * format before using enchantment IDs. See `parseEnchantments()`, or
+   * `parseEnchantmentSlots()` when array positions must match inventory slots.
    */
   ENCHANTMENTS_STAT = 80,
   PET_INSTANCEID_STAT = 81,

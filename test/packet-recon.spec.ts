@@ -539,40 +539,52 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.unknownInt).to.equal(2);
   });
 
-  it('RerollAllEnchantmentsPacket reads byte/short/short/byte (no leftover)', () => {
-    const reader = hexReader('010003ffff00');
-    const p = new RerollAllEnchantmentsPacket();
-    p.read(reader);
-    expect(p.unknownByte).to.equal(1);
-    expect(p.itemSlotId).to.equal(3);
-    expect(p.unknownShort2).to.equal(-1);
-    expect(p.unknownByte2).to.equal(0);
-    expect(reader.remaining).to.equal(0);
-  });
+  it('RerollAllEnchantmentsPacket reads and round trips counted lock lists', () => {
+    const captures = [
+      {
+        hex: '000001000b00',
+        artifactMode: 0,
+        equipmentSlotId: 1,
+        artifactInventorySlot: 11,
+        lockedSlotIndices: [],
+      },
+      {
+        hex: '000001000b0101',
+        artifactMode: 0,
+        equipmentSlotId: 1,
+        artifactInventorySlot: 11,
+        lockedSlotIndices: [1],
+      },
+      {
+        hex: '000001000b020001',
+        artifactMode: 0,
+        equipmentSlotId: 1,
+        artifactInventorySlot: 11,
+        lockedSlotIndices: [0, 1],
+      },
+      {
+        hex: '010001ffff020001',
+        artifactMode: 1,
+        equipmentSlotId: 1,
+        artifactInventorySlot: -1,
+        lockedSlotIndices: [0, 1],
+      },
+    ];
 
-  it('RerollAllEnchantmentsPacket round trips', () => {
-    const p = new RerollAllEnchantmentsPacket();
-    p.unknownByte = 1;
-    p.itemSlotId = 3;
-    p.unknownShort2 = -1;
-    p.unknownByte2 = 0;
-    const out = roundTrip(p, new RerollAllEnchantmentsPacket());
-    expect(out.unknownByte).to.equal(1);
-    expect(out.itemSlotId).to.equal(3);
-    expect(out.unknownShort2).to.equal(-1);
-    expect(out.unknownByte2).to.equal(0);
-  });
+    for (const capture of captures) {
+      const reader = hexReader(capture.hex);
+      const packet = new RerollAllEnchantmentsPacket();
+      packet.read(reader);
+      expect(packet.artifactMode).to.equal(capture.artifactMode);
+      expect(packet.equipmentSlotId).to.equal(capture.equipmentSlotId);
+      expect(packet.artifactInventorySlot).to.equal(capture.artifactInventorySlot);
+      expect(packet.lockedSlotIndices).to.deep.equal(capture.lockedSlotIndices);
+      expect(reader.remaining).to.equal(0);
 
-  it('RerollAllEnchantmentsPacket reads its optional mode byte', () => {
-    const reader = hexReader('010008ffff0100');
-    const p = new RerollAllEnchantmentsPacket();
-    p.read(reader);
-    expect(p.optionalByte).to.equal(1);
-    expect(p.unknownByte2).to.equal(0);
-    expect(reader.remaining).to.equal(0);
-    const writer = new Writer();
-    p.write(writer);
-    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal('010008ffff0100');
+      const writer = new Writer();
+      packet.write(writer);
+      expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(capture.hex);
+    }
   });
 
   it('EnchantPacket reads a single success byte (no leftover)', () => {

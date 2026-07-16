@@ -20,9 +20,9 @@ export type EnchantmentBlobFormat = 'equipment-v2' | 'unknown';
 export interface SlotEnchantments {
   /** Zero-based equipment slot index (position in the CSV). */
   slot: number;
-  /** The raw base64url blob for this slot (may be empty string). */
+  /** The non-blank raw base64url blob for this slot. */
   raw: string;
-  /** The base64url-decoded bytes, or an empty buffer if `raw` is blank. */
+  /** The base64url-decoded bytes. */
   bytes: Buffer;
   /** First three decoded bytes, or the entire blob when shorter than three. */
   header: Buffer;
@@ -52,6 +52,53 @@ function decodeBlob(raw: string): Buffer {
   return Buffer.from(padded, 'base64');
 }
 
+/** Parses one non-blank CSV field while retaining its original slot index. */
+function parseEnchantmentBlob(raw: string, slot: number): SlotEnchantments {
+  const bytes = decodeBlob(raw);
+  const version = bytes.length >= 2 ? bytes[1] : undefined;
+  const declaredCount = bytes.length >= 3 ? bytes[2] : undefined;
+  const requiredLength = declaredCount === undefined ? Infinity : 3 + declaredCount * 2;
+  const recognized = bytes.length >= 3 && bytes[0] === 0 && version === 2 && bytes.length >= requiredLength;
+  const slotCount = recognized ? declaredCount : undefined;
+  const enchantmentTypeIds: number[] = [];
+  if (recognized) {
+    for (let offset = 3, i = 0; i < slotCount!; i++, offset += 2) {
+      const id = bytes.readUInt16LE(offset);
+      if (id !== 0xfffd) enchantmentTypeIds.push(id);
+    }
+  }
+  const suffix = recognized ? bytes.subarray(requiredLength) : Buffer.alloc(0);
+  return {
+    slot,
+    raw,
+    bytes,
+    header: bytes.subarray(0, Math.min(3, bytes.length)),
+    version,
+    format: recognized ? 'equipment-v2' : 'unknown',
+    isEmpty: recognized ? enchantmentTypeIds.length === 0 : undefined,
+    slotCount,
+    enchantmentTypeIds,
+    suffix,
+  };
+}
+
+/**
+ * Parses stat 80 without collapsing its comma-separated slot positions.
+ * Blank fields are returned as `undefined`, so a caller may safely use the
+ * result's array index as the equipment/inventory slot index. Returns [] for
+ * an empty or missing value.
+ */
+export function parseEnchantmentSlots(
+  value: string | undefined,
+): Array<SlotEnchantments | undefined> {
+  if (!value) {
+    return [];
+  }
+  return value.split(',').map((raw, slot) => (
+    raw.length > 0 ? parseEnchantmentBlob(raw, slot) : undefined
+  ));
+}
+
 /**
  * Parses a stat-80 string into per-entry blobs. Blank CSV fields are skipped.
  * Only a complete `00 02 <count>` blob is decoded as equipment enchantments;
@@ -59,42 +106,7 @@ function decodeBlob(raw: string): Buffer {
  * but return no enchantment IDs. Returns [] for an empty or missing value.
  */
 export function parseEnchantments(value: string | undefined): SlotEnchantments[] {
-  if (!value) {
-    return [];
-  }
-  const result: SlotEnchantments[] = [];
-  const parts = value.split(',');
-  for (let slot = 0; slot < parts.length; slot++) {
-    const raw = parts[slot];
-    if (raw.length === 0) {
-      continue; // trailing empty slots
-    }
-    const bytes = decodeBlob(raw);
-    const version = bytes.length >= 2 ? bytes[1] : undefined;
-    const declaredCount = bytes.length >= 3 ? bytes[2] : undefined;
-    const requiredLength = declaredCount === undefined ? Infinity : 3 + declaredCount * 2;
-    const recognized = bytes.length >= 3 && bytes[0] === 0 && version === 2 && bytes.length >= requiredLength;
-    const slotCount = recognized ? declaredCount : undefined;
-    const enchantmentTypeIds: number[] = [];
-    if (recognized) {
-      for (let offset = 3, i = 0; i < slotCount!; i++, offset += 2) {
-        const id = bytes.readUInt16LE(offset);
-        if (id !== 0xfffd) enchantmentTypeIds.push(id);
-      }
-    }
-    const suffix = recognized ? bytes.subarray(requiredLength) : Buffer.alloc(0);
-    result.push({
-      slot,
-      raw,
-      bytes,
-      header: bytes.subarray(0, Math.min(3, bytes.length)),
-      version,
-      format: recognized ? 'equipment-v2' : 'unknown',
-      isEmpty: recognized ? enchantmentTypeIds.length === 0 : undefined,
-      slotCount,
-      enchantmentTypeIds,
-      suffix,
-    });
-  }
-  return result;
+  return parseEnchantmentSlots(value).filter(
+    (entry): entry is SlotEnchantments => entry !== undefined,
+  );
 }

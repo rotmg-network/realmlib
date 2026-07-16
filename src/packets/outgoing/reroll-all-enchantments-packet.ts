@@ -4,14 +4,13 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to reroll all enchantments on an item. The server acknowledges with an
- * `EnchantPacket` (success) followed by a `VAULT_CONTENT` refresh, all in the
- * same tick.
+ * Sent to reroll an item's enchantments. The server acknowledges with an
+ * `EnchantPacket`, then publishes the resulting enchantments in stat 80 on a
+ * subsequent `NewTickPacket`.
  *
- * Captured samples: `01 0003 ffff 00` and `01 0000 ffff 00`. The first short
- * therefore varies (3 and 0) — likely the target item's slot/container id —
- * while the leading byte (1), the second short (-1) and the trailing byte (0)
- * are constant. Field meanings still unconfirmed.
+ * Current-build layout (confirmed across 124 Exalt 6.12 requests):
+ * `artifactMode:u8, equipmentSlotId:u16, artifactInventorySlot:i16,
+ * lockedSlotCount:u8, lockedSlotIndices:u8[count]`.
  */
 export class RerollAllEnchantmentsPacket implements Packet {
 
@@ -19,46 +18,52 @@ export class RerollAllEnchantmentsPacket implements Packet {
 
   //#region packet-specific members
   /**
-   * A leading byte (observed as 1). Purpose not yet confirmed.
+   * Selects the artifact source. Observed as `0` when an inventory artifact is
+   * supplied and `1` when {@link artifactInventorySlot} is `-1`. The official
+   * enum names are not yet known.
    */
-  unknownByte: number;
+  artifactMode: number;
   /**
-   * Slot ID of the item being rerolled.
+   * Equipment/inventory slot whose stat-80 entry is rerolled.
    */
-  itemSlotId: number;
+  equipmentSlotId: number;
   /**
-   * A second short (observed as -1). Purpose not yet confirmed.
+   * Inventory slot containing the artifact card, or `-1` when no artifact is
+   * supplied.
    */
-  unknownShort2: number;
+  artifactInventorySlot: number;
   /**
-   * A trailing byte (observed as 0). Purpose not yet confirmed.
+   * Zero-based enchantment-slot indices which the server must preserve while
+   * rerolling the other positions.
    */
-  unknownByte2: number;
-  /** Optional byte observed before the final byte for one reroll mode. */
-  optionalByte: number | undefined;
+  lockedSlotIndices: number[];
   //#endregion
 
   constructor() {
-    this.unknownByte = 0;
-    this.itemSlotId = 0;
-    this.unknownShort2 = 0;
-    this.unknownByte2 = 0;
-    this.optionalByte = undefined;
+    this.artifactMode = 0;
+    this.equipmentSlotId = 0;
+    this.artifactInventorySlot = -1;
+    this.lockedSlotIndices = [];
   }
 
   read(reader: Reader): void {
-    this.unknownByte = reader.readByte();
-    this.itemSlotId = reader.readShort();
-    this.unknownShort2 = reader.readShort();
-    if (reader.remaining > 1) this.optionalByte = reader.readByte();
-    this.unknownByte2 = reader.readByte();
+    this.artifactMode = reader.readUnsignedByte();
+    this.equipmentSlotId = reader.readUnsignedShort();
+    this.artifactInventorySlot = reader.readShort();
+    const lockedSlotCount = reader.readUnsignedByte();
+    this.lockedSlotIndices = new Array<number>(lockedSlotCount);
+    for (let i = 0; i < lockedSlotCount; i++) {
+      this.lockedSlotIndices[i] = reader.readUnsignedByte();
+    }
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.unknownByte);
-    writer.writeShort(this.itemSlotId);
-    writer.writeShort(this.unknownShort2);
-    if (this.optionalByte !== undefined) writer.writeByte(this.optionalByte);
-    writer.writeByte(this.unknownByte2);
+    writer.writeUnsignedByte(this.artifactMode);
+    writer.writeUnsignedShort(this.equipmentSlotId);
+    writer.writeShort(this.artifactInventorySlot);
+    writer.writeUnsignedByte(this.lockedSlotIndices.length);
+    for (const lockedSlotIndex of this.lockedSlotIndices) {
+      writer.writeUnsignedByte(lockedSlotIndex);
+    }
   }
 }

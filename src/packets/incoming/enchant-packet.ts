@@ -10,8 +10,8 @@ import { Writer } from '../../writer';
  *
  * Observed chain (all within the same server tick):
  * `REROLL_ALL_ENCHANTMENTS (C->S)` → `ENCHANT (S->C, success)` →
- * `VAULT_CONTENT (S->C, refresh)`. The client learns the new enchantments
- * from the VAULT_CONTENT that follows, not from this packet.
+ * `NEWTICK (S->C, stat 80 update)`. The client learns the new enchantments
+ * from the stat update that follows, not from this packet.
  */
 export class EnchantPacket implements Packet {
 
