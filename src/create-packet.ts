@@ -129,6 +129,7 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.FORGE_RESULT]: () => new IncomingPackets.ForgeResultPacket(),
   [PacketType.CHANGE_ALLY_SHOOT]: () => new OutgoingPackets.ChangeAllyShootPacket(),
   [PacketType.CONVERT_SEASONAL_CHARACTER]: () => new OutgoingPackets.ConvertSeasonalCharacterPacket(),
+  [PacketType.SET_ABILITY]: () => new OutgoingPackets.SetAbilityPacket(),
   [PacketType.GET_PLAYERS_LIST_MESSAGE]: () => new OutgoingPackets.GetPlayersListPacket(),
   [PacketType.MODERATOR_ACTION_MESSAGE]: () => new OutgoingPackets.ModeratorActionMessagePacket(),
   [PacketType.CREEP_MOVE_MESSAGE]: () => new OutgoingPackets.CreepMoveMessagePacket(),

@@ -59,6 +59,7 @@ export * from './reskin-packet';
 export * from './retitle-packet';
 export * from './claim-chest-reward-packet';
 export * from './select-entrance-packet';
+export * from './set-ability-packet';
 export * from './set-condition-packet';
 export * from './shootack-packet';
 export * from './unknown-224-packet';
