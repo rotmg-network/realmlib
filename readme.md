@@ -5,7 +5,7 @@ framing, RC4 encryption, and binary read/write for the game's packets, so
 clientless apps, MITM proxies, and packet sniffers do not need to reimplement
 the protocol.
 
-realmlib is updated for **game build 6.11**
+realmlib is updated for **game build 6.12.0.2.0**
 
 ## Install
 
