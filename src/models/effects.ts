@@ -147,6 +147,9 @@ export enum ConditionEffectBits2 {
 
 /**
  * The ID values of all visual/particle effects in the game
+ * 
+ *  "assembly": "Assembly-CSharp",
+ *      "name": "PEHBMICMEDO",
  */
 export enum VisualEffect {
   UNKNOWN = 0,
@@ -183,21 +186,26 @@ export enum VisualEffect {
   STATUS_FLASH = 31,
   FIRE_ORB_BUFF = 32,
   OVERLAY = 33,
-  UNKNOWN_34 = 34,
-  SUMMONER_MAGIC_CIRCLE = 35,
+  /** Summoner objects and effects */
+  SUMMONER_EFFECT = 35,
   /** Kensei dash trail from the dash start to its end position. */
   KENSEI_DASH_TRAIL = 36,
   /** Kensei channel-dash activation, emitted once when the ability is armed. */
   KENSEI_CHANNEL_DASH = 37,
   // Effects 38-40 remain visual-only and semantically unconfirmed. In
   // particular, current captures do not correlate them with AOE landings.
-  UNKNOWN_38 = 38,
-  UNKNOWN_39 = 39,
-  UNKNOWN_40 = 40
+  ATTACK = 38,
+  AOE = 39,
+  // Unknown yet
+  SHOCK_BLAST = 40
 }
 
 /**
  * The types of particle effects that exist in the game
+ * 
+ * Found in 
+ *    "assembly": "Assembly-CSharp"
+      "name": "IKOJFKLPJDL"
  */
 export enum ParticleEffect {
   CircleParticle = 0,
@@ -232,5 +240,6 @@ export enum ParticleEffect {
   SmokeCloudParticle = 29,
   NoteParticle = 30,
   LaserParticle = 31,
-  SummonerRingParticle = 32
+  SummonerParticle = 32,
+  SummonerSpriteParticle = 33
 }
