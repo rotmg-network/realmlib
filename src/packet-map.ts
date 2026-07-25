@@ -200,6 +200,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   234: PacketType.CLAIM_REWARD,
   235: PacketType.CLAIM_REWARD_RESULT,
   237: PacketType.CLAIM_DAILY_ITEM,
+  238: PacketType.GIFT_NOTIFICATION,
   239: PacketType.CLAIM_REWARDS_INFO_REQUEST,
   1000: PacketType.IP_ADDRESS,
 };
