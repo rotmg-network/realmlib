@@ -1,3 +1,18 @@
+
+/**
+ * The type of dust mapped to ID
+ *  "assembly": "Assembly-CSharp",
+ *    "name": "PECLBJPGJOD",
+ */
+export enum DustType {
+  None = 0,
+  GreenDust = 1,
+  NlueDust = 2,
+  YellowDust = 3,
+  PurpleDust = 4,
+  RedDust = 5
+}
+
 /**
  * An objects in-game properties used when forging or dismantling
  */
