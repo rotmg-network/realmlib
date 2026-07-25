@@ -1,7 +1,7 @@
 /**
  * Container types that items can be stored in
  */
-export enum ContainerType {
+export enum PanelType {
     None = 0,
     Map = 1,
     Equipment = 2,
@@ -9,7 +9,10 @@ export enum ContainerType {
     Backpack = 4,
     Quickslot = 5,
     VaultPanel = 6,
-    PotionPanel = 7
+    PotionPanel = 7,
+    ExtraBackpack = 8,
+    Pet = 9,
+    ForgeVaultPanel = 10
 }
 
 /**
