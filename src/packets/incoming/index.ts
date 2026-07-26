@@ -71,3 +71,5 @@ export * from './party-action-packet';
 export * from './party-join-request-response-packet';
 export * from './party-list-packet';
 export * from './party-member-added-packet';
+export * from './upgrade-enchanter-packet';
+export * from './unknown181-packet';
