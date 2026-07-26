@@ -22,5 +22,7 @@ export enum VaultType {
     None = 0,
     Vault = 1,
     Gift = 2,
-    Potions = 3
+    Potions = 3,
+    TemporaryGift = 4,
+    Forge = 5
 }
