@@ -129,6 +129,18 @@ export class NotificationPacket implements Packet {
     } else if (this.effect === 13) { // Emote
       this.objectId = reader.readInt32();
       this.emoteType = reader.readInt32();
+    } else if (this.effect === 17) { // PurchaseResult
+      // Receipt for a purchase request (packet 223). The string is an XML
+      // document, e.g.
+      //   <Success><ItemsInventory>31597</ItemsInventory><Credits>0</Credits>
+      //   <Fame>777</Fame><Recipient>OpJokrrr</Recipient>
+      //   <CampaignProgress>...</CampaignProgress></Success>
+      // followed by a trailing short. Confirmed from the 2026-07-26 proxy
+      // capture, where the absence of this branch abandoned 239 of 241 bytes.
+      this.message = reader.readString();
+      if (reader.remaining >= 2) {
+        this.uiExtra = reader.readShort();
+      }
     } else if (this.effect === 18) { // reverse-engineered from a single sample
       // int32 echoes the value sent in the preceding packet 224.
       this.unknownInt = reader.readInt32();
@@ -183,6 +195,9 @@ export class NotificationPacket implements Packet {
     } else if (this.effect === 13) { // Emote
       writer.writeInt32(this.objectId);
       writer.writeInt32(this.emoteType);
+    } else if (this.effect === 17) { // PurchaseResult
+      writer.writeString(this.message);
+      writer.writeShort(this.uiExtra);
     } else if (this.effect === 18) { // reverse-engineered from a single sample
       writer.writeInt32(this.unknownInt);
       writer.writeShort(this.uiExtra);
