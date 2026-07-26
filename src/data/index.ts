@@ -9,3 +9,5 @@ export * from './slot-object-data';
 export * from './stat-data';
 export * from './trade-item';
 export * from './world-pos-data';
+export * from './party-info-data';
+export * from './party-player-data';
