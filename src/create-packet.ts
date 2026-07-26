@@ -148,6 +148,7 @@ const PACKET_FACTORIES: { [key in PacketType]?: PacketFactory } = {
   [PacketType.PARTY_REQUEST_RESPONSE]: () => new IncomingPackets.PartyJoinRequestResponsePacket(),
   [PacketType.PARTY_LIST_MESSAGE]: () => new IncomingPackets.PartyListPacket(),
   [PacketType.PARTY_MEMBER_ADDED]: () => new IncomingPackets.PartyMemberAddedPacket(),
+  [PacketType.PURCHASE_REQUEST]: () => new OutgoingPackets.PurchaseRequestPacket(),
   [PacketType.CREATE_PARTY_MESSAGE]: () => new OutgoingPackets.CreatePartyPacket(),
   [PacketType.PARTY_ACTION_RESULT]: () => new OutgoingPackets.PartyActionResultPacket(),
   [PacketType.PARTY_INVITE_RESPONSE]: () => new OutgoingPackets.PartyInviteResponsePacket(),

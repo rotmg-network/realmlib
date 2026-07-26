@@ -194,6 +194,7 @@ const ID_TO_TYPE: { [id: number]: PacketType } = {
   219: PacketType.REDEEM_VOUCHER,
   220: PacketType.VOUCHER_RESULT,
   222: PacketType.LOADING_SCREEN,
+  223: PacketType.PURCHASE_REQUEST,
   224: PacketType.UNKNOWN224,
   232: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD,
   233: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT,
