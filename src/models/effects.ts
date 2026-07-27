@@ -1,7 +1,12 @@
 /**
- * The ID values of all condition effects in the game
+ * The ID values of all condition effects in the game.
+ *
+ * NOTE: this was `declare enum` until 2026-07-28, which meant TypeScript
+ * emitted no runtime object — `ConditionEffect.STASIS` type-checked but was
+ * `undefined` at run time, so any consumer using it in value position (rather
+ * than as a type) silently got undefined. It is a real enum now.
  */
-export declare enum ConditionEffect {
+export enum ConditionEffect {
   NOTHING = 0,
   DEAD = 1,
   QUIET = 2,
