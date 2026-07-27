@@ -32,7 +32,8 @@ export class ChangeTradePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.offer = new Array(reader.readShort());
+    const offerCount = reader.validateCollectionCount(reader.readShort(), 1, 'trade offer');
+    this.offer = new Array(offerCount);
     for (let i = 0; i < this.offer.length; i++) {
       this.offer[i] = reader.readBoolean();
     }

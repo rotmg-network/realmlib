@@ -26,7 +26,7 @@ export class QuestObjectIdPacket implements Packet {
 
   read(reader: Reader): void {
     this.objectId = reader.readInt32();
-    const listLen = reader.readCompressedInt();
+    const listLen = reader.validateCollectionCount(reader.readCompressedInt(), 1, 'quest object ids');
     this.list = new Array<number>(listLen);
     for (let i = 0; i < listLen; i++) {
       this.list[i] = reader.readCompressedInt();

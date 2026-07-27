@@ -34,7 +34,7 @@ export class AccountListPacket implements Packet {
 
   read(reader: Reader): void {
     this.accountListId = reader.readInt32();
-    const accountIdsLen = reader.readShort();
+    const accountIdsLen = reader.validateCollectionCount(reader.readShort(), 2, 'account list');
     this.accountIds = new Array<string>(accountIdsLen);
     for (let i = 0; i < accountIdsLen; i++) {
       this.accountIds[i] = reader.readString();

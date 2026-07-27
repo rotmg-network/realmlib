@@ -28,7 +28,8 @@ export class ForgeResultPacket implements Packet {
   read(reader: Reader): void {
     this.success = reader.readBoolean();
 
-    let resultCount = reader.readByte();
+    const resultCount = reader.validateCollectionCount(reader.readByte(), 12, 'forge results');
+    this.results = [];
     for (let i = 0; i < resultCount; i++) {
       let result = new SlotObjectData();
       result.read(reader)

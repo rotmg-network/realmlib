@@ -24,7 +24,7 @@ export class BlacksmithRequestPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const count = reader.readUnsignedByte();
+    const count = reader.validateCollectionCount(reader.readUnsignedByte(), 12, 'blacksmith slots');
     this.slots = new Array(count);
     for (let i = 0; i < count; i++) {
       this.slots[i] = new SlotObjectData();

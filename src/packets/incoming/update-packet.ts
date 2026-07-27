@@ -54,7 +54,7 @@ export class UpdatePacket implements Packet {
     this.pos.read(reader);
     this.levelType = reader.readByte();
 
-    const tilesLen = reader.readCompressedInt()
+    const tilesLen = reader.validateCollectionCount(reader.readCompressedInt(), 6, 'ground tiles');
     this.tiles = new Array<GroundTileData>(tilesLen);
     for (let i = 0; i < this.tiles.length; i++) {
       const gd = new GroundTileData();
@@ -62,7 +62,7 @@ export class UpdatePacket implements Packet {
       this.tiles[i] = gd;
     }
 
-    const newObjectsLen = reader.readCompressedInt();
+    const newObjectsLen = reader.validateCollectionCount(reader.readCompressedInt(), 12, 'new objects');
     this.newObjects = new Array<ObjectData>(newObjectsLen);
     for (let i = 0; i < newObjectsLen; i++) {
       const od = new ObjectData();
@@ -70,7 +70,7 @@ export class UpdatePacket implements Packet {
       this.newObjects[i] = od;
     }
 
-    const dropsLen = reader.readCompressedInt();
+    const dropsLen = reader.validateCollectionCount(reader.readCompressedInt(), 1, 'object drops');
     this.drops = new Array<number>(dropsLen);
     for (let i = 0; i < dropsLen; i++) {
       this.drops[i] = reader.readCompressedInt();

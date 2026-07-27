@@ -32,7 +32,7 @@ export class FavourPetPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const count = reader.readByte();
+    const count = reader.validateCollectionCount(reader.readByte(), 4, 'favourite pets');
     this.petIds = new Array(count);
     for (let i = 0; i < count; i++) {
       this.petIds[i] = reader.readInt32();

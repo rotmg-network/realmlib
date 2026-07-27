@@ -31,7 +31,7 @@ export class IncomingPartyMemberInfoPacket implements Packet {
     this.partyId = reader.readUInt32();
     this.unknownShort = reader.readUnsignedShort();
     this.maxSize = reader.readUnsignedByte();
-    const count = Math.max(0, reader.readShort());
+    const count = reader.validateCollectionCount(reader.readShort(), 8, 'party members');
     this.partyPlayers = new Array(count);
     for (let i = 0; i < count; i++) {
       this.partyPlayers[i] = new PartyPlayerData();

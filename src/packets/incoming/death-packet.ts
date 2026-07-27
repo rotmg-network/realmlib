@@ -50,7 +50,7 @@ export class DeathPacket implements Packet {
     this.fameEarned = reader.readCompressedInt();
     this.accountLevel = reader.readCompressedInt();
     this.accountXP = reader.readCompressedInt();
-    const bonusCount = reader.readCompressedInt();
+    const bonusCount = reader.validateCollectionCount(reader.readCompressedInt(), 4, 'fame bonuses');
     this.fameBonuses = new Array<FameData>(bonusCount);
     for (let i = 0; i < bonusCount; i++) {
       const bonus = new FameData();

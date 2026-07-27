@@ -44,7 +44,7 @@ export class ForgeRequestPacket implements Packet {
 
   read(reader: Reader): void {
     this.resultItemType = reader.readInt32();
-    const count = reader.readInt32();
+    const count = reader.validateCollectionCount(reader.readInt32(), 12, 'forge items');
     this.dismantledItems = new Array<SlotObjectData>(count);
     for (let i = 0; i < count; i++) {
       const slot = new SlotObjectData();

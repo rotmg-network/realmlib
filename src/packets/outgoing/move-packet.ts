@@ -48,7 +48,8 @@ export class MovePacket implements Packet {
   read(reader: Reader): void {
     this.tickId = reader.readInt32();
     this.time = reader.readUInt32();
-    this.records = new Array(reader.readShort());
+    const recordCount = reader.validateCollectionCount(reader.readShort(), 10, 'move records');
+    this.records = new Array(recordCount);
     for (let i = 0; i < this.records.length; i++) {
       this.records[i] = new MoveRecord();
       this.records[i].read(reader);

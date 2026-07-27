@@ -47,7 +47,7 @@ export class QuestRedeemPacket implements Packet {
   read(reader: Reader): void {
     this.questId = reader.readString();
     this.item = reader.readInt32();
-    const slotsLen = reader.readShort();
+    const slotsLen = reader.validateCollectionCount(reader.readShort(), 12, 'quest redeem slots');
     this.slots = new Array(slotsLen);
     for (let i = 0; i < slotsLen; i++) {
       this.slots[i] = new SlotObjectData();

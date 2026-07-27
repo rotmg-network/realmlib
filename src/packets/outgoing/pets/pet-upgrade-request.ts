@@ -69,7 +69,7 @@ export class PetUpgradeRequestPacket implements Packet {
     this.pIdTwo = reader.readInt32();
     this.objectId = reader.readInt32();
     this.paymentType = reader.readByte();
-    const slotObjectLen = reader.readShort();
+    const slotObjectLen = reader.validateCollectionCount(reader.readShort(), 12, 'pet upgrade slots');
     this.slotObjects = new Array<SlotObjectData>(slotObjectLen);
     for (let i = 0; i < slotObjectLen; i++) {
       this.slotObjects[i] = new SlotObjectData();

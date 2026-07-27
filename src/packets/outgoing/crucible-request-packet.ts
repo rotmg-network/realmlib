@@ -25,7 +25,7 @@ export class CrucibleRequestPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const count = reader.readUnsignedShort();
+    const count = reader.validateCollectionCount(reader.readUnsignedShort(), 4, 'crucible indices');
     this.indices = new Array<number>(count);
     for (let i = 0; i < count; i++) {
       this.indices[i] = reader.readInt32();

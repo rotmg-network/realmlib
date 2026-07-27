@@ -31,13 +31,13 @@ export class CrucibleResponsePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const indexCount = reader.readUnsignedShort();
+    const indexCount = reader.validateCollectionCount(reader.readUnsignedShort(), 4, 'crucible indices');
     this.indices = new Array<number>(indexCount);
     for (let i = 0; i < indexCount; i++) {
       this.indices[i] = reader.readInt32();
     }
 
-    const dataCount = reader.readUnsignedShort();
+    const dataCount = reader.validateCollectionCount(reader.readUnsignedShort(), 2, 'crucible data');
     this.data = new Array<string>(dataCount);
     for (let i = 0; i < dataCount; i++) {
       this.data[i] = reader.readString();

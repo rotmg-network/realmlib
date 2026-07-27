@@ -13,6 +13,23 @@ function readerOf(bytes: number[]): Reader {
 }
 
 describe('Reader bounds checking', () => {
+  it('rejects negative collection counts before allocation', () => {
+    const reader = new Reader(0);
+    expect(() => reader.validateCollectionCount(-1, 4, 'items'))
+      .to.throw(PacketReadError, 'invalid items count -1');
+  });
+
+  it('rejects collection counts that cannot fit in the packet', () => {
+    const reader = new Reader(8);
+    expect(() => reader.validateCollectionCount(3, 4, 'items'))
+      .to.throw(PacketReadError, 'items count 3 cannot fit in 8 remaining byte(s)');
+  });
+
+  it('accepts collection counts that fit exactly', () => {
+    const reader = new Reader(12);
+    expect(reader.validateCollectionCount(3, 4, 'items')).to.equal(3);
+  });
+
   it('throws PacketReadError when a fixed read runs past the end', () => {
     const reader = readerOf([0, 0]); // only 2 bytes, ask for 4
     expect(() => reader.readInt32()).to.throw(PacketReadError);

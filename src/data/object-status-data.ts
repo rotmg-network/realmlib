@@ -34,7 +34,7 @@ export class ObjectStatusData implements DataPacket {
   read(reader: Reader): void {
     this.objectId = reader.readCompressedInt();
     this.pos.read(reader);
-    const statLen = reader.readCompressedInt();
+    const statLen = reader.validateCollectionCount(reader.readCompressedInt(), 3, 'object stats');
     this.stats = new Array(statLen);
     for (let i = 0; i < statLen; i++) {
       const sd = new StatData();

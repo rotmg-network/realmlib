@@ -44,11 +44,13 @@ export class AcceptTradePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.clientOffer = new Array(reader.readShort());
+    const clientOfferCount = reader.validateCollectionCount(reader.readShort(), 1, 'client trade offer');
+    this.clientOffer = new Array(clientOfferCount);
     for (let i = 0; i < this.clientOffer.length; i++) {
       this.clientOffer[i] = reader.readBoolean();
     }
-    this.partnerOffer = new Array(reader.readShort());
+    const partnerOfferCount = reader.validateCollectionCount(reader.readShort(), 1, 'partner trade offer');
+    this.partnerOffer = new Array(partnerOfferCount);
     for (let i = 0; i < this.partnerOffer.length; i++) {
       this.partnerOffer[i] = reader.readBoolean();
     }

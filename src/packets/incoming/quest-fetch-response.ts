@@ -32,7 +32,7 @@ export class QuestFetchResponsePacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const questsLen = reader.readShort();
+    const questsLen = reader.validateCollectionCount(reader.readShort(), 23, 'daily quests');
     this.quests = new Array<QuestData>(questsLen);
     for (let i = 0; i < questsLen; i++) {
       this.quests[i] = new QuestData();

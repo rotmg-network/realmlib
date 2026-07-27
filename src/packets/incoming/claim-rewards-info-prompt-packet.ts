@@ -40,7 +40,7 @@ export class ClaimRewardsInfoPromptPacket implements Packet {
   read(reader: Reader): void {
     this.promptId = reader.readInt32();
     this.unknownByte = reader.readByte();
-    const count = reader.readShort();
+    const count = reader.validateCollectionCount(reader.readShort(), 4, 'claimable rewards');
     this.items = new Array<number>(count);
     for (let i = 0; i < count; i++) {
       this.items[i] = reader.readInt32();

@@ -25,7 +25,8 @@ export class ForgeUnlockedBlueprints implements Packet {
 
   read(reader: Reader): void {
     this.unknownByte = reader.readByte();
-    let count = reader.readCompressedInt();
+    const count = reader.validateCollectionCount(reader.readCompressedInt(), 1, 'unlocked blueprints');
+    this.unlockedBlueprints = [];
     for (let i = 0; i < count; i++) {
       this.unlockedBlueprints.push(reader.readCompressedInt());
     }

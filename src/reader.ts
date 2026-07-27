@@ -8,6 +8,8 @@ export class Reader {
    * The default size when this reader is reset
    */
   static readonly DEFAULT_SIZE: number = 4;
+  /** Absolute cap for variable-length collections, independent of frame size. */
+  static readonly MAX_COLLECTION_ITEMS: number = 1_000_000;
 
   /** The current position of the pointer in the buffer */
   index: number;
@@ -36,6 +38,29 @@ export class Reader {
         `read of ${bytes} byte(s) at offset ${this.index} exceeds packet length ${this._length}`,
       );
     }
+  }
+
+  /**
+   * Validates a server-controlled collection count before allocating it.
+   * `minimumBytesPerItem` should be the smallest possible encoded item size.
+   */
+  validateCollectionCount(
+    count: number,
+    minimumBytesPerItem: number = 1,
+    label: string = 'collection',
+  ): number {
+    if (!Number.isInteger(count) || count < 0) {
+      throw new PacketReadError(`invalid ${label} count ${count} at offset ${this.index}`);
+    }
+    if (!Number.isInteger(minimumBytesPerItem) || minimumBytesPerItem <= 0) {
+      throw new RangeError('minimumBytesPerItem must be a positive integer');
+    }
+    if (count > Reader.MAX_COLLECTION_ITEMS || count > Math.floor(this.remaining / minimumBytesPerItem)) {
+      throw new PacketReadError(
+        `${label} count ${count} cannot fit in ${this.remaining} remaining byte(s)`,
+      );
+    }
+    return count;
   }
 
   /** Creates a new `Reader` and initialises the

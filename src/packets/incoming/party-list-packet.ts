@@ -17,7 +17,7 @@ export class PartyListPacket implements Packet {
 
   read(reader: Reader): void {
     this.packetNumber = reader.readUnsignedByte();
-    const count = Math.max(0, reader.readShort());
+    const count = reader.validateCollectionCount(reader.readShort(), 14, 'party list');
     this.parties = new Array(count);
     for (let i = 0; i < count; i++) {
       this.parties[i] = new PartyInfoData();

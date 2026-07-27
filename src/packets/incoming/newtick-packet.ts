@@ -45,7 +45,7 @@ export class NewTickPacket implements Packet {
     this.tickTime = reader.readInt32();
     this.serverRealTimeMS = reader.readUInt32();
     this.serverLastTimeRTTMS = reader.readUnsignedShort();
-    const statusesLen = reader.readShort();
+    const statusesLen = reader.validateCollectionCount(reader.readShort(), 10, 'tick statuses');
     this.statuses = new Array<ObjectStatusData>(statusesLen);
     for (let i = 0; i < statusesLen; i++) {
       const osd = new ObjectStatusData();

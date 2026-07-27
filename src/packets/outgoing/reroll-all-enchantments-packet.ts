@@ -50,7 +50,11 @@ export class RerollAllEnchantmentsPacket implements Packet {
     this.artifactMode = reader.readUnsignedByte();
     this.equipmentSlotId = reader.readUnsignedShort();
     this.artifactInventorySlot = reader.readShort();
-    const lockedSlotCount = reader.readUnsignedByte();
+    const lockedSlotCount = reader.validateCollectionCount(
+      reader.readUnsignedByte(),
+      1,
+      'locked enchantment slots',
+    );
     this.lockedSlotIndices = new Array<number>(lockedSlotCount);
     for (let i = 0; i < lockedSlotCount; i++) {
       this.lockedSlotIndices[i] = reader.readUnsignedByte();
