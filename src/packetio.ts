@@ -17,6 +17,29 @@ export interface RC4Config {
   outgoingKey: string;
 }
 
+export interface PacketIOOptions {
+  socket?: Socket;
+  rc4?: RC4Config;
+  packetMap?: PacketMap;
+  /** Maximum typed/raw packets waiting behind the current socket write. */
+  maxOutgoingQueue?: number;
+}
+
+export type SendStatus =
+  | 'sent'
+  | 'queued'
+  | 'disconnected'
+  | 'missing-mapping'
+  | 'queue-full'
+  | 'invalid';
+
+export interface SendResult {
+  readonly accepted: boolean;
+  readonly status: SendStatus;
+  /** Number of packets still waiting after this call. */
+  readonly queueSize: number;
+}
+
 /**
  * The payload of the `rawPacket` debug event: the deciphered bytes of an
  * incoming packet along with its id and mapped type (if any).
@@ -37,6 +60,10 @@ export interface RawOutgoingPacket extends RawPacket {
   /** Total packet size including the 5 byte header. */
   size: number;
 }
+
+type QueuedOutgoing =
+  | { kind: 'packet'; packet: Packet }
+  | { kind: 'raw'; id: number; payload: Buffer };
 
 /**
  * An RC4 configuration which is suitable for
@@ -76,6 +103,7 @@ export class PacketIO extends EventEmitter {
    * a corrupt length prefix.
    */
   static readonly MAX_PACKET_SIZE = 0x1000000;
+  static readonly DEFAULT_MAX_OUTGOING_QUEUE = 1024;
 
   /**
    * The socket this packet interface is attached to.
@@ -104,7 +132,10 @@ export class PacketIO extends EventEmitter {
   private sendRC4: RC4;
   private receiveRC4: RC4;
 
-  private outgoingQueue: Packet[];
+  private outgoingQueue: QueuedOutgoing[];
+  private readonly maxOutgoingQueue: number;
+  private drainActive: boolean;
+  private writeBlocked: boolean;
 
   private readonly writer: Writer;
   private readonly reader: Reader;
@@ -116,7 +147,7 @@ export class PacketIO extends EventEmitter {
    * Creates a new `PacketIO` instance
    * @param opts The options to use for this instance
    */
-  constructor(opts: { socket?: Socket, rc4?: RC4Config, packetMap?: PacketMap } = { rc4: DEFAULT_RC4 }) {
+  constructor(opts: PacketIOOptions = { rc4: DEFAULT_RC4 }) {
     super();
     if (!opts.rc4) {
       opts.rc4 = DEFAULT_RC4;
@@ -124,13 +155,20 @@ export class PacketIO extends EventEmitter {
     this.writer = new Writer();
     this.reader = new Reader();
     this.outgoingQueue = [];
+    this.maxOutgoingQueue = opts.maxOutgoingQueue ?? PacketIO.DEFAULT_MAX_OUTGOING_QUEUE;
+    if (!Number.isInteger(this.maxOutgoingQueue) || this.maxOutgoingQueue < 1) {
+      throw new RangeError('maxOutgoingQueue must be a positive integer');
+    }
+    this.drainActive = false;
+    this.writeBlocked = false;
     this.sendRC4 = new RC4(opts.rc4.outgoingKey);
     this.receiveRC4 = new RC4(opts.rc4.incomingKey);
     this.packetMap = opts.packetMap || DEFAULT_PACKET_MAP;
 
     this.eventHandlers = new Map([
       ['data', this.onData.bind(this)],
-      ['connect', this.resetState.bind(this)]
+      ['connect', this.resetState.bind(this)],
+      ['drain', this.onSocketDrain.bind(this)],
     ]);
 
     if (opts.socket) {
@@ -167,6 +205,7 @@ export class PacketIO extends EventEmitter {
       }
       this.socket = undefined;
     }
+    this.clearOutgoingQueue();
   }
 
   /**
@@ -186,22 +225,16 @@ export class PacketIO extends EventEmitter {
    * Sends a packet
    * @param packet The packet to send
    */
-  send(packet: Packet) {
+  send(packet: Packet): SendResult {
     if (!this.socket || this.socket.destroyed) {
-      return;
+      return this.sendResult(false, 'disconnected');
     }
     const type = this.packetMap[packet.type];
     if (type === undefined) {
       this.emitError(new RealmlibError('MISSING_MAPPING', `Mapper is missing an id for the packet type ${packet.type}`));
-      return;
+      return this.sendResult(false, 'missing-mapping');
     }
-
-    if (this.outgoingQueue.length === 0) {
-      this.outgoingQueue.push(packet);
-      this.drainQueue();
-    } else {
-      this.outgoingQueue.push(packet);
-    }
+    return this.enqueueOutgoing({ kind: 'packet', packet });
   }
 
   /**
@@ -209,17 +242,53 @@ export class PacketIO extends EventEmitter {
    * protocol research around packets that are mapped but not yet modeled.
    * The payload must be the unencrypted body bytes, excluding the 5 byte header.
    */
-  sendRaw(id: number, payload: Buffer | number[] = []): void {
+  sendRaw(id: number, payload: Buffer | number[] = []): SendResult {
     if (!this.socket || this.socket.destroyed) {
-      return;
+      return this.sendResult(false, 'disconnected');
     }
     if (!Number.isInteger(id) || id < 0 || id > 255) {
       this.emitError(new RealmlibError('INVALID_RAW_ID', `Raw packet id must be in [0,255], got ${id}`));
-      return;
+      return this.sendResult(false, 'invalid');
     }
     // Buffer.from copies a Buffer and materializes a number[], so one call
     // handles both input shapes (and always gives us an owned copy to cipher).
     const body = Buffer.from(payload as Buffer);
+    if (body.length + 5 > PacketIO.MAX_PACKET_SIZE) {
+      this.emitError(new RealmlibError('FRAME_TOO_LARGE', `Raw packet size exceeds ${PacketIO.MAX_PACKET_SIZE}`));
+      return this.sendResult(false, 'invalid');
+    }
+    return this.enqueueOutgoing({ kind: 'raw', id, payload: body });
+  }
+
+  /** Number of typed/raw packets currently waiting for a socket write. */
+  get outgoingQueueSize(): number {
+    return this.outgoingQueue.length;
+  }
+
+  private enqueueOutgoing(item: QueuedOutgoing): SendResult {
+    if (this.outgoingQueue.length >= this.maxOutgoingQueue) {
+      const error = new RealmlibError(
+        'OUTGOING_QUEUE_FULL',
+        `Outgoing queue limit ${this.maxOutgoingQueue} reached`,
+      );
+      this.emitError(error);
+      this.emit('outgoingDropped', { item, reason: 'queue-full' });
+      return this.sendResult(false, 'queue-full');
+    }
+    const wasActive = this.drainActive;
+    this.outgoingQueue.push(item);
+    if (!this.drainActive) {
+      this.drainActive = true;
+      this.drainQueue();
+    }
+    return this.sendResult(true, wasActive ? 'queued' : 'sent');
+  }
+
+  private sendResult(accepted: boolean, status: SendStatus): SendResult {
+    return { accepted, status, queueSize: this.outgoingQueue.length };
+  }
+
+  private buildRawFrame(id: number, body: Buffer): Buffer {
     const frame = Buffer.alloc(5 + body.length);
     frame.writeInt32BE(frame.length, 0);
     frame.writeUInt8(id, 4);
@@ -234,7 +303,7 @@ export class PacketIO extends EventEmitter {
       } as RawOutgoingPacket);
     }
     this.sendRC4.cipher(frame.subarray(5));
-    this.socket.write(frame);
+    return frame;
   }
 
   /**
@@ -242,40 +311,74 @@ export class PacketIO extends EventEmitter {
    * them to the socket
    */
   private drainQueue(): void {
-    const packet = this.outgoingQueue.shift()!;
+    if (this.writeBlocked) {
+      return;
+    }
+    const item = this.outgoingQueue.shift();
+    if (!item || !this.socket || this.socket.destroyed) {
+      this.drainActive = false;
+      return;
+    }
+
+    let frame: Buffer;
+    try {
+      frame = item.kind === 'raw'
+        ? this.buildRawFrame(item.id, item.payload)
+        : this.buildPacketFrame(item.packet);
+    } catch (error) {
+      this.emitError(new RealmlibError(
+        'PACKET_WRITE_ERROR',
+        error instanceof Error ? error.message : String(error),
+      ));
+      process.nextTick(() => this.drainQueue());
+      return;
+    }
+
+    this.writeBlocked = !this.socket.write(frame);
+    if (!this.writeBlocked) {
+      process.nextTick(() => this.drainQueue());
+    }
+  }
+
+  private buildPacketFrame(packet: Packet): Buffer {
     this.lastOutgoing = packet;
     this.writer.index = 5;
-    // send() already validated the mapping exists for this type, so the id is
-    // present and numeric here.
-    const type = this.packetMap[packet.type] as number;
+    const id = this.packetMap[packet.type] as number;
     packet.write(this.writer);
-    this.writer.writeHeader(type);
+    this.writer.writeHeader(id);
     if (this.listenerCount('sentPacket') !== 0) {
-      this.emit('sentPacket', { id: type, type: packet.type, size: this.writer.index });
+      this.emit('sentPacket', { id, type: packet.type, size: this.writer.index });
     }
     if (this.listenerCount('sentRawPacket') !== 0) {
       this.emit('sentRawPacket', {
-        id: type,
+        id,
         type: packet.type,
-        // Copy only when observed — this runs on every send.
         payload: Buffer.from(this.writer.buffer.subarray(5, this.writer.index)),
         size: this.writer.index,
       } as RawOutgoingPacket);
     }
     this.sendRC4.cipher(this.writer.buffer.subarray(5, this.writer.index));
-    if (this.socket && !this.socket.write(this.writer.buffer.subarray(0, this.writer.index))) {
-      this.socket.once('drain', () => {
-        if (this.outgoingQueue.length > 0) {
-          this.drainQueue();
-        }
-      });
-    } else {
-      process.nextTick(() => {
-        if (this.outgoingQueue.length > 0) {
-          this.drainQueue();
-        }
+    return Buffer.from(this.writer.buffer.subarray(0, this.writer.index));
+  }
+
+  private onSocketDrain(): void {
+    if (!this.writeBlocked) {
+      return;
+    }
+    this.writeBlocked = false;
+    this.drainQueue();
+  }
+
+  private clearOutgoingQueue(): void {
+    if (this.outgoingQueue.length > 0) {
+      this.emit('outgoingDropped', {
+        count: this.outgoingQueue.length,
+        reason: 'connection-reset',
       });
     }
+    this.outgoingQueue = [];
+    this.drainActive = false;
+    this.writeBlocked = false;
   }
 
   /**
@@ -296,6 +399,7 @@ export class PacketIO extends EventEmitter {
    * Resets the reader buffer and the RC4 instances
    */
   private resetState(): void {
+    this.clearOutgoingQueue();
     this.resetBuffer();
     this.sendRC4.reset();
     this.receiveRC4.reset();
