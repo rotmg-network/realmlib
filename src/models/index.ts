@@ -11,6 +11,7 @@ export * from './forge-properties';
 export * from './game-id';
 export * from './guild-rank';
 export * from './inv-result';
+export * from './notifications';
 export * from './object-type';
 export * from './party'
 export * from './payment-type';

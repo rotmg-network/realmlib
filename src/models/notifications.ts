@@ -1,0 +1,34 @@
+/**
+ * Notification types sent in the {@link Notification} packet.
+ */
+export declare enum NotificationEffect {
+  PLAYER = 0,
+  SYSTEM = 1,
+  ERROR = 2,
+  STICKY = 3,
+  GLOBAL = 4,
+  REALM_QUEUE = 5,
+  OBJECT = 6,
+  PLAYER_DEATH = 7,
+  PORTAL_OPENED = 8,
+  TELEPORT_ERROR = 9,
+  PLAYER_CALLOUT = 10,
+  PROGRESS_BAR = 11,
+  BEHAVIOUR = 12,
+  EMOTE = 13,
+  VICTORY = 14,
+  INVITE = 15,
+  CRUCIBLE_DATA_REFRESH = 16,
+  ITEM_BOUGHT_FOR_INVENTORY = 17,
+  TREE_UNLOCKED = 18,
+  MISSION_UNLOCKED = 19,
+  BLUEPRINT_UNLOCKED = 20,
+  WITH_ICON = 21,
+  FAME_BONUS = 22,
+  FORGE_FIRE = 23,
+  WIND_DIRECTION_CHANGE = 24,
+  BLOOD_RITUAL_REFRESH = 25,
+  MISSIONS_PROGRESS_REFRESH = 99,
+  REALM_THRESHOLD = 1001,
+  DUST = 1002
+}
