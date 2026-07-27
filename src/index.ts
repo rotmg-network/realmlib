@@ -2,6 +2,7 @@ export * from './create-packet';
 export * from './debug';
 export * from './errors';
 export * from './packet-map';
+export * from './packet-registry';
 export * from './packet-type';
 export * from './packet';
 export * from './packetio';

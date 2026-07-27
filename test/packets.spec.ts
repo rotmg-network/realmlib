@@ -4,7 +4,14 @@ import { Writer } from '../src/writer';
 import { GroundTileData, StatData, WorldPosData } from '../src/data';
 import { StatType } from '../src/models';
 import { UpdatePacket } from '../src/packets/incoming/update-packet';
-import { createPacket, ForgeUnlockedBlueprints, PacketType, ProgressUpdatePacket } from '../src';
+import {
+  createPacket,
+  DEFAULT_PACKET_MAP,
+  ForgeUnlockedBlueprints,
+  PACKET_REGISTRY,
+  PacketType,
+  ProgressUpdatePacket,
+} from '../src';
 
 /** Builds a Reader positioned at 0 over the bytes a Writer has produced. */
 function toReader(writer: Writer): Reader {
@@ -75,6 +82,25 @@ describe('UpdatePacket', () => {
 });
 
 describe('packet factory coverage', () => {
+  it('derives unique ids, mappings, and factories from one registry', () => {
+    const ids = PACKET_REGISTRY
+      .map((definition) => definition.id)
+      .filter((id): id is number => id !== undefined);
+    const types = PACKET_REGISTRY.map((definition) => definition.type);
+    expect(new Set(ids).size).to.equal(ids.length);
+    expect(new Set(types).size).to.equal(types.length);
+
+    for (const definition of PACKET_REGISTRY) {
+      if (definition.id !== undefined) {
+        expect(DEFAULT_PACKET_MAP[definition.id]).to.equal(definition.type);
+        expect(DEFAULT_PACKET_MAP[definition.type]).to.equal(definition.id);
+      }
+      if (definition.factory) {
+        expect(createPacket(definition.type).type).to.equal(definition.type);
+      }
+    }
+  });
+
   it('constructs the seasonal conversion packet', () => {
     expect(createPacket(PacketType.CONVERT_SEASONAL_CHARACTER).type).to.equal(PacketType.CONVERT_SEASONAL_CHARACTER);
   });

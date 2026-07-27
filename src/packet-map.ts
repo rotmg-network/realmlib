@@ -1,217 +1,24 @@
+import { PACKET_REGISTRY } from './packet-registry';
 import { PacketType } from './packet-type';
 
 /**
- * A bidirectional map between packet types and their numeric ids. A numeric
- * key resolves to the `PacketType` for that id; a `PacketType` (string) key
- * resolves to its numeric id. Either lookup is `undefined` when the map has no
- * entry for it.
+ * A bidirectional map between packet types and numeric ids.
  */
 export interface PacketMap {
-  /** numeric id -> packet type */
+  /** Numeric id -> packet type. */
   [id: number]: PacketType | undefined;
-  /** packet type (string) -> numeric id */
+  /** Packet type -> numeric id. */
   [type: string]: number | PacketType | undefined;
 }
 
 /**
- * Numeric packet id -> `PacketType` for the current game build.
- * The ids are build specific and change between releases; this is the
- * single place they are defined.
- */
-const ID_TO_TYPE: { [id: number]: PacketType } = {
-  0: PacketType.FAILURE,
-  1: PacketType.TELEPORT,
-  3: PacketType.CLAIM_LOGIN_REWARD_MSG,
-  4: PacketType.DELETE_PET,
-  5: PacketType.REQUESTTRADE,
-  6: PacketType.QUEST_FETCH_RESPONSE,
-  7: PacketType.JOINGUILD,
-  8: PacketType.PING,
-  9: PacketType.PLAYERTEXT,
-  10: PacketType.NEWTICK,
-  11: PacketType.SHOWEFFECT,
-  12: PacketType.SERVERPLAYERSHOOT,
-  13: PacketType.USEITEM,
-  14: PacketType.TRADEACCEPTED,
-  15: PacketType.GUILDREMOVE,
-  16: PacketType.PETUPGRADEREQUEST,
-  17: PacketType.ENTER_ARENA,
-  18: PacketType.GOTO,
-  19: PacketType.INVDROP,
-  20: PacketType.OTHERHIT,
-  21: PacketType.NAMERESULT,
-  22: PacketType.BUYRESULT,
-  23: PacketType.HATCH_PET,
-  24: PacketType.ACTIVE_PET_UPDATE_REQUEST,
-  25: PacketType.ENEMYHIT,
-  26: PacketType.GUILDRESULT,
-  27: PacketType.EDITACCOUNTLIST,
-  28: PacketType.TRADECHANGED,
-  30: PacketType.PLAYERSHOOT,
-  31: PacketType.PONG,
-  33: PacketType.PET_CHANGE_SKIN_MSG,
-  34: PacketType.TRADEDONE,
-  35: PacketType.ENEMYSHOOT,
-  36: PacketType.ACCEPTTRADE,
-  37: PacketType.CHANGEGUILDRANK,
-  38: PacketType.PLAYSOUND,
-  39: PacketType.VERIFY_EMAIL,
-  40: PacketType.SQUAREHIT,
-  41: PacketType.NEW_ABILITY,
-  42: PacketType.UPDATE,
-  44: PacketType.TEXT,
-  45: PacketType.RECONNECT,
-  46: PacketType.DEATH,
-  47: PacketType.USEPORTAL,
-  48: PacketType.QUEST_ROOM_MSG,
-  49: PacketType.ALLYSHOOT,
-  50: PacketType.IMMINENT_ARENA_WAVE,
-  51: PacketType.RESKIN,
-  52: PacketType.RESET_DAILY_QUESTS,
-  53: PacketType.PET_CHANGE_FORM_MSG,
-  55: PacketType.INVSWAP,
-  56: PacketType.CHANGETRADE,
-  57: PacketType.CREATE,
-  58: PacketType.QUEST_REDEEM,
-  59: PacketType.CREATEGUILD,
-  60: PacketType.SETCONDITION,
-  61: PacketType.LOAD,
-  62: PacketType.MOVE,
-  63: PacketType.KEY_INFO_RESPONSE,
-  64: PacketType.AOE,
-  65: PacketType.GOTOACK,
-  66: PacketType.GLOBAL_NOTIFICATION,
-  67: PacketType.NOTIFICATION,
-  68: PacketType.ARENA_DEATH,
-  69: PacketType.CLIENTSTAT,
-  74: PacketType.HELLO,
-  75: PacketType.DAMAGE,
-  76: PacketType.ACTIVEPETUPDATE,
-  77: PacketType.INVITEDTOGUILD,
-  78: PacketType.PETYARDUPDATE,
-  79: PacketType.PASSWORD_PROMPT,
-  80: PacketType.ACCEPT_ARENA_DEATH,
-  81: PacketType.UPDATEACK,
-  82: PacketType.QUESTOBJID,
-  83: PacketType.PIC,
-  84: PacketType.REALM_HERO_LEFT_MSG,
-  85: PacketType.BUY,
-  86: PacketType.TRADESTART,
-  87: PacketType.EVOLVE_PET,
-  88: PacketType.TRADEREQUESTED,
-  89: PacketType.AOEACK,
-  90: PacketType.PLAYERHIT,
-  91: PacketType.CANCELTRADE,
-  92: PacketType.MAPINFO,
-  93: PacketType.LOGIN_REWARD_MSG,
-  94: PacketType.KEY_INFO_REQUEST,
-  95: PacketType.INVRESULT,
-  96: PacketType.QUEST_REDEEM_RESPONSE,
-  97: PacketType.CHOOSENAME,
-  98: PacketType.QUEST_FETCH_ASK,
-  99: PacketType.ACCOUNTLIST,
-  101: PacketType.CREATE_SUCCESS,
-  102: PacketType.CHECKCREDITS,
-  103: PacketType.GROUNDDAMAGE,
-  104: PacketType.GUILDINVITE,
-  105: PacketType.ESCAPE,
-  106: PacketType.FILE,
-  107: PacketType.RESKIN_UNLOCK,
-  108: PacketType.NEW_CHARACTER_INFORMATION,
-  109: PacketType.UNLOCK_INFORMATION,
-  112: PacketType.QUEUE_INFORMATION,
-  113: PacketType.QUEUE_CANCEL,
-  114: PacketType.EXALTATION_BONUS_CHANGED,
-  115: PacketType.REDEEM_EXALTATION_REWARD,
-  117: PacketType.VAULT_CONTENT,
-  118: PacketType.FORGE_REQUEST,
-  119: PacketType.FORGE_RESULT,
-  120: PacketType.FORGE_UNLOCKED_BLUEPRINTS,
-  121: PacketType.SHOOTACK,
-  122: PacketType.CHANGE_ALLY_SHOOT,
-  123: PacketType.GET_PLAYERS_LIST_MESSAGE, // admin only
-  124: PacketType.MODERATOR_ACTION_MESSAGE, // admin only
-  126: PacketType.CREEP_MOVE_MESSAGE,
-  129: PacketType.CUSTOM_MAP_DELETE,        // admin only
-  131: PacketType.CUSTOM_MAP_LIST,          // admin only
-  133: PacketType.CREEP_HIT,
-  134: PacketType.PLAYER_CALLOUT,
-  136: PacketType.BUY_REFINEMENT,
-  137: PacketType.DASH,
-  138: PacketType.DASH_ACK,
-  139: PacketType.STATS,
-  140: PacketType.BUY_CUSTOMISATION_SOCKET,
-  145: PacketType.FAVOUR_PET,
-  146: PacketType.SKIN_RECYCLE,  
-  147: PacketType.UNKNOWN147,
-  148: PacketType.DAMAGE_BOOST,
-  149: PacketType.CLAIM_BATTLE_PASS,
-  150: PacketType.CLAIM_BP_MILESTONE_RESULT,
-  151: PacketType.BOOST_BP_MILESTONE,
-  154: PacketType.CONVERT_SEASONAL_CHARACTER,
-  155: PacketType.RETITLE,
-  156: PacketType.SET_GRAVE_STONE,
-  157: PacketType.SET_ABILITY,
-  159: PacketType.EMOTE,
-  160: PacketType.BUY_EMOTE,
-  162: PacketType.SET_TRACKED_SEASON,
-  163: PacketType.CLAIM_MISSION,
-  164: PacketType.CLAIM_MISSION_RESULT,
-  165: PacketType.PROGRESS_UPDATE,
-  166: PacketType.STASIS,
-  167: PacketType.SET_DISCOVERABLE,
-  169: PacketType.REALM_SCORE_UPDATE,
-  170: PacketType.CLAIM_REWARDS_INFO_PROMPT,
-  171: PacketType.CLAIM_CHEST_REWARD,
-  172: PacketType.CHEST_REWARD_RESULT,
-  173: PacketType.UNLOCK_ENCHANTMENT_SLOT,
-  175: PacketType.UNLOCK_ENCHANTMENT,
-  177: PacketType.APPLY_ENCHANTMENT,
-  180: PacketType.ACTIVATE_CRUCIBLE,
-  181: PacketType.UNKNOWN181,
-  182: PacketType.CRUCIBLE_REQUEST,
-  183: PacketType.CRUCIBLE_RESPONSE,
-  185: PacketType.UPGRADE_ENCHANTER,
-  187: PacketType.UPGRADE_ENCHANTMENT,
-  189: PacketType.REROLL_ALL_ENCHANTMENTS,
-  190: PacketType.ENCHANT,
-  191: PacketType.RESET_ENCHANTMENT_REROLL_COUNT,
-  192: PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT,
-  195: PacketType.BLACKSMITH_REQUEST,
-  196: PacketType.BLACKSMITH_DISMANTLE,
-  197: PacketType.SELECT_ENTRANCE,
-  200: PacketType.CREATE_PARTY_MESSAGE,
-  204: PacketType.PARTY_ACTION_RESULT,
-  207: PacketType.PARTY_ACTION,
-  208: PacketType.INCOMING_PARTY_INVITE,
-  209: PacketType.PARTY_INVITE_RESPONSE,
-  210: PacketType.INCOMING_PARTY_MEMBER_INFO,
-  212: PacketType.PARTY_MEMBER_ADDED,
-  214: PacketType.PARTY_LIST_MESSAGE,
-  215: PacketType.PARTY_JOIN_REQUEST,
-  217: PacketType.PARTY_REQUEST_RESPONSE,
-  218: PacketType.FOR_RECONNECT,
-  219: PacketType.REDEEM_VOUCHER,
-  220: PacketType.VOUCHER_RESULT,
-  222: PacketType.LOADING_SCREEN,
-  223: PacketType.PURCHASE_REQUEST,
-  224: PacketType.UNKNOWN224,
-  232: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD,
-  233: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT,
-  234: PacketType.CLAIM_REWARD,
-  235: PacketType.CLAIM_REWARD_RESULT,
-  237: PacketType.CLAIM_DAILY_ITEM,
-  238: PacketType.GIFT_NOTIFICATION,
-  239: PacketType.CLAIM_REWARDS_INFO_REQUEST,
-  1000: PacketType.IP_ADDRESS,
-};
-
-/**
- * The default bidirectional packet map for the current build. `PacketIO`
- * uses this when no custom map is supplied.
+ * Default bidirectional packet map, derived from the central packet registry.
  */
 export const DEFAULT_PACKET_MAP: PacketMap = {};
-for (const [id, type] of Object.entries(ID_TO_TYPE)) {
-  DEFAULT_PACKET_MAP[Number(id)] = type;
-  DEFAULT_PACKET_MAP[type] = Number(id);
+for (const definition of PACKET_REGISTRY) {
+  if (definition.id === undefined) {
+    continue;
+  }
+  DEFAULT_PACKET_MAP[definition.id] = definition.type;
+  DEFAULT_PACKET_MAP[definition.type] = definition.id;
 }
