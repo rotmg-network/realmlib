@@ -8,6 +8,7 @@ import { Writer } from './writer';
 import { createPacket } from './create-packet';
 import { INCOMING_KEY, OUTGOING_KEY, RC4 } from './crypto/rc4';
 import { RealmlibError } from './errors';
+import { PacketFieldProbe, probePacketFields } from './debug';
 
 /**
  * The configuration for the RC4 ciphers used by this PacketIO
@@ -51,14 +52,29 @@ export interface RawPacket {
   type: PacketType | undefined;
   /** The deciphered packet body (everything after the 5 byte header). */
   payload: Buffer;
+  /** Total packet size including the five-byte frame header. */
+  size: number;
+  readonly direction: 'incoming';
 }
 
 /**
  * The payload of raw outgoing packet debug events.
  */
-export interface RawOutgoingPacket extends RawPacket {
+export interface RawOutgoingPacket extends Omit<RawPacket, 'direction'> {
   /** Total packet size including the 5 byte header. */
   size: number;
+  readonly direction: 'outgoing';
+}
+
+export interface PacketDiagnostic extends RawPacket {
+  status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error';
+  /** Bytes consumed from the packet body. */
+  offset: number;
+  /** Bytes left after parsing stopped. */
+  remaining: number;
+  /** Primitive interpretations at `offset`. */
+  probes: PacketFieldProbe[];
+  error?: unknown;
 }
 
 type QueuedOutgoing =
@@ -294,12 +310,13 @@ export class PacketIO extends EventEmitter {
     frame.writeUInt8(id, 4);
     body.copy(frame, 5);
     const type = this.packetMap[id];
-    if (this.listenerCount('sentRawPacket') !== 0) {
+      if (this.listenerCount('sentRawPacket') !== 0) {
       this.emit('sentRawPacket', {
         id,
         type,
         payload: Buffer.from(body),
         size: frame.length,
+        direction: 'outgoing',
       } as RawOutgoingPacket);
     }
     this.sendRC4.cipher(frame.subarray(5));
@@ -355,6 +372,7 @@ export class PacketIO extends EventEmitter {
         type: packet.type,
         payload: Buffer.from(this.writer.buffer.subarray(5, this.writer.index)),
         size: this.writer.index,
+        direction: 'outgoing',
       } as RawOutgoingPacket);
     }
     this.sendRC4.cipher(this.writer.buffer.subarray(5, this.writer.index));
@@ -456,27 +474,78 @@ export class PacketIO extends EventEmitter {
 
       // Debug hook: surface the raw bytes of every incoming packet (mapped
       // or not) so consumers can log/inspect them. Only built when observed.
+      const payload = Buffer.from(this.reader.buffer.subarray(5, this.reader.length));
       if (this.listenerCount('rawPacket') !== 0) {
         const rawPacket: RawPacket = {
           id,
           type,
-          payload: Buffer.from(this.reader.buffer.subarray(5, this.reader.length)),
+          payload,
+          size: this.reader.length,
+          direction: 'incoming',
         };
         this.emit('rawPacket', rawPacket);
       }
 
       if (!type) {
-        this.emit('unknownPacket', { id, size: this.reader.length });
+        const diagnostic = this.createDiagnostic(id, type, payload, 'unknown', 0);
+        this.emit('unknownPacket', diagnostic);
+        this.emit('packetDiagnostic', diagnostic);
         return undefined;
       }
-      if (this.listenerCount(type) !== 0) {
-        const packet = createPacket(type);
-        packet.read(this.reader);
+      const shouldParse = this.listenerCount(type) !== 0
+        || this.listenerCount('packetDiagnostic') !== 0
+        || this.listenerCount('packetParseError') !== 0;
+      if (shouldParse) {
+        let packet: Packet;
+        try {
+          packet = createPacket(type);
+        } catch (error) {
+          const diagnostic = this.createDiagnostic(id, type, payload, 'unimplemented', 0, error);
+          this.emit('packetDiagnostic', diagnostic);
+          return undefined;
+        }
+        try {
+          packet.read(this.reader);
+        } catch (error) {
+          const offset = Math.max(0, this.reader.index - 5);
+          const diagnostic = this.createDiagnostic(id, type, payload, 'parse-error', offset, error);
+          this.emit('packetParseError', diagnostic);
+          this.emit('packetDiagnostic', diagnostic);
+          this.emitError(error);
+          return undefined;
+        }
+        if (this.listenerCount('packetDiagnostic') !== 0) {
+          const offset = Math.max(0, this.reader.index - 5);
+          this.emit('packetDiagnostic', this.createDiagnostic(id, type, payload, 'parsed', offset));
+        }
         return packet;
       }
     } catch (error) {
       this.emitError(error);
     }
+  }
+
+  private createDiagnostic(
+    id: number,
+    type: PacketType | undefined,
+    payload: Buffer,
+    status: PacketDiagnostic['status'],
+    offset: number,
+    error?: unknown,
+  ): PacketDiagnostic {
+    const safeOffset = Math.min(Math.max(0, offset), payload.length);
+    return {
+      id,
+      type,
+      payload: Buffer.from(payload),
+      size: payload.length + 5,
+      direction: 'incoming',
+      status,
+      offset: safeOffset,
+      remaining: payload.length - safeOffset,
+      probes: probePacketFields(payload, safeOffset),
+      error,
+    };
   }
 
   /**

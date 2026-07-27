@@ -3,7 +3,9 @@ import { Socket } from 'net';
 import {
   CheckCreditsPacket,
   PacketIO,
+  PacketDiagnostic,
   PacketType,
+  RC4,
   RealmlibError,
 } from '../src';
 
@@ -19,6 +21,15 @@ function socketWithWrites(results: boolean[]): { socket: Socket; writes: Buffer[
     return results.shift() ?? true;
   }) as typeof socket.write;
   return { socket, writes };
+}
+
+function emitIncoming(socket: Socket, id: number, payload: Buffer, key: string = '00'): void {
+  const frame = Buffer.alloc(payload.length + 5);
+  frame.writeInt32BE(frame.length, 0);
+  frame.writeUInt8(id, 4);
+  payload.copy(frame, 5);
+  new RC4(key).cipher(frame.subarray(5));
+  socket.emit('data', frame);
 }
 
 describe('PacketIO outgoing queue', () => {
@@ -77,5 +88,77 @@ describe('PacketIO outgoing queue', () => {
     });
     io.send(new CheckCreditsPacket());
     expect(sentType).to.equal(PacketType.CHECKCREDITS);
+  });
+});
+
+describe('PacketIO diagnostics', () => {
+  it('includes payload bytes and field probes for unknown packets', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+    });
+    let diagnostic: PacketDiagnostic | undefined;
+    io.on('unknownPacket', (event) => {
+      diagnostic = event;
+    });
+
+    emitIncoming(socket, 250, Buffer.from('000568656c6c6f', 'hex'));
+
+    expect(diagnostic).to.deep.include({
+      id: 250,
+      type: undefined,
+      status: 'unknown',
+      offset: 0,
+      remaining: 7,
+      direction: 'incoming',
+    });
+    expect(diagnostic?.payload.toString('hex')).to.equal('000568656c6c6f');
+    expect(diagnostic?.probes).to.deep.include({ kind: 'string', bytes: 7, value: 'hello' });
+  });
+
+  it('reports parse failures without requiring a typed packet listener', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+    });
+    let diagnostic: PacketDiagnostic | undefined;
+    io.on('packetParseError', (event) => {
+      diagnostic = event;
+    });
+
+    emitIncoming(socket, 170, Buffer.from('0000', 'hex'));
+
+    expect(diagnostic).to.deep.include({
+      id: 170,
+      type: PacketType.CLAIM_REWARDS_INFO_PROMPT,
+      status: 'parse-error',
+      offset: 0,
+      remaining: 2,
+    });
+    expect(diagnostic?.error).to.be.instanceOf(Error);
+  });
+
+  it('can parse and inspect a mapped packet without a typed listener', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+    });
+    let diagnostic: PacketDiagnostic | undefined;
+    io.on('packetDiagnostic', (event) => {
+      diagnostic = event;
+    });
+
+    emitIncoming(socket, 8, Buffer.from('0000002a', 'hex'));
+
+    expect(diagnostic).to.deep.include({
+      id: 8,
+      type: PacketType.PING,
+      status: 'parsed',
+      offset: 4,
+      remaining: 0,
+    });
   });
 });
