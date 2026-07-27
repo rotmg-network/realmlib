@@ -6,79 +6,84 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to update favourite-pet state.
+ * Sent to set the account's favourite pet, or to favourite a title.
  *
- * The first byte is an operation discriminator rather than a count. Current
- * captures contain `0 + one int32 pet id` and `2 + two int32 pet ids`.
- * Unknown operations retain every complete trailing int32 for diagnostics.
+ * The first byte is a CATEGORY discriminator, not a count -- see
+ * {@link FavourPetOperation} for the evidence. Category 0 carries one int32 pet
+ * instance id (-1 clears); category 2 carries a title item type plus a trailing
+ * int32 observed as 0. Unknown categories retain every complete trailing int32
+ * for diagnostics.
+ *
+ * `values` is deliberately not called `petIds`: the category-2 form does not
+ * carry a pet at all.
  */
 export class FavourPetPacket implements Packet {
 
   readonly type = PacketType.FAVOUR_PET;
 
   //#region packet-specific members
-  /** Wire operation controlling the number and meaning of the pet ids. */
+  /** Category controlling the number and meaning of the trailing int32s. */
   operation: FavourPetOperation;
-  /** Object IDs of the pets to favour. */
-  petIds: number[];
+  /** The trailing int32s, whose meaning depends on `operation`. */
+  values: number[];
   //#endregion
 
   constructor() {
-    this.operation = FavourPetOperation.SinglePet;
-    this.petIds = [];
+    this.operation = FavourPetOperation.Pet;
+    this.values = [];
   }
 
-  /** Builds the observed single-pet request form. */
-  static single(petId: number): FavourPetPacket {
+  /** Favourite a pet by instance id, or pass -1 to clear the favourite. */
+  static pet(petInstanceId: number): FavourPetPacket {
     const packet = new FavourPetPacket();
-    packet.operation = FavourPetOperation.SinglePet;
-    packet.petIds = [petId];
+    packet.operation = FavourPetOperation.Pet;
+    packet.values = [petInstanceId];
     return packet;
   }
 
-  /** Builds the observed two-pet request form. */
-  static pair(firstPetId: number, secondPetId: number): FavourPetPacket {
+  /** Favourite a title by item type. The trailing int32 is 0 in the capture. */
+  static title(titleType: number, trailing = 0): FavourPetPacket {
     const packet = new FavourPetPacket();
-    packet.operation = FavourPetOperation.PetPair;
-    packet.petIds = [firstPetId, secondPetId];
+    packet.operation = FavourPetOperation.Title;
+    packet.values = [titleType, trailing];
     return packet;
   }
 
   write(writer: Writer): void {
-    const expectedCount = FavourPetPacket.expectedPetIdCount(this.operation);
-    if (expectedCount !== null && this.petIds.length !== expectedCount) {
+    const expectedCount = FavourPetPacket.expectedValueCount(this.operation);
+    if (expectedCount !== null && this.values.length !== expectedCount) {
       throw new RangeError(
-        `favourite-pet operation ${this.operation} requires ${expectedCount} pet id(s), got ${this.petIds.length}`,
+        `favourite category ${this.operation} requires ${expectedCount} value(s), got ${this.values.length}`,
       );
     }
     writer.writeUnsignedByte(this.operation);
-    for (const petId of this.petIds) {
-      writer.writeInt32(petId);
+    for (const value of this.values) {
+      writer.writeInt32(value);
     }
   }
 
   read(reader: Reader): void {
     this.operation = reader.readUnsignedByte() as FavourPetOperation;
-    const expectedCount = FavourPetPacket.expectedPetIdCount(this.operation);
+    const expectedCount = FavourPetPacket.expectedValueCount(this.operation);
     if (expectedCount === null && reader.remaining % 4 !== 0) {
       throw new PacketReadError(
-        `favourite-pet operation ${this.operation} has ${reader.remaining} trailing byte(s), not complete int32 ids`,
+        `favourite category ${this.operation} has ${reader.remaining} trailing byte(s), not complete int32s`,
       );
     }
     const count = expectedCount ?? reader.remaining / 4;
-    reader.validateCollectionCount(count, 4, 'favourite-pet ids');
-    this.petIds = new Array(count);
+    reader.validateCollectionCount(count, 4, 'favourite values');
+    this.values = new Array(count);
     for (let i = 0; i < count; i++) {
-      this.petIds[i] = reader.readInt32();
+      this.values[i] = reader.readInt32();
     }
   }
 
-  /** Returns the number of pet IDs in a known operation, or null if unknown. */
-  private static expectedPetIdCount(operation: number): number | null {
+  /** Trailing int32 count for a known category, or null if unknown. */
+  private static expectedValueCount(operation: number): number | null {
     switch (operation) {
-      case FavourPetOperation.SinglePet:
+      case FavourPetOperation.Pet:
         return 1;
-      case FavourPetOperation.PetPair:
+      case FavourPetOperation.Title:
         return 2;
       default:
         return null;

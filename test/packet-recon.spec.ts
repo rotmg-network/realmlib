@@ -349,34 +349,47 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.unknownShort).to.equal(2);
   });
 
-  it('FavourPetPacket reads the two-pet operation', () => {
-    const reader = hexReader('0200000fe200000fe3');
+  it('FavourPetPacket reads the title category', () => {
+    // 0x9a0c = Title_Inagural_Champion, sent one packet after a RETITLE.
+    const reader = hexReader('0200009a0c00000000');
     const p = new FavourPetPacket();
     p.read(reader);
-    expect(p.operation).to.equal(FavourPetOperation.PetPair);
-    expect(p.petIds).to.deep.equal([4066, 4067]);
+    expect(p.operation).to.equal(FavourPetOperation.Title);
+    expect(p.values).to.deep.equal([39436, 0]);
     expect(reader.remaining).to.equal(0);
   });
 
-  it('FavourPetPacket reads and round trips the single-pet operation', () => {
+  it('FavourPetPacket reads and round trips the pet category', () => {
     const reader = hexReader('000000001d');
     const captured = new FavourPetPacket();
     captured.read(reader);
-    expect(captured.operation).to.equal(FavourPetOperation.SinglePet);
-    expect(captured.petIds).to.deep.equal([29]);
+    expect(captured.operation).to.equal(FavourPetOperation.Pet);
+    expect(captured.values).to.deep.equal([29]);
     expect(reader.remaining).to.equal(0);
 
-    const p = FavourPetPacket.single(123456);
+    const p = FavourPetPacket.pet(123456);
     const out = roundTrip(p, new FavourPetPacket());
-    expect(out.operation).to.equal(FavourPetOperation.SinglePet);
-    expect(out.petIds).to.deep.equal([123456]);
+    expect(out.operation).to.equal(FavourPetOperation.Pet);
+    expect(out.values).to.deep.equal([123456]);
   });
 
-  it('FavourPetPacket round trips the two-pet operation', () => {
-    const p = FavourPetPacket.pair(123456, 654321);
+  it('FavourPetPacket round trips the title category', () => {
+    const p = FavourPetPacket.title(39436);
     const out = roundTrip(p, new FavourPetPacket());
-    expect(out.operation).to.equal(FavourPetOperation.PetPair);
-    expect(out.petIds).to.deep.equal([123456, 654321]);
+    expect(out.operation).to.equal(FavourPetOperation.Title);
+    expect(out.values).to.deep.equal([39436, 0]);
+  });
+
+  it('FavourPetPacket writes the capture that proved the byte is a category', () => {
+    // The client sent this and /char/list answered <FavoritePet>85</FavoritePet>.
+    // A count byte would have made it 01 00000055.
+    const w = new Writer();
+    FavourPetPacket.pet(85).write(w);
+    expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('0000000055');
+
+    const clear = new Writer();
+    FavourPetPacket.pet(-1).write(clear);
+    expect(clear.buffer.subarray(0, clear.index).toString('hex')).to.equal('00ffffffff');
   });
 
   it('VaultContentPacket accepts lists of one-byte compressed integers', () => {

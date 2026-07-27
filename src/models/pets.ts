@@ -36,14 +36,24 @@ export enum PetUpgradeType {
 }
 
 /**
- * Observed layouts of the `FAVOUR_PET` request.
+ * Category discriminator of the `FAVOUR_PET` request.
  *
- * The values are wire discriminators, not a pet-id count: operation 0 carries
- * one pet id, while operation 2 carries two.
+ * Not a pet-id count. The 2026-07-27 capture settles it against the account
+ * service: the client sent `00 00000055` and `/char/list` came back with
+ * `<FavoritePet>85</FavoritePet>`, and 0x55 is 85. Read as a count that body
+ * declares zero pets, which cannot be what set pet 85.
+ *
+ * Category 2 is not "a pet pair" either. Its only sample is
+ * `02 00009a0c 00000000`, sent one packet after a `RetitlePacket`, and 0x9a0c
+ * is 39436 = `Title_Inagural_Champion` in the game's objects.xml. So packet 145
+ * is a general favourite toggle whose first byte picks what is being favourited,
+ * and the trailing int32 of the title form is 0 and unexplained.
  */
 export enum FavourPetOperation {
-  SinglePet = 0,
-  PetPair = 2
+  /** One int32 pet instance id follows; -1 clears the favourite. */
+  Pet = 0,
+  /** One int32 title item type follows, then a trailing int32 (observed 0). */
+  Title = 2
 }
 
 /** Result codes used when moving items to or from a pet container. */
