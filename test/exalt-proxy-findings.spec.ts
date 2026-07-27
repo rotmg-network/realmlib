@@ -73,12 +73,12 @@ describe('Exalt proxy findings (2026-07-27)', () => {
 
   it('replays the 239 -> 170 reward-prompt exchange', () => {
     const request = parse(new ClaimRewardsInfoRequestPacket(), '0000230c');
-    expect(request.promptId).to.equal(0x230c);
+    expect(request.chestItemType).to.equal(0x230c);
 
     const resultHex = '0000230c0300060000109c0000058400000baf0000c17f00005c8a0000748c';
     const result = parse(new ClaimRewardsInfoPromptPacket(), resultHex);
-    expect(result.promptId).to.equal(request.promptId);
-    expect(result.unknownByte).to.equal(3);
+    expect(result.chestItemType).to.equal(request.chestItemType);
+    expect(result.chestType).to.equal(3);
     expect(result.items).to.deep.equal([0x109c, 0x0584, 0x0baf, 0xc17f, 0x5c8a, 0x748c]);
     expect(writeHex(result)).to.equal(resultHex);
   });

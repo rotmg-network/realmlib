@@ -4,33 +4,33 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to request the contents of a claimable-rewards prompt. The server
- * responds with a `ClaimRewardsInfoPromptPacket` (id 170) whose `promptId`
- * echoes the one sent here — confirmed 4/4 in captures, with the response
- * arriving within one server RTT.
+ * Sent to look inside a chest item without opening it. The server responds with
+ * a `ClaimRewardsInfoPromptPacket` (id 170) whose `chestItemType` echoes the one
+ * sent here — confirmed in every capture, one server RTT apart.
  *
- * Observed prompt ids can coincide with item ids sitting in the gift chest
- * (e.g. 42345 was both a requested prompt id and a gift-chest item), so the
- * id likely identifies a claimable package/container item.
+ * The id is simply the chest's own item type, which is why a bare int32 is
+ * enough to identify it. This is a read: the 2026-07-27 capture sent it for a
+ * chest still sitting in vault storage, took the pool back, and only swapped and
+ * used the item much later. Nothing is consumed and no claim need follow.
  */
 export class ClaimRewardsInfoRequestPacket implements Packet {
 
   readonly type = PacketType.CLAIM_REWARDS_INFO_REQUEST;
 
   //#region packet-specific members
-  /** The prompt id being requested (echoed back in packet 170). */
-  promptId: number;
+  /** The chest item type being inspected (echoed back in packet 170). */
+  chestItemType: number;
   //#endregion
 
   constructor() {
-    this.promptId = 0;
+    this.chestItemType = 0;
   }
 
   read(reader: Reader): void {
-    this.promptId = reader.readInt32();
+    this.chestItemType = reader.readInt32();
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.promptId);
+    writer.writeInt32(this.chestItemType);
   }
 }

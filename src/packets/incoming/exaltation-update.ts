@@ -4,7 +4,18 @@ import { Reader } from "../../reader";
 import { Writer } from "../../writer";
 
 /**
- * Received when the players exaltation stats update
+ * Received once per connection for the character being loaded.
+ *
+ * Despite the packet's name this carries the account's per-class POWER-UP
+ * (stat-potion) totals, not exaltations. A 2026-07-27 session decodes the
+ * Samurai body to [118, 84, 96, 82, 135, 137, 150, 96] and the Wizard body to
+ * [99, 1467, 150, 134, 151, 143, 149, 152]; the same session's
+ * `/account/listPowerUpStats` returns `<ClassPowerup><Class>785</Class>
+ * <Dex>118</Dex><Spd>84</Spd><Vit>96</Vit><Wis>82</Wis><Def>135</Def>
+ * <Att>137</Att><Mana>150</Mana><Life>96</Life></ClassPowerup>` and Class 782
+ * with `<Spd>1467</Spd>`. Same eight numbers, same order, same outlier — which
+ * confirms both the read order below and the meaning against an independent
+ * source.
  */
 export class ExaltationUpdatePacket implements Packet {
   readonly type = PacketType.EXALTATION_BONUS_CHANGED;

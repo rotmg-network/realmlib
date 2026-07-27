@@ -701,18 +701,18 @@ describe('current-build packets reconciled from captured bytes', () => {
     const reader = hexReader('0000ff2a02000300009411000094160000941b');
     const p = new ClaimRewardsInfoPromptPacket();
     p.read(reader);
-    expect(p.promptId).to.equal(0x0000ff2a);
-    expect(p.unknownByte).to.equal(2);
+    expect(p.chestItemType).to.equal(0x0000ff2a);
+    expect(p.chestType).to.equal(2);
     expect(p.items).to.deep.equal([0x9411, 0x9416, 0x941b]);
     expect(reader.remaining).to.equal(0);
   });
 
-  it('ClaimRewardsInfoRequestPacket round trips the prompt id', () => {
+  it('ClaimRewardsInfoRequestPacket round trips the chest item type', () => {
     // Captured C->S request; the server echoed 0x230c back in packet 170.
     const reader = hexReader('0000230c');
     const p = new ClaimRewardsInfoRequestPacket();
     p.read(reader);
-    expect(p.promptId).to.equal(0x230c);
+    expect(p.chestItemType).to.equal(0x230c);
     expect(reader.remaining).to.equal(0);
   });
 
@@ -740,8 +740,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     const reader = hexReader('0000ffd10200030000ffd60000ffd70000ffd8');
     const p = new ClaimRewardsInfoPromptPacket();
     p.read(reader);
-    expect(p.promptId).to.equal(0xffd1);
-    expect(p.unknownByte).to.equal(2);
+    expect(p.chestItemType).to.equal(0xffd1);
+    expect(p.chestType).to.equal(2);
     expect(p.items).to.deep.equal([0xffd6, 0xffd7, 0xffd8]);
     expect(reader.remaining).to.equal(0);
   });
