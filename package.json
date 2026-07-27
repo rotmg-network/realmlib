@@ -9,6 +9,8 @@
     "clean": "node -e \"require('fs').rmSync('lib', { recursive: true, force: true })\"",
     "build": "npm run clean && tsc -p .",
     "test": "mocha",
+    "reconcile:exalt": "npm run build --silent && node scripts/reconcile-exalt.cjs",
+    "check:protocol": "npm run build --silent && node scripts/reconcile-exalt.cjs --strict protocol/exalt-current.json",
     "prepare": "npm run build"
   },
   "files": [
