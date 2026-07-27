@@ -25,8 +25,8 @@ import {
   NotificationPacket,
   Reader,
   RedeemVoucherPacket,
+  DamageWithEffectPacket,
   SlotObjectData,
-  StasisPacket,
   UpgradeEnchanterPacket,
   VoucherResultPacket,
   Writer,
@@ -114,19 +114,22 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(writeHex(twoDyes)).to.equal('0002000000102601000000110701');
   });
 
-  it('StasisPacket decodes objectId, effect 22, and the duration float', () => {
-    // 19:40 session: same object at 7.0s then ~2.98s; 0.0 clears the stasis.
-    const seven = parse(new StasisPacket(), '000003af0116000000000000ffffff1640e00000');
-    expect(seven.objectId).to.equal(943);
-    expect(seven.unknownByte).to.equal(1);
+  it('DamageWithEffectPacket (166) decodes a stasis application', () => {
+    // A Damage body (0 dmg, effect 22, owner sentinel 0xffffff) + effect id +
+    // duration float. Same object at 7.0s then ~2.98s; 0.0 clears the stasis.
+    const seven = parse(new DamageWithEffectPacket(), '000003af0116000000000000ffffff1640e00000');
+    expect(seven.targetId).to.equal(943);
+    expect(seven.effects).to.deep.equal([22]);
+    expect(seven.damageAmount).to.equal(0);
+    expect(seven.bulletId).to.equal(0);
+    expect(seven.objectId).to.equal(0xffffff);
     expect(seven.effectId).to.equal(22);
-    expect(seven.unknownInt2).to.equal(-234);
-    expect(seven.durationSeconds).to.equal(7);
+    expect(seven.value).to.equal(7);
     expect(writeHex(seven)).to.equal('000003af0116000000000000ffffff1640e00000');
 
-    const clear = parse(new StasisPacket(), '000005610116000000000000ffffff1600000000');
-    expect(clear.objectId).to.equal(1377);
-    expect(clear.durationSeconds).to.equal(0);
+    const clear = parse(new DamageWithEffectPacket(), '000005610116000000000000ffffff1600000000');
+    expect(clear.targetId).to.equal(1377);
+    expect(clear.value).to.equal(0);
   });
 
   it('reads the 141 result body 01 0000 as success + empty string', () => {

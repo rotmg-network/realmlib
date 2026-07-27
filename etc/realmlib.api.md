@@ -8,6 +8,18 @@ import { EventEmitter } from 'events';
 import { Socket } from 'net';
 
 // @public
+export class AcceleratorUpdatedPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.ACCELERATOR_UPDATED;
+    value: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class AcceptArenaDeathPacket implements Packet {
     // (undocumented)
     propagate: boolean;
@@ -71,6 +83,21 @@ export class ActivateCruciblePacket implements Packet {
     trailing: number;
     // (undocumented)
     readonly type = PacketType.ACTIVATE_CRUCIBLE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class ActivateCrucibleResultPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.ACTIVATE_CRUCIBLE_RESULT;
+    // @deprecated
+    get value(): number;
+    set value(value: number);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -220,6 +247,31 @@ export class BlacksmithRequestPacket implements Packet {
     slots: SlotObjectData[];
     // (undocumented)
     readonly type = PacketType.BLACKSMITH_REQUEST;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class BoostBpMilestonePacket implements Packet {
+    constructor();
+    milestone: number;
+    passId: string;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.BOOST_BP_MILESTONE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class BoostBpMilestoneResultPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.BOOST_BP_MILESTONE_RESULT;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -1246,6 +1298,21 @@ export class CreateSuccessPacket implements Packet {
 }
 
 // @public
+export class CreepHitPacket implements Packet {
+    constructor();
+    bulletId: number;
+    objectId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    targetId: number;
+    time: number;
+    // (undocumented)
+    readonly type = PacketType.CREEP_HIT;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class CreepMoveMessagePacket implements Packet {
     constructor();
     hold: boolean;
@@ -1321,6 +1388,43 @@ export enum CustomizationCategory {
 }
 
 // @public
+export class CustomMapDeletePacket implements Packet {
+    constructor();
+    mapId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.CUSTOM_MAP_DELETE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class CustomMapDeleteResponsePacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.CUSTOM_MAP_DELETE_RESPONSE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class DamageBoostPacket implements Packet {
+    constructor();
+    objectId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.DAMAGE_BOOST;
+    value: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export enum DamageFlags {
     // (undocumented)
     ArmorPierce = 2,
@@ -1343,6 +1447,25 @@ export class DamagePacket implements Packet {
     targetId: number;
     // (undocumented)
     readonly type = PacketType.DAMAGE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class DamageWithEffectPacket implements Packet {
+    constructor();
+    bulletId: number;
+    damageAmount: number;
+    effectId: number;
+    effects: number[];
+    info: number;
+    objectId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    targetId: number;
+    // (undocumented)
+    readonly type = PacketType.DAMAGE_WITH_EFFECT;
+    value: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -1501,6 +1624,7 @@ export enum EnchantmentOperation {
 // @public
 export class EnchantPacket implements Packet {
     constructor();
+    errorText: string | null;
     // (undocumented)
     read(reader: Reader): void;
     success: boolean;
@@ -1916,6 +2040,22 @@ export class GetPlayersListPacket implements Packet {
 }
 
 // @public
+export class GiftResultPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.GIFT_RESULT;
+    unknownBool: boolean;
+    unknownString: string;
+    unknownString2: string;
+    unknownString3: string;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class GlobalNotificationPacket implements Packet {
     constructor();
     notificationType: number;
@@ -2309,6 +2449,18 @@ export class KeyInfoResponsePacket implements Packet {
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.KEY_INFO_RESPONSE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class LoadingScreenPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.LOADING_SCREEN;
+    unknownBool: boolean;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -2883,6 +3035,10 @@ export class PacketReadError extends RealmlibError {
 // @public
 export enum PacketType {
     // (undocumented)
+    ACCELERATOR_ADDED = "ACCELERATOR_ADDED",
+    // (undocumented)
+    ACCELERATOR_UPDATED = "ACCELERATOR_UPDATED",
+    // (undocumented)
     ACCEPT_ARENA_DEATH = "ACCEPT_ARENA_DEATH",
     // (undocumented)
     ACCEPTTRADE = "ACCEPTTRADE",
@@ -2890,6 +3046,8 @@ export enum PacketType {
     ACCOUNTLIST = "ACCOUNTLIST",
     // (undocumented)
     ACTIVATE_CRUCIBLE = "ACTIVATE_CRUCIBLE",
+    // (undocumented)
+    ACTIVATE_CRUCIBLE_RESULT = "ACTIVATE_CRUCIBLE_RESULT",
     // (undocumented)
     ACTIVE_PET_UPDATE_REQUEST = "ACTIVE_PET_UPDATE_REQUEST",
     // (undocumented)
@@ -2910,6 +3068,8 @@ export enum PacketType {
     BLACKSMITH_REQUEST = "BLACKSMITH_REQUEST",
     // (undocumented)
     BOOST_BP_MILESTONE = "BOOST_BP_MILESTONE",
+    // (undocumented)
+    BOOST_BP_MILESTONE_RESULT = "BOOST_BP_MILESTONE_RESULT",
     // (undocumented)
     BUY = "BUY",
     // (undocumented)
@@ -2989,11 +3149,17 @@ export enum PacketType {
     // (undocumented)
     CUSTOM_MAP_DELETE = "CUSTOM_MAP_DELETE",
     // (undocumented)
+    CUSTOM_MAP_DELETE_RESPONSE = "CUSTOM_MAP_DELETE_RESPONSE",
+    // (undocumented)
     CUSTOM_MAP_LIST = "CUSTOM_MAP_LIST",
+    // (undocumented)
+    CUSTOM_MAP_LIST_RESPONSE = "CUSTOM_MAP_LIST_RESPONSE",
     // (undocumented)
     DAMAGE = "DAMAGE",
     // (undocumented)
     DAMAGE_BOOST = "DAMAGE_BOOST",
+    // (undocumented)
+    DAMAGE_WITH_EFFECT = "DAMAGE_WITH_EFFECT",
     // (undocumented)
     DASH = "DASH",
     // (undocumented)
@@ -3038,6 +3204,8 @@ export enum PacketType {
     GET_PLAYERS_LIST_MESSAGE = "GET_PLAYERS_LIST_MESSAGE",
     // (undocumented)
     GIFT_NOTIFICATION = "GIFT_NOTIFICATION",
+    // (undocumented)
+    GIFT_RESULT = "GIFT_RESULT",
     // (undocumented)
     GLOBAL_NOTIFICATION = "GLOBAL_NOTIFICATION",
     // (undocumented)
@@ -3123,6 +3291,8 @@ export enum PacketType {
     // (undocumented)
     PET_CHANGE_SKIN_MSG = "PET_CHANGE_SKIN_MSG",
     // (undocumented)
+    PET_SHADER_PURCHASE_RESULT = "PET_SHADER_PURCHASE_RESULT",
+    // (undocumented)
     PETUPGRADEREQUEST = "PETUPGRADEREQUEST",
     // (undocumented)
     PETYARDUPDATE = "PETYARDUPDATE",
@@ -3144,6 +3314,8 @@ export enum PacketType {
     PONG = "PONG",
     // (undocumented)
     PROGRESS_UPDATE = "PROGRESS_UPDATE",
+    // (undocumented)
+    PURCHASE_PET_SHADER = "PURCHASE_PET_SHADER",
     PURCHASE_REQUEST = "PURCHASE_REQUEST",
     // (undocumented)
     QUEST_FETCH_ASK = "QUEST_FETCH_ASK",
@@ -3171,6 +3343,8 @@ export enum PacketType {
     REDEEM_EXALTATION_REWARD = "REDEEM_EXALTATION_REWARD",
     // (undocumented)
     REDEEM_VOUCHER = "REDEEM_VOUCHER",
+    // (undocumented)
+    REFINE_RESULT = "REFINE_RESULT",
     // (undocumented)
     REQUESTTRADE = "REQUESTTRADE",
     // (undocumented)
@@ -3208,9 +3382,13 @@ export enum PacketType {
     // (undocumented)
     SKIN_RECYCLE = "SKIN_RECYCLE",
     // (undocumented)
-    SQUAREHIT = "SQUAREHIT",
+    SKIN_RECYCLE_RESPONSE = "SKIN_RECYCLE_RESPONSE",
     // (undocumented)
-    STASIS = "STASIS",
+    SLIPPING_INFO = "SLIPPING_INFO",
+    // (undocumented)
+    SQUAREHIT = "SQUAREHIT",
+    // @deprecated (undocumented)
+    STASIS = "DAMAGE_WITH_EFFECT",
     // (undocumented)
     STATS = "STATS",
     // (undocumented)
@@ -3228,17 +3406,31 @@ export enum PacketType {
     // (undocumented)
     TRADESTART = "TRADESTART",
     // (undocumented)
-    UNKNOWN147 = "UNKNOWN147",
+    UNKNOWN116 = "UNKNOWN116",
+    // @deprecated (undocumented)
+    UNKNOWN147 = "SKIN_RECYCLE_RESPONSE",
+    // @deprecated (undocumented)
+    UNKNOWN181 = "ACTIVATE_CRUCIBLE_RESULT",
     // (undocumented)
-    UNKNOWN181 = "UNKNOWN181",
+    UNKNOWN198 = "UNKNOWN198",
     // (undocumented)
-    UNKNOWN224 = "UNKNOWN224",
+    UNKNOWN199 = "UNKNOWN199",
+    // @deprecated (undocumented)
+    UNKNOWN224 = "UNLOCK_MISSION_TREE",
+    // (undocumented)
+    UNKNOWN226 = "UNKNOWN226",
+    // (undocumented)
+    UNKNOWN231 = "UNKNOWN231",
     // (undocumented)
     UNLOCK_ENCHANTMENT = "UNLOCK_ENCHANTMENT",
     // (undocumented)
     UNLOCK_ENCHANTMENT_SLOT = "UNLOCK_ENCHANTMENT_SLOT",
     // (undocumented)
     UNLOCK_INFORMATION = "UNLOCK_INFORMATION",
+    // (undocumented)
+    UNLOCK_MISSION = "UNLOCK_MISSION",
+    // (undocumented)
+    UNLOCK_MISSION_TREE = "UNLOCK_MISSION_TREE",
     // (undocumented)
     UPDATE = "UPDATE",
     // (undocumented)
@@ -3613,6 +3805,18 @@ export enum PetContainerTransferResult {
     InvalidGeneric = 1,
     // (undocumented)
     Ok = 0
+}
+
+// @public
+export class PetShaderPurchaseResultPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.PET_SHADER_PURCHASE_RESULT;
+    // (undocumented)
+    write(writer: Writer): void;
 }
 
 // @public (undocumented)
@@ -4000,6 +4204,19 @@ export const PROXY_INCOMING: RC4Config;
 export const PROXY_OUTGOING: RC4Config;
 
 // @public
+export class PurchasePetShaderPacket implements Packet {
+    constructor();
+    petId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.PURCHASE_PET_SHADER;
+    unknownInt: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class PurchaseRequestPacket implements Packet {
     constructor();
     static build(category: string, itemId: number, quantity: number, currency: string): string;
@@ -4255,6 +4472,18 @@ export class ReconnectPacket implements Packet {
 }
 
 // @public
+export class RedeemExaltationRewardPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.REDEEM_EXALTATION_REWARD;
+    unknownInt: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class RedeemVoucherPacket implements Packet {
     constructor();
     code: string;
@@ -4480,6 +4709,32 @@ export class SetConditionPacket implements Packet {
 }
 
 // @public
+export class SetDiscoverablePacket implements Packet {
+    constructor();
+    discoverable: boolean;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.SET_DISCOVERABLE;
+    unknownShort: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class SetGraveStonePacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.SET_GRAVE_STONE;
+    unknownInt: number;
+    unknownInt2: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class ShootAckPacket implements Packet {
     constructor();
     // (undocumented)
@@ -4509,6 +4764,46 @@ export class ShowEffectPacket implements Packet {
     toString(): string;
     // (undocumented)
     readonly type = PacketType.SHOWEFFECT;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class SkinRecyclePacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    slotObject: SlotObjectData;
+    // (undocumented)
+    readonly type = PacketType.SKIN_RECYCLE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class SkinRecycleResponsePacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    slotObject: SlotObjectData;
+    // (undocumented)
+    readonly type = PacketType.SKIN_RECYCLE_RESPONSE;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class SlippingInfoPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.SLIPPING_INFO;
+    unknownFloat: number;
+    unknownFloat2: number;
+    unknownFloat3: number;
+    unknownFloat4: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -4560,24 +4855,6 @@ export class SquareHitPacket implements Packet {
     time: number;
     // (undocumented)
     readonly type = PacketType.SQUAREHIT;
-    // (undocumented)
-    write(writer: Writer): void;
-}
-
-// @public
-export class StasisPacket implements Packet {
-    constructor();
-    durationSeconds: number;
-    effectId: number;
-    objectId: number;
-    // (undocumented)
-    read(reader: Reader): void;
-    // (undocumented)
-    readonly type = PacketType.STASIS;
-    unknownByte: number;
-    unknownInt: number;
-    unknownInt2: number;
-    unknownShort: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -5060,25 +5337,63 @@ export class TradeStartPacket implements Packet {
 }
 
 // @public
-export class Unknown181Packet implements Packet {
+export class Unknown116Packet implements Packet {
+    constructor();
+    message: string;
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.UNKNOWN116;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public @deprecated (undocumented)
+export const Unknown181Packet: typeof ActivateCrucibleResultPacket;
+
+// @public @deprecated (undocumented)
+export type Unknown181Packet = ActivateCrucibleResultPacket;
+
+// @public
+export class Unknown198Packet implements Packet {
     constructor();
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
-    readonly type = PacketType.UNKNOWN181;
-    value: number;
+    readonly type = PacketType.UNKNOWN198;
+    unknownString: string;
     // (undocumented)
     write(writer: Writer): void;
 }
 
 // @public
-export class Unknown224Packet implements Packet {
+export class Unknown199Packet implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    result: boolean;
+    // (undocumented)
+    readonly type = PacketType.UNKNOWN199;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public @deprecated (undocumented)
+export const Unknown224Packet: typeof UnlockMissionTreePacket;
+
+// @public @deprecated (undocumented)
+export type Unknown224Packet = UnlockMissionTreePacket;
+
+// @public
+export class Unknown226Packet implements Packet {
     constructor();
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
-    readonly type = PacketType.UNKNOWN224;
-    unknownInt: number;
+    readonly type = PacketType.UNKNOWN226;
+    unknownString: string;
+    unknownString2: string;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -5098,6 +5413,34 @@ export class UnlockInformationPacket implements Packet {
 // @public
 export enum UnlockInformationType {
     VAULT = 2
+}
+
+// @public
+export class UnlockMissionPacket implements Packet {
+    constructor();
+    boardId: number;
+    missionId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.UNLOCK_MISSION;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class UnlockMissionTreePacket implements Packet {
+    constructor();
+    boardId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.UNLOCK_MISSION_TREE;
+    // @deprecated
+    get unknownInt(): number;
+    set unknownInt(value: number);
+    // (undocumented)
+    write(writer: Writer): void;
 }
 
 // @public

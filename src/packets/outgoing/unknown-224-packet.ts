@@ -4,32 +4,53 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Current build packet 224 (client -> server). The body is a single int32
- * (observed as 51); the server immediately echoes the same value back in a
- * `NotificationPacket` with effect 18, which suggests some kind of
- * claim/acknowledge with an id.
+ * Sent to unlock a mission tree. A single int32 board/tree id.
+ *
+ * Formerly `Unknown224Packet`. Two independent sources name it:
+ * - the 6.12.0.2.0 client binary: class `KFLPDMILKEJ` (vtable id 224) carries
+ *   exactly the `boardId` field token of `ClaimMissionPacket` /
+ *   `UnlockMissionPacket`, and the catalog pairs `UnlockMissionTree` with
+ *   `UnlockMission` (225);
+ * - the original capture: the observed body was 51, and the same session's
+ *   `/missions/getPlayerMissions` returned `<TreesUnlocked>50,51</TreesUnlocked>`
+ *   — i.e. the packet unlocked tree 51. The effect-18 notification echoing
+ *   the value is the "tree unlocked" toast.
  */
-export class Unknown224Packet implements Packet {
+export class UnlockMissionTreePacket implements Packet {
 
-  readonly type = PacketType.UNKNOWN224;
+  readonly type = PacketType.UNLOCK_MISSION_TREE;
 
   //#region packet-specific members
-  /**
-   * An int32 echoed back by the server in an effect-18 notification.
-   * Purpose not yet confirmed.
-   */
-  unknownInt: number;
+  /** Mission board / season tree id (observed 51 = the season tree). */
+  boardId: number;
   //#endregion
 
   constructor() {
-    this.unknownInt = 0;
+    this.boardId = 0;
+  }
+
+  /**
+   * Backward-compatible alias for {@link boardId}.
+   * @deprecated The int32 is the mission board/tree id.
+   */
+  get unknownInt(): number {
+    return this.boardId;
+  }
+
+  set unknownInt(value: number) {
+    this.boardId = value;
   }
 
   read(reader: Reader): void {
-    this.unknownInt = reader.readInt32();
+    this.boardId = reader.readInt32();
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.unknownInt);
+    writer.writeInt32(this.boardId);
   }
 }
+
+/** @deprecated Renamed {@link UnlockMissionTreePacket}. */
+export const Unknown224Packet = UnlockMissionTreePacket;
+/** @deprecated Renamed {@link UnlockMissionTreePacket}. */
+export type Unknown224Packet = UnlockMissionTreePacket;

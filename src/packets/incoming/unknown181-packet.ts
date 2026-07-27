@@ -4,28 +4,49 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Packet 181, server -> client. A single byte (observed as 1) whose meaning is
- * not yet known; it followed crucible activity in the 2026-07-26 capture.
- * Defined so the id is consumed rather than falling through unparsed.
+ * Received in response to `ACTIVATE_CRUCIBLE` (180). A single result bool
+ * (observed 1 following crucible activity in the 2026-07-26 capture).
+ *
+ * Formerly `Unknown181Packet`. The 6.12.0.2.0 client binary settles it:
+ * class `FDDGDIKABKI` at incoming factory id 181 is registered by
+ * `CruciblesManager`, i.e. the catalog's `ActivateCrucibleResultMessage`,
+ * pairing with outgoing 180.
  */
-export class Unknown181Packet implements Packet {
+export class ActivateCrucibleResultPacket implements Packet {
 
-  readonly type = PacketType.UNKNOWN181;
+  readonly type = PacketType.ACTIVATE_CRUCIBLE_RESULT;
 
   //#region packet-specific members
-  /** The single body byte (observed as 1). */
-  value: number;
+  /** Whether the crucible activation succeeded (observed true). */
+  result: boolean;
   //#endregion
 
   constructor() {
-    this.value = 0;
+    this.result = false;
+  }
+
+  /**
+   * Backward-compatible numeric alias for {@link result}.
+   * @deprecated The body is a boolean success flag.
+   */
+  get value(): number {
+    return this.result ? 1 : 0;
+  }
+
+  set value(value: number) {
+    this.result = value !== 0;
   }
 
   read(reader: Reader): void {
-    this.value = reader.readByte();
+    this.result = reader.readBoolean();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.value);
+    writer.writeBoolean(this.result);
   }
 }
+
+/** @deprecated Renamed {@link ActivateCrucibleResultPacket}. */
+export const Unknown181Packet = ActivateCrucibleResultPacket;
+/** @deprecated Renamed {@link ActivateCrucibleResultPacket}. */
+export type Unknown181Packet = ActivateCrucibleResultPacket;

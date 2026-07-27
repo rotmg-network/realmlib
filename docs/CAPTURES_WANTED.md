@@ -1,5 +1,40 @@
 # realmlib capture playbook — toward full coverage
 
+## UPDATE 2026-07-27 (late) — client-binary extraction landed
+
+The rotmg-extractor dump (packet_structures.json, 178 vtable-exact layouts +
+the incoming message factory) resolved most of this playbook without captures.
+Landed in realmlib: 115, 129, 130, 133, 136(doc), 146, 147, 148, 151, 152, 153,
+156, 166 (= DamageWithEffect, ex-STASIS), 167, 181 (= ActivateCrucibleResult),
+193/194, 198/199, 222, 224 (= UnlockMissionTree), 225, 226, 227, 231(id),
+236, 116, 135(id), 132(id), plus enum batches. **173/175/177/187 and 162 do
+not exist in build 6.12.0.2.0** (superseded by the 189–198 cluster), and
+**1000 cannot be a wire id** (ids are single bytes).
+
+What captures are still worth taking, in order:
+
+1. **Verification passes** — one real body each for the newly modelled
+   packets above (they are client-binary-derived, not wire-observed).
+   Highest value: 115+116 (exaltation redeem), 146→147 (skin recycle),
+   151→152 (BP milestone boost), 156, 167, 236.
+2. **Nested-framing blockers** — 132 (custom map list), 135 (refine result),
+   218 (server-name list), 231 (stat-bonus/stacks block), 238 (GiftInfo).
+   A single body each pins the list/struct framing.
+3. **Naming ambiguities** — buy a **dust bundle** at the enchanter (settles
+   whether 191/192 are BuyDusts/Result vs reroll-count reset); trigger an
+   accelerator gain (separates 153 updated vs 179 added); capture 222's
+   context (SaveLockUpdate vs TutorialStateChanged); a gift send (226).
+4. **A failed enchant/reroll** — the 190 body should then carry the error
+   string after the bool, confirming the truncation-on-success reading.
+5. The original wishlist below still applies for enums and `unknown*` fields
+   (trades, parties, failures, payment types, effect bitmasks).
+
+Anything below that talks about capturing 173/175/177/187 or "the enchanting
+cluster" is obsolete — those ids are gone; enchanting flows through
+185/189–192/195–199.
+
+---
+
 Goal: model every packet realmlib registers, name every `unknown*` field, and
 fill every enum. This is the shopping list for Exalt captures, organised into
 **themed sessions** so one client run knocks out a whole cluster.

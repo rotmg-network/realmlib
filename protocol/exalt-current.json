@@ -1425,7 +1425,7 @@
     },
     {
       "id": 147,
-      "type": "UNKNOWN147",
+      "type": "SKIN_RECYCLE_RESPONSE",
       "name": "UNKNOWN147",
       "confidence": 70,
       "provenance": "realmlib packet-map.ts"
@@ -1563,7 +1563,7 @@
     },
     {
       "id": 166,
-      "type": "STASIS",
+      "type": "DAMAGE_WITH_EFFECT",
       "name": "STASIS",
       "confidence": 70,
       "provenance": "realmlib packet-map.ts"
@@ -1648,7 +1648,7 @@
     },
     {
       "id": 181,
-      "type": "UNKNOWN181",
+      "type": "ACTIVATE_CRUCIBLE_RESULT",
       "class": "Unknown181Packet",
       "name": "Unknown181",
       "direction": "incoming",
@@ -1898,7 +1898,7 @@
     },
     {
       "id": 224,
-      "type": "UNKNOWN224",
+      "type": "UNLOCK_MISSION_TREE",
       "class": "Unknown224Packet",
       "name": "Unknown224",
       "direction": "outgoing",
