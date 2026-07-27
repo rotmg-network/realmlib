@@ -16,7 +16,8 @@ export class BuyResultPacket implements Packet {
    */
   result: number;
   /**
-   * > Unknown.
+   * Server response payload. Successful purchases commonly return JSON such
+   * as `{"k":"s.buy_success"}`; failures may instead contain plain text.
    */
   resultString: string;
   //#endregion
@@ -34,5 +35,17 @@ export class BuyResultPacket implements Packet {
   write(writer: Writer): void {
     writer.writeInt32(this.result);
     writer.writeString(this.resultString);
+  }
+
+  /**
+   * Parses a JSON result payload, returning `undefined` for plain-text or
+   * malformed responses.
+   */
+  parseJson(): unknown | undefined {
+    try {
+      return JSON.parse(this.resultString);
+    } catch {
+      return undefined;
+    }
   }
 }

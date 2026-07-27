@@ -2,13 +2,14 @@ import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
+import { AccountRewardGrant, parseAccountRewardGrants } from '../../models';
 
 /**
  * Current build packet 233 (server -> client), sent in response to
  * `ClaimAccountLevelRewardPacket`. The body is a success flag, a compressed
- * reward ID, and -- ONLY when the claim succeeded -- a descriptor string such
- * as `boost_loot:2`, `boost_exp:3`, `item:Beginner Weapon`,
- * `char_start_with:all:1:T1`, `fame:200`.
+ * reward ID, and -- ONLY when the claim succeeded -- a comma-separated grant
+ * descriptor such as `item:Stat Potion Choice Chest,item:Power Pizza` or
+ * `fame:1000`. Item grants may include skin/texture data after a second colon.
  *
  * Confirmed against the 2026-07-26 proxy capture: the one successful sample
  * was `01 1e 000c "boost_loot:2"`, while all 106 failures were the bare
@@ -31,6 +32,11 @@ export class ClaimAccountLevelRewardResultPacket implements Packet {
     this.success = false;
     this.rewardId = 0;
     this.grantedRewardDescription = '';
+  }
+
+  /** Parses {@link grantedRewardDescription} into individual typed grants. */
+  get grants(): AccountRewardGrant[] {
+    return parseAccountRewardGrants(this.grantedRewardDescription);
   }
 
   read(reader: Reader): void {

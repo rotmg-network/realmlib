@@ -12,9 +12,9 @@ export class BuyPacket implements Packet {
 
   //#region packet-specific members
   /**
-   * The object id of the item being purchased.
+   * The object type of the item being purchased.
    */
-  objectId: number;
+  objectType: number;
   /**
    * The number of items being purchased.
    */
@@ -22,17 +22,29 @@ export class BuyPacket implements Packet {
   //#endregion
 
   constructor() {
-    this.objectId = 0;
+    this.objectType = 0;
     this.quantity = 0;
   }
 
+  /**
+   * Backward-compatible alias for {@link objectType}.
+   * @deprecated Packet 85 carries an object type, not a world object id.
+   */
+  get objectId(): number {
+    return this.objectType;
+  }
+
+  set objectId(value: number) {
+    this.objectType = value;
+  }
+
   write(writer: Writer): void {
-    writer.writeInt32(this.objectId);
+    writer.writeInt32(this.objectType);
     writer.writeInt32(this.quantity);
   }
 
   read(reader: Reader): void {
-    this.objectId = reader.readInt32();
+    this.objectType = reader.readInt32();
     this.quantity = reader.readInt32();
   }
 }
