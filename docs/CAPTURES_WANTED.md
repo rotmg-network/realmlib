@@ -32,6 +32,47 @@ Legend: **[P]** unmodelled packet (no factory), **[F]** modelled but has
 
 ---
 
+## Predicted byte layouts — predict-and-verify
+
+For each unmodelled packet, the layout below is the **hypothesis** to check the
+captured bytes against, derived from this build's conventions:
+
+- **Result/ack packets** = `byte success` + `short code` (confirmed on 141).
+- **Item/skin lists** = `short count` + `int32[count]` (CHEST_REWARD_RESULT,
+  BUY_CUSTOMISATION_SOCKET, CLAIM_REWARDS_INFO_PROMPT).
+- **Slot-targeted ops** = `SlotObjectData` = 3 × int32 =
+  `int32 ownerObjectId, int32 slotId, int32 itemType` (12 bytes; INVSWAP,
+  CLAIM_CHEST_REWARD).
+- **Datastore ids** = UTF string = `uint16 length` + utf8 digits (CLAIM_BATTLE_PASS).
+- **Toggles** = a single `byte` (0/1); **sentinels** = signed, e.g. `ff` = −1.
+
+Worked example (this is the method): **140** was predicted `short count + {byte,
+int32, byte}` and the 19:40 session's `0001 00 00001007 01` matched byte-exact,
+with **141** = `01 0000` = `byte success(1) + short code(0)`. Both confirmed.
+
+| id | dir | predicted layout | how to confirm |
+|---|---|---|---|
+| **115 REDEEM_EXALTATION_REWARD** | C→S | `int32 objType` (class, e.g. 785) `[+ byte stat/index]` | first 4 bytes = the class you exalted; expect a fresh `114` for that class in reply; watch for `ExaltationRedeemInfoMessage` |
+| **136 BUY_REFINEMENT** | C→S | `int32 itemType [+ int32 count]` | itemType resolves in objects.xml; reply is `byte success + short code` (new incoming id — flag it) |
+| **146 SKIN_RECYCLE** | C→S | `short count + int32[count] skinTypes` (or bare `int32`) | **recycle exactly 2 skins in one action** to prove the count prefix; cross-ref `/account/ownedSkins` |
+| **151 BOOST_BP_MILESTONE** | C→S | `string passId + byte milestone` (parallels 149) | passId = `uint16 len`+digits; cross-ref `/season/bpInfo`; reply `BoostBPMilestoneResultMessage` |
+| **156 SET_GRAVE_STONE** | C→S | `int32 gravestoneType` | type in objects.xml (gravestone); follow-up `47 RESKIN_UNLOCK` type `4` (Gravestone) |
+| **162 SET_TRACKED_SEASON** | C→S | `int32 seasonId` (e.g. 50/51) or `string seasonId` | value = a season id from `/missions/getClientSeasons`; int32 50 = `00000032`, a string starts `0002…` |
+| **167 SET_DISCOVERABLE** | C→S | `byte discoverable` (0/1) | capture both toggles — a single `00` / `01` |
+| **173 UNLOCK_ENCHANTMENT_SLOT** | C→S | `SlotObjectData target` (12B) `[+ byte slotIndex]` | the 12B triple = (playerId, invSlot, itemType) of a preceding INVSWAP/USEITEM; stat-80 blob gains a slot |
+| **175 UNLOCK_ENCHANTMENT** | C→S | `SlotObjectData target + int32 enchantmentType` | enchantmentType resolves via `EnchantType`; item's `parseEnchantments` changes |
+| **177 APPLY_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot + int32 enchantmentType` | which enchant slot filled matches `byte`; new id in the stat-80 blob = `int32` |
+| **187 UPGRADE_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot` | the upgraded slot index = `byte`; blob's id at that slot bumps |
+| **238 GIFT_NOTIFICATION** | S→C | `int32 giftId` or `short count + …` | fires on a received/pending gift; cross-ref `/craigsgift/info`; keep neighbours |
+| **166 STASIS** | S→C? | `int32 objectId +` known 12B tail `01 16 00×6 ff ff ff 16` | **confirm direction + the bytes before the tail first**; if S→C the int32 = an enemy objectId entering stasis |
+| **148 DAMAGE_BOOST** | S→C | `int32 objectId + int32 amount [+ int32 durationMs]` | objectId = the buffed entity; fires when a damage buff applies |
+
+Each result packet you find that isn't already registered is itself a new id to
+add (like 141) — model it `byte success + short code` unless the bytes say
+otherwise, and flag it so the id table stays in sync.
+
+---
+
 ## Session 1 — Enchanting (fully blind, highest value)
 
 Open the Enchantments screen and perform **each** action once, on an item you can

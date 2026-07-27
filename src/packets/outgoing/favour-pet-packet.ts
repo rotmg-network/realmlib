@@ -10,9 +10,10 @@ import { Writer } from '../../writer';
  *
  * The first byte is a CATEGORY discriminator, not a count -- see
  * {@link FavourPetOperation} for the evidence. Category 0 carries one int32 pet
- * instance id (-1 clears); category 2 carries a title item type plus a trailing
- * int32 observed as 0. Unknown categories retain every complete trailing int32
- * for diagnostics.
+ * instance id (-1 clears); category 2 carries the two title-slot ids (primary,
+ * secondary) and mirrors the `RETITLE` sent just before it (the 19:40 session
+ * shows `RETITLE 0000c89f00000fe3` then `FAVOUR_PET 02 0000c89f00000fe3`).
+ * Unknown categories retain every complete trailing int32 for diagnostics.
  *
  * `values` is deliberately not called `petIds`: the category-2 form does not
  * carry a pet at all.
@@ -41,11 +42,14 @@ export class FavourPetPacket implements Packet {
     return packet;
   }
 
-  /** Favourite a title by item type. The trailing int32 is 0 in the capture. */
-  static title(titleType: number, trailing = 0): FavourPetPacket {
+  /**
+   * Favourite the equipped title pair. `secondaryTitleId` is 0 when only one
+   * title slot is used. The pair mirrors the preceding {@link RetitlePacket}.
+   */
+  static title(titleId: number, secondaryTitleId = 0): FavourPetPacket {
     const packet = new FavourPetPacket();
     packet.operation = FavourPetOperation.Title;
-    packet.values = [titleType, trailing];
+    packet.values = [titleId, secondaryTitleId];
     return packet;
   }
 

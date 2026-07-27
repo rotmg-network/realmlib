@@ -380,6 +380,19 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.values).to.deep.equal([39436, 0]);
   });
 
+  it('FavourPetPacket title category carries both title slots (mirrors RETITLE)', () => {
+    // 19:40 session: RETITLE 0000c89f00000fe3 then FAVOUR_PET 02<same>.
+    const reader = hexReader('020000c89f00000fe3');
+    const p = new FavourPetPacket();
+    p.read(reader);
+    expect(p.operation).to.equal(FavourPetOperation.Title);
+    expect(p.values).to.deep.equal([0xc89f, 0x0fe3]);
+    expect(reader.remaining).to.equal(0);
+
+    const out = roundTrip(FavourPetPacket.title(0xc89f, 0x0fe3), new FavourPetPacket());
+    expect(out.values).to.deep.equal([0xc89f, 0x0fe3]);
+  });
+
   it('FavourPetPacket writes the capture that proved the byte is a category', () => {
     // The client sent this and /char/list answered <FavoritePet>85</FavoritePet>.
     // A count byte would have made it 01 00000055.

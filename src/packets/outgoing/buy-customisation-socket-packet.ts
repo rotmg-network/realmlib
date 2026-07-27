@@ -36,7 +36,10 @@ export interface CustomisationSocketSelection {
  *
  * The types resolve as 0x12CF Large Void Spirals Cloth, 0x1394 Small Terminal
  * Cloth, 0x3113 High Lime Inferno Flipbook Style, 0x1026 Deep Pink Clothing Dye,
- * 0x1107 Black Accessory Dye — which is what makes the framing certain.
+ * 0x1107 Black Accessory Dye — which is what makes the framing certain. A second
+ * session (19:40) round-trips two more bodies verbatim — `0001 00 00001007 01`
+ * and `0002 00 00001007 01 00 00001311 01` — each drawing a `141` reply of
+ * `01 0000`, confirming the framing against independent bytes.
  *
  * Caveat: because every observed type is < 65536, an `int32 at offset 1` and a
  * `short at offset 3` are indistinguishable here. The int32 reading is chosen

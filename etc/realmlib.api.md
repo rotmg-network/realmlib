@@ -1671,7 +1671,7 @@ export class FavourPetPacket implements Packet {
     static pet(petInstanceId: number): FavourPetPacket;
     // (undocumented)
     read(reader: Reader): void;
-    static title(titleType: number, trailing?: number): FavourPetPacket;
+    static title(titleId: number, secondaryTitleId?: number): FavourPetPacket;
     // (undocumented)
     readonly type = PacketType.FAVOUR_PET;
     values: number[];

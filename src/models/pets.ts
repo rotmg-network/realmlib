@@ -43,16 +43,19 @@ export enum PetUpgradeType {
  * `<FavoritePet>85</FavoritePet>`, and 0x55 is 85. Read as a count that body
  * declares zero pets, which cannot be what set pet 85.
  *
- * Category 2 is not "a pet pair" either. Its only sample is
- * `02 00009a0c 00000000`, sent one packet after a `RetitlePacket`, and 0x9a0c
- * is 39436 = `Title_Inagural_Champion` in the game's objects.xml. So packet 145
+ * Category 2 is not "a pet pair" either: it carries the two title-slot ids and
+ * mirrors the `RetitlePacket` sent immediately before it. The 19:40 session
+ * settles this — `RETITLE 0000c89f00000fe3` is followed by
+ * `FAVOUR_PET 02 0000c89f00000fe3`, the same two int32 verbatim. So packet 145
  * is a general favourite toggle whose first byte picks what is being favourited,
- * and the trailing int32 of the title form is 0 and unexplained.
+ * and the "trailing int32" is just the secondary title slot (0 when only one
+ * title is equipped, as in the earlier `02 00009a0c 00000000` sample where
+ * 0x9a0c = 39436 = `Title_Inagural_Champion`).
  */
 export enum FavourPetOperation {
   /** One int32 pet instance id follows; -1 clears the favourite. */
   Pet = 0,
-  /** One int32 title item type follows, then a trailing int32 (observed 0). */
+  /** Two int32 title-slot ids follow (primary, secondary); mirrors RETITLE. */
   Title = 2
 }
 
