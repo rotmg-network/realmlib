@@ -22,7 +22,7 @@ export class UpgradeEnchanterPacket implements Packet {
   //#region packet-specific members
   /** Varies per sample; meaning not yet confirmed. */
   value: number;
-  /** Object type of the enchanter item (0x0A9C in every observed sample). */
+  /** Object type of the enchanter item (observed 0x0A9C, 0xCE44, and 0xCE6F). */
   itemType: number;
   /** Trailing flag byte (0 in every observed sample). */
   flag: number;

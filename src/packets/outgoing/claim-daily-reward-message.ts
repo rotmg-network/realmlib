@@ -4,7 +4,11 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to claim rewards from the login calendar.
+ * Sent to claim a login-calendar reward.
+ *
+ * `claimKey` is a base64-encoded Google Datastore key for the account's
+ * DailyLoginData entry. The current non-consecutive calendar sends
+ * `"nonconsecutive"` as `claimType`.
  */
 export class ClaimDailyRewardMessage implements Packet {
 

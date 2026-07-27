@@ -6,7 +6,12 @@ import { Reader } from '../../../reader';
 import { Writer } from '../../../writer';
 
 /**
- * Sent when you are feeding and fusing pets or upgrading your pet yard
+ * Sent when feeding/fusing pets or upgrading the pet yard.
+ *
+ * The first byte discriminates the operation. All observed forms share the
+ * same 16-byte base layout; feed requests append a short-counted list of
+ * `SlotObjectData` entries. Keeping the common wire layout here also preserves
+ * unknown operation values for debugging.
  */
 export class PetUpgradeRequestPacket implements Packet {
 
