@@ -43,6 +43,21 @@ describe('Reader/Writer primitives', () => {
     expect(w.buffer.readInt32BE(0)).to.equal(5);
     expect(w.buffer.readUInt8(4)).to.equal(200);
   });
+
+  it('rejects invalid fixed-width values instead of coercing them', () => {
+    const w = new Writer();
+    expect(() => w.writeInt32(NaN)).to.throw(TypeError, 'int32 must be an integer');
+    expect(() => w.writeUnsignedByte(-1)).to.throw(RangeError, 'uint8 out of range');
+    expect(() => w.writeShort(1.5)).to.throw(TypeError, 'int16 must be an integer');
+    expect(() => w.writeFloat(Infinity)).to.throw(TypeError, 'float32 must be a finite number');
+    expect(() => w.writeBoolean(1 as unknown as boolean)).to.throw(TypeError, 'boolean must be true or false');
+  });
+
+  it('rejects invalid packet ids instead of truncating them', () => {
+    const w = new Writer();
+    w.index = 5;
+    expect(() => w.writeHeader(256)).to.throw(RangeError, 'packet id out of range');
+  });
 });
 
 describe('compressed integers', () => {
@@ -84,6 +99,12 @@ describe('strings', () => {
     w.writeStringUTF32(value);
     expect(toReader(w).readStringUTF32()).to.equal(value);
   });
+
+  it('rejects strings which exceed the uint16 byte-length prefix', () => {
+    const w = new Writer();
+    expect(() => w.writeString('x'.repeat(0x10000)))
+      .to.throw(RangeError, 'string byte length out of range');
+  });
 });
 
 describe('byte arrays', () => {
@@ -92,5 +113,10 @@ describe('byte arrays', () => {
     const w = new Writer();
     w.writeByteArray(bytes);
     expect(toReader(w).readByteArray()).to.deep.equal(bytes);
+  });
+
+  it('rejects invalid byte values', () => {
+    const w = new Writer();
+    expect(() => w.writeByteArray([0, 256])).to.throw(RangeError, 'byte array value out of range');
   });
 });

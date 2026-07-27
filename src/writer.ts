@@ -30,17 +30,17 @@ export class Writer {
      * @param id The packet id to write to the header.
      */
     writeHeader(id: number): void {
+        this.assertInteger(id, 0, 0xff, 'packet id');
+        this.assertInteger(this.index, 5, 0x7fffffff, 'packet length');
         this.buffer.writeInt32BE(this.index, 0);
-        this.buffer.writeUInt8(id & 0xff, 4);
+        this.buffer.writeUInt8(id, 4);
     }
 
     /** Writes a 4 byte integer to the buffer.
      * @param value The value to write.
      */
     writeInt32(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
-        }
+        this.assertInteger(value, -0x80000000, 0x7fffffff, 'int32');
         this.checkCapacity(4);
         this.index = this.buffer.writeInt32BE(value, this.index);
     }
@@ -49,9 +49,7 @@ export class Writer {
      * @param value The value to write.
      */
     writeUInt32(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
-        }
+        this.assertInteger(value, 0, 0xffffffff, 'uint32');
         this.checkCapacity(4);
         this.index = this.buffer.writeUInt32BE(value, this.index);
     }
@@ -60,9 +58,7 @@ export class Writer {
      * @param value The value to write.
      */
     writeShort(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
-        }
+        this.assertInteger(value, -0x8000, 0x7fff, 'int16');
         this.checkCapacity(2);
         this.index = this.buffer.writeInt16BE(value, this.index);
     }
@@ -71,9 +67,7 @@ export class Writer {
      * @param value The value to write.
      */
     writeUnsignedShort(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
-        }
+        this.assertInteger(value, 0, 0xffff, 'uint16');
         this.checkCapacity(2);
         this.index = this.buffer.writeUInt16BE(value, this.index);
     }
@@ -82,9 +76,7 @@ export class Writer {
      * @param value The value to write.
      */
     writeByte(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
-        }
+        this.assertInteger(value, -0x80, 0x7f, 'int8');
         this.checkCapacity(1);
         this.index = this.buffer.writeInt8(value, this.index);
     }
@@ -94,9 +86,7 @@ export class Writer {
      * @param value The value to write.
      */
     writeUnsignedByte(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
-        }
+        this.assertInteger(value, 0, 0xff, 'uint8');
         this.checkCapacity(1);
         this.index = this.buffer.writeUInt8(value, this.index);
     }
@@ -107,7 +97,7 @@ export class Writer {
      */
     writeBoolean(value: boolean): void {
         if (typeof value !== 'boolean') {
-            value = false;
+            throw new TypeError(`boolean must be true or false, got ${String(value)}`);
         }
         const byteValue = value ? 1 : 0;
         this.writeByte(byteValue);
@@ -117,8 +107,11 @@ export class Writer {
      * @param value The value to write.
      */
     writeFloat(value: number): void {
-        if (isNaN(value)) {
-            value = 0;
+        if (typeof value !== 'number' || !Number.isFinite(value)) {
+            throw new TypeError(`float32 must be a finite number, got ${String(value)}`);
+        }
+        if (Math.abs(value) > 3.4028234663852886e38) {
+            throw new RangeError(`float32 value out of range: ${value}`);
         }
         this.checkCapacity(4);
         this.index = this.buffer.writeFloatBE(value, this.index);
@@ -129,8 +122,10 @@ export class Writer {
      */
     writeByteArray(value: number[]): void {
         if (!Array.isArray(value)) {
-            this.writeUnsignedShort(0);
-            return;
+            throw new TypeError('byte array must be an array');
+        }
+        for (const byte of value) {
+            this.assertInteger(byte, 0, 0xff, 'byte array value');
         }
         this.writeUnsignedShort(value.length);
         this.checkCapacity(value.length);
@@ -144,10 +139,10 @@ export class Writer {
      */
     writeString(value: string): void {
         if (typeof value !== 'string') {
-            this.writeUnsignedShort(0);
-            return;
+            throw new TypeError(`string value must be a string, got ${typeof value}`);
         }
         const byteLength = Buffer.byteLength(value, 'utf8');
+        this.assertInteger(byteLength, 0, 0xffff, 'string byte length');
         this.writeUnsignedShort(byteLength);
         this.checkCapacity(byteLength);
         this.index += this.buffer.write(value, this.index, 'utf8');
@@ -157,6 +152,9 @@ export class Writer {
      * @param value The int value to write.
      */
     writeStringUTF32(value: string): void {
+        if (typeof value !== 'string') {
+            throw new TypeError(`string value must be a string, got ${typeof value}`);
+        }
         const byteLength = Buffer.byteLength(value, 'utf8');
         this.writeInt32(byteLength);
         this.checkCapacity(byteLength);
@@ -171,6 +169,7 @@ export class Writer {
      * @param amount The int value to write.
      */
     writeCompressedInt(amount: number): void {
+        this.assertInteger(amount, -0x7fffffff, 0x7fffffff, 'compressed int');
         const isNegative = amount < 0;
         let value = isNegative ? -amount : amount;
         let byte = value & 63;
@@ -199,6 +198,16 @@ export class Writer {
         while (this.index + addedBytes > this.buffer.length) {
             this.buffer = Buffer.concat([this.buffer, Buffer.alloc(this.size)], this.size * 2);
             this.size *= 2;
+        }
+    }
+
+    /** Validates a fixed-width integer before it reaches Node's Buffer API. */
+    private assertInteger(value: number, min: number, max: number, label: string): void {
+        if (typeof value !== 'number' || !Number.isInteger(value)) {
+            throw new TypeError(`${label} must be an integer, got ${String(value)}`);
+        }
+        if (value < min || value > max) {
+            throw new RangeError(`${label} out of range [${min}, ${max}]: ${value}`);
         }
     }
 }
