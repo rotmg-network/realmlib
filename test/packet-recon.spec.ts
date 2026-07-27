@@ -699,15 +699,23 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.guildRank).to.equal(0);
   });
 
-  it('ClaimMissionPacket reads int/int/byte/short (no leftover)', () => {
-    const reader = hexReader('000000320000000201ffff');
+  it('ClaimMissionPacket reads boardId/missionId/slot/subId (no leftover)', () => {
+    // Cross-checked against /missions/getPlayerMissions: board 50 is the season
+    // tree, mission 3 the "Scouting the Unknown" entry, slot 1, subId -1.
+    const reader = hexReader('000000320000000301ffff');
     const p = new ClaimMissionPacket();
     p.read(reader);
-    expect(p.unknownInt).to.equal(50);
-    expect(p.unknownInt2).to.equal(2);
-    expect(p.unknownByte).to.equal(1);
-    expect(p.unknownShort).to.equal(-1);
+    expect(p.boardId).to.equal(50);
+    expect(p.missionId).to.equal(3);
+    expect(p.slot).to.equal(1);
+    expect(p.subId).to.equal(-1);
     expect(reader.remaining).to.equal(0);
+
+    const out = roundTrip(p, new ClaimMissionPacket());
+    expect(out.boardId).to.equal(50);
+    expect(out.missionId).to.equal(3);
+    expect(out.slot).to.equal(1);
+    expect(out.subId).to.equal(-1);
   });
 
   it('ClaimRewardsInfoPromptPacket reads id + byte + int array (no leftover)', () => {
@@ -833,13 +841,14 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(reader.remaining).to.equal(0);
   });
 
-  it('ClaimMissionResultPacket (id 164) reads byte/byte/short (no leftover)', () => {
+  it('ClaimMissionResultPacket (id 164) reads success/slot/subId (no leftover)', () => {
+    // Second byte echoes the request's slot (1), not the mission id.
     const reader = hexReader('01010000');
     const p = new ClaimMissionResultPacket();
     p.read(reader);
-    expect(p.unknownByte).to.equal(1);
-    expect(p.unknownByte2).to.equal(1);
-    expect(p.unknownShort).to.equal(0);
+    expect(p.success).to.equal(1);
+    expect(p.slot).to.equal(1);
+    expect(p.subId).to.equal(0);
     expect(reader.remaining).to.equal(0);
   });
 

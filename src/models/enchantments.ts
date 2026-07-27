@@ -67,6 +67,10 @@ function parseEnchantmentBlob(raw: string, slot: number): SlotEnchantments {
       if (id !== 0xfffd) enchantmentTypeIds.push(id);
     }
   }
+  // Trailing bytes past the declared slots. The 2026-07-27 capture shows the
+  // pattern clearly: entries with at least one empty slot carry a trailing
+  // `05 00`, fully-enchanted entries carry nothing. It looks like a parse bug
+  // but is real wire data, so it is preserved verbatim rather than trimmed.
   const suffix = recognized ? bytes.subarray(requiredLength) : Buffer.alloc(0);
   return {
     slot,

@@ -209,6 +209,31 @@ export class BlacksmithRequestPacket implements Packet {
 }
 
 // @public
+export class BuyCustomisationSocketPacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    selections: CustomisationSocketSelection[];
+    // (undocumented)
+    readonly type = PacketType.BUY_CUSTOMISATION_SOCKET;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class BuyCustomisationSocketResultPacket implements Packet {
+    constructor();
+    code: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    success: number;
+    // (undocumented)
+    readonly type = PacketType.BUY_CUSTOMISATION_SOCKET_RESULT;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class BuyEmotePacket implements Packet {
     constructor();
     emoteType: number;
@@ -444,13 +469,11 @@ export class CheckCreditsPacket implements Packet {
 // @public
 export class ChestRewardResultPacket implements Packet {
     constructor();
-    itemType: number;
+    items: number[];
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.CHEST_REWARD_RESULT;
-    unknownByte: number;
-    unknownByte2: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -523,13 +546,13 @@ export class ClaimBpMilestoneResultPacket implements Packet {
 // @public
 export class ClaimChestRewardPacket implements Packet {
     constructor();
+    choiceIndex: number;
     // (undocumented)
     read(reader: Reader): void;
     slotObject: SlotObjectData;
     // (undocumented)
     readonly type = PacketType.CLAIM_CHEST_REWARD;
     unknownByte: number;
-    unknownShort: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -578,14 +601,14 @@ export class ClaimDailyRewardResponse implements Packet {
 // @public
 export class ClaimMissionPacket implements Packet {
     constructor();
+    boardId: number;
+    missionId: number;
     // (undocumented)
     read(reader: Reader): void;
+    slot: number;
+    subId: number;
     // (undocumented)
     readonly type = PacketType.CLAIM_MISSION;
-    unknownByte: number;
-    unknownInt: number;
-    unknownInt2: number;
-    unknownShort: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -595,11 +618,11 @@ export class ClaimMissionResultPacket implements Packet {
     constructor();
     // (undocumented)
     read(reader: Reader): void;
+    slot: number;
+    subId: number;
+    success: number;
     // (undocumented)
     readonly type = PacketType.CLAIM_MISSION_RESULT;
-    unknownByte: number;
-    unknownByte2: number;
-    unknownShort: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -640,13 +663,13 @@ export class ClaimRewardResultPacket implements Packet {
 // @public
 export class ClaimRewardsInfoPromptPacket implements Packet {
     constructor();
+    chestItemType: number;
+    chestType: number;
     items: number[];
-    promptId: number;
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.CLAIM_REWARDS_INFO_PROMPT;
-    unknownByte: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -654,7 +677,7 @@ export class ClaimRewardsInfoPromptPacket implements Packet {
 // @public
 export class ClaimRewardsInfoRequestPacket implements Packet {
     constructor();
-    promptId: number;
+    chestItemType: number;
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
@@ -1234,6 +1257,13 @@ export class CrucibleResponsePacket implements Packet {
 }
 
 // @public
+export interface CustomisationSocketSelection {
+    itemType: number;
+    unknownByte: number;
+    unknownByte2: number;
+}
+
+// @public
 export enum CustomizationCategory {
     // (undocumented)
     BoostExp = 9,
@@ -1630,23 +1660,21 @@ export class FameData implements DataPacket {
 
 // @public
 export enum FavourPetOperation {
-    // (undocumented)
-    PetPair = 2,
-    // (undocumented)
-    SinglePet = 0
+    Pet = 0,
+    Title = 2
 }
 
 // @public
 export class FavourPetPacket implements Packet {
     constructor();
     operation: FavourPetOperation;
-    static pair(firstPetId: number, secondPetId: number): FavourPetPacket;
-    petIds: number[];
+    static pet(petInstanceId: number): FavourPetPacket;
     // (undocumented)
     read(reader: Reader): void;
-    static single(petId: number): FavourPetPacket;
+    static title(titleType: number, trailing?: number): FavourPetPacket;
     // (undocumented)
     readonly type = PacketType.FAVOUR_PET;
+    values: number[];
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -2743,6 +2771,8 @@ export enum PacketType {
     // (undocumented)
     BUY_CUSTOMISATION_SOCKET = "BUY_CUSTOMISATION_SOCKET",
     // (undocumented)
+    BUY_CUSTOMISATION_SOCKET_RESULT = "BUY_CUSTOMISATION_SOCKET_RESULT",
+    // (undocumented)
     BUY_EMOTE = "BUY_EMOTE",
     // (undocumented)
     BUY_REFINEMENT = "BUY_REFINEMENT",
@@ -3738,6 +3768,12 @@ export enum PortalType {
     // (undocumented)
     Vault = 1824
 }
+
+// @public
+export const PowerUpStatsPacket: typeof ExaltationUpdatePacket;
+
+// @public (undocumented)
+export type PowerUpStatsPacket = ExaltationUpdatePacket;
 
 // @public
 export function probePacketFields(payload: Buffer, offset?: number): PacketFieldProbe[];

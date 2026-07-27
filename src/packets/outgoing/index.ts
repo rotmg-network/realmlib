@@ -77,3 +77,4 @@ export * from './party-invite-response-packet';
 export * from './party-join-request-packet';
 export * from './purchase-request-packet';
 export * from './activate-crucible-packet';
+export * from './buy-customisation-socket-packet';

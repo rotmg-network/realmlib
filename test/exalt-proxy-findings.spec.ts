@@ -1,5 +1,7 @@
 import { expect } from 'chai';
 import {
+  BuyCustomisationSocketPacket,
+  BuyCustomisationSocketResultPacket,
   BuyPacket,
   BuyResultPacket,
   CheckCreditsPacket,
@@ -69,6 +71,53 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     const result = parse(new ClaimBpMilestoneResultPacket(), '01');
     expect(result.success).to.equal(true);
     expect(writeHex(result)).to.equal('01');
+  });
+
+  it('reads the -1 tier sentinel (claim everything available) as signed', () => {
+    // Same pass id, tier byte ff instead of 02; drew a single 01 reply.
+    const requestHex = '001034373639393734323235323430303634ff';
+    const request = parse(new ClaimBattlePassPacket(), requestHex);
+    expect(request.passId).to.equal('4769974225240064');
+    expect(request.tier).to.equal(-1);
+    expect(writeHex(request)).to.equal(requestHex);
+  });
+
+  it('maps and constructs the new customisation-socket pair (140 -> 141)', () => {
+    expect(DEFAULT_PACKET_MAP[140]).to.equal(PacketType.BUY_CUSTOMISATION_SOCKET);
+    expect(DEFAULT_PACKET_MAP[141]).to.equal(PacketType.BUY_CUSTOMISATION_SOCKET_RESULT);
+    expect(DEFAULT_PACKET_MAP[PacketType.BUY_CUSTOMISATION_SOCKET_RESULT]).to.equal(141);
+    expect(createPacket(PacketType.BUY_CUSTOMISATION_SOCKET)).to.be.instanceOf(BuyCustomisationSocketPacket);
+    expect(createPacket(PacketType.BUY_CUSTOMISATION_SOCKET_RESULT)).to.be.instanceOf(BuyCustomisationSocketResultPacket);
+  });
+
+  it('parses the three captured 140 bodies as short count + {byte,int32,byte}', () => {
+    // 0x12cf/0x1394 cloths + 0x3113 flipbook style; trailing 1 lands on the dyes.
+    const three = parse(new BuyCustomisationSocketPacket(), '000300000012cf00000000139400010000311300');
+    expect(three.selections).to.deep.equal([
+      { unknownByte: 0, itemType: 0x12cf, unknownByte2: 0 },
+      { unknownByte: 0, itemType: 0x1394, unknownByte2: 0 },
+      { unknownByte: 1, itemType: 0x3113, unknownByte2: 0 },
+    ]);
+    expect(writeHex(three)).to.equal('000300000012cf00000000139400010000311300');
+
+    const oneDye = parse(new BuyCustomisationSocketPacket(), '0001000000102601');
+    expect(oneDye.selections).to.deep.equal([
+      { unknownByte: 0, itemType: 0x1026, unknownByte2: 1 },
+    ]);
+
+    const twoDyes = parse(new BuyCustomisationSocketPacket(), '0002000000102601000000110701');
+    expect(twoDyes.selections).to.deep.equal([
+      { unknownByte: 0, itemType: 0x1026, unknownByte2: 1 },
+      { unknownByte: 0, itemType: 0x1107, unknownByte2: 1 },
+    ]);
+    expect(writeHex(twoDyes)).to.equal('0002000000102601000000110701');
+  });
+
+  it('reads the 141 result body 01 0000 as success + code', () => {
+    const result = parse(new BuyCustomisationSocketResultPacket(), '010000');
+    expect(result.success).to.equal(1);
+    expect(result.code).to.equal(0);
+    expect(writeHex(result)).to.equal('010000');
   });
 
   it('replays the 239 -> 170 reward-prompt exchange', () => {

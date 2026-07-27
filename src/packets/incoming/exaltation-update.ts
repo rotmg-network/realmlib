@@ -84,3 +84,12 @@ export class ExaltationUpdatePacket implements Packet {
       `LIFE: ${this.healthProgress}`;
   }
 }
+
+/**
+ * Semantic alias for {@link ExaltationUpdatePacket}: id 114 carries per-class
+ * power-up (stat-potion) totals, not exaltation data. Use this name so consumers
+ * stop reaching for the packet expecting exaltation state. The wire type stays
+ * {@link PacketType.EXALTATION_BONUS_CHANGED} (the id's catalog name).
+ */
+export const PowerUpStatsPacket = ExaltationUpdatePacket;
+export type PowerUpStatsPacket = ExaltationUpdatePacket;

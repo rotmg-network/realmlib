@@ -4,42 +4,60 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to claim a mission reward. Reverse-engineered from a single sample
- * (`00000032 00000002 01 ffff`); the field meanings are not yet confirmed.
+ * Sent to claim a mission reward.
+ *
+ * The four fields were `unknown*` when this was inferred from a single sample,
+ * but two independent 2026-07-27 sources now resolve them:
+ *
+ * ```
+ * C->S 163: 00000032 00000003 01 ffff
+ * ```
+ *
+ * `/missions/getPlayerMissions` for the same account returns
+ * `<TreesUnlocked>50,51</TreesUnlocked>` and, inside `<Season id="50">`, the
+ * entry `3,4,1,1783451287,0,0`. So `boardId` 50 is the season mission tree and
+ * `missionId` 3 is that season entry. `slot` is independent of `missionId` (the
+ * earlier sample set happened to move them in lockstep, which is why it could
+ * not be told apart before).
+ *
+ * The season entry format, for reference, is
+ * `id, progress, state, startedTimestamp, claimed, claimedTimestamp`, where
+ * `state` is 0 = active, 1 = complete/claimable, 2 = claimed. Mission 3 here was
+ * "Scouting the Unknown" at progress 4 (complete), i.e. the reward popup.
  */
 export class ClaimMissionPacket implements Packet {
 
   readonly type = PacketType.CLAIM_MISSION;
 
   //#region packet-specific members
-  /** First int32 (observed as 50). Purpose not yet confirmed. */
-  unknownInt: number;
-  /** Second int32 (observed as 2). Purpose not yet confirmed. */
-  unknownInt2: number;
-  /** A byte (observed as 1). Purpose not yet confirmed. */
-  unknownByte: number;
-  /** A trailing short (observed as -1). Purpose not yet confirmed. */
-  unknownShort: number;
+  /** Mission board / season tree id (observed 50, the season mission tree). */
+  boardId: number;
+  /** Mission id within the board (observed 3, matching the season entry). */
+  missionId: number;
+  /** Slot index of the claim; independent of `missionId` (observed 1). */
+  slot: number;
+  /** Sub-id, -1 when absent (observed -1). */
+  subId: number;
   //#endregion
 
   constructor() {
-    this.unknownInt = 0;
-    this.unknownInt2 = 0;
-    this.unknownByte = 0;
-    this.unknownShort = 0;
+    this.boardId = 0;
+    this.missionId = 0;
+    this.slot = 0;
+    this.subId = -1;
   }
 
   read(reader: Reader): void {
-    this.unknownInt = reader.readInt32();
-    this.unknownInt2 = reader.readInt32();
-    this.unknownByte = reader.readByte();
-    this.unknownShort = reader.readShort();
+    this.boardId = reader.readInt32();
+    this.missionId = reader.readInt32();
+    this.slot = reader.readByte();
+    this.subId = reader.readShort();
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.unknownInt);
-    writer.writeInt32(this.unknownInt2);
-    writer.writeByte(this.unknownByte);
-    writer.writeShort(this.unknownShort);
+    writer.writeInt32(this.boardId);
+    writer.writeInt32(this.missionId);
+    writer.writeByte(this.slot);
+    writer.writeShort(this.subId);
   }
 }
