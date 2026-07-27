@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "description": "Sanitized packet bodies captured from Exalt proxy sessions or constructed as protocol regression vectors.",
+  "fixtures": [
+    {
+      "name": "daily login reward claim",
+      "category": "login",
+      "id": 3,
+      "type": "CLAIM_LOGIN_REWARD_MSG",
+      "direction": "outgoing",
+      "body": "005e61684e795a5746736257396d6447686c6257466b5a32396b61484a6b6369384c4567644259324e766457353047494341774b6d677337734944417353446b5268615778355447396e6157354559585268474943416f705769713430494441000e6e6f6e636f6e7365637574697665",
+      "roundTrip": true
+    },
+    {
+      "name": "reconnect to Nexus",
+      "category": "reconnect",
+      "id": 45,
+      "type": "RECONNECT",
+      "direction": "incoming",
+      "body": "00054e6578757300093132372e302e302e310802fffffffeffffffff0000",
+      "roundTrip": true
+    },
+    {
+      "name": "server queue position",
+      "category": "queue",
+      "id": 112,
+      "type": "QUEUE_INFORMATION",
+      "direction": "incoming",
+      "body": "00070055",
+      "roundTrip": true
+    },
+    {
+      "name": "movement acknowledgement",
+      "category": "movement",
+      "id": 62,
+      "type": "MOVE",
+      "direction": "outgoing",
+      "body": "00000001000003e80001000003e83fc0000040200000",
+      "roundTrip": true
+    },
+    {
+      "name": "multi-projectile enemy shot",
+      "category": "combat",
+      "id": 35,
+      "type": "ENEMYSHOOT",
+      "direction": "incoming",
+      "body": "c350000003e70441280000c05000003f4000000078033e800000",
+      "roundTrip": true
+    },
+    {
+      "name": "inventory transaction result",
+      "category": "inventory",
+      "id": 95,
+      "type": "INVRESULT",
+      "direction": "incoming",
+      "body": "01000000d93300000000ffffffff0000d9320000000400000baf0000000000000000",
+      "roundTrip": true
+    },
+    {
+      "name": "feed pet request",
+      "category": "pets",
+      "id": 16,
+      "type": "PETUPGRADEREQUEST",
+      "direction": "outgoing",
+      "body": "020000001c00000000000000000100030000080e00000004000037c70000080e00000006000037c70000080e00000008000037c7",
+      "roundTrip": true
+    },
+    {
+      "name": "empty vault contents",
+      "category": "vault",
+      "id": 117,
+      "type": "VAULT_CONTENT",
+      "direction": "incoming",
+      "body": "010000000000000000000000000000000000000000",
+      "roundTrip": true
+    },
+    {
+      "name": "battle pass milestone claim",
+      "category": "rewards",
+      "id": 149,
+      "type": "CLAIM_BATTLE_PASS",
+      "direction": "outgoing",
+      "body": "00103437363939373432323532343030363402",
+      "roundTrip": true
+    },
+    {
+      "name": "reset enchantment reroll count",
+      "category": "enchanting",
+      "id": 191,
+      "type": "RESET_ENCHANTMENT_REROLL_COUNT",
+      "direction": "outgoing",
+      "body": "0003343a37",
+      "roundTrip": true
+    },
+    {
+      "name": "truncated reward prompt",
+      "category": "malformed",
+      "id": 170,
+      "type": "CLAIM_REWARDS_INFO_PROMPT",
+      "direction": "incoming",
+      "body": "0000",
+      "expectedError": "PACKET_READ_ERROR"
+    }
+  ]
+}
