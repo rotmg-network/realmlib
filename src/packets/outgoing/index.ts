@@ -6,6 +6,7 @@ export * from './claim-mission-packet';
 export * from './emote-packet';
 export * from './redeem-voucher-packet';
 export * from './claim-account-level-reward-packet';
+export * from './claim-battle-pass-packet';
 export * from './claim-reward-packet';
 export * from './claim-rewards-info-request-packet';
 export * from './buy-packet';

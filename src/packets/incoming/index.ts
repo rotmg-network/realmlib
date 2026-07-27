@@ -5,6 +5,7 @@ export * from './claim-mission-result-packet';
 export * from './claim-rewards-info-prompt-packet';
 export * from './stats-packet';
 export * from './claim-account-level-reward-result-packet';
+export * from './claim-bp-milestone-result-packet';
 export * from './claim-reward-result-packet';
 export * from './voucher-result-packet';
 export * from './aoe-packet';

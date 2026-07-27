@@ -10,10 +10,10 @@ import { Writer } from '../../writer';
  * 358 samples, all exactly 9 bytes, all of the same shape:
  * `int32 value`, `int32 itemType`, `byte flag`.
  *
- * `itemType` was 0x0A9C (2716) and `flag` was 0 in every sample, while `value`
- * varied (117, 22, 23, ...). The fields are named conservatively because with
- * two of the three constant across the capture their exact meaning is not yet
- * provable — but parsing it stops 358 packets a session falling through.
+ * `itemType` was 0x0A9C (2716) throughout the first capture but 0xCE44/0xCE6F
+ * in the 2026-07-27 one — it genuinely varies and is an item type, resolving
+ * the earlier "constant, unproven" caveat. `flag` (0) has still never varied
+ * and `value` remains conservatively named.
  */
 export class UpgradeEnchanterPacket implements Packet {
 
