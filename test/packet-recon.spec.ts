@@ -347,22 +347,19 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.unknownShort).to.equal(2);
   });
 
-  it('FavourPetPacket reads the leading byte then a signed pet id', () => {
-    const reader = hexReader('00ffffffff');
+  it('FavourPetPacket reads a counted pet-id list', () => {
+    const reader = hexReader('0200000fe200000fe3');
     const p = new FavourPetPacket();
     p.read(reader);
-    expect(p.unknownByte).to.equal(0);
-    expect(p.petId).to.equal(-1);
+    expect(p.petIds).to.deep.equal([4066, 4067]);
     expect(reader.remaining).to.equal(0);
   });
 
   it('FavourPetPacket round trips', () => {
     const p = new FavourPetPacket();
-    p.unknownByte = 1;
-    p.petId = 123456;
+    p.petIds = [123456, 654321];
     const out = roundTrip(p, new FavourPetPacket());
-    expect(out.unknownByte).to.equal(1);
-    expect(out.petId).to.equal(123456);
+    expect(out.petIds).to.deep.equal([123456, 654321]);
   });
 
   it('NotificationPacket effect 11 consumes message + progress values', () => {
@@ -731,8 +728,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     const vp = new VoucherResultPacket();
     vp.read(res);
     expect(vp.success).to.equal(false);
-    expect(vp.result).to.equal('Vouchers.VoucherNotExist');
-    expect(vp.code).to.equal('voucher_code');
+    expect(vp.resultKey).to.equal('Vouchers.VoucherNotExist');
+    expect(vp.strings[1]).to.equal('voucher_code');
     expect(res.remaining).to.equal(0);
   });
 
