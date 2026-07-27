@@ -5,6 +5,36 @@ import { PacketType } from '../../../packet-type';
 import { Reader } from '../../../reader';
 import { Writer } from '../../../writer';
 
+export type PetUpgradeOperation =
+  | {
+      kind: 'yard';
+      objectId: number;
+      paymentType: PaymentType;
+    }
+  | {
+      kind: 'feed';
+      petId: number;
+      objectId: number;
+      paymentType: PaymentType;
+      slots: SlotObjectData[];
+    }
+  | {
+      kind: 'fuse';
+      firstPetId: number;
+      secondPetId: number;
+      objectId: number;
+      paymentType: PaymentType;
+    }
+  | {
+      kind: 'unknown';
+      transactionType: number;
+      firstPetId: number;
+      secondPetId: number;
+      objectId: number;
+      paymentType: PaymentType;
+      slots: SlotObjectData[];
+    };
+
 /**
  * Sent when feeding/fusing pets or upgrading the pet yard.
  *
@@ -49,6 +79,81 @@ export class PetUpgradeRequestPacket implements Packet {
     this.objectId = 0;
     this.slotObjects = [];
     this.paymentType = 0;
+  }
+
+  /** Builds a pet-yard upgrade request with no item slots. */
+  static yard(objectId: number, paymentType: PaymentType): PetUpgradeRequestPacket {
+    const packet = new PetUpgradeRequestPacket();
+    packet.petTransType = PetUpgradeType.PetYard;
+    packet.objectId = objectId;
+    packet.paymentType = paymentType;
+    return packet;
+  }
+
+  /** Builds a pet-feed request from one or more inventory/container slots. */
+  static feed(
+    petId: number,
+    slots: SlotObjectData[],
+    paymentType: PaymentType,
+    objectId: number = 0,
+  ): PetUpgradeRequestPacket {
+    const packet = new PetUpgradeRequestPacket();
+    packet.petTransType = PetUpgradeType.FeedPet;
+    packet.pIdOne = petId;
+    packet.objectId = objectId;
+    packet.paymentType = paymentType;
+    packet.slotObjects = slots.map((slot) => slot.clone());
+    return packet;
+  }
+
+  /** Builds a two-pet fusion request with no item slots. */
+  static fuse(
+    firstPetId: number,
+    secondPetId: number,
+    paymentType: PaymentType,
+    objectId: number = 0,
+  ): PetUpgradeRequestPacket {
+    const packet = new PetUpgradeRequestPacket();
+    packet.petTransType = PetUpgradeType.FusePet;
+    packet.pIdOne = firstPetId;
+    packet.pIdTwo = secondPetId;
+    packet.objectId = objectId;
+    packet.paymentType = paymentType;
+    return packet;
+  }
+
+  /** Returns a discriminator-based view of the current request. */
+  get operation(): PetUpgradeOperation {
+    switch (this.petTransType) {
+      case PetUpgradeType.PetYard:
+        return { kind: 'yard', objectId: this.objectId, paymentType: this.paymentType };
+      case PetUpgradeType.FeedPet:
+        return {
+          kind: 'feed',
+          petId: this.pIdOne,
+          objectId: this.objectId,
+          paymentType: this.paymentType,
+          slots: this.slotObjects.map((slot) => slot.clone()),
+        };
+      case PetUpgradeType.FusePet:
+        return {
+          kind: 'fuse',
+          firstPetId: this.pIdOne,
+          secondPetId: this.pIdTwo,
+          objectId: this.objectId,
+          paymentType: this.paymentType,
+        };
+      default:
+        return {
+          kind: 'unknown',
+          transactionType: this.petTransType,
+          firstPetId: this.pIdOne,
+          secondPetId: this.pIdTwo,
+          objectId: this.objectId,
+          paymentType: this.paymentType,
+          slots: this.slotObjects.map((slot) => slot.clone()),
+        };
+    }
   }
 
   write(writer: Writer): void {

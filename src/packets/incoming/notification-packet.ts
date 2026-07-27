@@ -2,6 +2,7 @@ import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
+import { NotificationEffect, NotificationPayload } from '../../models';
 
 /** Received when the server displays a player or UI notification. */
 export class NotificationPacket implements Packet {
@@ -75,6 +76,96 @@ export class NotificationPacket implements Packet {
     this.hasProgressValue = false;
     this.emoteType = 0;
     this.unknownInt = 0;
+  }
+
+  /** Returns an effect-discriminated view of this packet's payload. */
+  get payload(): NotificationPayload {
+    switch (this.effect) {
+      case NotificationEffect.GLOBAL:
+        return {
+          kind: 'ui',
+          effect: NotificationEffect.GLOBAL,
+          extra: this.extra,
+          message: this.message,
+          uiExtra: this.uiExtra,
+        };
+      case NotificationEffect.REALM_QUEUE:
+        return {
+          kind: 'queue',
+          effect: NotificationEffect.REALM_QUEUE,
+          extra: this.extra,
+          objectId: this.objectId,
+          queuePosition: this.queuePos,
+        };
+      case NotificationEffect.OBJECT:
+        return {
+          kind: 'object',
+          effect: NotificationEffect.OBJECT,
+          extra: this.extra,
+          message: this.message,
+          objectId: this.objectId,
+          color: this.color,
+        };
+      case NotificationEffect.PLAYER_DEATH:
+      case NotificationEffect.PORTAL_OPENED:
+        return {
+          kind: 'picture',
+          effect: this.effect,
+          extra: this.extra,
+          message: this.message,
+          pictureType: this.pictureType,
+        };
+      case NotificationEffect.PLAYER_CALLOUT:
+        return {
+          kind: 'callout',
+          effect: NotificationEffect.PLAYER_CALLOUT,
+          extra: this.extra,
+          message: this.message,
+          senderObjectId: this.senderObjectId,
+          numberOfStars: this.numberOfStars,
+        };
+      case NotificationEffect.PROGRESS_BAR:
+        return {
+          kind: 'progress',
+          effect: NotificationEffect.PROGRESS_BAR,
+          extra: this.extra,
+          message: (this.extra & 3) !== 0 ? this.message : undefined,
+          maximum: this.hasProgressMax ? this.progressMax : undefined,
+          value: this.hasProgressValue ? this.progressValue : undefined,
+        };
+      case NotificationEffect.EMOTE:
+        return {
+          kind: 'emote',
+          effect: NotificationEffect.EMOTE,
+          extra: this.extra,
+          objectId: this.objectId,
+          emoteType: this.emoteType,
+        };
+      case NotificationEffect.ITEM_BOUGHT_FOR_INVENTORY:
+        return {
+          kind: 'purchase',
+          effect: NotificationEffect.ITEM_BOUGHT_FOR_INVENTORY,
+          extra: this.extra,
+          receiptXml: this.message,
+          uiExtra: this.uiExtra,
+        };
+      case NotificationEffect.TREE_UNLOCKED:
+        return {
+          kind: 'tree-unlocked',
+          effect: NotificationEffect.TREE_UNLOCKED,
+          extra: this.extra,
+          value: this.unknownInt,
+          uiExtra: this.uiExtra,
+        };
+      case NotificationEffect.PLAYER:
+      case NotificationEffect.SYSTEM:
+      case NotificationEffect.ERROR:
+      case NotificationEffect.STICKY:
+      case NotificationEffect.TELEPORT_ERROR:
+        return { kind: 'message', effect: this.effect, extra: this.extra, message: this.message };
+      default:
+        return { kind: 'unknown', effect: this.effect, extra: this.extra };
+    }
   }
 
   read(reader: Reader): void {

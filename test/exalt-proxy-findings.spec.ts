@@ -9,6 +9,7 @@ import {
   ClaimBpMilestoneResultPacket,
   ClaimDailyRewardMessage,
   ClaimRewardPacket,
+  ClaimRewardTrack,
   ClaimRewardResultPacket,
   ClaimRewardsInfoPromptPacket,
   ClaimRewardsInfoRequestPacket,
@@ -18,8 +19,11 @@ import {
   PaymentType,
   PetUpgradeRequestPacket,
   PetUpgradeType,
+  NotificationEffect,
+  NotificationPacket,
   Reader,
   RedeemVoucherPacket,
+  SlotObjectData,
   UpgradeEnchanterPacket,
   VoucherResultPacket,
   Writer,
@@ -117,6 +121,11 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(result.unknownShort).to.equal(0);
   });
 
+  it('constructs claim-all requests through the typed reward-track API', () => {
+    expect(writeHex(ClaimRewardPacket.forTrack(ClaimRewardTrack.Free))).to.equal('00');
+    expect(writeHex(ClaimRewardPacket.forTrack(ClaimRewardTrack.Premium))).to.equal('01');
+  });
+
   it('replays BUY, BUYRESULT, and the empty CHECKCREDITS request', () => {
     const buy = parse(new BuyPacket(), '000020ff00000001');
     expect(buy.objectType).to.equal(8447);
@@ -164,6 +173,34 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(fuse.pIdTwo).to.equal(28);
     expect(fuse.paymentType).to.equal(PaymentType.Fame);
     expect(writeHex(fuse)).to.equal(fuseHex);
+  });
+
+  it('constructs and inspects pet-upgrade variants without raw field assembly', () => {
+    const slot = SlotObjectData.from(2062, 4, 14279);
+    const feed = PetUpgradeRequestPacket.feed(28, [slot], PaymentType.Fame);
+    expect(feed.operation).to.deep.include({
+      kind: 'feed',
+      petId: 28,
+      paymentType: PaymentType.Fame,
+    });
+
+    const fuse = PetUpgradeRequestPacket.fuse(29, 28, PaymentType.Fame);
+    expect(fuse.operation).to.deep.include({
+      kind: 'fuse',
+      firstPetId: 29,
+      secondPetId: 28,
+    });
+  });
+
+  it('exposes notification payloads as discriminated variants', () => {
+    const queue = parse(new NotificationPacket(), '0500000000330007');
+    expect(queue.payload).to.deep.equal({
+      kind: 'queue',
+      effect: NotificationEffect.REALM_QUEUE,
+      extra: 0,
+      objectId: 51,
+      queuePosition: 7,
+    });
   });
 
   it('accepts varying UPGRADE_ENCHANTER item types', () => {
