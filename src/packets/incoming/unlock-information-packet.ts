@@ -1,4 +1,3 @@
-import { UnlockInformationType } from '../../models/unlock-information';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';

@@ -38,7 +38,7 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
     }
     for (const stat of stats) {
         switch (stat.statType) {
-            case StatType.NAME_STAT:
+            case StatType.NAME_STAT: {
                 // Current Exalt may append title/background metadata as hex tokens.
                 // Keep the visible name separate while retaining those raw tokens.
                 const [name, title, background, ...rest] = stat.stringStatValue.split(',');
@@ -46,6 +46,7 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
                 playerData.nameTitle = title;
                 playerData.nameBackground = [background, ...rest].filter(Boolean).join(',') || undefined;
                 continue;
+            }
             case StatType.LEVEL_STAT:
                 playerData.level = stat.statValue;
                 continue;

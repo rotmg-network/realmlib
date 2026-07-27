@@ -9,7 +9,7 @@ realmlib is updated for **game build 6.12.0.2.0**
 
 ## Install
 
-Requires [Node.js 16+](https://nodejs.org/en/download/current/).
+Requires [Node.js 20.19+](https://nodejs.org/en/download/current/).
 
 ```bash
 git clone https://github.com/rotmg-network/realmlib.git
@@ -116,6 +116,21 @@ data, and more. Import them from the package root alongside the packets.
 - `PacketIO` emits a **`rawPacket`** event for every frame, and an
   **`unknownPacket`** event for ids not in the map. These are useful for
   sniffing traffic or checking what changed after a game update.
+
+## Development
+
+Install the locked dependency graph and run every local quality gate:
+
+```bash
+npm ci
+npm run check
+```
+
+`npm run check` runs TypeScript typechecking, ESLint, the offline packet tests,
+Exalt packet-map reconciliation, the public API compatibility report, and
+package publication validation. When an intentional public API change is made,
+refresh the committed report with `npm run api:update` and review the diff in
+`etc/realmlib.api.md`.
 
 ## Credits
 

@@ -1,4 +1,3 @@
-import { FailureCode } from '../../models';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
