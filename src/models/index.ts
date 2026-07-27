@@ -1,6 +1,7 @@
 export * from './account-list';
 export * from './account-reward-grant';
 export * from './character-data';
+export * from './campaigns';
 export * from './enchantments';
 export * from './enchants';
 export * from './classes';
@@ -12,6 +13,8 @@ export * from './forge-properties';
 export * from './game-id';
 export * from './guild-rank';
 export * from './inv-result';
+export * from './items';
+export * from './missions';
 export * from './notifications';
 export * from './object-type';
 export * from './party'

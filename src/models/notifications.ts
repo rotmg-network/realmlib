@@ -16,6 +16,9 @@ export enum NotificationEffect {
   EMOTE = 13,
   VICTORY = 14,
   INVITE = 15,
+  /** Shares wire value 15 with {@link INVITE} in the current client. */
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values -- current client defines both names
+  MISSIONS_REFRESH = 15,
   CRUCIBLE_DATA_REFRESH = 16,
   ITEM_BOUGHT_FOR_INVENTORY = 17,
   TREE_UNLOCKED = 18,
@@ -26,7 +29,10 @@ export enum NotificationEffect {
   FORGE_FIRE = 23,
   WIND_DIRECTION_CHANGE = 24,
   BLOOD_RITUAL_REFRESH = 25,
+  /** @deprecated Use {@link MISSIONS_PROGRESS_ONLY_REFRESH}. */
   MISSIONS_PROGRESS_REFRESH = 99,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values -- compatibility alias
+  MISSIONS_PROGRESS_ONLY_REFRESH = 99,
   REALM_THRESHOLD = 1001,
   DUST = 1002,
 }

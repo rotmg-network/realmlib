@@ -1,3 +1,4 @@
+import { ReskinUnlockType } from '../../models';
 import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
@@ -13,24 +14,24 @@ export class ReskinUnlockPacket implements Packet {
   /**
    * The kind of unlock (RealmShark: `unlockType`).
    */
-  unlockType: number;
+  unlockType: ReskinUnlockType;
   /**
    * The id of the skin that was unlocked (RealmShark: `unlockId`).
    */
   unlockId: number;
 
   constructor() {
-    this.unlockType = 0;
+    this.unlockType = 0 as ReskinUnlockType;
     this.unlockId = 0;
   }
 
   read(reader: Reader): void {
-    this.unlockType = reader.readByte();
+    this.unlockType = reader.readUnsignedByte() as ReskinUnlockType;
     this.unlockId = reader.readInt32();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.unlockType);
+    writer.writeUnsignedByte(this.unlockType);
     writer.writeInt32(this.unlockId);
   }
 

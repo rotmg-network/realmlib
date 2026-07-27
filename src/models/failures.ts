@@ -9,6 +9,11 @@ export enum FailureCode {
    */
   GenericRejection = 0,
   /**
+   * Valid current-build failure code observed after LOAD with an empty
+   * description. The precise server-side cause is not yet decoded.
+   */
+  Unknown3 = 3,
+  /**
    * Received when the game version sent in the HelloPacket is not updated
    */
   IncorrectVersion = 4,
@@ -96,4 +101,3 @@ export enum ProtocolError {
    */
   RateLimit = 64
 }
-

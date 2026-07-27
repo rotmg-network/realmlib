@@ -10,3 +10,26 @@ export enum PartyResponse {
     PartyFull = 5,
     Blacklisted = 6
 }
+
+/** Actions a client can request for a party or party member. */
+export enum PartyAction {
+    None = 0,
+    Kick = 1,
+    Disconnect = 2,
+    PromoteToLeader = 3,
+    Refresh = 4,
+    GetPartyList = 5,
+    LeaveParty = 6,
+    TeleportTo = 7
+}
+
+/** Results reported after a party action request. */
+export enum PartyActionResult {
+    None = 0,
+    Failed = 1,
+    Kicked = 2,
+    KickNotFound = 3,
+    PromotedToLeader = 4,
+    PromoteNotFound = 5,
+    LeftParty = 6
+}

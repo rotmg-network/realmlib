@@ -251,6 +251,40 @@ export class BuyResultPacket implements Packet {
 }
 
 // @public
+export enum CampaignBoost {
+    // (undocumented)
+    Blacksmith = 8,
+    // (undocumented)
+    BXP = 0,
+    // (undocumented)
+    Caretaker = 5,
+    // (undocumented)
+    Damage = 21,
+    // (undocumented)
+    DropDustChance = 9,
+    // (undocumented)
+    DropDustVolume = 10,
+    // (undocumented)
+    DropLoot = 2,
+    // (undocumented)
+    DungeonMaster = 7,
+    // (undocumented)
+    HP = 20,
+    // (undocumented)
+    ItemSlotChance = 11,
+    // (undocumented)
+    Keymaster = 6,
+    // (undocumented)
+    None = -1,
+    // (undocumented)
+    TieredLoot = 1,
+    // (undocumented)
+    Travel = 4,
+    // (undocumented)
+    XP = 3
+}
+
+// @public
 export class CancelTradePacket implements Packet {
     // (undocumented)
     read(): void;
@@ -320,6 +354,50 @@ export interface CharacterData {
     id: number;
     level: number;
     seasonal: boolean;
+}
+
+// @public
+export enum CharacterFilter {
+    // (undocumented)
+    BloodRitual = 6,
+    // (undocumented)
+    Crucible = 3,
+    // (undocumented)
+    CrucibleSeasonal = 5,
+    // (undocumented)
+    NonCrucible = 4,
+    // (undocumented)
+    None = 0,
+    // (undocumented)
+    NonSeasonal = 2,
+    // (undocumented)
+    OutsideBloodRitual = 7,
+    // (undocumented)
+    Seasonal = 1
+}
+
+// @public
+export enum CharacterStatAxis {
+    // (undocumented)
+    Attack = 0,
+    // (undocumented)
+    Defense = 1,
+    // (undocumented)
+    Dexterity = 3,
+    // (undocumented)
+    MaxHp = 6,
+    // (undocumented)
+    MaxMp = 7,
+    // (undocumented)
+    None = -1,
+    // (undocumented)
+    Speed = 2,
+    // (undocumented)
+    SummonPower = 8,
+    // (undocumented)
+    Vitality = 4,
+    // (undocumented)
+    Wisdom = 5
 }
 
 // @public
@@ -602,7 +680,11 @@ export enum Classes {
     // (undocumented)
     Bard = 796,
     // (undocumented)
+    Druid = 819,
+    // (undocumented)
     Huntress = 802,
+    // (undocumented)
+    Kensei = 818,
     // (undocumented)
     Knight = 798,
     // (undocumented)
@@ -894,6 +976,20 @@ export enum ConditionEffectBits2 {
     WIS_BOOST = 16384,
     // (undocumented)
     WIS_DEBUFF = 33554432
+}
+
+// @public
+export enum ContainerArea {
+    // (undocumented)
+    Backpack = 2,
+    // (undocumented)
+    BackpackExtension = 3,
+    // (undocumented)
+    Equipment = 0,
+    // (undocumented)
+    ForgeVault = 4,
+    // (undocumented)
+    Inventory = 1
 }
 
 // @public
@@ -1264,8 +1360,10 @@ export class DeletePetMessage implements Packet {
 // @public
 export enum DustType {
     // (undocumented)
-    GreenDust = 1,
+    BlueDust = 2,
     // (undocumented)
+    GreenDust = 1,
+    // @deprecated (undocumented)
     NlueDust = 2,
     // (undocumented)
     None = 0,
@@ -1487,6 +1585,7 @@ export enum FailureCode {
     ServerMaintenance = 16,
     ServerQueue = 15,
     TeleportRealmBlock = 9,
+    Unknown3 = 3,
     WrongServerEntered = 10
 }
 
@@ -1530,11 +1629,22 @@ export class FameData implements DataPacket {
 }
 
 // @public
+export enum FavourPetOperation {
+    // (undocumented)
+    PetPair = 2,
+    // (undocumented)
+    SinglePet = 0
+}
+
+// @public
 export class FavourPetPacket implements Packet {
     constructor();
+    operation: FavourPetOperation;
+    static pair(firstPetId: number, secondPetId: number): FavourPetPacket;
     petIds: number[];
     // (undocumented)
     read(reader: Reader): void;
+    static single(petId: number): FavourPetPacket;
     // (undocumented)
     readonly type = PacketType.FAVOUR_PET;
     // (undocumented)
@@ -1928,17 +2038,29 @@ export enum InvResultFlags {
     // (undocumented)
     Bit14 = 16384,
     // (undocumented)
+    Bit15 = 32768,
+    // (undocumented)
     Bit17 = 131072,
     // (undocumented)
     Bit18 = 262144,
     // (undocumented)
     Bit19 = 524288,
     // (undocumented)
+    Bit2 = 4,
+    // (undocumented)
     Bit20 = 1048576,
     // (undocumented)
     Bit23 = 8388608,
     // (undocumented)
+    Bit29 = 536870912,
+    // (undocumented)
+    Bit3 = 8,
+    // (undocumented)
+    Bit5 = 32,
+    // (undocumented)
     Bit6 = 64,
+    // (undocumented)
+    Bit8 = 256,
     // (undocumented)
     None = 0
 }
@@ -1986,6 +2108,30 @@ export class InvSwapPacket implements Packet {
 
 // @public
 export function isInventoryStat(statType: number): boolean;
+
+// @public
+export enum ItemCategory {
+    // (undocumented)
+    Ability = 2,
+    // (undocumented)
+    Accessory = 4,
+    // (undocumented)
+    All = 0,
+    // (undocumented)
+    Armor = 3,
+    // (undocumented)
+    Consumable = 5,
+    // (undocumented)
+    Marks = 6,
+    // (undocumented)
+    Other = 9,
+    // (undocumented)
+    Pet = 7,
+    // (undocumented)
+    Shiny = 8,
+    // (undocumented)
+    Weapon = 1
+}
 
 // @public
 export class JoinGuildPacket implements Packet {
@@ -2071,6 +2217,94 @@ export class MapInfoPacket implements Packet {
     width: number;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export enum MissionObjectiveType {
+    // (undocumented)
+    BiomeScore = 19,
+    // (undocumented)
+    CloseRealm = 7,
+    // (undocumented)
+    CompleteDailyQuests = 18,
+    // (undocumented)
+    CompleteDungeonByDifficulty = 4,
+    // (undocumented)
+    CompleteDungeonByDifficultyRange = 12,
+    // (undocumented)
+    CompleteDungeonById = 3,
+    // (undocumented)
+    CompleteDungeonTime = 14,
+    // (undocumented)
+    Consume = 20,
+    // (undocumented)
+    DrinkStatPotionAny = 9,
+    // (undocumented)
+    DrinkStatPotionType = 8,
+    // (undocumented)
+    FeedPet = 5,
+    // (undocumented)
+    ForgeItemsTier = 41,
+    // (undocumented)
+    ForgeLabel = 10,
+    // (undocumented)
+    FusePets = 6,
+    // (undocumented)
+    GainExp = 15,
+    // (undocumented)
+    HatchEggs = 17,
+    // (undocumented)
+    KillAny = 2,
+    // (undocumented)
+    KillQuestMonsters = 16,
+    // (undocumented)
+    KillType = 1,
+    // (undocumented)
+    MaximizeStat = 11,
+    // (undocumented)
+    MaximizeStatsOnOneChar = 13,
+    // (undocumented)
+    Unknown = -1
+}
+
+// @public
+export enum MissionRewardKind {
+    // (undocumented)
+    BXP = 1,
+    // (undocumented)
+    Item = 0,
+    // (undocumented)
+    Unknown = -1
+}
+
+// @public
+export enum MissionState {
+    // (undocumented)
+    Active = 0,
+    // (undocumented)
+    Claimed = 2,
+    // (undocumented)
+    Completed = 1,
+    // (undocumented)
+    OnCooldown = 3
+}
+
+// @public
+export enum MissionTrackingState {
+    // (undocumented)
+    CanBeTracked = 1,
+    // (undocumented)
+    Claimed = 20,
+    // (undocumented)
+    ClaimedOnCooldown = 21,
+    // (undocumented)
+    Completed = 10,
+    // (undocumented)
+    Tracked = 0,
+    // (undocumented)
+    UnavailableToTrack = 2,
+    // (undocumented)
+    Unknown = -1
 }
 
 // @public
@@ -2206,7 +2440,10 @@ export enum NotificationEffect {
     // (undocumented)
     MISSION_UNLOCKED = 19,
     // (undocumented)
+    MISSIONS_PROGRESS_ONLY_REFRESH = 99,
+    // @deprecated (undocumented)
     MISSIONS_PROGRESS_REFRESH = 99,
+    MISSIONS_REFRESH = 15,
     // (undocumented)
     OBJECT = 6,
     // (undocumented)
@@ -2968,9 +3205,29 @@ export enum ParticleEffect {
 }
 
 // @public
+export enum PartyAction {
+    // (undocumented)
+    Disconnect = 2,
+    // (undocumented)
+    GetPartyList = 5,
+    // (undocumented)
+    Kick = 1,
+    // (undocumented)
+    LeaveParty = 6,
+    // (undocumented)
+    None = 0,
+    // (undocumented)
+    PromoteToLeader = 3,
+    // (undocumented)
+    Refresh = 4,
+    // (undocumented)
+    TeleportTo = 7
+}
+
+// @public
 export class PartyActionPacket implements Packet {
     constructor();
-    actionId: number;
+    actionId: PartyAction;
     playerId: number;
     // (undocumented)
     read(reader: Reader): void;
@@ -2981,9 +3238,27 @@ export class PartyActionPacket implements Packet {
 }
 
 // @public
+export enum PartyActionResult {
+    // (undocumented)
+    Failed = 1,
+    // (undocumented)
+    Kicked = 2,
+    // (undocumented)
+    KickNotFound = 3,
+    // (undocumented)
+    LeftParty = 6,
+    // (undocumented)
+    None = 0,
+    // (undocumented)
+    PromotedToLeader = 4,
+    // (undocumented)
+    PromoteNotFound = 5
+}
+
+// @public
 export class PartyActionResultPacket implements Packet {
     constructor();
-    actionId: number;
+    actionId: PartyActionResult;
     playerId: number;
     // (undocumented)
     read(reader: Reader): void;
@@ -3140,6 +3415,18 @@ export enum PaymentType {
     Invalid = -1
 }
 
+// @public
+export enum PetContainerTransferResult {
+    // (undocumented)
+    InvalidCantPutOnPet = 3,
+    // (undocumented)
+    InvalidCantWithdrawFromPet = 2,
+    // (undocumented)
+    InvalidGeneric = 1,
+    // (undocumented)
+    Ok = 0
+}
+
 // @public (undocumented)
 export type PetUpgradeOperation = {
     kind: 'yard';
@@ -3158,6 +3445,9 @@ export type PetUpgradeOperation = {
     objectId: number;
     paymentType: PaymentType;
 } | {
+    kind: 'backpack';
+    petId: number;
+} | {
     kind: 'unknown';
     transactionType: number;
     firstPetId: number;
@@ -3170,6 +3460,7 @@ export type PetUpgradeOperation = {
 // @public
 export class PetUpgradeRequestPacket implements Packet {
     constructor();
+    static backpack(petId: number): PetUpgradeRequestPacket;
     static feed(petId: number, slots: SlotObjectData[], paymentType: PaymentType, objectId?: number): PetUpgradeRequestPacket;
     static fuse(firstPetId: number, secondPetId: number, paymentType: PaymentType, objectId?: number): PetUpgradeRequestPacket;
     objectId: number;
@@ -3196,6 +3487,7 @@ export enum PetUpgradeType {
     FeedPet = 2,
     // (undocumented)
     FusePet = 3,
+    PetBackpack = 4,
     // (undocumented)
     PetYard = 1,
     Unknown = 0
@@ -3871,9 +4163,25 @@ export class ReskinUnlockPacket implements Packet {
     // (undocumented)
     readonly type = PacketType.RESKIN_UNLOCK;
     unlockId: number;
-    unlockType: number;
+    unlockType: ReskinUnlockType;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export enum ReskinUnlockType {
+    // (undocumented)
+    Emote = 5,
+    // (undocumented)
+    Entrance = 6,
+    // (undocumented)
+    Gravestone = 4,
+    // (undocumented)
+    PetSkin = 2,
+    // (undocumented)
+    Skin = 1,
+    // (undocumented)
+    Title = 3
 }
 
 // @public
@@ -4136,12 +4444,10 @@ export enum StatType {
     BACKPACK_8_STAT = 139,
     // (undocumented)
     BACKPACK_9_STAT = 140,
-    // (undocumented)
     BACKPACK_SLOTS_STAT = 130,
     // (undocumented)
     BREATH_STAT = 64,
     BXP_STAT = 61,
-    // (undocumented)
     CHALLENGER_STARBG_STAT = 100,
     // (undocumented)
     CONDITION_STAT = 29,
@@ -4229,7 +4535,7 @@ export enum StatType {
     // (undocumented)
     INVENTORY_7_STAT = 15,
     // (undocumented)
-    INVENTORY_8_STAT = 16,// always 1000
+    INVENTORY_8_STAT = 16,
     // (undocumented)
     INVENTORY_9_STAT = 17,
     // (undocumented)
@@ -4276,7 +4582,6 @@ export enum StatType {
     NAME_CHOSEN_STAT = 56,
     // (undocumented)
     NAME_STAT = 31,
-    // (undocumented)
     NEW_CON_STAT = 96,
     // (undocumented)
     NEXT_CLASS_QUEST_FAME_STAT = 58,// server time the player joined the game
@@ -4290,6 +4595,7 @@ export enum StatType {
     OPENED_AT_TIMESTAMP = 104,
     // (undocumented)
     OWNER_ACCOUNT_ID_STAT = 54,
+    PET_BACKPACK_SLOTS_STAT = 148,
     // (undocumented)
     PET_FAMILY_STAT = 86,
     // (undocumented)
@@ -4315,9 +4621,9 @@ export enum StatType {
     // (undocumented)
     PET_SECONDABILITY_TYPE_STAT = 94,
     // (undocumented)
-    PET_THIRDABILITY_POINT_STAT = 89,
+    PET_THIRDABILITY_POINT_STAT = 89,// string stat: comma-separated modifier list (see isStringStat)
     // (undocumented)
-    PET_THIRDABILITY_POWER_STAT = 92,// string stat: comma-separated modifier list (see isStringStat)
+    PET_THIRDABILITY_POWER_STAT = 92,
     // (undocumented)
     PET_THIRDABILITY_TYPE_STAT = 95,
     // (undocumented)
@@ -4343,11 +4649,11 @@ export enum StatType {
     // (undocumented)
     SEASONAL_CHARACTER_STAT = 24,
     // (undocumented)
-    SHADER_STAT = 129,// 0, related to pet
+    SHADER_STAT = 129,
     // (undocumented)
     SINK_LEVEL_STAT = 60,
     // (undocumented)
-    SIZE_STAT = 2,// always 0
+    SIZE_STAT = 2,
     // (undocumented)
     SPEED_BOOST_STAT = 50,
     // (undocumented)
@@ -4357,15 +4663,16 @@ export enum StatType {
     // (undocumented)
     SUPPORTER_STAT = 99,
     // (undocumented)
-    TEX1_STAT = 32,// observed 1
+    TEX1_STAT = 32,
     // (undocumented)
-    TEX2_STAT = 33,// observed 0
+    TEX2_STAT = 33,
     // (undocumented)
-    TEXTURE_STAT = 25,// observed 151
-    // (undocumented)
-    UNKNOWN_148 = 148,// observed -1
-    // (undocumented)
-    UNKNOWN_149 = 149,// observed 0
+    TEXTURE_STAT = 25,// observed 1
+    // @deprecated (undocumented)
+    UNKNOWN_148 = 148,// observed 0
+    UNKNOWN_149 = 149,// observed 151
+    UNKNOWN_150 = 150,// observed -1
+    UNKNOWN_151 = 151,
     // (undocumented)
     UNKNOWN_154 = 154,
     // (undocumented)
@@ -4374,24 +4681,21 @@ export enum StatType {
     UNKNOWN_156 = 156,
     // (undocumented)
     UNKNOWN_157 = 157,
-    // (undocumented)
     UNKNOWN_158 = 158,
-    // (undocumented)
     UNKNOWN_73 = 73,
-    // (undocumented)
     UNKNOWN_74 = 74,
     // (undocumented)
     UNKNOWN_75 = 75,
     // (undocumented)
-    VITALITY_BOOST_STAT = 51,// observed -1
+    VITALITY_BOOST_STAT = 51,
     // (undocumented)
     VITALITY_STAT = 26,
     // (undocumented)
     WISDOM_BOOST_STAT = 52,
     // (undocumented)
-    WISDOM_STAT = 27,// observed 0
+    WISDOM_STAT = 27,
     // (undocumented)
-    XP_BOOSTED_STAT = 65,// observed 9
+    XP_BOOSTED_STAT = 65,
     // (undocumented)
     XP_TIMER_STAT = 66
 }

@@ -1,6 +1,6 @@
 /**
  * A list of the stat types which are used to describe an entity's attributes.
- * Values are for the current game build (6.11) and must match the live
+ * Values are for the current game build (6.12) and must match the live
  * protocol exactly, otherwise stat data is misread.
  */
 export enum StatType {
@@ -76,7 +76,8 @@ export enum StatType {
   HEALTH_POTION_STACK_STAT = 69,
   MAGIC_POTION_STACK_STAT = 70,
   MATERIAL_AMOUNT_STAT = 71,
-  UNKNOWN_74 = 74, // always 1000
+  /** Unresolved numeric stat; observed values range from 700 to 1150. */
+  UNKNOWN_74 = 74,
   MATERIAL_CAP_STAT = 72,
   HASBACKPACK_STAT = 79,
   /**
@@ -102,10 +103,12 @@ export enum StatType {
   PET_FIRSTABILITY_TYPE_STAT = 93,
   PET_SECONDABILITY_TYPE_STAT = 94,
   PET_THIRDABILITY_TYPE_STAT = 95,
+  /** Legacy stat retained for older captures; absent from current metadata. */
   NEW_CON_STAT = 96,
   FORTUNE_TOKEN_STAT = 97,
   SUPPORTER_POINTS_STAT = 98,
   SUPPORTER_STAT = 99,
+  /** Legacy stat retained for older captures; absent from current metadata. */
   CHALLENGER_STARBG_STAT = 100,
   PROJECTILE_SPEED_MULT = 102,
   PLAYER_JOIN_TIME = 101, // server time the player joined the game 
@@ -143,17 +146,26 @@ export enum StatType {
   BACKPACK_6_STAT = 137,
   BACKPACK_7_STAT = 138,
   DUST_CAP_STAT = 147,
-  UNKNOWN_148 = 148, // 0, related to pet
+  /** @deprecated Use {@link PET_BACKPACK_SLOTS_STAT}. */
+  UNKNOWN_148 = 148,
+  /** Number of backpack slots currently unlocked for a pet. */
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values -- compatibility alias
+  PET_BACKPACK_SLOTS_STAT = 148,
+  /** Current metadata defines this stat, but its payload semantics are unknown. */
+  UNKNOWN_150 = 150,
+  /** Current metadata defines this stat, but its payload semantics are unknown. */
+  UNKNOWN_151 = 151,
   UNKNOWN_155 = 155,
-  UNKNOWN_158 = 158, // always 0
+  /** Unresolved numeric stat; observed values range from 0 to 10000. */
+  UNKNOWN_158 = 158,
 
   // Resolved via RealmShark/ProdMafia. 125 varies over an object's lifetime
   // between a small set of recurring signed-int values; 126 is ~9.1M-9.8M and
   // climbs with spawn order — consistent with an animation state + timestamp.
   ANIMATION_STAT = 125,
   ANIMATION_TIMESTAMP_STAT = 126,
-  // 122 observed 1500/6000/9500 on assorted objects (encounter difficulty);
-  // 73 observed 800 on one enemy type, still unnamed.
+  // 122 observed 1500/6000/9500 on assorted objects (encounter difficulty).
+  /** Unresolved numeric stat; observed as 600 or 800 on object type 29461. */
   UNKNOWN_73 = 73,
   DIFFICULTY_STAT = 122,
 
@@ -163,7 +175,8 @@ export enum StatType {
   UNKNOWN_75 = 75, // observed 0
   POWER_LEVEL_STAT = 124, // observed 151
   SHADER_STAT = 129, // observed -1
-  BACKPACK_SLOTS_STAT = 130, // observed 0
+  /** Number of normal player backpack slots, observed as 0 or 8. */
+  BACKPACK_SLOTS_STAT = 130,
   // 139-146 sit right after BACKPACK_7 — a second (8-slot) backpack bank.
   BACKPACK_8_STAT = 139,
   BACKPACK_9_STAT = 140,
@@ -173,12 +186,27 @@ export enum StatType {
   BACKPACK_13_STAT = 144,
   BACKPACK_14_STAT = 145,
   BACKPACK_15_STAT = 146,
-  UNKNOWN_149 = 149, // observed -1
+  /** Unresolved player stat, usually -1; one capture contained 2648. */
+  UNKNOWN_149 = 149,
   ACCOUNT_LEVEL_STAT = 152,
   ACCOUNT_LEVEL_EXP_STAT = 153,
-  UNKNOWN_154 = 154, // observed 0
-  UNKNOWN_156 = 156, // observed 9
-  UNKNOWN_157 = 157, // observed 0
+  UNKNOWN_154 = 154,
+  UNKNOWN_156 = 156,
+  UNKNOWN_157 = 157,
+}
+
+/** Character attributes used by mission and progression metadata. */
+export enum CharacterStatAxis {
+  None = -1,
+  Attack = 0,
+  Defense = 1,
+  Speed = 2,
+  Dexterity = 3,
+  Vitality = 4,
+  Wisdom = 5,
+  MaxHp = 6,
+  MaxMp = 7,
+  SummonPower = 8
 }
 
 /**

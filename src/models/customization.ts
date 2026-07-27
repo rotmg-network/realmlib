@@ -18,3 +18,13 @@ export enum CustomizationCategory {
     BoostLoot = 10,
     DiscountBattlePassPercentage = 11
 }
+
+/** Categories sent by `RESKIN_UNLOCK` when a customization is unlocked. */
+export enum ReskinUnlockType {
+    Skin = 1,
+    PetSkin = 2,
+    Title = 3,
+    Gravestone = 4,
+    Emote = 5,
+    Entrance = 6
+}

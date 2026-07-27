@@ -38,12 +38,18 @@ export enum InvResultOrigin {
  */
 export enum InvResultFlags {
   None = 0,
+  Bit2 = 0x4,
+  Bit3 = 0x8,
+  Bit5 = 0x20,
   Bit6 = 0x40,
+  Bit8 = 0x100,
   Bit12 = 0x1000,
   Bit14 = 0x4000,
+  Bit15 = 0x8000,
   Bit17 = 0x20000,
   Bit18 = 0x40000,
   Bit19 = 0x80000,
   Bit20 = 0x100000,
   Bit23 = 0x800000,
+  Bit29 = 0x20000000,
 }

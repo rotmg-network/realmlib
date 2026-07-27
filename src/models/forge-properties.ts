@@ -7,7 +7,10 @@
 export enum DustType {
   None = 0,
   GreenDust = 1,
+  /** @deprecated Typo retained for source compatibility; use {@link BlueDust}. */
   NlueDust = 2,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values -- compatibility alias
+  BlueDust = 2,
   YellowDust = 3,
   PurpleDust = 4,
   RedDust = 5

@@ -18,7 +18,9 @@ export enum Classes {
     Ninja = 806,
     Samurai = 785,
     Bard = 796,
-    Summoner = 817
+    Summoner = 817,
+    Kensei = 818,
+    Druid = 819
 }
 
 /**
@@ -44,6 +46,8 @@ export function parsePlayerClass(classId: number): string {
         case Classes.Samurai: return "Samurai"
         case Classes.Bard: return "Bard"
         case Classes.Summoner: return "Summoner"
+        case Classes.Kensei: return "Kensei"
+        case Classes.Druid: return "Druid"
         default: return "Unknown"
     }
 }
