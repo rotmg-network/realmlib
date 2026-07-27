@@ -30,5 +30,26 @@ export enum PetUpgradeType {
   Unknown = 0,
   PetYard = 1,
   FeedPet = 2,
-  FusePet = 3
+  FusePet = 3,
+  /** Expands the selected pet's backpack capacity. */
+  PetBackpack = 4
+}
+
+/**
+ * Observed layouts of the `FAVOUR_PET` request.
+ *
+ * The values are wire discriminators, not a pet-id count: operation 0 carries
+ * one pet id, while operation 2 carries two.
+ */
+export enum FavourPetOperation {
+  SinglePet = 0,
+  PetPair = 2
+}
+
+/** Result codes used when moving items to or from a pet container. */
+export enum PetContainerTransferResult {
+  Ok = 0,
+  InvalidGeneric = 1,
+  InvalidCantWithdrawFromPet = 2,
+  InvalidCantPutOnPet = 3
 }

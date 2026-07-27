@@ -175,6 +175,15 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(writeHex(fuse)).to.equal(fuseHex);
   });
 
+  it('replays the captured pet-backpack upgrade form', () => {
+    const backpackHex = '040000001d0000000000000000000000';
+    const backpack = parse(new PetUpgradeRequestPacket(), backpackHex);
+    expect(backpack.petTransType).to.equal(PetUpgradeType.PetBackpack);
+    expect(backpack.operation).to.deep.equal({ kind: 'backpack', petId: 29 });
+    expect(writeHex(backpack)).to.equal(backpackHex);
+    expect(writeHex(PetUpgradeRequestPacket.backpack(29))).to.equal(backpackHex);
+  });
+
   it('constructs and inspects pet-upgrade variants without raw field assembly', () => {
     const slot = SlotObjectData.from(2062, 4, 14279);
     const feed = PetUpgradeRequestPacket.feed(28, [slot], PaymentType.Fame);

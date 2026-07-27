@@ -25,6 +25,7 @@ import {
   EnemyHitPacket,
   ShootAckPacket,
   FavourPetPacket,
+  FavourPetOperation,
   RealmScoreUpdatePacket,
   CrucibleRequestPacket,
   CrucibleResponsePacket,
@@ -57,6 +58,7 @@ import {
   DashAckPacket,
   UnlockInformationPacket,
   UnlockInformationType,
+  VaultContentPacket,
   VisualEffect,
 } from '../src';
 
@@ -85,7 +87,7 @@ function roundTrip<T extends { write(w: Writer): void; read(r: Reader): void }>(
   return fresh;
 }
 
-describe('reconciled packet round trips (build 6.11)', () => {
+describe('reconciled packet round trips (build 6.12)', () => {
   it('AllyShootPacket', () => {
     const p = new AllyShootPacket();
     p.bulletId = 40000; // > 255, must be a u16
@@ -347,19 +349,46 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.unknownShort).to.equal(2);
   });
 
-  it('FavourPetPacket reads a counted pet-id list', () => {
+  it('FavourPetPacket reads the two-pet operation', () => {
     const reader = hexReader('0200000fe200000fe3');
     const p = new FavourPetPacket();
     p.read(reader);
+    expect(p.operation).to.equal(FavourPetOperation.PetPair);
     expect(p.petIds).to.deep.equal([4066, 4067]);
     expect(reader.remaining).to.equal(0);
   });
 
-  it('FavourPetPacket round trips', () => {
-    const p = new FavourPetPacket();
-    p.petIds = [123456, 654321];
+  it('FavourPetPacket reads and round trips the single-pet operation', () => {
+    const reader = hexReader('000000001d');
+    const captured = new FavourPetPacket();
+    captured.read(reader);
+    expect(captured.operation).to.equal(FavourPetOperation.SinglePet);
+    expect(captured.petIds).to.deep.equal([29]);
+    expect(reader.remaining).to.equal(0);
+
+    const p = FavourPetPacket.single(123456);
     const out = roundTrip(p, new FavourPetPacket());
+    expect(out.operation).to.equal(FavourPetOperation.SinglePet);
+    expect(out.petIds).to.deep.equal([123456]);
+  });
+
+  it('FavourPetPacket round trips the two-pet operation', () => {
+    const p = FavourPetPacket.pair(123456, 654321);
+    const out = roundTrip(p, new FavourPetPacket());
+    expect(out.operation).to.equal(FavourPetOperation.PetPair);
     expect(out.petIds).to.deep.equal([123456, 654321]);
+  });
+
+  it('VaultContentPacket accepts lists of one-byte compressed integers', () => {
+    const packet = new VaultContentPacket();
+    packet.vaultContents = new Array(16).fill(-1);
+    packet.materialContents = [];
+    packet.giftContents = [];
+    packet.potionContents = [];
+    packet.spoilsContents = [];
+
+    const out = roundTrip(packet, new VaultContentPacket());
+    expect(out.vaultContents).to.deep.equal(packet.vaultContents);
   });
 
   it('NotificationPacket effect 11 consumes message + progress values', () => {
@@ -747,6 +776,16 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p233.success).to.equal(true);
     expect(p233.rewardId).to.equal(11);
     expect(p233.grantedRewardDescription).to.equal('item:Beginner Weapon');
+    expect(res.remaining).to.equal(0);
+  });
+
+  it('account-level reward result accepts the short failure form', () => {
+    const res = hexReader('0033');
+    const packet = new ClaimAccountLevelRewardResultPacket();
+    packet.read(res);
+    expect(packet.success).to.equal(false);
+    expect(packet.rewardId).to.equal(51);
+    expect(packet.grantedRewardDescription).to.equal('');
     expect(res.remaining).to.equal(0);
   });
 

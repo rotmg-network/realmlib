@@ -26,6 +26,10 @@ export type PetUpgradeOperation =
       paymentType: PaymentType;
     }
   | {
+      kind: 'backpack';
+      petId: number;
+    }
+  | {
       kind: 'unknown';
       transactionType: number;
       firstPetId: number;
@@ -122,6 +126,14 @@ export class PetUpgradeRequestPacket implements Packet {
     return packet;
   }
 
+  /** Builds a request to expand a pet's backpack capacity. */
+  static backpack(petId: number): PetUpgradeRequestPacket {
+    const packet = new PetUpgradeRequestPacket();
+    packet.petTransType = PetUpgradeType.PetBackpack;
+    packet.pIdOne = petId;
+    return packet;
+  }
+
   /** Returns a discriminator-based view of the current request. */
   get operation(): PetUpgradeOperation {
     switch (this.petTransType) {
@@ -143,6 +155,8 @@ export class PetUpgradeRequestPacket implements Packet {
           objectId: this.objectId,
           paymentType: this.paymentType,
         };
+      case PetUpgradeType.PetBackpack:
+        return { kind: 'backpack', petId: this.pIdOne };
       default:
         return {
           kind: 'unknown',

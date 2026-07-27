@@ -70,7 +70,7 @@ export class VaultContentPacket implements Packet {
   }
 
   private static readList(reader: Reader): number[] {
-    const count = reader.validateCollectionCount(reader.readCompressedInt(), 4, 'vault contents');
+    const count = reader.validateCollectionCount(reader.readCompressedInt(), 1, 'vault contents');
     const list = new Array<number>(count);
     for (let i = 0; i < count; i++) {
       list[i] = reader.readCompressedInt();
