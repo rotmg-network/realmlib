@@ -299,3 +299,28 @@ export enum ParticleEffect {
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   SummonerSpriteParticle = 33
 }
+
+/**
+ * Tests a condition effect against a player's two condition words.
+ *
+ * Effects 1-31 live in `PlayerData.condition` (CONDITION_STAT 29) as
+ * `1 << (index - 1)`; effects 32-63 live in `PlayerData.condition2`
+ * (NEW_CON_STAT 96) as `1 << (index - 32)`. Getting that split wrong is a
+ * silent class of bug — testing STASIS (22) against condition2 simply never
+ * fires — so consumers should use this rather than open-coding masks.
+ */
+export function hasConditionEffect(
+  condition: number,
+  condition2: number,
+  effect: ConditionEffect,
+): boolean {
+  if (effect <= 0) return false;
+  if (effect < 32) {
+    return (condition & (1 << (effect - 1))) !== 0;
+  }
+  if (effect < 64) {
+    // `>>> 0` keeps bit 31 positive; `1 << 31` is negative in JS.
+    return ((condition2 >>> 0) & ((1 << (effect - 32)) >>> 0)) !== 0;
+  }
+  return false;
+}

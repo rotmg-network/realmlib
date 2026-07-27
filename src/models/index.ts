@@ -23,6 +23,7 @@ export * from './pets';
 export * from './player-data';
 export * from './point';
 export * from './portal-types';
+export * from './slot-type';
 export * from './stat-type';
 export * from './static-objects';
 export * from './trade-result';

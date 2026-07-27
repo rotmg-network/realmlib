@@ -8,6 +8,9 @@ import { EventEmitter } from 'events';
 import { Socket } from 'net';
 
 // @public
+export const ABILITY_SLOT_TYPES: readonly SlotType[];
+
+// @public
 export class AcceleratorUpdatedPacket implements Packet {
     constructor();
     // (undocumented)
@@ -208,7 +211,16 @@ export class ArenaDeathPacket implements Packet {
 }
 
 // @public
+export const ARMOR_SLOT_TYPES: readonly SlotType[];
+
+// @public
+export const BACKPACK_END = 20;
+
+// @public
 export const BACKPACK_SLOT_COUNT = 8;
+
+// @public
+export const BACKPACK_START = 12;
 
 // @public
 export enum BarType {
@@ -1731,6 +1743,18 @@ export class EnterArenaPacket implements Packet {
 }
 
 // @public
+export enum EquipmentSlot {
+    // (undocumented)
+    Ability = 1,
+    // (undocumented)
+    Armor = 2,
+    // (undocumented)
+    Ring = 3,
+    // (undocumented)
+    Weapon = 0
+}
+
+// @public
 export class EscapePacket implements Packet {
     // (undocumented)
     read(): void;
@@ -2194,6 +2218,9 @@ export class GuildResultPacket implements Packet {
 }
 
 // @public
+export function hasConditionEffect(condition: number, condition2: number, effect: ConditionEffect): boolean;
+
+// @public
 export class HatchPetMessage implements Packet {
     constructor();
     petName: string;
@@ -2296,6 +2323,9 @@ export class InvDropPacket implements Packet {
 
 // @public
 export const INVENTORY_SLOT_COUNT = 12;
+
+// @public
+export const INVENTORY_START = 4;
 
 // @public
 export function inventorySlotIndex(statType: number): number | null;
@@ -4846,6 +4876,71 @@ export class SlotObjectData implements DataPacket {
 }
 
 // @public
+export enum SlotType {
+    // (undocumented)
+    Bow = 3,
+    // (undocumented)
+    Cloak = 13,
+    Consumable = 10,
+    // (undocumented)
+    Dagger = 2,
+    // (undocumented)
+    HeavyArmor = 7,
+    // (undocumented)
+    Helm = 16,
+    // (undocumented)
+    Katana = 24,
+    // (undocumented)
+    LeatherArmor = 6,
+    // (undocumented)
+    Lute = 28,
+    // (undocumented)
+    Mace = 29,
+    // (undocumented)
+    Orb = 21,
+    // (undocumented)
+    PetEgg = 26,
+    // (undocumented)
+    Poison = 18,
+    // (undocumented)
+    Prism = 22,
+    // (undocumented)
+    Quiver = 15,
+    // (undocumented)
+    Ring = 9,
+    // (undocumented)
+    Robe = 14,
+    // (undocumented)
+    Scepter = 23,
+    // (undocumented)
+    Seal = 12,
+    // (undocumented)
+    Sheath = 30,
+    // (undocumented)
+    Shield = 5,
+    // (undocumented)
+    Shuriken = 25,
+    // (undocumented)
+    Sigil = 31,
+    // (undocumented)
+    Skull = 19,
+    // (undocumented)
+    Spell = 11,
+    // (undocumented)
+    Staff = 17,
+    // (undocumented)
+    Sword = 1,
+    // (undocumented)
+    Tome = 4,
+    // (undocumented)
+    Trap = 20,
+    // (undocumented)
+    Wakizashi = 27,
+    // (undocumented)
+    Wand = 8
+}
+
+// @public
 export class SquareHitPacket implements Packet {
     constructor();
     bulletId: number;
@@ -5663,6 +5758,9 @@ export class VoucherResultPacket implements Packet {
     // (undocumented)
     write(writer: Writer): void;
 }
+
+// @public
+export const WEAPON_SLOT_TYPES: readonly SlotType[];
 
 // @public (undocumented)
 export class WorldPosData implements DataPacket, Point {
