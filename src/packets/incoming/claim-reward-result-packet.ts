@@ -18,14 +18,18 @@ export class ClaimRewardResultPacket implements Packet {
   success: boolean;
   /** The XML reward payload. */
   xml: string;
-  /** A trailing short (observed as 0). Purpose not yet confirmed. */
-  unknownShort: number;
+  /**
+   * Trailing string; empty (`0000` length prefix) in every capture. The client
+   * binary reads `byte + string + string`, which is why the old `short`
+   * reading of these two bytes was replaced.
+   */
+  trailingString: string;
   //#endregion
 
   constructor() {
     this.success = false;
     this.xml = '';
-    this.unknownShort = 0;
+    this.trailingString = '';
   }
 
   /**
@@ -43,12 +47,12 @@ export class ClaimRewardResultPacket implements Packet {
   read(reader: Reader): void {
     this.success = reader.readBoolean();
     this.xml = reader.readString();
-    this.unknownShort = reader.readShort();
+    this.trailingString = reader.readString();
   }
 
   write(writer: Writer): void {
     writer.writeBoolean(this.success);
     writer.writeString(this.xml);
-    writer.writeShort(this.unknownShort);
+    writer.writeString(this.trailingString);
   }
 }

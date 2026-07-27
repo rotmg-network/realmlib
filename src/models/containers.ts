@@ -26,3 +26,15 @@ export enum VaultType {
     TemporaryGift = 4,
     Forge = 5
 }
+
+/**
+ * Storage-expansion target, from client enum `LHEDNLBAILD` (build 6.12.0.2.0).
+ * Candidate discriminator for the expand-storage flows; distinct from
+ * `UnlockInformationType`.
+ */
+export enum ExpansionTarget {
+  Vault = 0,
+  SeasonalVault = 1,
+  SeasonalPotion = 2,
+  None = 3
+}

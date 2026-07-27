@@ -184,6 +184,22 @@ export class ArenaDeathPacket implements Packet {
 export const BACKPACK_SLOT_COUNT = 8;
 
 // @public
+export enum BarType {
+    // (undocumented)
+    Ability = 16,
+    // (undocumented)
+    Breath = 2,
+    // (undocumented)
+    Channeling = 4,
+    // (undocumented)
+    Frostbite = 8,
+    // (undocumented)
+    Health = 1,
+    // (undocumented)
+    Undefined = 0
+}
+
+// @public
 export class BlacksmithDismantlePacket implements Packet {
     constructor();
     // (undocumented)
@@ -223,10 +239,10 @@ export class BuyCustomisationSocketPacket implements Packet {
 // @public
 export class BuyCustomisationSocketResultPacket implements Packet {
     constructor();
-    code: number;
+    message: string;
     // (undocumented)
     read(reader: Reader): void;
-    success: number;
+    success: boolean;
     // (undocumented)
     readonly type = PacketType.BUY_CUSTOMISATION_SOCKET_RESULT;
     // (undocumented)
@@ -616,11 +632,11 @@ export class ClaimMissionPacket implements Packet {
 // @public
 export class ClaimMissionResultPacket implements Packet {
     constructor();
+    message: string;
     // (undocumented)
     read(reader: Reader): void;
     slot: number;
-    subId: number;
-    success: number;
+    success: boolean;
     // (undocumented)
     readonly type = PacketType.CLAIM_MISSION_RESULT;
     // (undocumented)
@@ -649,12 +665,12 @@ export class ClaimRewardResultPacket implements Packet {
     // (undocumented)
     read(reader: Reader): void;
     success: boolean;
+    trailingString: string;
     // (undocumented)
     readonly type = PacketType.CLAIM_REWARD_RESULT;
     // @deprecated
     get unknownByte(): number;
     set unknownByte(value: number);
-    unknownShort: number;
     // (undocumented)
     write(writer: Writer): void;
     xml: string;
@@ -861,6 +877,13 @@ export enum ConditionEffect {
     STUN_IMMUNE = 12,
     // (undocumented)
     STUNNED = 7,
+    UNKNOWN_60 = 60,
+    // (undocumented)
+    UNKNOWN_61 = 61,
+    // (undocumented)
+    UNKNOWN_62 = 62,
+    // (undocumented)
+    UNKNOWN_63 = 63,
     // (undocumented)
     UNSTABLE = 30,
     // (undocumented)
@@ -991,6 +1014,12 @@ export enum ConditionEffectBits2 {
     SPD_BOOST = 4096,
     // (undocumented)
     SPD_DEBUFF = 8388608,
+    UNKNOWN_60 = 268435456,
+    // (undocumented)
+    UNKNOWN_61 = 536870912,
+    // (undocumented)
+    UNKNOWN_62 = 1073741824,
+    UNKNOWN_63 = 2147483648,
     // (undocumented)
     VIT_BOOST = 8192,
     // (undocumented)
@@ -1292,6 +1321,16 @@ export enum CustomizationCategory {
 }
 
 // @public
+export enum DamageFlags {
+    // (undocumented)
+    ArmorPierce = 2,
+    // (undocumented)
+    Kill = 1,
+    // (undocumented)
+    Laser = 4
+}
+
+// @public
 export class DamagePacket implements Packet {
     constructor();
     bulletId: number;
@@ -1437,7 +1476,27 @@ export class EmotePacket implements Packet {
 export const EMPTY_ENCHANTMENT = "AAIE_f_9__3__f8FAA==";
 
 // @public
+export enum EnchantCurrency {
+    // (undocumented)
+    Dust = 0,
+    // (undocumented)
+    Gold = 1
+}
+
+// @public
 export type EnchantmentBlobFormat = 'equipment-v2' | 'unknown';
+
+// @public
+export enum EnchantmentOperation {
+    // (undocumented)
+    Downgrade = 2,
+    // (undocumented)
+    Reroll = 3,
+    // (undocumented)
+    Upgrade = 1,
+    // (undocumented)
+    Wipe = 4
+}
 
 // @public
 export class EnchantPacket implements Packet {
@@ -1494,9 +1553,7 @@ export enum EnchantType {
     // (undocumented)
     EnchancedXPBonus = 25,
     // (undocumented)
-    None = -1,
-    // (undocumented)
-    v = 28
+    None = -1
 }
 
 // @public
@@ -1576,6 +1633,26 @@ export class EvolvedPetMessage implements Packet {
 }
 
 // @public
+export enum ExaltationStat {
+    // (undocumented)
+    Attack = 2,
+    // (undocumented)
+    Defense = 3,
+    // (undocumented)
+    Dexterity = 7,
+    // (undocumented)
+    HP = 0,
+    // (undocumented)
+    MP = 1,
+    // (undocumented)
+    Speed = 4,
+    // (undocumented)
+    Vitality = 5,
+    // (undocumented)
+    Wisdom = 6
+}
+
+// @public
 export class ExaltationUpdatePacket implements Packet {
     constructor();
     attackProgress: number;
@@ -1602,6 +1679,18 @@ export class ExaltationUpdatePacket implements Packet {
     wisdomProgress: number;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export enum ExpansionTarget {
+    // (undocumented)
+    None = 3,
+    // (undocumented)
+    SeasonalPotion = 2,
+    // (undocumented)
+    SeasonalVault = 1,
+    // (undocumented)
+    Vault = 0
 }
 
 // @public
@@ -1660,6 +1749,7 @@ export class FameData implements DataPacket {
 
 // @public
 export enum FavourPetOperation {
+    Entrance = 1,
     Pet = 0,
     Title = 2
 }
@@ -1690,6 +1780,20 @@ export class FilePacket implements Packet {
     readonly type = PacketType.FILE;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export enum ForgeMaterialRarity {
+    // (undocumented)
+    CommonMaterial = 1,
+    // (undocumented)
+    LegendaryMaterial = 3,
+    // (undocumented)
+    MythicalMaterial = 4,
+    // (undocumented)
+    None = 0,
+    // (undocumented)
+    RareMaterial = 2
 }
 
 // @public
@@ -1896,6 +2000,16 @@ export class GuildInvitePacket implements Packet {
     readonly type = PacketType.GUILDINVITE;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export enum GuildMemberAction {
+    // (undocumented)
+    ChangeRank = 1,
+    // (undocumented)
+    None = 0,
+    // (undocumented)
+    Remove = 2
 }
 
 // @public
@@ -2296,6 +2410,24 @@ export enum MissionObjectiveType {
 }
 
 // @public
+export enum MissionRepeatCadence {
+    // (undocumented)
+    Always = 0,
+    // (undocumented)
+    Daily = 2,
+    // (undocumented)
+    EveryOtherDay = 6,
+    // (undocumented)
+    Monthly = 4,
+    // (undocumented)
+    Never = 1,
+    // (undocumented)
+    OnlyOnce = 5,
+    // (undocumented)
+    Weekly = 3
+}
+
+// @public
 export enum MissionRewardKind {
     // (undocumented)
     BXP = 1,
@@ -2333,6 +2465,18 @@ export enum MissionTrackingState {
     UnavailableToTrack = 2,
     // (undocumented)
     Unknown = -1
+}
+
+// @public
+export enum ModerationAction {
+    // (undocumented)
+    AccountBlock = 3,
+    // (undocumented)
+    Kick = 2,
+    // (undocumented)
+    MuteAccount = 0,
+    // (undocumented)
+    UnmuteAccount = 1
 }
 
 // @public
@@ -3216,10 +3360,14 @@ export enum ParticleEffect {
     SparkParticle = 14,
     // (undocumented)
     StreamParticle = 15,
-    // (undocumented)
+    // @deprecated (undocumented)
     SummonerParticle = 32,
-    // (undocumented)
+    // @deprecated (undocumented)
     SummonerSpriteParticle = 33,
+    // (undocumented)
+    SummonParticle = 32,
+    // (undocumented)
+    SummonSpriteParticle = 33,
     // (undocumented)
     TeleportParticle = 16,
     // (undocumented)
@@ -3232,6 +3380,16 @@ export enum ParticleEffect {
     VortexParticle = 20,
     // (undocumented)
     XmlParticle = 21
+}
+
+// @public
+export enum PartyAccess {
+    // (undocumented)
+    None = 0,
+    // (undocumented)
+    Private = 2,
+    // (undocumented)
+    Public = 1
 }
 
 // @public
@@ -3767,6 +3925,14 @@ export enum PortalType {
     RealmPortal = 1810,
     // (undocumented)
     Vault = 1824
+}
+
+// @public
+export enum PotionType {
+    // (undocumented)
+    Health = 0,
+    // (undocumented)
+    Magic = 1
 }
 
 // @public
@@ -4399,6 +4565,24 @@ export class SquareHitPacket implements Packet {
 }
 
 // @public
+export class StasisPacket implements Packet {
+    constructor();
+    durationSeconds: number;
+    effectId: number;
+    objectId: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.STASIS;
+    unknownByte: number;
+    unknownInt: number;
+    unknownInt2: number;
+    unknownShort: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class StatData implements DataPacket {
     constructor();
     isStringStat(): boolean;
@@ -4748,6 +4932,14 @@ export class TeleportPacket implements Packet {
     readonly type = PacketType.TELEPORT;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export enum TextKind {
+    // (undocumented)
+    AutoTranslated = 2,
+    // (undocumented)
+    Normal = 1
 }
 
 // @public

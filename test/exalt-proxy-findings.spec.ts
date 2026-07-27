@@ -26,6 +26,7 @@ import {
   Reader,
   RedeemVoucherPacket,
   SlotObjectData,
+  StasisPacket,
   UpgradeEnchanterPacket,
   VoucherResultPacket,
   Writer,
@@ -113,10 +114,26 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(writeHex(twoDyes)).to.equal('0002000000102601000000110701');
   });
 
-  it('reads the 141 result body 01 0000 as success + code', () => {
+  it('StasisPacket decodes objectId, effect 22, and the duration float', () => {
+    // 19:40 session: same object at 7.0s then ~2.98s; 0.0 clears the stasis.
+    const seven = parse(new StasisPacket(), '000003af0116000000000000ffffff1640e00000');
+    expect(seven.objectId).to.equal(943);
+    expect(seven.unknownByte).to.equal(1);
+    expect(seven.effectId).to.equal(22);
+    expect(seven.unknownInt2).to.equal(-234);
+    expect(seven.durationSeconds).to.equal(7);
+    expect(writeHex(seven)).to.equal('000003af0116000000000000ffffff1640e00000');
+
+    const clear = parse(new StasisPacket(), '000005610116000000000000ffffff1600000000');
+    expect(clear.objectId).to.equal(1377);
+    expect(clear.durationSeconds).to.equal(0);
+  });
+
+  it('reads the 141 result body 01 0000 as success + empty string', () => {
+    // The client binary reads bool + string; 0000 is the string length prefix.
     const result = parse(new BuyCustomisationSocketResultPacket(), '010000');
-    expect(result.success).to.equal(1);
-    expect(result.code).to.equal(0);
+    expect(result.success).to.equal(true);
+    expect(result.message).to.equal('');
     expect(writeHex(result)).to.equal('010000');
   });
 
@@ -167,7 +184,7 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     const result = parse(new ClaimRewardResultPacket(), '01000b3c53756363657373202f3e0000');
     expect(result.success).to.equal(true);
     expect(result.xml).to.equal('<Success />');
-    expect(result.unknownShort).to.equal(0);
+    expect(result.trailingString).to.equal('');
   });
 
   it('constructs claim-all requests through the typed reward-track API', () => {

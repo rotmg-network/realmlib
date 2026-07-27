@@ -101,3 +101,23 @@ export type NotificationPayload =
       uiExtra: number;
     }
   | { kind: 'unknown'; effect: number; extra: number };
+
+/**
+ * Chat text kind on the `TEXT` packet, from client enum `FBAIGIMMLKK`
+ * (build 6.12.0.2.0).
+ */
+export enum TextKind {
+  Normal = 1,
+  AutoTranslated = 2
+}
+
+/**
+ * Moderation action kinds, from client enum `DBPELDFMMPI` (build 6.12.0.2.0);
+ * pairs with `MODERATOR_ACTION_MESSAGE` (124).
+ */
+export enum ModerationAction {
+  MuteAccount = 0,
+  UnmuteAccount = 1,
+  Kick = 2,
+  AccountBlock = 3
+}

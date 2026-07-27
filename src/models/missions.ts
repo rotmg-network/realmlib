@@ -49,3 +49,16 @@ export enum MissionState {
   Claimed = 2,
   OnCooldown = 3
 }
+
+/**
+ * Mission repeat cadence, from client enum `BKKFIGGNCBD` (build 6.12.0.2.0).
+ */
+export enum MissionRepeatCadence {
+  Always = 0,
+  Never = 1,
+  Daily = 2,
+  Weekly = 3,
+  Monthly = 4,
+  OnlyOnce = 5,
+  EveryOtherDay = 6
+}

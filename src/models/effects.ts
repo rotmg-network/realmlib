@@ -62,6 +62,17 @@ export declare enum ConditionEffect {
   WIS_DEBUFF = 57,
   DEX_DEBUFF = 58,
   INSPIRED = 59,
+  /**
+   * Effects 60-63 exist in the 6.12.0.2.0 client's condition table (its
+   * indices run 0-63 plus 99 with no gaps) but the obfuscated dump does not
+   * recover which index is which. The game XML uses three condition names with
+   * no realmlib mapping — "Drought", "In Combat", and "Multiplied" — which must
+   * be three of these four slots.
+   */
+  UNKNOWN_60 = 60,
+  UNKNOWN_61 = 61,
+  UNKNOWN_62 = 62,
+  UNKNOWN_63 = 63,
   GROUND_DAMAGE = 99
 }
 
@@ -142,7 +153,36 @@ export enum ConditionEffectBits2 {
   VIT_DEBUFF = 0x1000000,
   WIS_DEBUFF = 0x2000000,
   DEX_DEBUFF = 0x4000000,
-  INSPIRED = 0x8000000
+  INSPIRED = 0x8000000,
+  /** See ConditionEffect.UNKNOWN_60 — candidates: Drought, In Combat, Multiplied. */
+  UNKNOWN_60 = 0x10000000,
+  UNKNOWN_61 = 0x20000000,
+  UNKNOWN_62 = 0x40000000,
+  /** Bit 31; JS bitwise ops coerce to int32, so `word & UNKNOWN_63` still works. */
+  UNKNOWN_63 = 0x80000000
+}
+
+/**
+ * Damage bitmask flags carried by damage-bearing packets, from client enum
+ * `KJGFEIIFLLP` (build 6.12.0.2.0).
+ */
+export enum DamageFlags {
+  Kill = 1,
+  ArmorPierce = 2,
+  Laser = 4
+}
+
+/**
+ * Status-bar type bitmask (channeling/breath state), from client enum
+ * `DPJGGPGKEJJ` (build 6.12.0.2.0).
+ */
+export enum BarType {
+  Undefined = 0,
+  Health = 1,
+  Breath = 2,
+  Channeling = 4,
+  Frostbite = 8,
+  Ability = 16
 }
 
 /**
@@ -186,17 +226,22 @@ export enum VisualEffect {
   STATUS_FLASH = 31,
   FIRE_ORB_BUFF = 32,
   OVERLAY = 33,
-  /** Summoner objects and effects */
+  /** Summoner objects and effects. Client name: `SummonEffectType`. */
   SUMMONER_EFFECT = 35,
-  /** Kensei dash trail from the dash start to its end position. */
+  /**
+   * Kensei dash trail from the dash start to its end position.
+   * Client name: `DashEffectType`.
+   */
   KENSEI_DASH_TRAIL = 36,
-  /** Kensei channel-dash activation, emitted once when the ability is armed. */
+  /**
+   * Kensei channel-dash activation, emitted once when the ability is armed.
+   * Client name: `ChannelingEffectType`.
+   */
   KENSEI_CHANNEL_DASH = 37,
-  // Effects 38-40 remain visual-only and semantically unconfirmed. In
-  // particular, current captures do not correlate them with AOE landings.
+  // 38-40 confirmed against the 6.12.0.2.0 client enum PEHBMICMEDO:
+  // Attack, AoE, ShockBlast.
   ATTACK = 38,
   AOE = 39,
-  // Unknown yet
   SHOCK_BLAST = 40
 }
 
@@ -240,6 +285,12 @@ export enum ParticleEffect {
   SmokeCloudParticle = 29,
   NoteParticle = 30,
   LaserParticle = 31,
+  SummonParticle = 32,
+  SummonSpriteParticle = 33,
+  /** @deprecated Client name is `SummonParticle`. */
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   SummonerParticle = 32,
+  /** @deprecated Client name is `SummonSpriteParticle`. */
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   SummonerSpriteParticle = 33
 }

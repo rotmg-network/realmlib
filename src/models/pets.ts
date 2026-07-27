@@ -55,6 +55,12 @@ export enum PetUpgradeType {
 export enum FavourPetOperation {
   /** One int32 pet instance id follows; -1 clears the favourite. */
   Pet = 0,
+  /**
+   * From client enum `ACMEACFBIGL` (Pet/Entrance/Title). No wire capture yet,
+   * so the trailing int32 count is unconfirmed — the reader treats it as
+   * unknown and keeps every complete trailing int32.
+   */
+  Entrance = 1,
   /** Two int32 title-slot ids follow (primary, secondary); mirrors RETITLE. */
   Title = 2
 }

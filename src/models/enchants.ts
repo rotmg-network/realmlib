@@ -24,6 +24,26 @@ export enum EnchantType {
     EnchancedProjectileArcGap = 17,
     EnchancedXPBonus = 25,
     EnchancedLootBonus = 26,
-    EnchancedDustBonus = 27,
-    v
+    EnchancedDustBonus = 27
+}
+
+/**
+ * Enchantment operation kinds, from client enum `AAMIPLLCFNK`
+ * (Assembly-CSharp, build 6.12.0.2.0). A zero-based variant `KIIOCLPGIAN`
+ * (Upgrade = 0, Downgrade = 1, Reroll = 2) also exists in the client.
+ */
+export enum EnchantmentOperation {
+    Upgrade = 1,
+    Downgrade = 2,
+    Reroll = 3,
+    Wipe = 4
+}
+
+/**
+ * Currency used to pay for an enchant operation, from client enum
+ * `MJMJAFIKFCI` (build 6.12.0.2.0).
+ */
+export enum EnchantCurrency {
+    Dust = 0,
+    Gold = 1
 }

@@ -75,3 +75,4 @@ export * from './party-member-added-packet';
 export * from './upgrade-enchanter-packet';
 export * from './unknown181-packet';
 export * from './buy-customisation-socket-result-packet';
+export * from './stasis-packet';

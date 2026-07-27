@@ -6,34 +6,36 @@ import { Writer } from '../../writer';
 /**
  * Received (server -> client) in response to a `BUY_CUSTOMISATION_SOCKET` (140).
  *
- * Packet id 141 is a new id: it is not in the Exalt embedded catalog mapping,
- * only in the 2026-07-27 capture, where it followed every 140 with the body
- * `01 0000` three times out of three. Modelled as `byte success + short code`,
- * the shape every other result packet in this build uses.
+ * Packet id 141 is a new id: absent from the Exalt embedded catalog and from
+ * the client's vtable extraction under any legacy name, but present in both
+ * 2026-07-27 sessions, following every 140 with the body `01 0000` (four
+ * occurrences). The client-binary layout is `bool + string`; the captured
+ * bodies parse as `true` + an empty string (`0000` is the string's zero length
+ * prefix, not a short).
  */
 export class BuyCustomisationSocketResultPacket implements Packet {
 
   readonly type = PacketType.BUY_CUSTOMISATION_SOCKET_RESULT;
 
   //#region packet-specific members
-  /** Success flag (observed 1). */
-  success: number;
-  /** Result/status code (observed 0). */
-  code: number;
+  /** Whether the purchase/application succeeded. */
+  success: boolean;
+  /** Message payload; empty in every capture so far. */
+  message: string;
   //#endregion
 
   constructor() {
-    this.success = 0;
-    this.code = 0;
+    this.success = false;
+    this.message = '';
   }
 
   read(reader: Reader): void {
-    this.success = reader.readByte();
-    this.code = reader.readShort();
+    this.success = reader.readBoolean();
+    this.message = reader.readString();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.success);
-    writer.writeShort(this.code);
+    writer.writeBoolean(this.success);
+    writer.writeString(this.message);
   }
 }

@@ -24,3 +24,13 @@ export function parseGuildRank(rank: number): string {
     default: return "Unknown";
   }
 }
+
+/**
+ * Guild-member management action, from client enum `JKIKHIJILAH`
+ * (build 6.12.0.2.0).
+ */
+export enum GuildMemberAction {
+  None = 0,
+  ChangeRank = 1,
+  Remove = 2
+}

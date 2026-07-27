@@ -89,3 +89,14 @@ export interface ForgeProperties {
    */
   isIngredient: boolean;
 }
+
+/**
+ * Forge material rarity, from client enum `EENOOAFOPBB` (build 6.12.0.2.0).
+ */
+export enum ForgeMaterialRarity {
+  None = 0,
+  CommonMaterial = 1,
+  RareMaterial = 2,
+  LegendaryMaterial = 3,
+  MythicalMaterial = 4
+}

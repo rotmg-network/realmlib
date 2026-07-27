@@ -161,7 +161,7 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 163, type: PacketType.CLAIM_MISSION, direction: 'outgoing', factory: () => new OutgoingPackets.ClaimMissionPacket() },
   { id: 164, type: PacketType.CLAIM_MISSION_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ClaimMissionResultPacket() },
   { id: 165, type: PacketType.PROGRESS_UPDATE, direction: 'incoming', factory: () => new IncomingPackets.ProgressUpdatePacket() },
-  { id: 166, type: PacketType.STASIS, direction: 'unknown' },
+  { id: 166, type: PacketType.STASIS, direction: 'incoming', factory: () => new IncomingPackets.StasisPacket() },
   { id: 167, type: PacketType.SET_DISCOVERABLE, direction: 'outgoing' },
   { id: 169, type: PacketType.REALM_SCORE_UPDATE, direction: 'incoming', factory: () => new IncomingPackets.RealmScoreUpdatePacket() },
   { id: 170, type: PacketType.CLAIM_REWARDS_INFO_PROMPT, direction: 'incoming', factory: () => new IncomingPackets.ClaimRewardsInfoPromptPacket() },

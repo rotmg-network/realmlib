@@ -6,40 +6,44 @@ import { Writer } from '../../writer';
 /**
  * Received (server -> client) in response to a {@link ClaimMissionPacket}
  * (`CLAIM_MISSION`, id 163) — captured arriving immediately after the client
- * claimed a mission. Sample `01 01 0000`, read as two bytes and a short.
+ * claimed a mission.
  *
- * The leading byte is a success flag. The second byte echoes the request's
- * `slot`, **not** the mission id — the 2026-07-27 claim sent `slot` 1 and the
- * reply's second byte was 1. The trailing short mirrors the request's `subId`.
+ * The client-binary layout is `byte + bool + string`; the captured body
+ * `01 01 0000` parses as byte 1, true, and an empty string (`0000` is the
+ * string's zero length prefix — the earlier `short` reading consumed the same
+ * bytes but would break on any non-empty message). Both leading bytes are 1 in
+ * the only capture, so which is the slot echo and which the success flag is
+ * inferred, not proven: the byte is read as the request's `slot` echo and the
+ * bool as success, matching this build's result-packet conventions.
  */
 export class ClaimMissionResultPacket implements Packet {
 
   readonly type = PacketType.CLAIM_MISSION_RESULT;
 
   //#region packet-specific members
-  /** Success flag (observed 1). */
-  success: number;
-  /** Echo of the request's `slot` (observed 1), not the mission id. */
+  /** Byte echoing the request's `slot` (observed 1), not the mission id. */
   slot: number;
-  /** Echo of the request's `subId` (observed 0). */
-  subId: number;
+  /** Success flag (observed true). */
+  success: boolean;
+  /** Message payload; empty in the capture. */
+  message: string;
   //#endregion
 
   constructor() {
-    this.success = 0;
     this.slot = 0;
-    this.subId = 0;
+    this.success = false;
+    this.message = '';
   }
 
   read(reader: Reader): void {
-    this.success = reader.readByte();
     this.slot = reader.readByte();
-    this.subId = reader.readShort();
+    this.success = reader.readBoolean();
+    this.message = reader.readString();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.success);
     writer.writeByte(this.slot);
-    writer.writeShort(this.subId);
+    writer.writeBoolean(this.success);
+    writer.writeString(this.message);
   }
 }

@@ -254,3 +254,28 @@ export function slotIndexToStatType(slotIndex: number): StatType | null {
   }
   return null;
 }
+
+/**
+ * Potion type for `POTION_ONE_TYPE`/`POTION_BELT` stats, from client enum
+ * `JKILKJMAEKH` (build 6.12.0.2.0).
+ */
+export enum PotionType {
+  Health = 0,
+  Magic = 1
+}
+
+/**
+ * Exaltation stat ordering, from client enum `OAGEIDLHJAK`
+ * (build 6.12.0.2.0). Matches the `EXALTED_*` stat block. Note this ordering
+ * differs from `CharacterStatAxis`.
+ */
+export enum ExaltationStat {
+  HP = 0,
+  MP = 1,
+  Attack = 2,
+  Defense = 3,
+  Speed = 4,
+  Vitality = 5,
+  Wisdom = 6,
+  Dexterity = 7
+}

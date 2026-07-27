@@ -33,3 +33,13 @@ export enum PartyActionResult {
     PromoteNotFound = 5,
     LeftParty = 6
 }
+
+/**
+ * Party access/visibility, from client enum `ICLDOIDKKOB` (build 6.12.0.2.0),
+ * used by the create-party UI.
+ */
+export enum PartyAccess {
+  None = 0,
+  Public = 1,
+  Private = 2
+}

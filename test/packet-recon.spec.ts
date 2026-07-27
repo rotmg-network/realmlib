@@ -830,12 +830,12 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p234.unknownByte).to.equal(1);
     expect(req.remaining).to.equal(0);
 
-    const res = hexReader('01000b3c53756363657373202f3e0000'); // byte + "<Success />" + short
+    const res = hexReader('01000b3c53756363657373202f3e0000'); // bool + "<Success />" + empty string
     const p235 = new ClaimRewardResultPacket();
     p235.read(res);
     expect(p235.unknownByte).to.equal(1);
     expect(p235.xml).to.equal('<Success />');
-    expect(p235.unknownShort).to.equal(0);
+    expect(p235.trailingString).to.equal('');
     expect(res.remaining).to.equal(0);
   });
 
@@ -854,14 +854,14 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(reader.remaining).to.equal(0);
   });
 
-  it('ClaimMissionResultPacket (id 164) reads success/slot/subId (no leftover)', () => {
-    // Second byte echoes the request's slot (1), not the mission id.
+  it('ClaimMissionResultPacket (id 164) reads slot/success/message (no leftover)', () => {
+    // Client-binary layout byte + bool + string; 0000 is the empty string.
     const reader = hexReader('01010000');
     const p = new ClaimMissionResultPacket();
     p.read(reader);
-    expect(p.success).to.equal(1);
     expect(p.slot).to.equal(1);
-    expect(p.subId).to.equal(0);
+    expect(p.success).to.equal(true);
+    expect(p.message).to.equal('');
     expect(reader.remaining).to.equal(0);
   });
 
