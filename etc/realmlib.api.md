@@ -239,6 +239,99 @@ export enum BarType {
 }
 
 // @public
+export interface BattlePassBoost {
+    // (undocumented)
+    amount: number;
+    // (undocumented)
+    price: number;
+}
+
+// @public
+export interface BattlePassInfo {
+    // (undocumented)
+    backgroundUrl: string;
+    // (undocumented)
+    boost: BattlePassBoost[];
+    // (undocumented)
+    bxp: number;
+    claimed: string[];
+    // (undocumented)
+    coupons: number;
+    // (undocumented)
+    end: number;
+    // (undocumented)
+    exaltDescription: string;
+    // (undocumented)
+    exalted: boolean;
+    // (undocumented)
+    exaltedPrice: number;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    milestones: BattlePassMilestone[];
+    // (undocumented)
+    previous: BattlePassPreviousState;
+    repeatables: Record<string, number>;
+    // (undocumented)
+    start: number;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    weeklyBxpCap: number;
+    // (undocumented)
+    weeklyExaltBxpCap: number;
+}
+
+// @public
+export interface BattlePassInfoResponse {
+    // (undocumented)
+    battlePass: BattlePassInfo;
+}
+
+// @public
+export interface BattlePassMilestone {
+    // (undocumented)
+    bxp: number;
+    bxp_interval: number;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    rewards: BattlePassRewards;
+}
+
+// @public
+export interface BattlePassPreviousState {
+    // (undocumented)
+    coupons: number;
+}
+
+// @public
+export interface BattlePassRewardItem {
+    // (undocumented)
+    amount: number;
+    // (undocumented)
+    autoconsume: boolean;
+    // (undocumented)
+    type: number;
+}
+
+// @public
+export interface BattlePassRewards {
+    // (undocumented)
+    coupons: number;
+    // (undocumented)
+    credits: number;
+    // (undocumented)
+    exaltedCoupons: number;
+    // (undocumented)
+    exaltedCredits: number;
+    // (undocumented)
+    exaltItems: BattlePassRewardItem[];
+    // (undocumented)
+    items: BattlePassRewardItem[];
+}
+
+// @public
 export class BlacksmithDismantlePacket implements Packet {
     constructor();
     // (undocumented)
@@ -627,12 +720,15 @@ export class ClaimBpMilestoneResultPacket implements Packet {
 export class ClaimChestRewardPacket implements Packet {
     constructor();
     choiceIndex: number;
+    execute: number;
     // (undocumented)
     read(reader: Reader): void;
     slotObject: SlotObjectData;
     // (undocumented)
     readonly type = PacketType.CLAIM_CHEST_REWARD;
-    unknownByte: number;
+    // @deprecated (undocumented)
+    get unknownByte(): number;
+    set unknownByte(value: number);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -2834,6 +2930,7 @@ export enum NotificationEffect {
 export class NotificationPacket implements Packet {
     constructor();
     color: number;
+    colorOrType: number;
     effect: number;
     emoteType: number;
     extra: number;
@@ -2842,6 +2939,7 @@ export class NotificationPacket implements Packet {
     message: string;
     numberOfStars: number;
     objectId: number;
+    objectTypeOrId: number;
     get payload(): NotificationPayload;
     pictureType: number;
     progressMax: number;
@@ -2905,6 +3003,13 @@ export type NotificationPayload = {
     message?: string;
     maximum?: number;
     value?: number;
+} | {
+    kind: 'behaviour';
+    effect: NotificationEffect.BEHAVIOUR;
+    extra: number;
+    message: string;
+    objectTypeOrId: number;
+    colorOrType: number;
 } | {
     kind: 'emote';
     effect: NotificationEffect.EMOTE;
@@ -5269,9 +5374,7 @@ export enum StatType {
     UNKNOWN_154 = 154,
     // (undocumented)
     UNKNOWN_155 = 155,
-    // (undocumented)
     UNKNOWN_156 = 156,
-    // (undocumented)
     UNKNOWN_157 = 157,
     UNKNOWN_158 = 158,
     UNKNOWN_73 = 73,
@@ -5385,6 +5488,7 @@ export class TradeItem implements DataPacket {
     constructor();
     included: boolean;
     item: number;
+    itemData: string;
     // (undocumented)
     read(reader: Reader): void;
     slotType: number;
@@ -5489,6 +5593,19 @@ export class Unknown226Packet implements Packet {
     readonly type = PacketType.UNKNOWN226;
     unknownString: string;
     unknownString2: string;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
+export class Unknown231Packet implements Packet {
+    constructor();
+    active: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.UNKNOWN231;
+    unknownInt: number;
     // (undocumented)
     write(writer: Writer): void;
 }

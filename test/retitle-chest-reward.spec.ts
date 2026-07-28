@@ -43,7 +43,7 @@ describe('retitle / chest-reward packets (retitle-reskin log)', () => {
 
   it('CLAIM_CHEST_REWARD parses byte + slot + choice index', () => {
     const p = fromHex(new ClaimChestRewardPacket(), '0100000249000000040000ff220001');
-    expect(p.unknownByte).to.equal(1);
+    expect(p.execute).to.equal(1);
     expect(p.slotObject.objectId).to.equal(0x249);
     expect(p.slotObject.slotId).to.equal(4);
     expect(p.slotObject.objectType).to.equal(0xff22);
