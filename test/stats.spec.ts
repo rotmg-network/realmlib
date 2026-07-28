@@ -79,6 +79,9 @@ describe('processStatData (current build ids)', () => {
       statData(StatType.TEXTURE_STAT, 1234), // id 25, numeric
       statData(StatType.INVENTORY_0_STAT, 2711),
       statData(StatType.BACKPACK_0_STAT, 999), // id 131 -> inventory slot 12
+      statData(StatType.BACKPACK_7_STAT, 777),
+      statData(StatType.BACKPACK_8_STAT, 888),
+      statData(StatType.BACKPACK_15_STAT, 1515),
       statData(StatType.NAME_STAT, 0, 'Wizard'), // string stat
       statData(StatType.EXP_STAT, 0, '9814'), // string stat parsed to a number
       statData(StatType.BXP_STAT, 14561542),
@@ -94,12 +97,23 @@ describe('processStatData (current build ids)', () => {
     expect(playerData.texture).to.equal(1234);
     expect(playerData.inventory[0]).to.equal(2711);
     expect(playerData.inventory[12]).to.equal(999);
+    expect(playerData.inventory[19]).to.equal(777);
+    expect(playerData.inventory[20]).to.equal(888);
+    expect(playerData.inventory[27]).to.equal(1515);
     expect(playerData.name).to.equal('Wizard');
     expect(playerData.exp).to.equal(9814);
     expect(playerData.bxp).to.equal(14561542);
     expect(playerData.seasonal).to.equal(true);
     expect(playerData.accountLevel).to.equal(35);
     expect(playerData.accountLevelExp).to.equal(406026);
+  });
+
+  it('returns an honest partial patch for an incomplete stat list', () => {
+    const playerData = processStatData([statData(StatType.HP_STAT, 420)]);
+
+    expect(playerData).to.deep.equal({ inventory: [], hp: 420 });
+    expect(playerData).not.to.have.property('objectId');
+    expect(playerData).not.to.have.property('name');
   });
 
   it('separates name decoration metadata from the visible name', () => {

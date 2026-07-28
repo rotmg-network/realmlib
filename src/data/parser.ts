@@ -1,11 +1,11 @@
 import { ObjectData, ObjectStatusData, StatData} from '.';
-import { PlayerData, StatType } from '../models';
+import { inventorySlotIndex, PlayerData, PlayerDataPatch, StatType } from '../models';
 
 /**
  * Processes the `data` and returns the resulting `PlayerData` object
  * @param data The data to process.
  */
-export function processObject(data: ObjectData): PlayerData {
+export function processObject(data: ObjectData): PlayerDataPatch {
     const playerData = processObjectStatus(data.status);
     playerData.class = data.objectType;
     return playerData;
@@ -17,7 +17,12 @@ export function processObject(data: ObjectData): PlayerData {
  * @param data The data to process.
  * @param currentData The existing `PlayerData`
  */
-export function processObjectStatus(data: ObjectStatusData, currentData?: PlayerData): PlayerData {
+export function processObjectStatus(data: ObjectStatusData, currentData: PlayerData): PlayerData;
+export function processObjectStatus(data: ObjectStatusData, currentData?: PlayerDataPatch): PlayerDataPatch;
+export function processObjectStatus(
+    data: ObjectStatusData,
+    currentData?: PlayerDataPatch,
+): PlayerDataPatch {
     const playerData = processStatData(data.stats, currentData);
     playerData.worldPos = data.pos;
     playerData.objectId = data.objectId;
@@ -31,8 +36,13 @@ export function processObjectStatus(data: ObjectStatusData, currentData?: Player
  * @param stats The stats to process
  * @param currentData The existing `PlayerData`
  */
-export function processStatData(stats: StatData[], currentData?: PlayerData): PlayerData {
-    const playerData = currentData || {} as PlayerData;
+export function processStatData(stats: StatData[], currentData: PlayerData): PlayerData;
+export function processStatData(stats: StatData[], currentData?: PlayerDataPatch): PlayerDataPatch;
+export function processStatData(
+    stats: StatData[],
+    currentData?: PlayerDataPatch,
+): PlayerDataPatch {
+    const playerData: PlayerDataPatch = currentData || { inventory: [] };
     if (!playerData.inventory) {
         playerData.inventory = [];
     }
@@ -233,13 +243,12 @@ export function processStatData(stats: StatData[], currentData?: PlayerData): Pl
             case StatType.FORGEFIRE:
                 playerData.forgefire = stat.statValue;
                 continue;
-            default:
-                if (stat.statType >= StatType.INVENTORY_0_STAT && stat.statType <= StatType.INVENTORY_11_STAT) {
-                    playerData.inventory[stat.statType - StatType.INVENTORY_0_STAT] = stat.statValue;
-                } else if (stat.statType >= StatType.BACKPACK_0_STAT && stat.statType <= StatType.BACKPACK_7_STAT) {
-                    const inventorySlots = StatType.INVENTORY_11_STAT - StatType.INVENTORY_0_STAT + 1;
-                    playerData.inventory[inventorySlots + stat.statType - StatType.BACKPACK_0_STAT] = stat.statValue;
+            default: {
+                const slotIndex = inventorySlotIndex(stat.statType);
+                if (slotIndex !== null) {
+                    playerData.inventory[slotIndex] = stat.statValue;
                 }
+            }
         }
     }
     return playerData;

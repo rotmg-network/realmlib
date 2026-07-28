@@ -220,9 +220,9 @@ export enum CharacterStatAxis {
  */
 export const INVENTORY_SLOT_COUNT = 12;
 /**
- * The number of backpack slots carried in the `BACKPACK_0..7` stats.
+ * The number of backpack slots carried in the `BACKPACK_0..15` stats.
  */
-export const BACKPACK_SLOT_COUNT = 8;
+export const BACKPACK_SLOT_COUNT = 16;
 
 /**
  * Whether `statType` carries an inventory or backpack slot's item id.
@@ -233,21 +233,21 @@ export function isInventoryStat(statType: number): boolean {
 
 /**
  * Maps an inventory-carrying stat type to a flat slot index:
- * `INVENTORY_0..11` -> 0..11, `BACKPACK_0..7` -> 12..19.
+ * `INVENTORY_0..11` -> 0..11, `BACKPACK_0..15` -> 12..27.
  * Returns `null` for any other stat type.
  */
 export function inventorySlotIndex(statType: number): number | null {
   if (statType >= StatType.INVENTORY_0_STAT && statType <= StatType.INVENTORY_11_STAT) {
     return statType - StatType.INVENTORY_0_STAT;
   }
-  if (statType >= StatType.BACKPACK_0_STAT && statType <= StatType.BACKPACK_7_STAT) {
+  if (statType >= StatType.BACKPACK_0_STAT && statType <= StatType.BACKPACK_15_STAT) {
     return INVENTORY_SLOT_COUNT + (statType - StatType.BACKPACK_0_STAT);
   }
   return null;
 }
 
 /**
- * Inverse of {@link inventorySlotIndex}: maps a flat slot index (0..19) back
+ * Inverse of {@link inventorySlotIndex}: maps a flat slot index (0..27) back
  * to its stat type. Returns `null` for out-of-range indices.
  */
 export function slotIndexToStatType(slotIndex: number): StatType | null {

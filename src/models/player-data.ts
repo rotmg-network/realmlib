@@ -296,3 +296,14 @@ export interface PlayerData {
      */
     forgefire: number;
 }
+
+/**
+ * Incremental player/entity data produced from UPDATE and NEWTICK stat lists.
+ *
+ * A wire update only includes fields that changed, so callers must not treat
+ * this as a complete {@link PlayerData} snapshot. `inventory` is always present
+ * because slot stats are projected into a stable flat array.
+ */
+export type PlayerDataPatch = Partial<Omit<PlayerData, 'inventory'>> & {
+    inventory: number[];
+};

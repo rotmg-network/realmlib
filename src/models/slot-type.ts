@@ -84,7 +84,7 @@ export const ARMOR_SLOT_TYPES: readonly SlotType[] = [
 
 /**
  * Index of each equipment slot within `PlayerData.inventory`. Slots 0-3 are
- * the equipped items, 4-11 the inventory proper, 12-19 the backpack.
+ * the equipped items, 4-11 the inventory proper, 12-27 the backpack banks.
  */
 export enum EquipmentSlot {
   Weapon = 0,
@@ -98,4 +98,4 @@ export const INVENTORY_START = 4;
 /** First backpack slot index; present only when a backpack is owned. */
 export const BACKPACK_START = 12;
 /** One past the last backpack slot. */
-export const BACKPACK_END = 20;
+export const BACKPACK_END = 28;
