@@ -2796,6 +2796,9 @@ export class InvSwapPacket implements Packet {
 export function isInventoryStat(statType: number): boolean;
 
 // @public
+export function isSafeMapName(name: string): boolean;
+
+// @public
 export enum ItemCategory {
     // (undocumented)
     Ability = 2,
@@ -5405,6 +5408,9 @@ export class RetitlePacket implements Packet {
     // (undocumented)
     write(writer: Writer): void;
 }
+
+// @public
+export const SAFE_MAP_NAMES: ReadonlySet<string>;
 
 // @public
 export class SelectEntrancePacket implements Packet {
