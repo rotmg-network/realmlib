@@ -4,6 +4,23 @@
 **Reviewed state:** the current working tree, including its uncommitted protocol-reconciliation changes  
 **Current protocol snapshot:** Exalt 6.12.0.2.0
 
+## P1 implementation status
+
+All P1 findings in this review were implemented on 2026-07-28:
+
+- `a1a770f` preserves protocol direction through `PacketIO` receive/raw-send
+  resolution and documents proxy configuration;
+- `5652812` makes corpus replay direction-aware;
+- `a35e4e7` fixes notification recursion and validates compressed integers, RC4
+  keys, and `hexdump` row widths;
+- `34c203b` introduces the honest `PlayerDataPatch` contract and models both
+  backpack banks;
+- `268ed77` keeps the absent ShowEffect color sentinel serializable.
+
+The accepted raw-token policy remains unchanged: authentication tokens and
+reconnect key material are still included in their packet `toString()` output
+and covered by regression tests.
+
 ## Executive summary
 
 RealmLib has a sound protocol-library core: packet metadata is centralized,

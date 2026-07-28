@@ -214,10 +214,10 @@ export class ArenaDeathPacket implements Packet {
 export const ARMOR_SLOT_TYPES: readonly SlotType[];
 
 // @public
-export const BACKPACK_END = 20;
+export const BACKPACK_END = 28;
 
 // @public
-export const BACKPACK_SLOT_COUNT = 8;
+export const BACKPACK_SLOT_COUNT = 16;
 
 // @public
 export const BACKPACK_START = 12;
@@ -3381,7 +3381,9 @@ export class PacketIO extends EventEmitter {
 
 // @public (undocumented)
 export interface PacketIOOptions {
+    incomingDirection?: WirePacketDirection;
     maxOutgoingQueue?: number;
+    outgoingDirection?: WirePacketDirection;
     // (undocumented)
     packetMap?: PacketMap;
     // (undocumented)
@@ -4469,6 +4471,11 @@ export interface PlayerData {
 }
 
 // @public
+export type PlayerDataPatch = Partial<Omit<PlayerData, 'inventory'>> & {
+    inventory: number[];
+};
+
+// @public
 export class PlayerHitPacket implements Packet {
     constructor();
     bulletId: number;
@@ -4603,13 +4610,19 @@ export type PowerUpStatsPacket = ExaltationUpdatePacket;
 export function probePacketFields(payload: Buffer, offset?: number): PacketFieldProbe[];
 
 // @public
-export function processObject(data: ObjectData): PlayerData;
+export function processObject(data: ObjectData): PlayerDataPatch;
 
 // @public
-export function processObjectStatus(data: ObjectStatusData, currentData?: PlayerData): PlayerData;
+export function processObjectStatus(data: ObjectStatusData, currentData: PlayerData): PlayerData;
+
+// @public (undocumented)
+export function processObjectStatus(data: ObjectStatusData, currentData?: PlayerDataPatch): PlayerDataPatch;
 
 // @public
-export function processStatData(stats: StatData[], currentData?: PlayerData): PlayerData;
+export function processStatData(stats: StatData[], currentData: PlayerData): PlayerData;
+
+// @public (undocumented)
+export function processStatData(stats: StatData[], currentData?: PlayerDataPatch): PlayerDataPatch;
 
 // @public (undocumented)
 export interface ProgressUpdateEntry {
@@ -6284,6 +6297,9 @@ export class VoucherResultPacket implements Packet {
 
 // @public
 export const WEAPON_SLOT_TYPES: readonly SlotType[];
+
+// @public (undocumented)
+export type WirePacketDirection = Exclude<PacketDirection, 'unknown'>;
 
 // @public (undocumented)
 export class WorldPosData implements DataPacket, Point {
