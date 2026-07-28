@@ -116,6 +116,48 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
   static readonly DEFAULT_MAX_OUTGOING_QUEUE = 1024;
 
   /**
+   * Registers a listener for a concrete packet type without widening its
+   * parameter to the base {@link Packet} interface.
+   */
+  override on<
+    TType extends PacketType,
+    TPacket extends Packet,
+  >(eventName: TType, listener: (packet: TPacket) => void): this;
+  override on<TEvent extends keyof PacketIOEventMap>(
+    eventName: TEvent,
+    listener: (...args: PacketIOEventMap[TEvent]) => void,
+  ): this;
+  override on(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    const addListener = EventEmitter.prototype.on as unknown as (
+      event: string | symbol,
+      callback: (...args: any[]) => void,
+    ) => EventEmitter;
+    addListener.call(this, eventName, listener);
+    return this;
+  }
+
+  /**
+   * Registers a one-shot listener with the same concrete-packet inference as
+   * {@link PacketIO.on}.
+   */
+  override once<
+    TType extends PacketType,
+    TPacket extends Packet,
+  >(eventName: TType, listener: (packet: TPacket) => void): this;
+  override once<TEvent extends keyof PacketIOEventMap>(
+    eventName: TEvent,
+    listener: (...args: PacketIOEventMap[TEvent]) => void,
+  ): this;
+  override once(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    const addOnceListener = EventEmitter.prototype.once as unknown as (
+      event: string | symbol,
+      callback: (...args: any[]) => void,
+    ) => EventEmitter;
+    addOnceListener.call(this, eventName, listener);
+    return this;
+  }
+
+  /**
    * The socket this packet interface is attached to.
    */
   socket: Socket | undefined;

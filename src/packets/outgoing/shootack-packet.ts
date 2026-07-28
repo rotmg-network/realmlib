@@ -16,15 +16,15 @@ export class ShootAckPacket implements Packet {
    */
   time: number;
   /**
-   * A trailing short added in the current build (observed values 1-4).
-   * Purpose not yet confirmed.
+   * Number of `EnemyShootPacket` messages acknowledged by this packet.
+   * Captured values are 1-4; zero is not a valid ordinary acknowledgement.
    */
   unknownShort: number;
   //#endregion
 
   constructor() {
     this.time = 0;
-    this.unknownShort = 0;
+    this.unknownShort = 1;
   }
 
   write(writer: Writer): void {

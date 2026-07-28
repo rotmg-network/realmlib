@@ -18,9 +18,7 @@ export class AoeAckPacket implements Packet {
    * The current client time.
    */
   time: number;
-  /**
-   * The position of the AoE which this packet is acknowledging.
-   */
+  /** The acknowledging player's current position, not the AoE origin. */
   position: WorldPosData;
   //#endregion
 
