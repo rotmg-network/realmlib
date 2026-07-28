@@ -13,7 +13,7 @@ export class TradeStartPacket implements Packet {
 
   /**
    * A description of the player's inventory. Items 0-3 are the hotbar items,
-   * and 4-12 are the 8 inventory slots
+   * and 4-11 are the 8 inventory slots.
    */
   clientItems: TradeItem[];
   /**
@@ -22,7 +22,7 @@ export class TradeStartPacket implements Packet {
   partnerName: string;
   /**
    * A description of the trade partner's inventory. Items 0-3 are the
-   * hotbar items, and 4-12 are the 8 inventory slots
+   * hotbar items, and 4-11 are the 8 inventory slots.
    */
   partnerItems: TradeItem[];
   /**

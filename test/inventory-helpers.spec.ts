@@ -41,6 +41,8 @@ describe('inventory stat<->slot helpers', () => {
     }
     expect(slotIndexToStatType(INVENTORY_SLOT_COUNT + BACKPACK_SLOT_COUNT)).to.equal(null);
     expect(slotIndexToStatType(-1)).to.equal(null);
+    expect(slotIndexToStatType(1.5)).to.equal(null);
+    expect(inventorySlotIndex(StatType.INVENTORY_0_STAT + 0.5)).to.equal(null);
   });
 });
 

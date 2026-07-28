@@ -237,6 +237,9 @@ export function isInventoryStat(statType: number): boolean {
  * Returns `null` for any other stat type.
  */
 export function inventorySlotIndex(statType: number): number | null {
+  if (!Number.isInteger(statType)) {
+    return null;
+  }
   if (statType >= StatType.INVENTORY_0_STAT && statType <= StatType.INVENTORY_11_STAT) {
     return statType - StatType.INVENTORY_0_STAT;
   }
@@ -251,6 +254,9 @@ export function inventorySlotIndex(statType: number): number | null {
  * to its stat type. Returns `null` for out-of-range indices.
  */
 export function slotIndexToStatType(slotIndex: number): StatType | null {
+  if (!Number.isInteger(slotIndex)) {
+    return null;
+  }
   if (slotIndex >= 0 && slotIndex < INVENTORY_SLOT_COUNT) {
     return StatType.INVENTORY_0_STAT + slotIndex;
   }

@@ -76,14 +76,14 @@ export class MapInfoPacket implements Packet {
   /**
    * Dungeon modifiers, separated by ';' (e.g.
    * `EXPERIENCED;DRAINED_4;STONEBOSS_4;HEROICDAMAGE;` in a Lost Halls boss
-   * room). Empty in the nexus and most maps. Read after `unknownShort1` /
+   * room). Empty in the nexus and most maps. Read after `unknownInt1` /
    * `unknownBool`; reading it before them (as older builds did) mis-sliced any
    * non-empty modifier.
    */
   dungeonModifier: string;
   /** Unknown int32. Usually 0; observed as 0x120717 in The Third Dimension. */
-  unknownShort1: number;
-  /** Unknown boolean between `newInt` and `unknownShort1`. */
+  unknownInt1: number;
+  /** Unknown boolean between `newInt` and `unknownInt1`. */
   unknownBool: boolean;
   /** Unknown trailing int16. Observed as -1 in current-build captures. */
   unknownShort2: number;
@@ -112,7 +112,7 @@ export class MapInfoPacket implements Packet {
     this.viewRadius = 0;
     this.newInt = 0;
     this.dungeonModifier = '';
-    this.unknownShort1 = 0;
+    this.unknownInt1 = 0;
     this.unknownBool = false;
     this.unknownShort2 = 0;
     this.hasRealmScores = false;
@@ -138,7 +138,7 @@ export class MapInfoPacket implements Packet {
     this.viewRadius = reader.readShort();
     this.newInt = reader.readShort();
     this.unknownBool = reader.readBoolean();
-    this.unknownShort1 = reader.readInt32();
+    this.unknownInt1 = reader.readInt32();
     this.dungeonModifier = reader.readString();
     this.unknownShort2 = reader.readShort();
     this.hasRealmScores = false;
@@ -169,13 +169,22 @@ export class MapInfoPacket implements Packet {
     writer.writeShort(this.viewRadius);
     writer.writeShort(this.newInt);
     writer.writeBoolean(this.unknownBool);
-    writer.writeInt32(this.unknownShort1);
+    writer.writeInt32(this.unknownInt1);
     writer.writeString(this.dungeonModifier);
     writer.writeShort(this.unknownShort2);
     if (this.hasRealmScores) {
       writer.writeInt32(this.maxRealmScore);
       writer.writeInt32(this.curRealmScore);
     }
+  }
+
+  /** @deprecated Use {@link unknownInt1}; this field has always been int32. */
+  get unknownShort1(): number {
+    return this.unknownInt1;
+  }
+
+  set unknownShort1(value: number) {
+    this.unknownInt1 = value;
   }
 
   toString(): string {

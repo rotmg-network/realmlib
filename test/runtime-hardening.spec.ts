@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import {
   ChatHelloPacket,
+  ChatToken,
   HelloPacket,
   NotificationEffect,
   NotificationPacket,
@@ -81,5 +82,10 @@ describe('runtime input hardening', () => {
     const chat = new ChatHelloPacket();
     chat.token = 'chat-secret';
     expect(chat.toString()).to.include('chat-secret');
+
+    const chatToken = new ChatToken();
+    chatToken.token = 'gateway-secret';
+    expect(chatToken.toString()).to.include('gateway-secret');
+    expect(chatToken.toString()).not.to.include('- 207');
   });
 });

@@ -42,9 +42,11 @@ export class EnemyShootPacket implements Packet {
    */
   numShots: number;
   /**
-   * The angle in degrees between the projectiles if `numShots > 1`.
+   * Raw angular increment between projectiles. The client's unit is unresolved.
    */
   angleInc: number;
+  /** Whether the optional multi-shot byte/float tail was present on the wire. */
+  hasMultiShotTail: boolean;
   //#endregion
 
   constructor() {
@@ -56,6 +58,7 @@ export class EnemyShootPacket implements Packet {
     this.damage = 0;
     this.numShots = 0;
     this.angleInc = 0;
+    this.hasMultiShotTail = false;
   }
 
   read(reader: Reader): void {
@@ -68,9 +71,11 @@ export class EnemyShootPacket implements Packet {
     if (reader.index < reader.length) {
       this.numShots = reader.readUnsignedByte();
       this.angleInc = reader.readFloat();
+      this.hasMultiShotTail = true;
     } else {
       this.numShots = 1;
       this.angleInc = 0;
+      this.hasMultiShotTail = false;
     }
   }
 
@@ -81,7 +86,7 @@ export class EnemyShootPacket implements Packet {
     this.startingPos.write(writer);
     writer.writeFloat(this.angle);
     writer.writeShort(this.damage);
-    if (this.numShots !== 1) {
+    if (this.hasMultiShotTail || this.numShots !== 1) {
       writer.writeUnsignedByte(this.numShots);
       writer.writeFloat(this.angleInc);
     }

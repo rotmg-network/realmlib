@@ -16,6 +16,7 @@ export enum GuildRank {
  */
 export function parseGuildRank(rank: number): string {
   switch(rank) {
+    case GuildRank.NoRank: return "No Rank";
     case GuildRank.Initiate: return "Initiate";
     case GuildRank.Member: return "Member";
     case GuildRank.Officer: return "Officer";

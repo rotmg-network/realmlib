@@ -41,6 +41,6 @@ export class ChatToken implements Packet {
   }
 
   toString(): string {
-    return `[ChatToken - 207] Token: ${this.token} - Host: ${this.host} - Port: ${this.port}`;
+    return `[ChatToken] Token: ${this.token} - Host: ${this.host} - Port: ${this.port}`;
   }
 }

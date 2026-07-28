@@ -49,10 +49,6 @@ export function loadCaptureCorpus(): CaptureCorpus {
 /** Replays one packet body through the same reader, factory, and writer used by consumers. */
 export function replayCaptureFixture(fixture: CaptureFixture): CaptureReplay {
   const packet = createPacket(fixture.type);
-  if (!packet) {
-    return { fixture, error: new Error(`no packet factory for ${fixture.type}`) };
-  }
-
   const body = Buffer.from(fixture.body, 'hex');
   const reader = new Reader(body.length);
   body.copy(reader.buffer);

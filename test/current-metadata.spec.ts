@@ -7,6 +7,7 @@ import {
   ContainerArea,
   DustType,
   FailureCode,
+  GuildRank,
   InvResultFlags,
   InvResultSecondaryFlags,
   ItemCategory,
@@ -26,6 +27,7 @@ import {
   ReskinUnlockType,
   StatType,
   Writer,
+  parseGuildRank,
   parsePlayerClass,
 } from '../src';
 
@@ -44,6 +46,10 @@ describe('current-build metadata enums', () => {
     expect(Classes.Druid).to.equal(819);
     expect(parsePlayerClass(Classes.Kensei)).to.equal('Kensei');
     expect(parsePlayerClass(Classes.Druid)).to.equal('Druid');
+  });
+
+  it('formats the explicit no-guild rank', () => {
+    expect(parseGuildRank(GuildRank.NoRank)).to.equal('No Rank');
   });
 
   it('maps current and legacy stat aliases without changing wire IDs', () => {

@@ -124,6 +124,22 @@ describe('reconciled packet round trips (build 6.12)', () => {
     expect(out.damage).to.equal(120);
     expect(out.numShots).to.equal(3);
     expect(out.angleInc).to.equal(0.25);
+    expect(out.hasMultiShotTail).to.equal(true);
+  });
+
+  it('EnemyShootPacket preserves a present one-shot tail', () => {
+    const packet = new EnemyShootPacket();
+    packet.numShots = 1;
+    packet.angleInc = 0.5;
+    packet.hasMultiShotTail = true;
+    const writer = new Writer();
+    packet.write(writer);
+
+    const decoded = new EnemyShootPacket();
+    decoded.read(toReader(writer));
+    expect(decoded.numShots).to.equal(1);
+    expect(decoded.angleInc).to.equal(0.5);
+    expect(decoded.hasMultiShotTail).to.equal(true);
   });
 
   it('ServerPlayerShootPacket uses generic multi-shot fields', () => {
@@ -940,6 +956,7 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.viewRadius).to.equal(15);
     expect(p.newInt).to.equal(15);
     expect(p.unknownBool).to.equal(false);
+    expect(p.unknownInt1).to.equal(0);
     expect(p.unknownShort1).to.equal(0);
     expect(p.dungeonModifier).to.equal('EXPERIENCED;DRAINED_4;STONEBOSS_4;HEROICDAMAGE;|S');
     expect(p.hasRealmScores).to.equal(false);
