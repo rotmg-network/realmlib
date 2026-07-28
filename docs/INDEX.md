@@ -7,6 +7,8 @@ evidence and historical planning.
 
 - [`../readme.md`](../readme.md) — supported runtime usage, entry points, and
   contributor commands.
+- [`API.md`](API.md) — stable entry points, documentation expectations, and
+  public API review policy.
 - [`PROTOCOL_COMPLETENESS.md`](PROTOCOL_COMPLETENESS.md) — generated current
   registry taxonomy. Refresh it with `npm run docs:protocol`.
 - [`../CODE_REVIEW.md`](../CODE_REVIEW.md) — code-review findings and

@@ -154,11 +154,12 @@ npm ci
 npm run check
 ```
 
-`npm run check` runs TypeScript typechecking, ESLint, the offline packet tests,
-Exalt packet-map reconciliation, the public API compatibility report, and
-package publication validation. When an intentional public API change is made,
-refresh the committed report with `npm run api:update` and review the diff in
-`etc/realmlib.api.md`.
+`npm run check` runs TypeScript typechecking, ESLint, formatting verification,
+the offline packet tests with core coverage thresholds, one production build,
+Exalt packet-map reconciliation, the public API compatibility report, publint,
+and a packed-tarball install/import smoke test. When an intentional public API
+change is made, refresh the committed report with `npm run api:update` and
+review the diff in `etc/realmlib.api.md`.
 
 ## Credits
 

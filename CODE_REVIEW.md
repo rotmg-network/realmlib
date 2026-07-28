@@ -560,6 +560,29 @@ Choose the intended license, add the canonical text, and declare it in
 
 ## P3 findings and cleanup
 
+Phase 3 was completed on 2026-07-28. The findings below are retained as the
+review record; their implemented outcomes are:
+
+| Finding | Status | Implemented outcome                                                                                                                                                                         |
+| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P3.1    | Done   | `PacketIO` is a socket facade over extracted decoder, encoder, resolver, queue, and event modules.                                                                                          |
+| P3.2    | Done   | Notification effect bodies use table-driven codecs and unknown bodies remain raw.                                                                                                           |
+| P3.3    | Done   | Stat projection uses explicit handler tables and `PlayerData` is composed from focused facets.                                                                                              |
+| P3.4    | Done   | Pet-upgrade operations and builders are separated from the wire DTO.                                                                                                                        |
+| P3.5    | Done   | Stable `core`, `protocol`, `packets`, `models`, and `data` subpaths were added without removing root exports.                                                                               |
+| P3.6    | Done   | Codec helpers are shared, reconciliation tests are split, direction collisions have fixtures, property tests were added, and core coverage is thresholded.                                  |
+| P3.7    | Done   | PacketIO events are typed, concrete packet listeners remain compatible, and distinct framing/mapping/read/write errors are exported.                                                        |
+| P3.8    | Done   | Canonical registry definitions and the default map are frozen; `createPacketMap()` supplies mutable copies.                                                                                 |
+| P3.9    | Done   | Ignored known packets avoid body copies. The paired benchmark measured roughly 0.7-1.0 ms for deferred views versus 8.6-10.0 ms for eager copies over 250,000 frames on the review machine. |
+| P3.10   | Done   | Generated protocol completeness separates modeled, raw, research, legacy, helper, and id-less categories.                                                                                   |
+| P3.11   | Done   | Runtime examples, direction guidance, diagnostics, dated findings, and the documentation index were corrected.                                                                              |
+| P3.12   | Done   | Stable entry points have an API policy; unresolved-link, TSDoc, and release-tag diagnostics are visible while the API snapshot remains enforced.                                            |
+| P3.13   | Done   | The aggregate gate builds once, lints scripts, checks coverage, and installs/requires the packed tarball with size guards.                                                                  |
+| P3.14   | Done   | Unused TypeDoc/JSON/Yarn configuration was removed and the API report is normalized to LF.                                                                                                  |
+| P3.15   | Done   | Prettier and a check-only gate standardize source, tests, scripts, configuration, and documentation.                                                                                        |
+| P3.16   | Done   | `.DS_Store`, coverage, generated build output, and temporary output are ignored; the root artifact was removed.                                                                             |
+| P3.17   | Done   | The listed scalar validation, naming, comment, compatibility, and optional-tail fixes were implemented and tested.                                                                          |
+
 ### P3.1 Split `PacketIO` by responsibility
 
 At 567 lines, `PacketIO` combines:
