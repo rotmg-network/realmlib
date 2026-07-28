@@ -16,11 +16,8 @@ const {
 describe('protocol completeness taxonomy', () => {
   it('separates modeled, raw, research, legacy, and id-less definitions', () => {
     const groups = protocolCompleteness();
-    expect(groups['raw-wire'].map((entry) => entry.type)).to.include.members([
-      PacketType.REFINE_RESULT,
-      PacketType.BUY_REFINEMENT,
-      PacketType.FOR_RECONNECT,
-      PacketType.GIFT_NOTIFICATION,
+    expect(groups['raw-wire'].map((entry) => entry.type)).to.deep.equal([
+      PacketType.ACCELERATOR_ADDED,
     ]);
     expect(groups['research-candidate'].map((entry) => entry.type)).to.include(
       PacketType.UPGRADE_ENCHANTMENT,
@@ -37,8 +34,8 @@ describe('protocol completeness taxonomy', () => {
 
   it('generates an evidence-conservative Markdown report', () => {
     const markdown = generateProtocolCompleteness(currentProtocol);
-    expect(markdown).to.include('| Modeled wire packets | 198 |');
-    expect(markdown).to.include('`incoming:218` — `FOR_RECONNECT`');
+    expect(markdown).to.include('| Modeled wire packets | 202 |');
+    expect(markdown).not.to.include('`incoming:218` — `FOR_RECONNECT`');
     expect(markdown).to.include('Catalog nested/helper classes');
     expect(markdown).to.include('Not presumed');
   });

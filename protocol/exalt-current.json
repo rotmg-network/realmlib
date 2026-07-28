@@ -2001,8 +2001,10 @@
       "id": 218,
       "type": "FOR_RECONNECT",
       "name": "ForReconnect",
-      "confidence": 70,
-      "provenance": "realmlib packet-map.ts"
+      "catalog_name": "ForReconnect",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 constant-vtable accessor and Beebyte name map"
     },
     {
       "id": 219,
@@ -2025,10 +2027,13 @@
     },
     {
       "id": 222,
-      "type": "LOADING_SCREEN",
-      "name": "LoadingScreen",
-      "confidence": 70,
-      "provenance": "realmlib packet-map.ts"
+      "type": "SAVE_LOCK_UPDATE",
+      "class": "SaveLockUpdatePacket",
+      "name": "SaveLockUpdateMessage",
+      "catalog_name": "SaveLockUpdateMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 constant-vtable accessor and Beebyte name map"
     },
     {
       "id": 223,
