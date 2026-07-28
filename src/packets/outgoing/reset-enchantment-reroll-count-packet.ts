@@ -29,7 +29,7 @@ export class ResetEnchantmentRerollCountPacket implements Packet {
     writer.writeString(this.value);
   }
 
-  /** @deprecated Use {@link value}. */
+  /** @deprecated Use {@link ResetEnchantmentRerollCountPacket.value}. */
   get unknownString(): string {
     return this.value;
   }

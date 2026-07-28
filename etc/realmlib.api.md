@@ -196,6 +196,9 @@ export class AoePacket implements Packet {
     write(writer: Writer): void;
 }
 
+// @public (undocumented)
+export function applyPetUpgradeOperation(state: PetUpgradeWireState, operation: PetUpgradeOperation): void;
+
 // @public
 export class ArenaDeathPacket implements Packet {
     constructor();
@@ -1418,6 +1421,12 @@ export class CreatePacket implements Packet {
 export function createPacket(type: PacketType): Packet;
 
 // @public
+export function createPacketMap(source?: ReadonlyPacketMap): PacketMap;
+
+// @public
+export function createPacketResolver(packetMap: PacketMap, canonicalMap: ReadonlyPacketMap): PacketResolver;
+
+// @public
 export class CreatePartyPacket implements Packet {
     constructor();
     activity: number;
@@ -1750,7 +1759,7 @@ export enum DebugShape {
 }
 
 // @public
-export const DEFAULT_PACKET_MAP: PacketMap;
+export const DEFAULT_PACKET_MAP: ReadonlyPacketMap;
 
 // @public
 export const DEFAULT_RC4: RC4Config;
@@ -1943,6 +1952,15 @@ export enum EnchantType {
 }
 
 // @public
+export function encodePacketFrame(packet: Packet, id: number, writer: Writer): Buffer;
+
+// @public
+export function encodeRawFrame(id: number, body: Buffer): Buffer;
+
+// @public
+export function encryptFrameBody(frame: Buffer, cipher: RC4): Buffer;
+
+// @public
 export class EnemyHitPacket implements Packet {
     constructor();
     bulletId: number;
@@ -1967,6 +1985,7 @@ export class EnemyShootPacket implements Packet {
     bulletId: number;
     bulletType: number;
     damage: number;
+    hasMultiShotTail: boolean;
     numShots: number;
     ownerId: number;
     // (undocumented)
@@ -2092,6 +2111,9 @@ export class ExaltationUpdatePacket implements Packet {
     write(writer: Writer): void;
 }
 
+// @public (undocumented)
+export function expandPetBackpack(petId: number): PetUpgradeOperation;
+
 // @public
 export enum ExpansionTarget {
     // (undocumented)
@@ -2179,6 +2201,9 @@ export class FavourPetPacket implements Packet {
     // (undocumented)
     write(writer: Writer): void;
 }
+
+// @public (undocumented)
+export function feedPet(petId: number, slots: SlotObjectData[], paymentType: PaymentType, objectId?: number): PetUpgradeOperation;
 
 // @public
 export class FilePacket implements Packet {
@@ -2273,6 +2298,29 @@ export class ForgeUnlockedBlueprints implements Packet {
     // (undocumented)
     write(writer: Writer): void;
 }
+
+// @public
+export class FrameDecoder {
+    constructor(maximumFrameSize: number);
+    // (undocumented)
+    readonly maximumFrameSize: number;
+    // (undocumented)
+    push(data: Buffer): Buffer[];
+    // (undocumented)
+    reset(): void;
+}
+
+// @public
+export class FrameTooLargeError extends RealmlibError {
+    constructor(frameLength: number, maximumFrameSize: number);
+    // (undocumented)
+    readonly frameLength: number;
+    // (undocumented)
+    readonly maximumFrameSize: number;
+}
+
+// @public (undocumented)
+export function fusePets(firstPetId: number, secondPetId: number, paymentType: PaymentType, objectId?: number): PetUpgradeOperation;
 
 // @public
 export const GAME_ID: {
@@ -2590,6 +2638,13 @@ export class IncomingPartyMemberInfoPacket implements Packet {
 }
 
 // @public
+export class InvalidFrameLengthError extends RealmlibError {
+    constructor(frameLength: number);
+    // (undocumented)
+    readonly frameLength: number;
+}
+
+// @public
 export class InvDropPacket implements Packet {
     constructor();
     quickSlot: number;
@@ -2863,7 +2918,10 @@ export class MapInfoPacket implements Packet {
     // (undocumented)
     readonly type = PacketType.MAPINFO;
     unknownBool: boolean;
-    unknownShort1: number;
+    unknownInt1: number;
+    // @deprecated (undocumented)
+    get unknownShort1(): number;
+    set unknownShort1(value: number);
     unknownShort2: number;
     viewRadius: number;
     width: number;
@@ -2876,6 +2934,13 @@ export const MapObjectType: typeof ContainerType;
 
 // @public
 export type MapObjectType = ContainerType;
+
+// @public
+export class MissingPacketFactoryError extends RealmlibError {
+    constructor(packetType: string);
+    // (undocumented)
+    readonly packetType: string;
+}
 
 // @public
 export enum MissionObjectiveType {
@@ -3182,8 +3247,10 @@ export namespace NotificationEffect {
     DUST = LegacyNotificationValue.DUST;
 }
 
+// Warning: (ae-forgotten-export) The symbol "NotificationEffectState" needs to be exported by the entry point index.d.ts
+//
 // @public
-export class NotificationPacket implements Packet {
+export class NotificationPacket implements Packet, NotificationEffectState {
     constructor();
     color: number;
     colorOrType: number;
@@ -3211,6 +3278,7 @@ export class NotificationPacket implements Packet {
     readonly type = PacketType.NOTIFICATION;
     uiExtra: number;
     unknownInt: number;
+    unknownPayload: Buffer;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -3289,6 +3357,7 @@ export type NotificationPayload = {
     kind: 'unknown';
     effect: number;
     extra: number;
+    rawPayload?: Buffer;
 };
 
 // @public (undocumented)
@@ -3342,6 +3411,32 @@ export class OtherHitPacket implements Packet {
 export const OUTGOING_KEY = "5a4d2016bc16dc64883194ffd9";
 
 // @public (undocumented)
+export type OutgoingDroppedEvent = {
+    item: QueuedOutgoing;
+    reason: 'queue-full';
+} | {
+    count: number;
+    reason: 'connection-reset';
+};
+
+// @public
+export class OutgoingQueue<T> {
+    constructor(maximumSize: number);
+    // (undocumented)
+    clear(): number;
+    // (undocumented)
+    get full(): boolean;
+    // (undocumented)
+    readonly maximumSize: number;
+    // (undocumented)
+    push(item: T): void;
+    // (undocumented)
+    shift(): T | undefined;
+    // (undocumented)
+    get size(): number;
+}
+
+// @public (undocumented)
 export interface Packet extends DataPacket {
     readonly type: PacketType;
 }
@@ -3363,9 +3458,13 @@ export interface PacketDefinition {
 export interface PacketDiagnostic extends RawPacket {
     // (undocumented)
     error?: unknown;
+    // (undocumented)
     offset: number;
+    // (undocumented)
     opaqueBytes?: number;
+    // (undocumented)
     probes: PacketFieldProbe[];
+    // (undocumented)
     remaining: number;
     // (undocumented)
     status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error' | 'leftover' | 'opaque';
@@ -3386,7 +3485,7 @@ export interface PacketFieldProbe {
 }
 
 // @public
-export class PacketIO extends EventEmitter {
+export class PacketIO extends EventEmitter<PacketIOEventMap> {
     constructor(opts?: PacketIOOptions);
     attach(socket: Socket): void;
     get connectionState(): PacketIOConnectionState;
@@ -3397,8 +3496,15 @@ export class PacketIO extends EventEmitter {
     get lastIncomingPacket(): Packet | undefined;
     get lastOutgoingPacket(): Packet | undefined;
     static readonly MAX_PACKET_SIZE = 16777216;
+    on<TType extends PacketType, TPacket extends Packet>(eventName: TType, listener: (packet: TPacket) => void): this;
+    // (undocumented)
+    on<TEvent extends keyof PacketIOEventMap>(eventName: TEvent, listener: (...args: PacketIOEventMap[TEvent]) => void): this;
+    once<TType extends PacketType, TPacket extends Packet>(eventName: TType, listener: (packet: TPacket) => void): this;
+    // (undocumented)
+    once<TEvent extends keyof PacketIOEventMap>(eventName: TEvent, listener: (...args: PacketIOEventMap[TEvent]) => void): this;
     get outgoingQueueSize(): number;
-    packetMap: PacketMap;
+    get packetMap(): ReadonlyPacketMap;
+    set packetMap(value: ReadonlyPacketMap);
     send(packet: Packet): SendResult;
     sendRaw(id: number, payload?: Buffer | number[]): SendResult;
     socket: Socket | undefined;
@@ -3407,13 +3513,29 @@ export class PacketIO extends EventEmitter {
 // @public (undocumented)
 export type PacketIOConnectionState = 'detached' | 'connecting' | 'connected' | 'backpressured' | 'closed';
 
+// Warning: (ae-forgotten-export) The symbol "TypedPacketEvents" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export type PacketIOEventMap = TypedPacketEvents & {
+    error: [error: Error];
+    rawPacket: [packet: RawPacket];
+    sentRawPacket: [packet: RawOutgoingPacket];
+    sentPacket: [packet: SentPacketEvent];
+    unknownPacket: [diagnostic: PacketDiagnostic];
+    packetDiagnostic: [diagnostic: PacketDiagnostic];
+    packetParseError: [diagnostic: PacketDiagnostic];
+    packetLeftover: [diagnostic: PacketDiagnostic];
+    packetOpaque: [diagnostic: PacketDiagnostic];
+    outgoingDropped: [event: OutgoingDroppedEvent];
+};
+
 // @public (undocumented)
 export interface PacketIOOptions {
     incomingDirection?: WirePacketDirection;
     maxOutgoingQueue?: number;
     outgoingDirection?: WirePacketDirection;
     // (undocumented)
-    packetMap?: PacketMap;
+    packetMap?: ReadonlyPacketMap;
     // (undocumented)
     rc4?: RC4Config;
     // (undocumented)
@@ -3427,8 +3549,22 @@ export interface PacketMap {
 }
 
 // @public
+export class PacketMappingError extends RealmlibError {
+    constructor(code: 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID', message: string);
+}
+
+// @public
 export class PacketReadError extends RealmlibError {
     constructor(message: string);
+}
+
+// @public
+export class PacketResolver {
+    constructor(packetMap: ReadonlyPacketMap, canonicalMap: ReadonlyPacketMap);
+    // (undocumented)
+    idFor(type: PacketType): number | undefined;
+    // (undocumented)
+    typeFor(id: number, direction: WirePacketDirection): PacketType | undefined;
 }
 
 // @public
@@ -3872,6 +4008,11 @@ export enum PacketType {
     VERIFY_EMAIL = "VERIFY_EMAIL",
     // (undocumented)
     VOUCHER_RESULT = "VOUCHER_RESULT"
+}
+
+// @public
+export class PacketWriteError extends RealmlibError {
+    constructor(message: string);
 }
 
 // @public
@@ -4347,6 +4488,22 @@ export enum PetUpgradeType {
     Unknown = 0
 }
 
+// @public (undocumented)
+export interface PetUpgradeWireState {
+    // (undocumented)
+    objectId: number;
+    // (undocumented)
+    paymentType: PaymentType;
+    // (undocumented)
+    petTransType: PetUpgradeType;
+    // (undocumented)
+    pIdOne: number;
+    // (undocumented)
+    pIdTwo: number;
+    // (undocumented)
+    slotObjects: SlotObjectData[];
+}
+
 // @public
 export enum PetYardType {
     // (undocumented)
@@ -4375,6 +4532,9 @@ export class PetYardUpdate implements Packet {
     write(writer: Writer): void;
     yardType: PetYardType;
 }
+
+// @public (undocumented)
+export function petYardUpgrade(objectId: number, paymentType: PaymentType): PetUpgradeOperation;
 
 // @public
 export class PicPacket implements Packet {
@@ -4407,6 +4567,25 @@ export class PingPacket implements Packet {
 }
 
 // @public
+export const PLAYER_STAT_HANDLED_TYPES: readonly number[];
+
+// @public
+export interface PlayerAccountGuildData {
+    // (undocumented)
+    accountFame: number;
+    // (undocumented)
+    accountId: string;
+    // (undocumented)
+    gold: number;
+    // (undocumented)
+    guildName: string;
+    // (undocumented)
+    guildRank: GuildRank;
+    // (undocumented)
+    nameChosen: boolean;
+}
+
+// @public
 export class PlayerCalloutPacket implements Packet {
     constructor();
     calloutType: number;
@@ -4420,82 +4599,51 @@ export class PlayerCalloutPacket implements Packet {
 }
 
 // @public
-export interface PlayerData {
-    accessoryDye: number;
-    accountFame: number;
-    accountId: string;
-    accountLevel: number;
-    accountLevelExp: number;
+export interface PlayerCombatData {
+    // (undocumented)
     atk: number;
+    // (undocumented)
     atkBoost: number;
-    bxp: number;
-    class: Classes;
-    className: string;
-    clothingDye: number;
     condition: number;
     condition2: number;
-    currentFame: number;
+    // (undocumented)
     def: number;
+    // (undocumented)
     defBoost: number;
+    // (undocumented)
     dex: number;
+    // (undocumented)
     dexBoost: number;
-    exaltedAtt: number;
-    exaltedDef: number;
-    exaltedDex: number;
-    exaltedHP: number;
-    exaltedMP: number;
-    exaltedSpd: number;
-    exaltedVit: number;
-    exaltedWis: number;
-    exp: number;
-    forgefire: number;
-    fortuneTokens: number;
-    gold: number;
-    guildName: string;
-    guildRank: GuildRank;
-    hasBackpack: boolean;
+    // (undocumented)
     hp: number;
-    hpPots: number;
-    inventory: number[];
-    legendaryRank: number;
-    level: number;
+    // (undocumented)
     maxHP: number;
+    // (undocumented)
     maxHPBoost: number;
+    // (undocumented)
     maxMP: number;
+    // (undocumented)
     maxMPBoost: number;
+    // (undocumented)
     mp: number;
-    mpPots: number;
-    name: string;
-    nameBackground?: string;
-    nameChosen: boolean;
-    nameTitle?: string;
-    nextClassQuestFame: number;
-    nextLevelExp: number;
-    objectId: number;
-    potionBelt: boolean;
-    potionOneAmount?: number;
-    potionOneType: number;
-    potionThreeAmount?: number;
-    potionThreeType: number;
-    potionTwoAmount?: number;
-    potionTwoType: number;
     projLifeMult: number;
     projSpeedMult: number;
-    seasonal: boolean;
-    // @deprecated
-    server: string;
-    size: number;
+    // (undocumented)
     spd: number;
+    // (undocumented)
     spdBoost: number;
-    stars: number;
-    texture: number;
+    // (undocumented)
     vit: number;
+    // (undocumented)
     vitBoost: number;
+    // (undocumented)
     wis: number;
+    // (undocumented)
     wisBoost: number;
-    worldPos: WorldPosData;
-    xpBoosted: boolean;
-    xpBoostTime: number;
+}
+
+// @public
+export interface PlayerData extends PlayerIdentityLocationData, PlayerAccountGuildData, PlayerCombatData, PlayerInventoryData, PlayerPotionQuickSlotData, PlayerProgressionData {
 }
 
 // @public
@@ -4514,6 +4662,110 @@ export class PlayerHitPacket implements Packet {
     readonly type = PacketType.PLAYERHIT;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export interface PlayerIdentityLocationData {
+    // (undocumented)
+    accessoryDye: number;
+    // (undocumented)
+    class: Classes;
+    // (undocumented)
+    className: string;
+    // (undocumented)
+    clothingDye: number;
+    // (undocumented)
+    name: string;
+    nameBackground?: string;
+    nameTitle?: string;
+    objectId: number;
+    // @deprecated (undocumented)
+    server: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    texture: number;
+    // (undocumented)
+    worldPos: WorldPosData;
+}
+
+// @public
+export interface PlayerInventoryData {
+    // (undocumented)
+    hasBackpack: boolean;
+    // (undocumented)
+    hpPots: number;
+    inventory: number[];
+    // (undocumented)
+    mpPots: number;
+}
+
+// @public
+export interface PlayerPotionQuickSlotData {
+    // (undocumented)
+    potionBelt: boolean;
+    // (undocumented)
+    potionOneAmount?: number;
+    // (undocumented)
+    potionOneType: number;
+    // (undocumented)
+    potionThreeAmount?: number;
+    // (undocumented)
+    potionThreeType: number;
+    // (undocumented)
+    potionTwoAmount?: number;
+    // (undocumented)
+    potionTwoType: number;
+}
+
+// @public
+export interface PlayerProgressionData {
+    // (undocumented)
+    accountLevel: number;
+    // (undocumented)
+    accountLevelExp: number;
+    // (undocumented)
+    bxp: number;
+    // (undocumented)
+    currentFame: number;
+    // (undocumented)
+    exaltedAtt: number;
+    // (undocumented)
+    exaltedDef: number;
+    // (undocumented)
+    exaltedDex: number;
+    // (undocumented)
+    exaltedHP: number;
+    // (undocumented)
+    exaltedMP: number;
+    // (undocumented)
+    exaltedSpd: number;
+    // (undocumented)
+    exaltedVit: number;
+    // (undocumented)
+    exaltedWis: number;
+    // (undocumented)
+    exp: number;
+    // (undocumented)
+    forgefire: number;
+    // (undocumented)
+    fortuneTokens: number;
+    // (undocumented)
+    legendaryRank: number;
+    // (undocumented)
+    level: number;
+    // (undocumented)
+    nextClassQuestFame: number;
+    // (undocumented)
+    nextLevelExp: number;
+    // (undocumented)
+    seasonal: boolean;
+    // (undocumented)
+    stars: number;
+    // (undocumented)
+    xpBoosted: boolean;
+    // (undocumented)
+    xpBoostTime: number;
 }
 
 // @public
@@ -4640,13 +4892,13 @@ export function probePacketFields(payload: Buffer, offset?: number): PacketField
 // @public
 export function processObject(data: ObjectData): PlayerDataPatch;
 
-// @public
+// @public (undocumented)
 export function processObjectStatus(data: ObjectStatusData, currentData: PlayerData): PlayerData;
 
 // @public (undocumented)
 export function processObjectStatus(data: ObjectStatusData, currentData?: PlayerDataPatch): PlayerDataPatch;
 
-// @public
+// @public (undocumented)
 export function processStatData(stats: StatData[], currentData: PlayerData): PlayerData;
 
 // @public (undocumented)
@@ -4679,6 +4931,12 @@ export class ProgressUpdatePacket implements Packet {
     write(writer: Writer): void;
 }
 
+// @public (undocumented)
+export function projectPetUpgradeOperation(state: PetUpgradeWireState): PetUpgradeOperation;
+
+// @public
+export function protocolCompleteness(): Readonly<Record<ProtocolSupportKind, readonly PacketDefinition[]>>;
+
 // @public
 export enum ProtocolError {
     IgnoredAck = 21,
@@ -4691,6 +4949,12 @@ export enum ProtocolError {
     TooManyEntities = 48,
     TooManyPackets = 42
 }
+
+// @public (undocumented)
+export type ProtocolSupportKind = 'modeled-wire' | 'raw-wire' | 'research-candidate' | 'legacy-metadata' | 'modeled-transport';
+
+// @public
+export function protocolSupportKind(definition: PacketDefinition): ProtocolSupportKind;
 
 // @public
 export const PROXY_INCOMING: RC4Config;
@@ -4834,6 +5098,16 @@ export class QueueCancelPacket implements Packet {
     write(writer: Writer): void;
 }
 
+// @public (undocumented)
+export type QueuedOutgoing = {
+    kind: 'packet';
+    packet: Packet;
+} | {
+    kind: 'raw';
+    id: number;
+    payload: Buffer;
+};
+
 // @public
 export class QueueInfoPacket implements Packet {
     constructor();
@@ -4849,20 +5123,23 @@ export class QueueInfoPacket implements Packet {
     write(writer: Writer): void;
 }
 
-// @public
+// @public (undocumented)
 export interface RawOutgoingPacket extends Omit<RawPacket, 'direction'> {
     // (undocumented)
     readonly direction: 'outgoing';
-    size: number;
 }
 
-// @public
+// @public (undocumented)
 export interface RawPacket {
     // (undocumented)
     readonly direction: 'incoming';
+    // (undocumented)
     id: number;
+    // (undocumented)
     payload: Buffer;
+    // (undocumented)
     size: number;
+    // (undocumented)
     type: PacketType | undefined;
 }
 
@@ -4912,6 +5189,9 @@ export class Reader {
 }
 
 // @public
+export type ReadonlyPacketMap = Readonly<PacketMap>;
+
+// @public
 export class RealmHeroesLeftPacket implements Packet {
     constructor();
     // (undocumented)
@@ -4933,7 +5213,7 @@ export class RealmlibError extends Error {
 }
 
 // @public
-export type RealmlibErrorCode = 'PACKET_READ_ERROR' | 'FRAME_TOO_LARGE' | 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID' | 'OUTGOING_QUEUE_FULL' | 'PACKET_WRITE_ERROR';
+export type RealmlibErrorCode = 'PACKET_READ_ERROR' | 'INVALID_FRAME_LENGTH' | 'FRAME_TOO_LARGE' | 'UNKNOWN_PACKET_TYPE' | 'MISSING_PACKET_FACTORY' | 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID' | 'OUTGOING_QUEUE_FULL' | 'PACKET_WRITE_ERROR';
 
 // @public
 export class RealmScoreUpdatePacket implements Packet {
@@ -5149,6 +5429,16 @@ export interface SendResult {
 
 // @public (undocumented)
 export type SendStatus = 'sent' | 'queued' | 'disconnected' | 'missing-mapping' | 'queue-full' | 'invalid';
+
+// @public (undocumented)
+export interface SentPacketEvent {
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    type: PacketType;
+}
 
 // @public
 export class ServerPlayerShootPacket implements Packet {
@@ -6052,6 +6342,11 @@ export type Unknown226Packet = GiftItemsPacket;
 
 // @public @deprecated (undocumented)
 export class Unknown231Packet extends StacksPacket {
+}
+
+// @public
+export class UnknownPacketTypeError extends RealmlibError {
+    constructor(value: string | number);
 }
 
 // @public

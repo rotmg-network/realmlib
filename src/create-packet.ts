@@ -5,7 +5,7 @@ import { MissingPacketFactoryError, UnknownPacketTypeError } from './errors';
 
 /**
  * Creates the packet object registered for `type`.
- * @throws {Error} when the packet is known but its wire structure is not yet implemented.
+ * @throws Error when the packet is known but its wire structure is not yet implemented.
  */
 export function createPacket(type: PacketType): Packet {
   if (typeof type !== 'string') {

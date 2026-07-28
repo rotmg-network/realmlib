@@ -34,7 +34,7 @@ export class ClaimAccountLevelRewardResultPacket implements Packet {
     this.grantedRewardDescription = '';
   }
 
-  /** Parses {@link grantedRewardDescription} into individual typed grants. */
+  /** Parses {@link ClaimAccountLevelRewardResultPacket.grantedRewardDescription} into typed grants. */
   get grants(): AccountRewardGrant[] {
     return parseAccountRewardGrants(this.grantedRewardDescription);
   }

@@ -33,7 +33,7 @@ export class ClaimRewardResultPacket implements Packet {
   }
 
   /**
-   * Backward-compatible numeric alias for {@link success}.
+   * Backward-compatible numeric alias for {@link ClaimRewardResultPacket.success}.
    * @deprecated The leading byte is a boolean success flag.
    */
   get unknownByte(): number {

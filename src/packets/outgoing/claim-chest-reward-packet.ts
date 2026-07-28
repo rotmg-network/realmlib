@@ -49,7 +49,7 @@ export class ClaimChestRewardPacket implements Packet {
     this.choiceIndex = 0;
   }
 
-  /** @deprecated Use {@link execute}. */
+  /** @deprecated Use {@link ClaimChestRewardPacket.execute}. */
   get unknownByte(): number {
     return this.execute;
   }

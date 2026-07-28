@@ -34,7 +34,7 @@ export class GiftItemsPacket implements Packet {
     writer.writeString(this.recipient);
   }
 
-  /** @deprecated Use {@link items}. */
+  /** @deprecated Use {@link GiftItemsPacket.items}. */
   get unknownString(): string {
     return this.items;
   }
@@ -43,7 +43,7 @@ export class GiftItemsPacket implements Packet {
     this.items = value;
   }
 
-  /** @deprecated Use {@link recipient}. */
+  /** @deprecated Use {@link GiftItemsPacket.recipient}. */
   get unknownString2(): string {
     return this.recipient;
   }

@@ -65,17 +65,20 @@
     "build": "npm run clean && tsc -p .",
     "typecheck": "tsc -p . --noEmit",
     "typecheck:test": "tsc -p tsconfig.test.json",
-    "lint": "eslint \"{src,test}/**/*.ts\"",
+    "lint": "eslint \"{src,test}/**/*.ts\" \"scripts/**/*.cjs\"",
     "test": "mocha",
     "coverage:core": "c8 --all --include='src/io/**/*.ts' --include='src/crypto/**/*.ts' --include='src/packet-registry.ts' --include='src/data/parser.ts' --reporter=text --reporter=json-summary --check-coverage --lines=90 --statements=90 --branches=90 --functions=90 mocha",
     "benchmark:payload-copy": "node scripts/benchmark-payload-copy.cjs",
     "reconcile:exalt": "npm run build --silent && node scripts/reconcile-exalt.cjs",
     "docs:protocol": "npm run build --silent && node scripts/generate-protocol-completeness.cjs",
-    "check:protocol": "npm run build --silent && node scripts/reconcile-exalt.cjs --strict protocol/exalt-current.json",
+    "check:protocol:built": "node scripts/reconcile-exalt.cjs --strict protocol/exalt-current.json",
+    "check:protocol": "npm run build --silent && npm run check:protocol:built",
     "api:update": "npm run build --silent && api-extractor run --local",
-    "api:check": "npm run build --silent && api-extractor run",
-    "package:check": "npm run build --silent && publint",
-    "check": "npm run typecheck && npm run typecheck:test && npm run lint && npm test && npm run check:protocol && npm run api:check && npm run package:check",
+    "api:check:built": "node scripts/check-api-report.cjs",
+    "api:check": "npm run build --silent && npm run api:check:built",
+    "package:check:built": "publint && node scripts/package-smoke.cjs",
+    "package:check": "npm run build --silent && npm run package:check:built",
+    "check": "npm run typecheck && npm run typecheck:test && npm run lint && npm run coverage:core && npm run build && npm run check:protocol:built && npm run api:check:built && npm run package:check:built",
     "prepare": "npm run build"
   },
   "files": [
@@ -110,7 +113,6 @@
     "mocha": "^11.7.6",
     "publint": "^0.3.22",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.28.20",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.65.0"
   }

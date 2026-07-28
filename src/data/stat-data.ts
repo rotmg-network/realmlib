@@ -6,7 +6,7 @@ import { StatType } from '../models';
 /**
  * One entry in an object's stat list: a {@link StatType}, its value, and a
  * secondary value. Whether the value is a string or a compressed int is decided
- * by the stat type ({@link isStringStat}) — the wire format has no type tag, so
+ * by the stat type ({@link StatData.isStringStat}) — the wire format has no type tag, so
  * read and write must agree on which stats are strings.
  */
 export class StatData implements DataPacket {

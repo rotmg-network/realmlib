@@ -30,7 +30,7 @@ export class UnlockMissionTreePacket implements Packet {
   }
 
   /**
-   * Backward-compatible alias for {@link boardId}.
+   * Backward-compatible alias for {@link UnlockMissionTreePacket.boardId}.
    * @deprecated The int32 is the mission board/tree id.
    */
   get unknownInt(): number {

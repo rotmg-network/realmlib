@@ -9,8 +9,8 @@ import { Writer } from '../../writer';
  * subsequent `NewTickPacket`.
  *
  * Current-build layout (confirmed across 124 Exalt 6.12 requests):
- * `artifactMode:u8, equipmentSlotId:u16, artifactInventorySlot:i16,
- * lockedSlotCount:u8, lockedSlotIndices:u8[count]`.
+ * `artifactMode:u8, equipmentSlotId:u16, artifactInventorySlot:i16,`
+ * `lockedSlotCount:u8, lockedSlotIndices:u8[count]`.
  */
 export class RerollAllEnchantmentsPacket implements Packet {
 
@@ -19,7 +19,8 @@ export class RerollAllEnchantmentsPacket implements Packet {
   //#region packet-specific members
   /**
    * Selects the artifact source. Observed as `0` when an inventory artifact is
-   * supplied and `1` when {@link artifactInventorySlot} is `-1`. The official
+   * supplied and `1` when
+   * {@link RerollAllEnchantmentsPacket.artifactInventorySlot} is `-1`. The official
    * enum names are not yet known.
    */
   artifactMode: number;

@@ -9,7 +9,7 @@ import { Writer } from '../../writer';
  *
  * First captured from a Druid in Exalt 6.12.0.2.0. The selector's official
  * enum values and whether every value uses a target position are not yet
- * known, so {@link ability} intentionally remains a numeric byte.
+ * known, so {@link SetAbilityPacket.ability} intentionally remains a numeric byte.
  */
 export class SetAbilityPacket implements Packet {
 

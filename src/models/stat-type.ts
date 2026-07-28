@@ -146,7 +146,7 @@ export enum StatType {
   BACKPACK_6_STAT = 137,
   BACKPACK_7_STAT = 138,
   DUST_CAP_STAT = 147,
-  /** @deprecated Use {@link PET_BACKPACK_SLOTS_STAT}. */
+  /** @deprecated Use {@link StatType.PET_BACKPACK_SLOTS_STAT}. */
   UNKNOWN_148 = 148,
   /** Number of backpack slots currently unlocked for a pet. */
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values -- compatibility alias

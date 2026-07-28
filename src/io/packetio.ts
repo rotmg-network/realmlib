@@ -138,7 +138,7 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
 
   /**
    * Registers a one-shot listener with the same concrete-packet inference as
-   * {@link PacketIO.on}.
+   * `PacketIO.on`.
    */
   override once<
     TType extends PacketType,

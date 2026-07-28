@@ -26,7 +26,7 @@ export class ActivateCrucibleResultPacket implements Packet {
   }
 
   /**
-   * Backward-compatible numeric alias for {@link result}.
+   * Backward-compatible numeric alias for {@link ActivateCrucibleResultPacket.result}.
    * @deprecated The body is a boolean success flag.
    */
   get value(): number {

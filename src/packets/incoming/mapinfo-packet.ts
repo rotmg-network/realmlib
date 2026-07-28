@@ -178,7 +178,7 @@ export class MapInfoPacket implements Packet {
     }
   }
 
-  /** @deprecated Use {@link unknownInt1}; this field has always been int32. */
+  /** @deprecated Use {@link MapInfoPacket.unknownInt1}; this field has always been int32. */
   get unknownShort1(): number {
     return this.unknownInt1;
   }

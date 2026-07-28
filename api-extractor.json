@@ -21,15 +21,15 @@
         "logLevel": "warning"
       },
       "ae-missing-release-tag": {
-        "logLevel": "none"
+        "logLevel": "warning"
       },
       "ae-unresolved-link": {
-        "logLevel": "none"
+        "logLevel": "warning"
       }
     },
     "tsdocMessageReporting": {
       "default": {
-        "logLevel": "none"
+        "logLevel": "warning"
       }
     }
   }

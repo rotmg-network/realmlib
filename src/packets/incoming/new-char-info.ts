@@ -7,7 +7,7 @@ import { Writer } from '../../writer';
 /**
  * Received when the server pushes a character's information — a single `<Char>`
  * XML document (the same schema the AppEngine `/char/list` returns). Use
- * {@link character} to parse it into structured {@link CharacterData}.
+ * {@link NewCharacterInfoPacket.character} to parse it into structured {@link CharacterData}.
  */
 export class NewCharacterInfoPacket implements Packet {
 

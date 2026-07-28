@@ -135,8 +135,8 @@ export class VaultContentPacket implements Packet {
   }
 
   /**
-   * Signed-byte compatibility view of {@link opaqueTail}.
-   * @deprecated Use {@link opaqueTail}.
+   * Signed-byte compatibility view of {@link VaultContentPacket.opaqueTail}.
+   * @deprecated Use {@link VaultContentPacket.opaqueTail}.
    */
   get unknownBytes(): number[] {
     return Array.from(this.opaqueTail, (byte) => byte > 127 ? byte - 256 : byte);

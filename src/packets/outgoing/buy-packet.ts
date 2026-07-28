@@ -27,7 +27,7 @@ export class BuyPacket implements Packet {
   }
 
   /**
-   * Backward-compatible alias for {@link objectType}.
+   * Backward-compatible alias for {@link BuyPacket.objectType}.
    * @deprecated Packet 85 carries an object type, not a world object id.
    */
   get objectId(): number {
