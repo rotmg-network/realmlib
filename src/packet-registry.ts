@@ -783,15 +783,24 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
     direction: 'outgoing',
     factory: () => new OutgoingPackets.CreepHitPacket(),
   },
-  // 135: bool + SlotObjectData + UniqueDataContainer + string; container framing unknown, no factory.
-  { id: 135, type: PacketType.REFINE_RESULT, direction: 'incoming' },
+  {
+    id: 135,
+    type: PacketType.REFINE_RESULT,
+    direction: 'incoming',
+    factory: () => new IncomingPackets.RefineResultPacket(),
+  },
   {
     id: 134,
     type: PacketType.PLAYER_CALLOUT,
     direction: 'outgoing',
     factory: () => new OutgoingPackets.PlayerCalloutPacket(),
   },
-  { id: 136, type: PacketType.BUY_REFINEMENT, direction: 'outgoing' },
+  {
+    id: 136,
+    type: PacketType.BUY_REFINEMENT,
+    direction: 'outgoing',
+    factory: () => new OutgoingPackets.BuyRefinementPacket(),
+  },
   {
     id: 137,
     type: PacketType.DASH,
@@ -1168,9 +1177,12 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
     direction: 'outgoing',
     factory: () => new OutgoingPackets.PartyJoinResponsePacket(),
   },
-  // 218: List<string> serverNames per the client dump (ForceReconnect/Queue);
-  // list prefix width unconfirmed, so no factory yet.
-  { id: 218, type: PacketType.FOR_RECONNECT, direction: 'incoming' },
+  {
+    id: 218,
+    type: PacketType.FOR_RECONNECT,
+    direction: 'incoming',
+    factory: () => new IncomingPackets.ForReconnectPacket(),
+  },
   {
     id: 219,
     type: PacketType.REDEEM_VOUCHER,
@@ -1185,9 +1197,9 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   },
   {
     id: 222,
-    type: PacketType.LOADING_SCREEN,
+    type: PacketType.SAVE_LOCK_UPDATE,
     direction: 'incoming',
-    factory: () => new IncomingPackets.LoadingScreenPacket(),
+    factory: () => new IncomingPackets.SaveLockUpdatePacket(),
   },
   {
     id: 223,
@@ -1261,10 +1273,12 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
     direction: 'incoming',
     factory: () => new IncomingPackets.ClaimDailyItemPacket(),
   },
-  // 238: GiftInfo {string type, int32 area, string text, List<int32> items,
-  // UserData{int32,string} from/to, int64 createdAt}; nested framing + int64
-  // reader support pending, so no factory yet.
-  { id: 238, type: PacketType.GIFT_NOTIFICATION, direction: 'incoming' },
+  {
+    id: 238,
+    type: PacketType.GIFT_NOTIFICATION,
+    direction: 'incoming',
+    factory: () => new IncomingPackets.GiftNotificationPacket(),
+  },
   {
     id: 239,
     type: PacketType.CLAIM_REWARDS_INFO_REQUEST,

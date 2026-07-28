@@ -4,31 +4,42 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Packet 222, server -> client. Layout from the 6.12.0.2.0 client binary
- * (class `EJKNOPDKIEA`, incoming factory id 222): a single bool whose field
- * token is a state flag, not the shared "result" token. It is registered
- * during connect-time setup. `LOADING_SCREEN` is realmlib's legacy name for
- * the id and is not a catalog name — the catalog candidates are
- * `SaveLockUpdateMessage` and `TutorialStateChangedMessage`; a capture with
- * surrounding context is needed to pick. No wire capture exists yet.
+ * Updates whether the account save lock is active (packet 222).
+ *
+ * The 6.12.0.2.0 client identifies the incoming class as
+ * `SaveLockUpdateMessage` and reads one bool into its `saveLock` field.
  */
-export class LoadingScreenPacket implements Packet {
-  readonly type = PacketType.LOADING_SCREEN;
+export class SaveLockUpdatePacket implements Packet {
+  readonly type = PacketType.SAVE_LOCK_UPDATE;
 
   //#region packet-specific members
-  /** The single bool body — a state flag of unknown meaning. */
-  unknownBool: boolean;
+  /** Whether the account save lock is active. */
+  saveLock: boolean;
   //#endregion
 
   constructor() {
-    this.unknownBool = false;
+    this.saveLock = false;
   }
 
   read(reader: Reader): void {
-    this.unknownBool = reader.readBoolean();
+    this.saveLock = reader.readBoolean();
   }
 
   write(writer: Writer): void {
-    writer.writeBoolean(this.unknownBool);
+    writer.writeBoolean(this.saveLock);
+  }
+
+  /** @deprecated Use {@link SaveLockUpdatePacket.saveLock}. */
+  get unknownBool(): boolean {
+    return this.saveLock;
+  }
+
+  set unknownBool(value: boolean) {
+    this.saveLock = value;
   }
 }
+
+/** @deprecated Use {@link SaveLockUpdatePacket}. */
+export const LoadingScreenPacket = SaveLockUpdatePacket;
+/** @deprecated Use {@link SaveLockUpdatePacket}. */
+export type LoadingScreenPacket = SaveLockUpdatePacket;

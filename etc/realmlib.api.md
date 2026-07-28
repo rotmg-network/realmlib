@@ -462,6 +462,23 @@ export class BuyPacket implements Packet {
 }
 
 // @public
+export class BuyRefinementPacket implements Packet {
+    constructor();
+    // (undocumented)
+    action: RefinementAction;
+    // (undocumented)
+    modifierIndices: number[];
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    slotObject: SlotObjectData;
+    // (undocumented)
+    readonly type = PacketType.BUY_REFINEMENT;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class BuyResultPacket implements Packet {
     constructor();
     parseJson(): unknown | undefined;
@@ -2300,6 +2317,20 @@ export class ForgeUnlockedBlueprints implements Packet {
 }
 
 // @public
+export class ForReconnectPacket implements Packet {
+    constructor();
+    encodedServerNames: string;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    serverNames: string[];
+    // (undocumented)
+    readonly type = PacketType.FOR_RECONNECT;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class FrameDecoder {
     constructor(maximumFrameSize: number);
     // (undocumented)
@@ -2374,6 +2405,24 @@ export class GetPlayersListPacket implements Packet {
 }
 
 // @public
+export interface GiftInfo {
+    // (undocumented)
+    area: number;
+    // (undocumented)
+    createdAt: number;
+    // (undocumented)
+    from: GiftUserData;
+    // (undocumented)
+    items: number[];
+    // (undocumented)
+    text: string;
+    // (undocumented)
+    to: GiftUserData;
+    // (undocumented)
+    type: string;
+}
+
+// @public
 export class GiftItemsPacket implements Packet {
     constructor();
     items: string;
@@ -2393,6 +2442,23 @@ export class GiftItemsPacket implements Packet {
 }
 
 // @public
+export class GiftNotificationPacket implements Packet {
+    constructor();
+    // (undocumented)
+    giftInfo: GiftInfo | null;
+    // (undocumented)
+    giftInfoJson: string;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.GIFT_NOTIFICATION;
+    // (undocumented)
+    unknownInt: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class GiftResultPacket implements Packet {
     constructor();
     // (undocumented)
@@ -2406,6 +2472,14 @@ export class GiftResultPacket implements Packet {
     unknownString3: string;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public
+export interface GiftUserData {
+    // (undocumented)
+    accountId: number;
+    // (undocumented)
+    name: string;
 }
 
 // @public
@@ -2868,17 +2942,11 @@ export enum LegacyNotificationValue {
     REALM_THRESHOLD = 1001
 }
 
-// @public
-export class LoadingScreenPacket implements Packet {
-    constructor();
-    // (undocumented)
-    read(reader: Reader): void;
-    // (undocumented)
-    readonly type = PacketType.LOADING_SCREEN;
-    unknownBool: boolean;
-    // (undocumented)
-    write(writer: Writer): void;
-}
+// @public @deprecated (undocumented)
+export const LoadingScreenPacket: typeof SaveLockUpdatePacket;
+
+// @public @deprecated (undocumented)
+export type LoadingScreenPacket = SaveLockUpdatePacket;
 
 // @public
 export class LoadPacket implements Packet {
@@ -3800,8 +3868,8 @@ export enum PacketType {
     KEY_INFO_RESPONSE = "KEY_INFO_RESPONSE",
     // (undocumented)
     LOAD = "LOAD",
-    // (undocumented)
-    LOADING_SCREEN = "LOADING_SCREEN",
+    // @deprecated (undocumented)
+    LOADING_SCREEN = "SAVE_LOCK_UPDATE",
     // (undocumented)
     LOGIN_REWARD_MSG = "LOGIN_REWARD_MSG",
     // (undocumented)
@@ -3919,6 +3987,8 @@ export enum PacketType {
     RESKIN_UNLOCK = "RESKIN_UNLOCK",
     // (undocumented)
     RETITLE = "RETITLE",
+    // (undocumented)
+    SAVE_LOCK_UPDATE = "SAVE_LOCK_UPDATE",
     // (undocumented)
     SELECT_ENTRANCE = "SELECT_ENTRANCE",
     // (undocumented)
@@ -5274,6 +5344,35 @@ export class RedeemVoucherPacket implements Packet {
 }
 
 // @public
+export enum RefinementAction {
+    // (undocumented)
+    Downgrade = 2,
+    // (undocumented)
+    Reroll = 3,
+    // (undocumented)
+    Upgrade = 1,
+    // (undocumented)
+    Wipe = 4
+}
+
+// @public
+export class RefineResultPacket implements Packet {
+    constructor();
+    mods: string;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    slotObject: SlotObjectData;
+    // (undocumented)
+    success: boolean;
+    // (undocumented)
+    readonly type = PacketType.REFINE_RESULT;
+    uniqueData: string;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class RequestTradePacket implements Packet {
     constructor();
     name: string;
@@ -5411,6 +5510,21 @@ export class RetitlePacket implements Packet {
 
 // @public
 export const SAFE_MAP_NAMES: ReadonlySet<string>;
+
+// @public
+export class SaveLockUpdatePacket implements Packet {
+    constructor();
+    // (undocumented)
+    read(reader: Reader): void;
+    saveLock: boolean;
+    // (undocumented)
+    readonly type = PacketType.SAVE_LOCK_UPDATE;
+    // @deprecated (undocumented)
+    get unknownBool(): boolean;
+    set unknownBool(value: boolean);
+    // (undocumented)
+    write(writer: Writer): void;
+}
 
 // @public
 export class SelectEntrancePacket implements Packet {

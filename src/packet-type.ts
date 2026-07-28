@@ -231,7 +231,10 @@ export enum PacketType {
   PARTY_JOIN_REQUEST_RESPONSE = 'PARTY_JOIN_REQUEST_RESPONSE',
   PARTY_REQUEST_RESPONSE = 'PARTY_REQUEST_RESPONSE',
   FOR_RECONNECT = 'FOR_RECONNECT',
-  LOADING_SCREEN = 'LOADING_SCREEN',
+  SAVE_LOCK_UPDATE = 'SAVE_LOCK_UPDATE',
+  /** @deprecated Packet 222 is SaveLockUpdateMessage; use SAVE_LOCK_UPDATE. */
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  LOADING_SCREEN = 'SAVE_LOCK_UPDATE',
   /** Client -> server request to purchase an item. */
   PURCHASE_REQUEST = 'PURCHASE_REQUEST',
   REDEEM_VOUCHER = 'REDEEM_VOUCHER',

@@ -91,3 +91,4 @@ export * from './set-discoverable-packet';
 export * from './purchase-pet-shader-packet';
 export * from './unlock-mission-packet';
 export * from './gift-items-packet';
+export * from './buy-refinement-packet';
