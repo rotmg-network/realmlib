@@ -9,3 +9,4 @@ yarn.lock
 *.js
 src/.DS_Store
 .claude/launch.json
+.DS_Store
