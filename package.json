@@ -20,6 +20,7 @@
     "clean": "node -e \"require('fs').rmSync('lib', { recursive: true, force: true })\"",
     "build": "npm run clean && tsc -p .",
     "typecheck": "tsc -p . --noEmit",
+    "typecheck:test": "tsc -p tsconfig.test.json",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "test": "mocha",
     "reconcile:exalt": "npm run build --silent && node scripts/reconcile-exalt.cjs",
@@ -27,7 +28,7 @@
     "api:update": "npm run build --silent && api-extractor run --local",
     "api:check": "npm run build --silent && api-extractor run",
     "package:check": "npm run build --silent && publint",
-    "check": "npm run typecheck && npm run lint && npm test && npm run check:protocol && npm run api:check && npm run package:check",
+    "check": "npm run typecheck && npm run typecheck:test && npm run lint && npm test && npm run check:protocol && npm run api:check && npm run package:check",
     "prepare": "npm run build"
   },
   "files": [
