@@ -5,23 +5,16 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received when an update even occurs. Some events include
- * + One or more new objects have entered the map (become visible)
- * + One or more objects have left the map (become invisible)
- * + New tiles are visible
+ * Adds newly visible tiles and objects and removes objects that left view.
  */
 export class UpdatePacket implements Packet {
 
   readonly type = PacketType.UPDATE;
 
   //#region packet-specific members
-  /**
-   * this is the position of the player???
-   */
+  /** View origin used for the update. */
   pos: WorldPosData;
-  /**
-   * Lever type, No fucking idea
-   */
+  /** Map/view-level discriminator. Its exact gameplay meaning is unresolved. */
   levelType: number;
   /**
    * The new tiles which are visible.
@@ -35,9 +28,9 @@ export class UpdatePacket implements Packet {
    * The visible objects which have left the map (become invisible).
    */
   drops: number[];
-  /**
-   * Trailing byte present in recent builds. Purpose unknown; defaults to 0.
-   */
+  /** Whether a legacy/variant payload included an extra trailing byte. */
+  hasTrailingByte: boolean;
+  /** Optional legacy/variant trailing byte. Not emitted by the current client. */
   unknownByte: number;
   //#endregion
 
@@ -47,6 +40,7 @@ export class UpdatePacket implements Packet {
     this.tiles = [];
     this.newObjects = [];
     this.drops = [];
+    this.hasTrailingByte = false;
     this.unknownByte = 0;
   }
 
@@ -76,7 +70,8 @@ export class UpdatePacket implements Packet {
       this.drops[i] = reader.readCompressedInt();
     }
 
-    if (reader.remaining > 0) {
+    this.hasTrailingByte = reader.remaining > 0;
+    if (this.hasTrailingByte) {
       this.unknownByte = reader.readUnsignedByte();
     }
   }
@@ -96,6 +91,8 @@ export class UpdatePacket implements Packet {
     for (const drop of this.drops) {
       writer.writeCompressedInt(drop);
     }
-    writer.writeUnsignedByte(this.unknownByte);
+    if (this.hasTrailingByte) {
+      writer.writeUnsignedByte(this.unknownByte);
+    }
   }
 }

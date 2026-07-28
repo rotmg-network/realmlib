@@ -67,7 +67,7 @@ export interface RawOutgoingPacket extends Omit<RawPacket, 'direction'> {
 }
 
 export interface PacketDiagnostic extends RawPacket {
-  status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error';
+  status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error' | 'leftover';
   /** Bytes consumed from the packet body. */
   offset: number;
   /** Bytes left after parsing stopped. */
@@ -494,7 +494,8 @@ export class PacketIO extends EventEmitter {
       }
       const shouldParse = this.listenerCount(type) !== 0
         || this.listenerCount('packetDiagnostic') !== 0
-        || this.listenerCount('packetParseError') !== 0;
+        || this.listenerCount('packetParseError') !== 0
+        || this.listenerCount('packetLeftover') !== 0;
       if (shouldParse) {
         let packet: Packet;
         try {
@@ -513,6 +514,13 @@ export class PacketIO extends EventEmitter {
           this.emit('packetDiagnostic', diagnostic);
           this.emitError(error);
           return undefined;
+        }
+        if (this.reader.remaining !== 0) {
+          const offset = Math.max(0, this.reader.index - 5);
+          const diagnostic = this.createDiagnostic(id, type, payload, 'leftover', offset);
+          this.emit('packetLeftover', diagnostic);
+          this.emit('packetDiagnostic', diagnostic);
+          return packet;
         }
         if (this.listenerCount('packetDiagnostic') !== 0) {
           const offset = Math.max(0, this.reader.index - 5);

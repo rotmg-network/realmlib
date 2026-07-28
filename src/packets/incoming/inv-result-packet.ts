@@ -58,7 +58,10 @@ export class InvResultPacket implements Packet {
    * bit atlas.
    */
   flags: number;
-  /** Purpose unknown; observed 0. */
+  /**
+   * Second unresolved bitfield. Nonzero only on captured use acknowledgements;
+   * see `InvResultSecondaryFlags` for observed raw bit positions.
+   */
   unknownInt2: number;
   //#endregion
 

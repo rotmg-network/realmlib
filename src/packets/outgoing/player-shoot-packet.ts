@@ -3,6 +3,7 @@ import {Packet} from '../../packet';
 import {PacketType} from '../../packet-type';
 import {Reader} from '../../reader';
 import {Writer} from '../../writer';
+import {PlayerShootSource} from '../../models';
 
 /**
  * Sent when the player shoots a projectile.
@@ -24,9 +25,7 @@ export class PlayerShootPacket implements Packet {
      * The item id of the weapon used to fire the projectile.
      */
     containerType: number;
-    /**
-     * (work-in-progress)
-     */
+    /** Unresolved signed shot metadata byte. */
     unknownByte: number;
     /**
      * The position of the starting point where the projectile was fired.
@@ -40,10 +39,10 @@ export class PlayerShootPacket implements Packet {
      * If the projectile is related to a burst weapon projectile.
      */
     isBurst: boolean;
-    /**
-     * No Fucking idea
-     */
+    /** Unknown signed byte immediately before `shootSource`. */
     unknownShort: number;
+    /** Whether the projectile came from the primary weapon or an ability. */
+    shootSource: PlayerShootSource;
     /**
      * The Player Position 
      */
@@ -60,6 +59,7 @@ export class PlayerShootPacket implements Packet {
         this.angle = 0;
         this.isBurst = false;
         this.unknownShort = 0;
+        this.shootSource = PlayerShootSource.Primary;
         this.playerPos = new WorldPosData();
     }
 
@@ -71,7 +71,8 @@ export class PlayerShootPacket implements Packet {
         this.startingPos.write(writer);
         writer.writeFloat(this.angle);
         writer.writeBoolean(this.isBurst);
-        writer.writeShort(this.unknownShort);
+        writer.writeByte(this.unknownShort);
+        writer.writeByte(this.shootSource);
         this.playerPos.write(writer);
     }
 
@@ -83,7 +84,8 @@ export class PlayerShootPacket implements Packet {
         this.startingPos.read(reader);
         this.angle = reader.readFloat();
         this.isBurst = reader.readBoolean();
-        this.unknownShort = reader.readShort();
+        this.unknownShort = reader.readByte();
+        this.shootSource = reader.readByte() as PlayerShootSource;
         this.playerPos.read(reader);
     }
 }

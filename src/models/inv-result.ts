@@ -53,3 +53,20 @@ export enum InvResultFlags {
   Bit23 = 0x800000,
   Bit29 = 0x20000000,
 }
+
+/**
+ * Observed raw bits in `InvResultPacket.unknownInt2`. These are intentionally
+ * named by position until controlled captures establish their meanings.
+ */
+export enum InvResultSecondaryFlags {
+  None = 0,
+  Bit5 = 0x20,
+  Bit10 = 0x400,
+  Bit11 = 0x800,
+  Bit15 = 0x8000,
+  Bit16 = 0x10000,
+  Bit18 = 0x40000,
+  Bit22 = 0x400000,
+  Bit27 = 0x8000000,
+  Bit30 = 0x40000000
+}

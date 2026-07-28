@@ -40,11 +40,12 @@ export class ServerPlayerShootPacket implements Packet {
 
   unknownByte: number;
   
-  spellBomb: boolean;
-  
-  bulletCount: number;
-  
-  bulletAngle: number;
+  /** Whether the optional multi-projectile tail is present. */
+  hasMultiShot: boolean;
+  /** Projectile count carried by the optional tail. */
+  numShots: number;
+  /** Angular increment, in radians, between projectiles. */
+  angleIncrement: number;
 
   constructor() {
     this.bulletId = 0;
@@ -55,9 +56,9 @@ export class ServerPlayerShootPacket implements Packet {
     this.damage = 0;
     this.unknownInt = 0;
     this.unknownByte = 0;
-    this.spellBomb = false;
-    this.bulletCount = 0;
-    this.bulletAngle = 0;
+    this.hasMultiShot = false;
+    this.numShots = 0;
+    this.angleIncrement = 0;
   }
 
   read(reader: Reader): void {
@@ -71,12 +72,13 @@ export class ServerPlayerShootPacket implements Packet {
     this.unknownByte = reader.readByte();
 
     if (reader.remaining > 0) {
-      this.spellBomb = true;
-      this.bulletCount = reader.readByte();
-      this.bulletAngle = reader.readFloat();
+      this.hasMultiShot = true;
+      this.numShots = reader.readByte();
+      this.angleIncrement = reader.readFloat();
     } else {
-      this.bulletCount = 0;
-      this.bulletAngle = 0;
+      this.hasMultiShot = false;
+      this.numShots = 0;
+      this.angleIncrement = 0;
     }
   }
 
@@ -90,10 +92,37 @@ export class ServerPlayerShootPacket implements Packet {
     writer.writeInt32(this.unknownInt);
     writer.writeByte(this.unknownByte);
 
-    if (this.spellBomb) {
-      writer.writeByte(this.bulletCount);
-      writer.writeFloat(this.bulletAngle);
+    if (this.hasMultiShot) {
+      writer.writeByte(this.numShots);
+      writer.writeFloat(this.angleIncrement);
     }
+  }
+
+  /** @deprecated Use `hasMultiShot`. */
+  get spellBomb(): boolean {
+    return this.hasMultiShot;
+  }
+
+  set spellBomb(value: boolean) {
+    this.hasMultiShot = value;
+  }
+
+  /** @deprecated Use `numShots`. */
+  get bulletCount(): number {
+    return this.numShots;
+  }
+
+  set bulletCount(value: number) {
+    this.numShots = value;
+  }
+
+  /** @deprecated Use `angleIncrement`. */
+  get bulletAngle(): number {
+    return this.angleIncrement;
+  }
+
+  set bulletAngle(value: number) {
+    this.angleIncrement = value;
   }
 
   toString(): string {
@@ -104,8 +133,8 @@ export class ServerPlayerShootPacket implements Packet {
     Angle: ${this.angle}\nDamage: ${this.damage}\n
     UnknownInt: ${this.unknownInt}\n
     UnknownByte: ${this.unknownByte}\n
-    SpellBomb: ${this.spellBomb}\n
-    BulletCount: ${this.bulletCount}\n
-    BulletAngle: ${this.bulletAngle}`;
+    HasMultiShot: ${this.hasMultiShot}\n
+    NumShots: ${this.numShots}\n
+    AngleIncrement: ${this.angleIncrement}`;
   }
 }

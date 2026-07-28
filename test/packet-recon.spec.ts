@@ -60,6 +60,9 @@ import {
   UnlockInformationType,
   VaultContentPacket,
   VisualEffect,
+  PlayerShootPacket,
+  PlayerShootSource,
+  ServerPlayerShootPacket,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the given hex bytes. */
@@ -121,6 +124,22 @@ describe('reconciled packet round trips (build 6.12)', () => {
     expect(out.damage).to.equal(120);
     expect(out.numShots).to.equal(3);
     expect(out.angleInc).to.equal(0.25);
+  });
+
+  it('ServerPlayerShootPacket uses generic multi-shot fields', () => {
+    const p = new ServerPlayerShootPacket();
+    p.bulletId = 40000;
+    p.ownerId = 123;
+    p.containerType = 456;
+    p.hasMultiShot = true;
+    p.numShots = 5;
+    p.angleIncrement = 0.25;
+
+    const out = roundTrip(p, new ServerPlayerShootPacket());
+    expect(out.hasMultiShot).to.equal(true);
+    expect(out.numShots).to.equal(5);
+    expect(out.angleIncrement).to.equal(0.25);
+    expect(out.spellBomb).to.equal(true);
   });
 
   it('DamagePacket (info byte + u16 bulletId)', () => {
@@ -188,6 +207,7 @@ describe('reconciled packet round trips (build 6.12)', () => {
     p.viewRadius = 15;
     p.dungeonModifier = 'a;b';
     p.unknownShort2 = 1;
+    p.hasRealmScores = true;
     p.maxRealmScore = 5000;
     p.curRealmScore = 1200;
     const out = roundTrip(p, new MapInfoPacket());
@@ -195,6 +215,7 @@ describe('reconciled packet round trips (build 6.12)', () => {
     expect(out.maxPlayers).to.equal(85);
     expect(out.viewRadius).to.equal(15);
     expect(out.dungeonModifier).to.equal('a;b');
+    expect(out.hasRealmScores).to.equal(true);
     expect(out.maxRealmScore).to.equal(5000);
     expect(out.curRealmScore).to.equal(1200);
   });
@@ -217,12 +238,31 @@ describe('reconciled packet round trips (build 6.12)', () => {
     p.pos = new WorldPosData(12.5, -7.25);
     p.levelType = 4;
     p.drops = [1, 2, 3];
+    p.hasTrailingByte = true;
     p.unknownByte = 9;
     const out = roundTrip(p, new UpdatePacket());
     expect(out.pos.x).to.equal(12.5);
     expect(out.levelType).to.equal(4);
     expect(out.drops).to.deep.equal([1, 2, 3]);
+    expect(out.hasTrailingByte).to.equal(true);
     expect(out.unknownByte).to.equal(9);
+  });
+
+  it('UpdatePacket omits the legacy trailing byte when absent', () => {
+    const p = new UpdatePacket();
+    const writer = new Writer();
+    p.write(writer);
+    const body = writer.buffer.subarray(0, writer.index);
+
+    const out = new UpdatePacket();
+    const reader = new Reader(body.length);
+    body.copy(reader.buffer);
+    out.read(reader);
+
+    expect(out.hasTrailingByte).to.equal(false);
+    const rewritten = new Writer();
+    out.write(rewritten);
+    expect(rewritten.buffer.subarray(0, rewritten.index).equals(body)).to.equal(true);
   });
 });
 
@@ -850,8 +890,37 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.name).to.equal('Lost Halls');
     expect(p.buildVersion).to.equal('6.12.0.0.0');
     expect(p.viewRadius).to.equal(15);
+    expect(p.newInt).to.equal(15);
+    expect(p.unknownBool).to.equal(false);
+    expect(p.unknownShort1).to.equal(0);
     expect(p.dungeonModifier).to.equal('EXPERIENCED;DRAINED_4;STONEBOSS_4;HEROICDAMAGE;|S');
+    expect(p.hasRealmScores).to.equal(false);
     expect(reader.remaining).to.equal(0);
+    const writer = new Writer();
+    p.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(
+      '0000010000000100000a4c6f73742048616c6c73000a4c6f73742048616c6c7300054e6578757340d57516' +
+      '000000004100000000000000326a4e85c8000a362e31322e302e302e30000f000f0000000000003145585045' +
+      '5249454e4345443b445241494e45445f343b53544f4e45424f53535f343b4845524f494344414d4147453b7c53ffff',
+    );
+  });
+
+  it('PlayerShootPacket preserves separate signed-byte source fields', () => {
+    const packet = new PlayerShootPacket();
+    packet.time = 1234;
+    packet.bulletId = 500;
+    packet.containerType = 0x1234;
+    packet.unknownByte = -2;
+    packet.startingPos = new WorldPosData(1.5, 2.5);
+    packet.angle = 0.25;
+    packet.isBurst = true;
+    packet.unknownShort = -3;
+    packet.shootSource = PlayerShootSource.Ability;
+    packet.playerPos = new WorldPosData(3.5, 4.5);
+
+    const out = roundTrip(packet, new PlayerShootPacket());
+    expect(out.unknownShort).to.equal(-3);
+    expect(out.shootSource).to.equal(PlayerShootSource.Ability);
   });
 
   it('ClaimMissionResultPacket (id 164) reads slot/success/message (no leftover)', () => {
@@ -938,6 +1007,9 @@ describe('current-build packets reconciled from captured bytes', () => {
     const p = new StatsPacket();
     p.read(reader);
     expect(p.objectId).to.equal(266255);
+    expect(p.state.attack).to.equal(2);
+    expect(p.state.hp).to.equal(0);
+    expect(p.state.dexterity).to.equal(0);
     expect(p.unknownInt1).to.equal(512);
     expect(p.abilityStateUnits).to.equal(2);
     expect(p.unknownInt2).to.equal(0);

@@ -8,6 +8,7 @@ import {
   DustType,
   FailureCode,
   InvResultFlags,
+  InvResultSecondaryFlags,
   ItemCategory,
   MissionObjectiveType,
   MissionRewardKind,
@@ -96,6 +97,13 @@ describe('current-build metadata enums', () => {
     const observedBits = [2, 3, 5, 6, 8, 12, 14, 15, 17, 18, 19, 20, 23, 29];
     for (const bit of observedBits) {
       expect(InvResultFlags[`Bit${bit}` as keyof typeof InvResultFlags]).to.equal(2 ** bit);
+    }
+
+    const observedSecondaryBits = [5, 10, 11, 15, 16, 18, 22, 27, 30];
+    for (const bit of observedSecondaryBits) {
+      expect(
+        InvResultSecondaryFlags[`Bit${bit}` as keyof typeof InvResultSecondaryFlags],
+      ).to.equal(2 ** bit);
     }
   });
 

@@ -58,9 +58,7 @@ export class MapInfoPacket implements Packet {
    * The time the connection to the game was started
    */
   gameOpenedTime: number;
-  /**
-   * Some New Bool
-   */
+  /** Unresolved map flag retained under the current client's recovered name. */
   newBool: boolean;
   /**
    * Build Version
@@ -71,7 +69,8 @@ export class MapInfoPacket implements Packet {
    */
   viewRadius: number;
   /**
-   * new Int
+   * A second radius-like int16. It is 15 in every current-build capture,
+   * matching `viewRadius`, but the client stores it separately.
    */
   newInt: number;
   /**
@@ -82,15 +81,17 @@ export class MapInfoPacket implements Packet {
    * non-empty modifier.
    */
   dungeonModifier: string;
-  /** > Unknown (usually 0). */
+  /** Unknown int32. Usually 0; observed as 0x120717 in The Third Dimension. */
   unknownShort1: number;
-  /** > Unknown */
+  /** Unknown boolean between `newInt` and `unknownShort1`. */
   unknownBool: boolean;
-  /** > Unknown */
+  /** Unknown trailing int16. Observed as -1 in current-build captures. */
   unknownShort2: number;
-  /** Max realm score (only present in realms). */
+  /** Whether this MAPINFO included the optional two-int realm-score tail. */
+  hasRealmScores: boolean;
+  /** Max realm score. Meaningful only when `hasRealmScores` is true. */
   maxRealmScore: number;
-  /** Current realm score (only present in realms). */
+  /** Current realm score. Meaningful only when `hasRealmScores` is true. */
   curRealmScore: number;
 
   constructor() {
@@ -114,6 +115,7 @@ export class MapInfoPacket implements Packet {
     this.unknownShort1 = 0;
     this.unknownBool = false;
     this.unknownShort2 = 0;
+    this.hasRealmScores = false;
     this.maxRealmScore = 0;
     this.curRealmScore = 0;
   }
@@ -134,12 +136,16 @@ export class MapInfoPacket implements Packet {
     this.gameOpenedTime = reader.readUInt32();
     this.buildVersion = reader.readString();
     this.viewRadius = reader.readShort();
-    this.newInt = reader.readInt32();
-    this.unknownShort1 = reader.readShort();
+    this.newInt = reader.readShort();
     this.unknownBool = reader.readBoolean();
+    this.unknownShort1 = reader.readInt32();
     this.dungeonModifier = reader.readString();
     this.unknownShort2 = reader.readShort();
+    this.hasRealmScores = false;
+    this.maxRealmScore = 0;
+    this.curRealmScore = 0;
     if (reader.remaining > 0) {
+      this.hasRealmScores = true;
       this.maxRealmScore = reader.readInt32();
       this.curRealmScore = reader.readInt32();
     }
@@ -161,13 +167,15 @@ export class MapInfoPacket implements Packet {
     writer.writeUInt32(this.gameOpenedTime);
     writer.writeString(this.buildVersion);
     writer.writeShort(this.viewRadius);
-    writer.writeInt32(this.newInt);
-    writer.writeShort(this.unknownShort1);
+    writer.writeShort(this.newInt);
     writer.writeBoolean(this.unknownBool);
+    writer.writeInt32(this.unknownShort1);
     writer.writeString(this.dungeonModifier);
     writer.writeShort(this.unknownShort2);
-    writer.writeInt32(this.maxRealmScore);
-    writer.writeInt32(this.curRealmScore);
+    if (this.hasRealmScores) {
+      writer.writeInt32(this.maxRealmScore);
+      writer.writeInt32(this.curRealmScore);
+    }
   }
 
   toString(): string {

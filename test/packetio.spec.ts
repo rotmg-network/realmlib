@@ -161,4 +161,27 @@ describe('PacketIO diagnostics', () => {
       remaining: 0,
     });
   });
+
+  it('reports bytes left unread by a mapped packet parser', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+    });
+    let diagnostic: PacketDiagnostic | undefined;
+    io.on('packetLeftover', (event) => {
+      diagnostic = event;
+    });
+
+    emitIncoming(socket, 8, Buffer.from('0000002aabcd', 'hex'));
+
+    expect(diagnostic).to.deep.include({
+      id: 8,
+      type: PacketType.PING,
+      status: 'leftover',
+      offset: 4,
+      remaining: 2,
+    });
+    expect(diagnostic?.probes).to.deep.include({ kind: 'int16', bytes: 2, value: -21555 });
+  });
 });
