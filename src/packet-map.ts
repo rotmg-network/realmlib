@@ -16,7 +16,7 @@ export interface PacketMap {
  */
 export const DEFAULT_PACKET_MAP: PacketMap = {};
 for (const definition of PACKET_REGISTRY) {
-  if (definition.id === undefined) {
+  if (definition.id === undefined || definition.id < 0 || definition.id > 255) {
     continue;
   }
   DEFAULT_PACKET_MAP[definition.type] = definition.id;

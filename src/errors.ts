@@ -6,6 +6,7 @@ export type RealmlibErrorCode =
   | 'PACKET_READ_ERROR'
   | 'FRAME_TOO_LARGE'
   | 'MISSING_MAPPING'
+  | 'INVALID_PACKET_ID'
   | 'INVALID_RAW_ID'
   | 'OUTGOING_QUEUE_FULL'
   | 'PACKET_WRITE_ERROR';

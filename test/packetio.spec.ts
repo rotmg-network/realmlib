@@ -2,9 +2,11 @@ import { expect } from 'chai';
 import { Socket } from 'net';
 import {
   CheckCreditsPacket,
+  DEFAULT_PACKET_MAP,
   Packet,
   PacketIO,
   PacketDiagnostic,
+  PacketMap,
   PacketType,
   RC4,
   RealmlibError,
@@ -75,6 +77,25 @@ describe('PacketIO outgoing queue', () => {
     expect(unmapped.send(new CheckCreditsPacket()).status).to.equal('missing-mapping');
   });
 
+  it('rejects invalid custom ids before enqueueing', () => {
+    const { socket, writes } = socketWithWrites([]);
+    const packetMap = {
+      [PacketType.CHECKCREDITS]: 1000,
+    } as PacketMap;
+    const io = new PacketIO({ socket, packetMap });
+    const errors: RealmlibError[] = [];
+    io.on('error', (error) => errors.push(error));
+
+    expect(io.send(new CheckCreditsPacket())).to.deep.include({
+      accepted: false,
+      status: 'invalid',
+      queueSize: 0,
+    });
+    expect(errors[0].code).to.equal('INVALID_PACKET_ID');
+    expect(writes).to.have.length(0);
+    expect(DEFAULT_PACKET_MAP[PacketType.IP_ADDRESS]).to.equal(undefined);
+  });
+
   it('validates queue configuration', () => {
     expect(() => new PacketIO({ maxOutgoingQueue: 0 }))
       .to.throw(RangeError, 'maxOutgoingQueue must be a positive integer');
@@ -89,6 +110,77 @@ describe('PacketIO outgoing queue', () => {
     });
     io.send(new CheckCreditsPacket());
     expect(sentType).to.equal(PacketType.CHECKCREDITS);
+  });
+
+  it('queues writes until a connecting socket emits connect', () => {
+    const { socket, writes } = socketWithWrites([true]);
+    Object.defineProperty(socket, 'connecting', { configurable: true, value: true });
+    const io = new PacketIO({ socket });
+
+    expect(io.connectionState).to.equal('connecting');
+    expect(io.send(new CheckCreditsPacket()).status).to.equal('queued');
+    expect(writes).to.have.length(0);
+
+    socket.emit('connect');
+
+    expect(io.connectionState).to.equal('connected');
+    expect(writes).to.have.length(1);
+  });
+
+  it('clears queued packets when a backpressured socket closes', () => {
+    const { socket } = socketWithWrites([false]);
+    const io = new PacketIO({ socket });
+
+    io.send(new CheckCreditsPacket());
+    io.send(new CheckCreditsPacket());
+    expect(io.connectionState).to.equal('backpressured');
+    expect(io.outgoingQueueSize).to.equal(1);
+
+    socket.emit('close', false);
+
+    expect(io.connectionState).to.equal('closed');
+    expect(io.outgoingQueueSize).to.equal(0);
+    expect(io.send(new CheckCreditsPacket()).status).to.equal('disconnected');
+  });
+
+  it('guards synchronous socket write failures and continues the queue', async () => {
+    const socket = new Socket();
+    let writeCount = 0;
+    socket.write = (() => {
+      writeCount++;
+      if (writeCount === 1) {
+        throw new Error('synthetic write failure');
+      }
+      return true;
+    }) as typeof socket.write;
+    const io = new PacketIO({ socket });
+    const errors: RealmlibError[] = [];
+    io.on('error', (error) => errors.push(error));
+
+    io.send(new CheckCreditsPacket());
+    io.send(new CheckCreditsPacket());
+    await nextTurn();
+    await nextTurn();
+
+    expect(errors[0]).to.deep.include({ code: 'PACKET_WRITE_ERROR' });
+    expect(writeCount).to.equal(2);
+    expect(io.outgoingQueueSize).to.equal(0);
+  });
+
+  it('tracks detach and socket errors without retaining lifecycle state', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({ socket });
+    let socketError: Error | undefined;
+    io.on('error', (error) => {
+      socketError = error;
+    });
+
+    socket.emit('error', new Error('synthetic socket error'));
+    expect(socketError?.message).to.equal('synthetic socket error');
+
+    io.detach();
+    expect(io.connectionState).to.equal('detached');
+    expect(io.socket).to.equal(undefined);
   });
 });
 

@@ -38,6 +38,12 @@ export interface PacketIOOptions {
 }
 
 export type WirePacketDirection = Exclude<PacketDirection, 'unknown'>;
+export type PacketIOConnectionState =
+  | 'detached'
+  | 'connecting'
+  | 'connected'
+  | 'backpressured'
+  | 'closed';
 
 export type SendStatus =
   | 'sent'
@@ -172,6 +178,7 @@ export class PacketIO extends EventEmitter {
   private readonly incomingDirection: WirePacketDirection;
   private readonly outgoingDirection: WirePacketDirection;
   private readonly useDirectionalRegistry: boolean;
+  private state: PacketIOConnectionState;
   private lastIncoming: Packet | undefined;
   private lastOutgoing: Packet | undefined;
 
@@ -193,6 +200,7 @@ export class PacketIO extends EventEmitter {
     }
     this.drainActive = false;
     this.writeBlocked = false;
+    this.state = 'detached';
     this.sendRC4 = new RC4(opts.rc4.outgoingKey);
     this.receiveRC4 = new RC4(opts.rc4.incomingKey);
     this.packetMap = opts.packetMap || DEFAULT_PACKET_MAP;
@@ -202,8 +210,10 @@ export class PacketIO extends EventEmitter {
 
     this.eventHandlers = new Map([
       ['data', this.onData.bind(this)],
-      ['connect', this.resetState.bind(this)],
+      ['connect', this.onSocketConnect.bind(this)],
       ['drain', this.onSocketDrain.bind(this)],
+      ['close', this.onSocketClose.bind(this)],
+      ['error', this.onSocketError.bind(this)],
     ]);
 
     if (opts.socket) {
@@ -223,8 +233,12 @@ export class PacketIO extends EventEmitter {
       this.detach();
     }
 
-    this.resetState();
+    this.clearOutgoingQueue();
+    this.resetBuffer();
+    this.sendRC4.reset();
+    this.receiveRC4.reset();
     this.socket = socket;
+    this.state = socket.connecting ? 'connecting' : 'connected';
     for (const [event, listener] of this.eventHandlers) {
       this.socket.on(event, listener);
     }
@@ -241,6 +255,7 @@ export class PacketIO extends EventEmitter {
       this.socket = undefined;
     }
     this.clearOutgoingQueue();
+    this.state = 'detached';
   }
 
   /**
@@ -261,13 +276,20 @@ export class PacketIO extends EventEmitter {
    * @param packet The packet to send
    */
   send(packet: Packet): SendResult {
-    if (!this.socket || this.socket.destroyed) {
+    if (!this.canAcceptOutgoing()) {
       return this.sendResult(false, 'disconnected');
     }
-    const type = this.packetMap[packet.type];
-    if (type === undefined) {
+    const id = this.packetMap[packet.type];
+    if (id === undefined) {
       this.emitError(new RealmlibError('MISSING_MAPPING', `Mapper is missing an id for the packet type ${packet.type}`));
       return this.sendResult(false, 'missing-mapping');
+    }
+    if (!Number.isInteger(id) || typeof id !== 'number' || id < 0 || id > 255) {
+      this.emitError(new RealmlibError(
+        'INVALID_PACKET_ID',
+        `Mapper id for ${packet.type} must be an integer in [0,255], got ${String(id)}`,
+      ));
+      return this.sendResult(false, 'invalid');
     }
     return this.enqueueOutgoing({ kind: 'packet', packet });
   }
@@ -278,7 +300,7 @@ export class PacketIO extends EventEmitter {
    * The payload must be the unencrypted body bytes, excluding the 5 byte header.
    */
   sendRaw(id: number, payload: Buffer | number[] = []): SendResult {
-    if (!this.socket || this.socket.destroyed) {
+    if (!this.canAcceptOutgoing()) {
       return this.sendResult(false, 'disconnected');
     }
     if (!Number.isInteger(id) || id < 0 || id > 255) {
@@ -300,6 +322,11 @@ export class PacketIO extends EventEmitter {
     return this.outgoingQueue.length;
   }
 
+  /** Current socket/queue lifecycle state. */
+  get connectionState(): PacketIOConnectionState {
+    return this.state;
+  }
+
   private enqueueOutgoing(item: QueuedOutgoing): SendResult {
     if (this.outgoingQueue.length >= this.maxOutgoingQueue) {
       const error = new RealmlibError(
@@ -310,9 +337,9 @@ export class PacketIO extends EventEmitter {
       this.emit('outgoingDropped', { item, reason: 'queue-full' });
       return this.sendResult(false, 'queue-full');
     }
-    const wasActive = this.drainActive;
+    const wasActive = this.drainActive || this.state === 'connecting';
     this.outgoingQueue.push(item);
-    if (!this.drainActive) {
+    if (!this.drainActive && this.state === 'connected') {
       this.drainActive = true;
       this.drainQueue();
     }
@@ -347,7 +374,7 @@ export class PacketIO extends EventEmitter {
    * them to the socket
    */
   private drainQueue(): void {
-    if (this.writeBlocked) {
+    if (this.writeBlocked || this.state !== 'connected') {
       return;
     }
     const item = this.outgoingQueue.shift();
@@ -370,7 +397,19 @@ export class PacketIO extends EventEmitter {
       return;
     }
 
-    this.writeBlocked = !this.socket.write(frame);
+    try {
+      this.writeBlocked = !this.socket.write(frame);
+    } catch (error) {
+      this.writeBlocked = false;
+      this.state = 'connected';
+      this.emitError(new RealmlibError(
+        'PACKET_WRITE_ERROR',
+        error instanceof Error ? error.message : String(error),
+      ));
+      process.nextTick(() => this.drainQueue());
+      return;
+    }
+    this.state = this.writeBlocked ? 'backpressured' : 'connected';
     if (!this.writeBlocked) {
       process.nextTick(() => this.drainQueue());
     }
@@ -403,6 +442,7 @@ export class PacketIO extends EventEmitter {
       return;
     }
     this.writeBlocked = false;
+    this.state = 'connected';
     this.drainQueue();
   }
 
@@ -432,14 +472,32 @@ export class PacketIO extends EventEmitter {
     }
   }
 
-  /**
-   * Resets the reader buffer and the RC4 instances
-   */
-  private resetState(): void {
-    this.clearOutgoingQueue();
+  private onSocketConnect(): void {
     this.resetBuffer();
     this.sendRC4.reset();
     this.receiveRC4.reset();
+    this.state = 'connected';
+    if (this.outgoingQueue.length !== 0 && !this.drainActive) {
+      this.drainActive = true;
+      this.drainQueue();
+    }
+  }
+
+  private onSocketClose(): void {
+    this.state = 'closed';
+    this.clearOutgoingQueue();
+    this.resetBuffer();
+  }
+
+  private onSocketError(error: unknown): void {
+    this.emitError(error);
+  }
+
+  private canAcceptOutgoing(): boolean {
+    return this.socket !== undefined
+      && !this.socket.destroyed
+      && this.state !== 'detached'
+      && this.state !== 'closed';
   }
 
   /**
