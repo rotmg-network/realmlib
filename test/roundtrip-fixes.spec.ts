@@ -31,6 +31,22 @@ describe('read/write round-trip fixes', () => {
     expect(back.bitmapData).to.deep.equal(pic.bitmapData);
   });
 
+  it('PicPacket rejects invalid dimensions and bitmap lengths before writing', () => {
+    const packet = new PicPacket();
+    const writer = new Writer();
+
+    expect(() => packet.write(writer)).to.throw(RangeError, 'positive integers');
+
+    packet.width = 1;
+    packet.height = 1;
+    packet.bitmapData = [0, 1, 2];
+    expect(() => packet.write(new Writer())).to.throw(RangeError, 'RGBA length 4');
+
+    packet.height = 1.5;
+    packet.bitmapData = [];
+    expect(() => packet.write(new Writer())).to.throw(RangeError, 'positive integers');
+  });
+
   it('ShowEffectPacket round-trips with a partial presence bitmask', () => {
     // Regression: write() never emitted the presence bitmask and wrote every
     // field unconditionally, so a re-encoded packet could not be read back.

@@ -8,9 +8,13 @@ import {
   createPacket,
   DEFAULT_PACKET_MAP,
   ForgeUnlockedBlueprints,
+  GiftItemsPacket,
   PACKET_REGISTRY,
   PacketType,
   ProgressUpdatePacket,
+  ResetEnchantmentRerollCountPacket,
+  Unknown198Packet,
+  Unknown226Packet,
 } from '../src';
 
 /** Builds a Reader positioned at 0 over the bytes a Writer has produced. */
@@ -36,6 +40,7 @@ describe('StatData', () => {
     expect(out.statType).to.equal(StatType.LEVEL_STAT);
     expect(out.statValue).to.equal(47);
     expect(out.statValueTwo).to.equal(3);
+    expect(out.toString()).to.contain('Value: 47 (secondary value: 3)');
   });
 
   it('round-trips a multi-byte string stat', () => {
@@ -51,6 +56,7 @@ describe('StatData', () => {
     out.read(toReader(w));
     expect(out.statType).to.equal(StatType.NAME_STAT);
     expect(out.stringStatValue).to.equal('Wízärd 世');
+    expect(out.toString()).to.contain('Value: Wízärd 世 (secondary value: 0)');
   });
 });
 
@@ -126,6 +132,22 @@ describe('packet factory coverage', () => {
     expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT).type).to.equal(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT);
     expect(createPacket(PacketType.CLAIM_REWARD).type).to.equal(PacketType.CLAIM_REWARD);
     expect(createPacket(PacketType.CLAIM_REWARD_RESULT).type).to.equal(PacketType.CLAIM_REWARD_RESULT);
+  });
+
+  it('keeps deprecated constructors identical to canonical registry factories', () => {
+    const reset = createPacket(PacketType.RESET_ENCHANTMENT_REROLL_COUNT);
+    expect(reset).to.be.instanceOf(ResetEnchantmentRerollCountPacket);
+    expect(reset).to.be.instanceOf(Unknown198Packet);
+    (reset as ResetEnchantmentRerollCountPacket).unknownString = 'reset';
+    expect((reset as ResetEnchantmentRerollCountPacket).value).to.equal('reset');
+
+    const gift = createPacket(PacketType.GIFT_ITEMS);
+    expect(gift).to.be.instanceOf(GiftItemsPacket);
+    expect(gift).to.be.instanceOf(Unknown226Packet);
+    (gift as GiftItemsPacket).unknownString = 'items';
+    (gift as GiftItemsPacket).unknownString2 = 'recipient';
+    expect((gift as GiftItemsPacket).items).to.equal('items');
+    expect((gift as GiftItemsPacket).recipient).to.equal('recipient');
   });
 });
 

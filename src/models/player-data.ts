@@ -268,25 +268,28 @@ export interface PlayerData {
      */
     potionOneType: number;
     /**
-     * The amount of potions in the first quickslot
+     * The amount of potions in the first quickslot, when known. The current
+     * stat projection does not infer this from the unresolved secondary value.
      */
-    potionOneAmount: number;
+    potionOneAmount?: number;
     /**
      * The potion type in the second quickslot
      */
     potionTwoType: number;
     /**
-     * The amount of potions in the second quickslot
+     * The amount of potions in the second quickslot, when known. The current
+     * stat projection does not infer this from the unresolved secondary value.
      */
-    potionTwoAmount: number;
+    potionTwoAmount?: number;
     /**
      * The potion type in the third quickslot
      */
     potionThreeType: number;
     /**
-     * The amount of potions in the third quickslot
+     * The amount of potions in the third quickslot, when known. The current
+     * stat projection does not infer this from the unresolved secondary value.
      */
-    potionThreeAmount: number;
+    potionThreeAmount?: number;
     /**
      * Whether or not the player has the third quickslot unlocked
      */

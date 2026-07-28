@@ -18,10 +18,6 @@ export interface DataPacket {
    */
   read(reader: Reader): void;
 
-  /**
-   * Returns the packet in a readable format for testing purposes
-   */
-  toString(): string;
 }
 
 export interface Packet extends DataPacket {

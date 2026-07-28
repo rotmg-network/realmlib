@@ -33,23 +33,29 @@ export class GiftItemsPacket implements Packet {
     writer.writeString(this.items);
     writer.writeString(this.recipient);
   }
-}
 
-/** @deprecated Use `GiftItemsPacket`. */
-export class Unknown226Packet extends GiftItemsPacket {
+  /** @deprecated Use {@link items}. */
   get unknownString(): string {
     return this.items;
   }
 
+  /** @deprecated Use {@link items}. */
   set unknownString(value: string) {
     this.items = value;
   }
 
+  /** @deprecated Use {@link recipient}. */
   get unknownString2(): string {
     return this.recipient;
   }
 
+  /** @deprecated Use {@link recipient}. */
   set unknownString2(value: string) {
     this.recipient = value;
   }
 }
+
+/** @deprecated Use {@link GiftItemsPacket}. */
+export const Unknown226Packet = GiftItemsPacket;
+/** @deprecated Use {@link GiftItemsPacket}. */
+export type Unknown226Packet = GiftItemsPacket;

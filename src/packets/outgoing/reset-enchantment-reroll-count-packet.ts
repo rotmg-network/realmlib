@@ -28,15 +28,19 @@ export class ResetEnchantmentRerollCountPacket implements Packet {
   write(writer: Writer): void {
     writer.writeString(this.value);
   }
-}
 
-/** @deprecated Use `ResetEnchantmentRerollCountPacket`. */
-export class Unknown198Packet extends ResetEnchantmentRerollCountPacket {
+  /** @deprecated Use {@link value}. */
   get unknownString(): string {
     return this.value;
   }
 
+  /** @deprecated Use {@link value}. */
   set unknownString(value: string) {
     this.value = value;
   }
 }
+
+/** @deprecated Use {@link ResetEnchantmentRerollCountPacket}. */
+export const Unknown198Packet = ResetEnchantmentRerollCountPacket;
+/** @deprecated Use {@link ResetEnchantmentRerollCountPacket}. */
+export type Unknown198Packet = ResetEnchantmentRerollCountPacket;

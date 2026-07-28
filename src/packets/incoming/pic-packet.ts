@@ -38,6 +38,20 @@ export class PicPacket implements Packet {
   }
 
   write(writer: Writer): void {
+    if (!Number.isInteger(this.width) || this.width <= 0
+      || !Number.isInteger(this.height) || this.height <= 0) {
+      throw new RangeError('PicPacket dimensions must be positive integers');
+    }
+    const byteLength = this.width * this.height * 4;
+    if (!Number.isSafeInteger(byteLength)) {
+      throw new RangeError('PicPacket dimensions exceed the safe bitmap size');
+    }
+    if (this.bitmapData.length !== byteLength) {
+      throw new RangeError(
+        `PicPacket bitmapData length ${this.bitmapData.length} does not match `
+        + `${this.width}x${this.height} RGBA length ${byteLength}`,
+      );
+    }
     writer.writeInt32(this.width);
     writer.writeInt32(this.height);
     // Must mirror read(): write the raw bytes with no length prefix.
