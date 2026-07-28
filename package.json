@@ -58,6 +58,7 @@
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "test": "mocha",
     "reconcile:exalt": "npm run build --silent && node scripts/reconcile-exalt.cjs",
+    "docs:protocol": "npm run build --silent && node scripts/generate-protocol-completeness.cjs",
     "check:protocol": "npm run build --silent && node scripts/reconcile-exalt.cjs --strict protocol/exalt-current.json",
     "api:update": "npm run build --silent && api-extractor run --local",
     "api:check": "npm run build --silent && api-extractor run",

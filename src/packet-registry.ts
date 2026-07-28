@@ -5,6 +5,12 @@ import * as OutgoingPackets from './packets/outgoing';
 
 export type PacketDirection = 'incoming' | 'outgoing' | 'unknown';
 export type PacketFactory = () => Packet;
+export type ProtocolSupportKind =
+  | 'modeled-wire'
+  | 'raw-wire'
+  | 'research-candidate'
+  | 'legacy-metadata'
+  | 'modeled-transport';
 
 /** Complete protocol metadata for one packet type. */
 export interface PacketDefinition {
@@ -14,6 +20,44 @@ export interface PacketDefinition {
   readonly direction: PacketDirection;
   /** Constructor for packets whose wire structure is implemented. */
   readonly factory?: PacketFactory;
+}
+
+/**
+ * Classifies a registry definition without pretending catalog helpers are wire
+ * packets or guessing layouts for factory-less research entries.
+ */
+export function protocolSupportKind(definition: PacketDefinition): ProtocolSupportKind {
+  if (definition.id === undefined) {
+    return 'modeled-transport';
+  }
+  if (definition.id < 0 || definition.id > 255) {
+    return 'legacy-metadata';
+  }
+  if (definition.factory) {
+    return 'modeled-wire';
+  }
+  return definition.direction === 'unknown' ? 'research-candidate' : 'raw-wire';
+}
+
+/** Returns registry definitions grouped by their protocol-support taxonomy. */
+export function protocolCompleteness(): Readonly<Record<ProtocolSupportKind, readonly PacketDefinition[]>> {
+  const groups: Record<ProtocolSupportKind, PacketDefinition[]> = {
+    'modeled-wire': [],
+    'raw-wire': [],
+    'research-candidate': [],
+    'legacy-metadata': [],
+    'modeled-transport': [],
+  };
+  for (const definition of PACKET_REGISTRY) {
+    groups[protocolSupportKind(definition)].push(definition);
+  }
+  return Object.freeze({
+    'modeled-wire': Object.freeze(groups['modeled-wire']),
+    'raw-wire': Object.freeze(groups['raw-wire']),
+    'research-candidate': Object.freeze(groups['research-candidate']),
+    'legacy-metadata': Object.freeze(groups['legacy-metadata']),
+    'modeled-transport': Object.freeze(groups['modeled-transport']),
+  });
 }
 
 /**

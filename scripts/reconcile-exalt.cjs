@@ -25,7 +25,10 @@ if (!fs.existsSync(inputPath)) {
 }
 
 const catalog = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
-const { PACKET_REGISTRY } = require('../lib/packet-registry');
+const {
+  PACKET_REGISTRY,
+  protocolCompleteness,
+} = require('../lib/packet-registry');
 const wireKey = (id, direction) => `${direction ?? 'unknown'}:${id}`;
 const localByWire = new Map();
 const localByType = new Map();
@@ -88,6 +91,17 @@ console.log(`  extractor mappings missing locally: ${missingLocal.length}`);
 console.log(`  local mappings absent from extractor: ${staleLocal.length}`);
 console.log(`  mapped packets without factories: ${missingFactories.length}`);
 console.log(`  unmapped Exalt catalog names: ${unmappedIncoming.length + unmappedOutgoing.length}`);
+const support = protocolCompleteness();
+console.log('  registry support taxonomy:');
+for (const category of [
+  'modeled-wire',
+  'raw-wire',
+  'research-candidate',
+  'legacy-metadata',
+  'modeled-transport',
+]) {
+  console.log(`    ${category}: ${support[category].length}`);
+}
 
 function printGroup(label, values) {
   if (values.length === 0) {
