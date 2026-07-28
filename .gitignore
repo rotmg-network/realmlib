@@ -3,6 +3,8 @@
 node_modules/
 lib/
 build/
+coverage/
+.nyc_output/
 *.tsbuildinfo
 temp/
 yarn.lock

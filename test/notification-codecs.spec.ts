@@ -2,21 +2,15 @@ import { expect } from 'chai';
 import {
   NotificationEffect,
   NotificationPacket,
-  Reader,
   Writer,
 } from '../src';
-
-function readerFrom(body: Buffer): Reader {
-  const reader = new Reader(body.length);
-  body.copy(reader.buffer);
-  return reader;
-}
+import { readerFromBuffer } from './support/codec';
 
 describe('notification effect codecs', () => {
   it('preserves unsupported effect bodies byte-exactly', () => {
     const body = Buffer.from('2a01deadbeef', 'hex');
     const packet = new NotificationPacket();
-    const reader = readerFrom(body);
+    const reader = readerFromBuffer(body);
     packet.read(reader);
 
     expect(reader.remaining).to.equal(0);
@@ -34,11 +28,11 @@ describe('notification effect codecs', () => {
 
   it('resets inactive fields when an instance is reused', () => {
     const packet = new NotificationPacket();
-    packet.read(readerFrom(Buffer.from('06000001780000000700000009', 'hex')));
+    packet.read(readerFromBuffer(Buffer.from('06000001780000000700000009', 'hex')));
     expect(packet.message).to.equal('x');
     expect(packet.color).to.equal(9);
 
-    packet.read(readerFrom(Buffer.from('05000000002a0003', 'hex')));
+    packet.read(readerFromBuffer(Buffer.from('05000000002a0003', 'hex')));
     expect(packet.effect).to.equal(NotificationEffect.REALM_QUEUE);
     expect(packet.objectId).to.equal(42);
     expect(packet.queuePos).to.equal(3);

@@ -93,6 +93,42 @@
       "roundTrip": true
     },
     {
+      "name": "client party join request at colliding id 215",
+      "category": "party",
+      "id": 215,
+      "type": "PARTY_JOIN_REQUEST",
+      "direction": "outgoing",
+      "body": "0000002a",
+      "roundTrip": true
+    },
+    {
+      "name": "server party join result at colliding id 215",
+      "category": "party",
+      "id": 215,
+      "type": "PARTY_JOIN_RESULT",
+      "direction": "incoming",
+      "body": "0000002a01",
+      "roundTrip": true
+    },
+    {
+      "name": "client party join response at colliding id 217",
+      "category": "party",
+      "id": 217,
+      "type": "PARTY_JOIN_REQUEST_RESPONSE",
+      "direction": "outgoing",
+      "body": "0001410300000101",
+      "roundTrip": true
+    },
+    {
+      "name": "server party request response at colliding id 217",
+      "category": "party",
+      "id": 217,
+      "type": "PARTY_REQUEST_RESPONSE",
+      "direction": "incoming",
+      "body": "0001410300000101",
+      "roundTrip": true
+    },
+    {
       "name": "truncated reward prompt",
       "category": "malformed",
       "id": 170,

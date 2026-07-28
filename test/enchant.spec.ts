@@ -5,34 +5,17 @@ import {
   BuyDustsResultPacket,
   EnchantPacket,
   PacketType,
-  Reader,
   ClaimDailyItemPacket,
-  Writer,
   createPacket,
 } from '../src';
-
-function fromHex<T extends { read(r: Reader): void }>(packet: T, hex: string): T {
-  const buf = Buffer.from(hex, 'hex');
-  const reader = new Reader(buf.length);
-  buf.copy(reader.buffer, 0, 0, buf.length);
-  reader.index = 0;
-  packet.read(reader);
-  expect(reader.remaining, 'no leftover bytes').to.equal(0);
-  return packet;
-}
-
-function roundTripsTo(packet: { write(w: Writer): void }, hex: string): void {
-  const w = new Writer();
-  packet.write(w);
-  expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
-}
+import { expectRoundTripsTo, parseHex } from './support/codec';
 
 describe('enchant packets (biglog)', () => {
   it('BUY_DUSTS (191) parses its "tier:qty" dust buy', () => {
     // Captured "4:7" = buy 7 tier-4 dust; gold went 250->222, dust t4 73->80.
-    const p = fromHex(new BuyDustsPacket(), '0003343a37');
+    const p = parseHex(new BuyDustsPacket(), '0003343a37');
     expect(p.value).to.equal('4:7');
-    roundTripsTo(p, '0003343a37');
+    expectRoundTripsTo(p, '0003343a37');
   });
 
   it('191 is now registered (was nofactory)', () => {
@@ -42,14 +25,14 @@ describe('enchant packets (biglog)', () => {
   });
 
   it('BUY_DUSTS_RESULT (192) parses the success byte', () => {
-    const p = fromHex(new BuyDustsResultPacket(), '01');
+    const p = parseHex(new BuyDustsResultPacket(), '01');
     expect(p.success).to.equal(true);
     expect(DEFAULT_PACKET_MAP[192]).to.equal(PacketType.BUY_DUSTS_RESULT);
-    roundTripsTo(p, '01');
+    expectRoundTripsTo(p, '01');
   });
 
   it('ENCHANT (190) is the reroll success byte', () => {
-    const p = fromHex(new EnchantPacket(), '01');
+    const p = parseHex(new EnchantPacket(), '01');
     expect(p.success).to.equal(true);
   });
 });
@@ -58,19 +41,19 @@ describe('ClaimDailyItemPacket (daily-login data)', () => {
   it('parses byte + key(base64) + category, zero leftover', () => {
     // Captured: flag 1, base64 datastore key, category "nonconsecutive".
     const hex = '01005e61684e795a5746736257396d6447686c6257466b5a32396b61484a6b6369384c4567644259324e766457353047494341774b6d677337734944417353446b5268615778355447396e6157354559585268474943416f7137686b59514b4441000e6e6f6e636f6e7365637574697665';
-    const p = fromHex(new ClaimDailyItemPacket  (), hex);
+    const p = parseHex(new ClaimDailyItemPacket(), hex);
     expect(p.flag).to.equal(1);
     expect(p.category).to.equal('nonconsecutive');
     expect(Buffer.from(p.key, 'base64').toString('latin1')).to.contain('DailyLoginData');
-    roundTripsTo(p, hex);
+    expectRoundTripsTo(p, hex);
   });
 
   it('parses the empty-key "all" variant', () => {
-    const p = fromHex(new ClaimDailyItemPacket(), '0100000003616c6c');
+    const p = parseHex(new ClaimDailyItemPacket(), '0100000003616c6c');
     expect(p.flag).to.equal(1);
     expect(p.key).to.equal('');
     expect(p.category).to.equal('all');
-    roundTripsTo(p, '0100000003616c6c');
+    expectRoundTripsTo(p, '0100000003616c6c');
   });
 
   it('is mapped at id 237', () => {

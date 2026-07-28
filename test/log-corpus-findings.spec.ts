@@ -6,29 +6,12 @@ import {
   DEFAULT_PACKET_MAP,
   NotificationEffect,
   NotificationPacket,
-  Packet,
   PacketType,
-  Reader,
   StacksPacket,
   TradeStartPacket,
-  Writer,
   createPacket,
 } from '../src';
-
-function parse<T extends Packet>(packet: T, hex: string): T {
-  const body = Buffer.from(hex, 'hex');
-  const reader = new Reader(body.length);
-  body.copy(reader.buffer);
-  packet.read(reader);
-  expect(reader.remaining, 'no leftover bytes').to.equal(0);
-  return packet;
-}
-
-function writeHex(packet: Packet): string {
-  const writer = new Writer();
-  packet.write(writer);
-  return writer.buffer.subarray(0, writer.index).toString('hex');
-}
+import { parseHex, writeHex } from './support/codec';
 
 describe('log corpus findings (2026-07-28)', () => {
   it('parses TRADESTART items with populated and empty metadata', () => {
@@ -41,7 +24,7 @@ describe('log corpus findings (2026-07-28)', () => {
       '000001a4',
       '01',
     ].join('');
-    const packet = parse(new TradeStartPacket(), hex);
+    const packet = parseHex(new TradeStartPacket(), hex);
 
     expect(packet.clientItems).to.have.length(2);
     expect(packet.clientItems[0].item).to.equal(0x0a74);
@@ -56,7 +39,7 @@ describe('log corpus findings (2026-07-28)', () => {
 
   it('round-trips the effect-12 behaviour notification payload', () => {
     const hex = '0c1a000c427269646765206f70656e2100000058002b2a28';
-    const packet = parse(new NotificationPacket(), hex);
+    const packet = parseHex(new NotificationPacket(), hex);
 
     expect(packet.effect).to.equal(NotificationEffect.BEHAVIOUR);
     expect(packet.extra).to.equal(26);
@@ -78,19 +61,19 @@ describe('log corpus findings (2026-07-28)', () => {
     expect(DEFAULT_PACKET_MAP[231]).to.equal(PacketType.STACKS);
     expect(createPacket(PacketType.STACKS)).to.be.instanceOf(StacksPacket);
 
-    const active = parse(new StacksPacket(), '0000000000000001');
+    const active = parseHex(new StacksPacket(), '0000000000000001');
     expect(active.state.hp).to.equal(0);
     expect(active.state.dexterity).to.equal(1);
     expect(writeHex(active)).to.equal('0000000000000001');
 
-    const inactive = parse(new StacksPacket(), '0000000000000000');
+    const inactive = parseHex(new StacksPacket(), '0000000000000000');
     expect(inactive.state.dexterity).to.equal(0);
     expect(writeHex(inactive)).to.equal('0000000000000000');
   });
 
   it('keeps DAMAGE_WITH_EFFECT generic when Curse precedes a Stasis magnitude', () => {
     const hex = '000001150126000000000000ffffff1640c00000';
-    const packet = parse(new DamageWithEffectPacket(), hex);
+    const packet = parseHex(new DamageWithEffectPacket(), hex);
 
     expect(packet.targetId).to.equal(277);
     expect(packet.effects).to.deep.equal([38]);
@@ -102,7 +85,7 @@ describe('log corpus findings (2026-07-28)', () => {
 
   it('preserves the chest-claim execute=0 request variant', () => {
     const hex = '00000002490000000c0000ffd10000';
-    const packet = parse(new ClaimChestRewardPacket(), hex);
+    const packet = parseHex(new ClaimChestRewardPacket(), hex);
 
     expect(packet.execute).to.equal(0);
     expect(packet.unknownByte).to.equal(0);

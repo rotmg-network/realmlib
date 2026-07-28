@@ -39,11 +39,21 @@
   },
   "typesVersions": {
     "*": {
-      "core": ["lib/core.d.ts"],
-      "protocol": ["lib/protocol.d.ts"],
-      "packets": ["lib/packets.d.ts"],
-      "models": ["lib/models.d.ts"],
-      "data": ["lib/data.d.ts"]
+      "core": [
+        "lib/core.d.ts"
+      ],
+      "protocol": [
+        "lib/protocol.d.ts"
+      ],
+      "packets": [
+        "lib/packets.d.ts"
+      ],
+      "models": [
+        "lib/models.d.ts"
+      ],
+      "data": [
+        "lib/data.d.ts"
+      ]
     }
   },
   "sideEffects": false,
@@ -57,6 +67,8 @@
     "typecheck:test": "tsc -p tsconfig.test.json",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "test": "mocha",
+    "coverage:core": "c8 --all --include='src/io/**/*.ts' --include='src/crypto/**/*.ts' --include='src/packet-registry.ts' --include='src/data/parser.ts' --reporter=text --reporter=json-summary --check-coverage --lines=90 --statements=90 --branches=90 --functions=90 mocha",
+    "benchmark:payload-copy": "node scripts/benchmark-payload-copy.cjs",
     "reconcile:exalt": "npm run build --silent && node scripts/reconcile-exalt.cjs",
     "docs:protocol": "npm run build --silent && node scripts/generate-protocol-completeness.cjs",
     "check:protocol": "npm run build --silent && node scripts/reconcile-exalt.cjs --strict protocol/exalt-current.json",
@@ -92,6 +104,7 @@
     "@types/chai": "^4.2.22",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.20.1",
+    "c8": "^12.0.0",
     "chai": "^4.3.4",
     "eslint": "^10.8.0",
     "mocha": "^11.7.6",

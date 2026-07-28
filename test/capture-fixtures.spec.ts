@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import {
-  DEFAULT_PACKET_MAP,
   RealmlibError,
   getPacketDefinitionById,
 } from '../src';
@@ -24,6 +23,7 @@ describe('packet capture fixtures', () => {
       'vault',
       'rewards',
       'enchanting',
+      'party',
       'malformed',
     ]);
   });
@@ -33,7 +33,6 @@ describe('packet capture fixtures', () => {
       const definition = getPacketDefinitionById(fixture.id, fixture.direction);
       expect(definition?.type).to.equal(fixture.type);
       expect(definition?.direction).to.equal(fixture.direction);
-      expect(DEFAULT_PACKET_MAP[fixture.id]).to.equal(fixture.type);
 
       const replay = replayCaptureFixture(fixture);
       if (fixture.expectedError) {

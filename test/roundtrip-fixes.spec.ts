@@ -1,21 +1,6 @@
 import { expect } from 'chai';
-import { PicPacket, Reader, ShowEffectPacket, Writer } from '../src';
-
-/** Serializes a packet, then reads it back into a fresh instance. */
-function roundTrip<T extends { read(r: Reader): void; write(w: Writer): void }>(
-  packet: T,
-  fresh: T,
-): T {
-  const writer = new Writer();
-  packet.write(writer);
-  const bytes = writer.buffer.subarray(0, writer.index);
-  const reader = new Reader(bytes.length);
-  bytes.copy(reader.buffer, 0, 0, bytes.length);
-  reader.index = 0;
-  fresh.read(reader);
-  expect(reader.remaining, 'no leftover bytes after round-trip').to.equal(0);
-  return fresh;
-}
+import { PicPacket, ShowEffectPacket, Writer } from '../src';
+import { roundTrip } from './support/codec';
 
 describe('read/write round-trip fixes', () => {
   it('PicPacket round-trips its raw (unprefixed) bitmap bytes', () => {
