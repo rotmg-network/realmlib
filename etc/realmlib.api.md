@@ -3365,6 +3365,7 @@ export interface PacketFieldProbe {
 export class PacketIO extends EventEmitter {
     constructor(opts?: PacketIOOptions);
     attach(socket: Socket): void;
+    get connectionState(): PacketIOConnectionState;
     // (undocumented)
     static readonly DEFAULT_MAX_OUTGOING_QUEUE = 1024;
     detach(): void;
@@ -3378,6 +3379,9 @@ export class PacketIO extends EventEmitter {
     sendRaw(id: number, payload?: Buffer | number[]): SendResult;
     socket: Socket | undefined;
 }
+
+// @public (undocumented)
+export type PacketIOConnectionState = 'detached' | 'connecting' | 'connected' | 'backpressured' | 'closed';
 
 // @public (undocumented)
 export interface PacketIOOptions {
@@ -4905,7 +4909,7 @@ export class RealmlibError extends Error {
 }
 
 // @public
-export type RealmlibErrorCode = 'PACKET_READ_ERROR' | 'FRAME_TOO_LARGE' | 'MISSING_MAPPING' | 'INVALID_RAW_ID' | 'OUTGOING_QUEUE_FULL' | 'PACKET_WRITE_ERROR';
+export type RealmlibErrorCode = 'PACKET_READ_ERROR' | 'FRAME_TOO_LARGE' | 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID' | 'OUTGOING_QUEUE_FULL' | 'PACKET_WRITE_ERROR';
 
 // @public
 export class RealmScoreUpdatePacket implements Packet {
