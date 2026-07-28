@@ -9,8 +9,10 @@ const realm = require('../lib');
 const root = process.argv[2];
 const output = process.argv[3];
 if (!root || !output) {
-  console.error('usage: node scripts/analyze-log-corpus.js <log-directory> <output.json>');
-  process.exit(1);
+  if (require.main === module) {
+    console.error('usage: node scripts/analyze-log-corpus.cjs <log-directory> <output.json>');
+    process.exit(1);
+  }
 }
 
 const capAdd = (array, value, cap = 12) => {
@@ -29,8 +31,22 @@ function statSummary() {
   return { count: 0, stringCount: 0, numericCount: 0, min: null, max: null, values: [], objectTypes: [] };
 }
 
+function recordDirection(value) {
+  if (value === 'S->C' || value === 'incoming') return 'incoming';
+  if (value === 'C->S' || value === 'outgoing') return 'outgoing';
+  return undefined;
+}
+
 function parseCurrent(record) {
-  const type = realm.DEFAULT_PACKET_MAP[record.id];
+  const direction = recordDirection(record.dir);
+  if (!direction) {
+    return {
+      status: 'invalid-direction',
+      type: `UNKNOWN_${record.id}`,
+      error: `Unknown packet direction: ${String(record.dir)}`,
+    };
+  }
+  const type = realm.getPacketDefinitionById(record.id, direction)?.type;
   if (!type) return { status: 'unmapped', type: `UNKNOWN_${record.id}` };
   let packet;
   try {
@@ -182,4 +198,8 @@ async function main() {
   fs.writeFileSync(output, JSON.stringify({ generatedAt: new Date().toISOString(), root, files, global }, null, 2));
 }
 
-main().catch((error) => { console.error(error); process.exit(1); });
+if (require.main === module) {
+  main().catch((error) => { console.error(error); process.exit(1); });
+}
+
+module.exports = { parseCurrent, recordDirection };
