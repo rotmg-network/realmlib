@@ -59,7 +59,7 @@ describe('PacketIO outgoing queue', () => {
   it('rejects packets once the bounded waiting queue is full', () => {
     const { socket } = socketWithWrites([false]);
     const io = new PacketIO({ socket, maxOutgoingQueue: 1 });
-    const errors: RealmlibError[] = [];
+    const errors: Error[] = [];
     io.on('error', (error) => errors.push(error));
 
     io.send(new CheckCreditsPacket());
@@ -67,7 +67,7 @@ describe('PacketIO outgoing queue', () => {
     const rejected = io.send(new CheckCreditsPacket());
 
     expect(rejected).to.deep.include({ accepted: false, status: 'queue-full', queueSize: 1 });
-    expect(errors[0].code).to.equal('OUTGOING_QUEUE_FULL');
+    expect((errors[0] as RealmlibError).code).to.equal('OUTGOING_QUEUE_FULL');
   });
 
   it('reports disconnected and missing-mapping sends', () => {
@@ -85,7 +85,7 @@ describe('PacketIO outgoing queue', () => {
       [PacketType.CHECKCREDITS]: 1000,
     } as PacketMap;
     const io = new PacketIO({ socket, packetMap });
-    const errors: RealmlibError[] = [];
+    const errors: Error[] = [];
     io.on('error', (error) => errors.push(error));
 
     expect(io.send(new CheckCreditsPacket())).to.deep.include({
@@ -93,7 +93,7 @@ describe('PacketIO outgoing queue', () => {
       status: 'invalid',
       queueSize: 0,
     });
-    expect(errors[0].code).to.equal('INVALID_PACKET_ID');
+    expect((errors[0] as RealmlibError).code).to.equal('INVALID_PACKET_ID');
     expect(writes).to.have.length(0);
     expect(DEFAULT_PACKET_MAP[PacketType.IP_ADDRESS]).to.equal(undefined);
   });
@@ -156,7 +156,7 @@ describe('PacketIO outgoing queue', () => {
       return true;
     }) as typeof socket.write;
     const io = new PacketIO({ socket });
-    const errors: RealmlibError[] = [];
+    const errors: Error[] = [];
     io.on('error', (error) => errors.push(error));
 
     io.send(new CheckCreditsPacket());

@@ -4,7 +4,10 @@
  */
 export type RealmlibErrorCode =
   | 'PACKET_READ_ERROR'
+  | 'INVALID_FRAME_LENGTH'
   | 'FRAME_TOO_LARGE'
+  | 'UNKNOWN_PACKET_TYPE'
+  | 'MISSING_PACKET_FACTORY'
   | 'MISSING_MAPPING'
   | 'INVALID_PACKET_ID'
   | 'INVALID_RAW_ID'
@@ -30,5 +33,50 @@ export class RealmlibError extends Error {
 export class PacketReadError extends RealmlibError {
   constructor(message: string) {
     super('PACKET_READ_ERROR', message);
+  }
+}
+
+/** Raised when a frame prefix is shorter than the mandatory five-byte header. */
+export class InvalidFrameLengthError extends RealmlibError {
+  constructor(readonly frameLength: number) {
+    super('INVALID_FRAME_LENGTH', `Frame length must be at least 5 bytes, got ${frameLength}`);
+  }
+}
+
+/** Raised when a frame prefix exceeds the configured safety limit. */
+export class FrameTooLargeError extends RealmlibError {
+  constructor(readonly frameLength: number, readonly maximumFrameSize: number) {
+    super('FRAME_TOO_LARGE', `Frame length ${frameLength} exceeds maximum ${maximumFrameSize}`);
+  }
+}
+
+/** Raised when a packet type or incoming id is not part of the registry/map. */
+export class UnknownPacketTypeError extends RealmlibError {
+  constructor(value: string | number) {
+    super('UNKNOWN_PACKET_TYPE', `Unknown packet type or id: ${String(value)}`);
+  }
+}
+
+/** Raised when a known packet type deliberately has no modeled factory. */
+export class MissingPacketFactoryError extends RealmlibError {
+  constructor(readonly packetType: string) {
+    super('MISSING_PACKET_FACTORY', `Packet type ${packetType} has no implemented factory`);
+  }
+}
+
+/** Raised when a packet type has no usable numeric wire mapping. */
+export class PacketMappingError extends RealmlibError {
+  constructor(
+    code: 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID',
+    message: string,
+  ) {
+    super(code, message);
+  }
+}
+
+/** Raised when serialization or the underlying socket write fails. */
+export class PacketWriteError extends RealmlibError {
+  constructor(message: string) {
+    super('PACKET_WRITE_ERROR', message);
   }
 }

@@ -249,6 +249,10 @@ const BY_TYPE = new Map<PacketType, PacketDefinition>();
 const BY_ID_AND_DIRECTION = new Map<string, PacketDefinition>();
 const idDirectionKey = (id: number, direction: PacketDirection): string => `${direction}:${id}`;
 for (const definition of PACKET_REGISTRY) {
+  Object.freeze(definition);
+}
+Object.freeze(PACKET_REGISTRY);
+for (const definition of PACKET_REGISTRY) {
   if (BY_TYPE.has(definition.type)) {
     throw new Error(`Duplicate packet type in registry: ${definition.type}`);
   }

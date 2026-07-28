@@ -1,6 +1,7 @@
 import { Packet } from './packet';
 import { getPacketDefinition } from './packet-registry';
 import { PacketType } from './packet-type';
+import { MissingPacketFactoryError, UnknownPacketTypeError } from './errors';
 
 /**
  * Creates the packet object registered for `type`.
@@ -11,8 +12,11 @@ export function createPacket(type: PacketType): Packet {
     throw new TypeError(`Parameter "type" must be a string, not ${typeof type}`);
   }
   const definition = getPacketDefinition(type);
-  if (!definition?.factory) {
-    throw new Error(`Unknown or unimplemented packet type: ${type}`);
+  if (!definition) {
+    throw new UnknownPacketTypeError(type);
+  }
+  if (!definition.factory) {
+    throw new MissingPacketFactoryError(type);
   }
   return definition.factory();
 }
