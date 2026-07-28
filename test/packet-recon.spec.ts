@@ -457,6 +457,15 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.vaultContents).to.deep.equal(packet.vaultContents);
   });
 
+  it('VaultContentPacket preserves an unsigned opaque tail', () => {
+    const packet = new VaultContentPacket();
+    packet.unknownBytes = [-128, -1, 127];
+
+    const out = roundTrip(packet, new VaultContentPacket());
+    expect(out.opaqueTail).to.deep.equal(Buffer.from([0x80, 0xff, 0x7f]));
+    expect(out.unknownBytes).to.deep.equal([-128, -1, 127]);
+  });
+
   it('NotificationPacket effect 11 consumes message + progress values', () => {
     const reader = hexReader(
       '0b2a001b416c69656e20496e766173696f6e204164657074202d20426f7373000000010001',

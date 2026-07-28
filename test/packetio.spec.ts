@@ -10,6 +10,8 @@ import {
   PacketType,
   RC4,
   RealmlibError,
+  VaultContentPacket,
+  Writer,
 } from '../src';
 
 function nextTurn(): Promise<void> {
@@ -334,5 +336,31 @@ describe('PacketIO diagnostics', () => {
       remaining: 2,
     });
     expect(diagnostic?.probes).to.deep.include({ kind: 'int16', bytes: 2, value: -21555 });
+  });
+
+  it('distinguishes preserved opaque packet tails from decoded payloads', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+    });
+    const packet = new VaultContentPacket();
+    packet.opaqueTail = Buffer.from([0x80, 0xff]);
+    const writer = new Writer();
+    packet.write(writer);
+    let diagnostic: PacketDiagnostic | undefined;
+    io.on('packetOpaque', (event) => {
+      diagnostic = event;
+    });
+
+    emitIncoming(socket, 117, writer.buffer.subarray(0, writer.index));
+
+    expect(diagnostic).to.deep.include({
+      id: 117,
+      type: PacketType.VAULT_CONTENT,
+      status: 'opaque',
+      remaining: 0,
+      opaqueBytes: 2,
+    });
   });
 });

@@ -46,8 +46,8 @@ export class VaultContentPacket implements Packet {
   /** Potion storage size after the next upgrade. */
   nextPotionMax: number;
 
-  /** Trailing bytes that are not yet understood. */
-  unknownBytes: number[];
+  /** Trailing bytes preserved byte-exactly without claiming decoded semantics. */
+  opaqueTail: Buffer;
 
   constructor() {
     this.lastVaultPacket = false;
@@ -66,7 +66,7 @@ export class VaultContentPacket implements Packet {
     this.potionUpgradeCost = -1;
     this.currentPotionMax = -1;
     this.nextPotionMax = -1;
-    this.unknownBytes = [];
+    this.opaqueTail = Buffer.alloc(0);
   }
 
   private static readList(reader: Reader): number[] {
@@ -105,10 +105,8 @@ export class VaultContentPacket implements Packet {
     this.currentPotionMax = reader.readShort();
     this.nextPotionMax = reader.readShort();
 
-    this.unknownBytes = [];
-    while (reader.remaining > 0) {
-      this.unknownBytes.push(reader.readByte());
-    }
+    this.opaqueTail = Buffer.from(reader.buffer.subarray(reader.index, reader.length));
+    reader.index = reader.length;
   }
 
   write(writer: Writer): void {
@@ -131,8 +129,24 @@ export class VaultContentPacket implements Packet {
     writer.writeShort(this.currentPotionMax);
     writer.writeShort(this.nextPotionMax);
 
-    for (const byte of this.unknownBytes) {
-      writer.writeByte(byte);
+    for (const byte of this.opaqueTail) {
+      writer.writeUnsignedByte(byte);
     }
+  }
+
+  /**
+   * Signed-byte compatibility view of {@link opaqueTail}.
+   * @deprecated Use {@link opaqueTail}.
+   */
+  get unknownBytes(): number[] {
+    return Array.from(this.opaqueTail, (byte) => byte > 127 ? byte - 256 : byte);
+  }
+
+  /** @deprecated Use {@link opaqueTail}. */
+  set unknownBytes(bytes: number[]) {
+    if (bytes.some((byte) => !Number.isInteger(byte) || byte < -128 || byte > 255)) {
+      throw new RangeError('VaultContentPacket unknownBytes must contain byte values');
+    }
+    this.opaqueTail = Buffer.from(bytes.map((byte) => byte & 0xff));
   }
 }

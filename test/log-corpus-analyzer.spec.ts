@@ -11,6 +11,7 @@ const {
     type: string;
     packet?: { type: PacketType };
     error?: string;
+    opaqueBytes?: number;
   };
   recordDirection(value: string): 'incoming' | 'outgoing' | undefined;
 } = require('../scripts/analyze-log-corpus.cjs');
@@ -63,5 +64,20 @@ describe('log corpus analyzer packet directions', () => {
 
     expect(result.status).to.equal('invalid-direction');
     expect(result.error).to.equal('Unknown packet direction: sideways');
+  });
+
+  it('reports preserved vault tails as opaque rather than fully decoded', () => {
+    const packet = new (require('../src').VaultContentPacket)();
+    packet.opaqueTail = Buffer.from([0x80, 0xff]);
+    const writer = new (require('../src').Writer)();
+    packet.write(writer);
+    const result = parseCurrent({
+      id: 117,
+      dir: 'S->C',
+      body: writer.buffer.subarray(0, writer.index).toString('hex'),
+    });
+
+    expect(result.status).to.equal('opaque');
+    expect(result.opaqueBytes).to.equal(2);
   });
 });

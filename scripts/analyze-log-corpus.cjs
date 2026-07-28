@@ -60,6 +60,15 @@ function parseCurrent(record) {
     body.copy(reader.buffer);
     reader.index = 0;
     packet.read(reader);
+    if (!reader.remaining && Buffer.isBuffer(packet.opaqueTail) && packet.opaqueTail.length) {
+      return {
+        status: 'opaque',
+        type,
+        packet,
+        leftover: 0,
+        opaqueBytes: packet.opaqueTail.length,
+      };
+    }
     return { status: reader.remaining ? 'leftover' : 'ok', type, packet, leftover: reader.remaining };
   } catch (error) {
     return { status: 'error', type, error: String(error).split('\n')[0] };

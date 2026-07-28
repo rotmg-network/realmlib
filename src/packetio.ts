@@ -86,13 +86,15 @@ export interface RawOutgoingPacket extends Omit<RawPacket, 'direction'> {
 }
 
 export interface PacketDiagnostic extends RawPacket {
-  status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error' | 'leftover';
+  status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error' | 'leftover' | 'opaque';
   /** Bytes consumed from the packet body. */
   offset: number;
   /** Bytes left after parsing stopped. */
   remaining: number;
   /** Primitive interpretations at `offset`. */
   probes: PacketFieldProbe[];
+  /** Bytes preserved by the packet as an explicitly opaque payload tail. */
+  opaqueBytes?: number;
   error?: unknown;
 }
 
@@ -572,7 +574,8 @@ export class PacketIO extends EventEmitter {
       const shouldParse = this.listenerCount(type) !== 0
         || this.listenerCount('packetDiagnostic') !== 0
         || this.listenerCount('packetParseError') !== 0
-        || this.listenerCount('packetLeftover') !== 0;
+        || this.listenerCount('packetLeftover') !== 0
+        || this.listenerCount('packetOpaque') !== 0;
       if (shouldParse) {
         let packet: Packet;
         try {
@@ -596,6 +599,15 @@ export class PacketIO extends EventEmitter {
           const offset = Math.max(0, this.reader.index - 5);
           const diagnostic = this.createDiagnostic(id, type, payload, 'leftover', offset);
           this.emit('packetLeftover', diagnostic);
+          this.emit('packetDiagnostic', diagnostic);
+          return packet;
+        }
+        const opaqueTail = (packet as Packet & { opaqueTail?: unknown }).opaqueTail;
+        if (Buffer.isBuffer(opaqueTail) && opaqueTail.length !== 0) {
+          const offset = Math.max(0, this.reader.index - 5);
+          const diagnostic = this.createDiagnostic(id, type, payload, 'opaque', offset);
+          diagnostic.opaqueBytes = opaqueTail.length;
+          this.emit('packetOpaque', diagnostic);
           this.emit('packetDiagnostic', diagnostic);
           return packet;
         }
