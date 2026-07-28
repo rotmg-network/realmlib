@@ -4,10 +4,13 @@
 
 The rotmg-extractor dump (packet_structures.json, 178 vtable-exact layouts +
 the incoming message factory) resolved most of this playbook without captures.
-Landed in realmlib: 115, 129, 130, 133, 136(doc), 146, 147, 148, 151, 152, 153,
+Landed in realmlib: 115, 116, 123, 125, 129-132, 133, 136(doc), 139, 142-144,
+146, 147, 148, 151, 152, 153,
 156, 166 (= DamageWithEffect, ex-STASIS), 167, 181 (= ActivateCrucibleResult),
-193/194, 198/199, 222, 224 (= UnlockMissionTree), 225, 226, 227, 231,
-236, 116, 135(id), 132(id), plus enum batches. **173/175/177/187 and 162 do
+184, 191/192 (= BuyDusts/Result), 193/194, 198/199
+(= ResetEnchantmentRerollCount/Result), 215/217 direction-reused party
+messages, 222, 224 (= UnlockMissionTree), 225, 226 (= GiftItems), 227, 231
+(= Stacks), 236, 135(id), plus enum batches. **173/175/177/187 and 162 do
 not exist in build 6.12.0.2.0** (superseded by the 189–198 cluster), and
 **1000 cannot be a wire id** (ids are single bytes).
 
@@ -17,13 +20,13 @@ What captures are still worth taking, in order:
    packets above (they are client-binary-derived, not wire-observed).
    Highest value: 115+116 (exaltation redeem), 146→147 (skin recycle),
    151→152 (BP milestone boost), 156, 167, 236.
-2. **Nested-framing blockers** — 132 (custom map list), 135 (refine result),
-   218 (server-name list), 238 (GiftInfo).
+2. **Nested-framing blockers** — 135 (refine result), 136 (buy refinement),
+   218 (server-name list), and 238 (GiftInfo).
    A single body each pins the list/struct framing.
-3. **Naming ambiguities** — buy a **dust bundle** at the enchanter (settles
-   whether 191/192 are BuyDusts/Result vs reroll-count reset); trigger an
-   accelerator gain (separates 153 updated vs 179 added); capture 222's
-   context (SaveLockUpdate vs TutorialStateChanged); a gift send (226).
+3. **Remaining semantic checks** — reset an enchantment reroll count to decode
+   id 198's opaque string; trigger an accelerator gain (separates 153 updated
+   vs 179 added); capture 222's context; and send a gift to identify the
+   serialization inside id 226's `items` string.
 4. **A failed enchant/reroll** — the 190 body should then carry the error
    string after the bool, confirming the truncation-on-success reading.
 5. The original wishlist below still applies for enums and `unknown*` fields
@@ -94,7 +97,7 @@ with **141** = `01 0000` = `byte success(1) + short code(0)`. Both confirmed.
 | **156 SET_GRAVE_STONE** | C→S | `int32 gravestoneType` | type in objects.xml (gravestone); follow-up `47 RESKIN_UNLOCK` type `4` (Gravestone) |
 | **162 SET_TRACKED_SEASON** | C→S | `int32 seasonId` (e.g. 50/51) or `string seasonId` | value = a season id from `/missions/getClientSeasons`; int32 50 = `00000032`, a string starts `0002…` |
 | **167 SET_DISCOVERABLE** | C→S | `byte discoverable` (0/1) | capture both toggles — a single `00` / `01` |
-| **231 UNKNOWN231** | S→C | `int32 unknown + int32 active` | trigger item `0x946e` while logging local ability phase/cooldown; the corpus confirms `0,1` activation and `0,0` deactivation, but not field-one semantics |
+| **231 STACKS** | S→C | `u8 hp, mp, attack, defense, speed, vitality, wisdom, dexterity` | vary one stack at a time and correlate the changed byte with the HUD counter |
 | **173 UNLOCK_ENCHANTMENT_SLOT** | C→S | `SlotObjectData target` (12B) `[+ byte slotIndex]` | the 12B triple = (playerId, invSlot, itemType) of a preceding INVSWAP/USEITEM; stat-80 blob gains a slot |
 | **175 UNLOCK_ENCHANTMENT** | C→S | `SlotObjectData target + int32 enchantmentType` | enchantmentType resolves via `EnchantType`; item's `parseEnchantments` changes |
 | **177 APPLY_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot + int32 enchantmentType` | which enchant slot filled matches `byte`; new id in the stat-80 blob = `int32` |
@@ -119,8 +122,8 @@ spare, noting which UI action produced which id/body:
 - **[P] 177 APPLY_ENCHANTMENT** — apply an enchantment to an item.
 - **[P] 187 UPGRADE_ENCHANTMENT** — upgrade an existing enchantment.
 - Confirm the already-modelled siblings fire too: `189 REROLL_ALL_ENCHANTMENTS`,
-  `191 RESET_ENCHANTMENT_REROLL_COUNT` (+ `192` result), `190 ENCHANT`,
-  `185 UPGRADE_ENCHANTER`.
+  `191 BUY_DUSTS` (+ `192` result), `198 RESET_ENCHANTMENT_REROLL_COUNT`
+  (+ `199` result), `190 ENCHANT`, and `185 UPGRADE_ENCHANTER`.
 - **[E] EnchantType**, **[E] DustType** — vary which enchantment and which dust
   you use so we see more than one enum value; cross-ref the item's stat-80 blob
   (`parseEnchantments`) and any forge/dust XML.
