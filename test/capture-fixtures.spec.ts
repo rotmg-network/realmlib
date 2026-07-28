@@ -30,7 +30,7 @@ describe('packet capture fixtures', () => {
 
   for (const fixture of corpus.fixtures) {
     it(`replays ${fixture.category}: ${fixture.name}`, () => {
-      const definition = getPacketDefinitionById(fixture.id);
+      const definition = getPacketDefinitionById(fixture.id, fixture.direction);
       expect(definition?.type).to.equal(fixture.type);
       expect(definition?.direction).to.equal(fixture.direction);
       expect(DEFAULT_PACKET_MAP[fixture.id]).to.equal(fixture.type);

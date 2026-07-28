@@ -9,18 +9,14 @@ export class PartyJoinRequestPacket implements Packet {
 
   /** Id of the party to join. */
   partyId: number;
-  /** Trailing byte. Purpose not yet confirmed. */
-  unknownByte: number;
 
-  constructor() { this.partyId = 0; this.unknownByte = 0; }
+  constructor() { this.partyId = 0; }
 
   read(reader: Reader): void {
     this.partyId = reader.readUInt32();
-    this.unknownByte = reader.readByte();
   }
 
   write(writer: Writer): void {
     writer.writeUInt32(this.partyId);
-    writer.writeByte(this.unknownByte);
   }
 }

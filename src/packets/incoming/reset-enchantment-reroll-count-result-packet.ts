@@ -4,17 +4,14 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Received in response to a `ResetEnchantmentRerollCountPacket` (id 191, the
- * gold→dust purchase). The body is a single byte, observed as `1` — the
- * purchase-success flag. In captures it arrived ~0.7s after the client's
- * id-191 request, 1:1, immediately before the player's gold/dust stats updated.
+ * Result of an enchantment reroll-count reset request.
  */
 export class ResetEnchantmentRerollCountResultPacket implements Packet {
 
   readonly type = PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT;
 
   //#region packet-specific members
-  /** Whether the reroll-count reset succeeded (observed `true`). */
+  /** Result flag. */
   success: boolean;
   //#endregion
 
@@ -28,5 +25,16 @@ export class ResetEnchantmentRerollCountResultPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeBoolean(this.success);
+  }
+}
+
+/** @deprecated Use `ResetEnchantmentRerollCountResultPacket`. */
+export class Unknown199Packet extends ResetEnchantmentRerollCountResultPacket {
+  get result(): boolean {
+    return this.success;
+  }
+
+  set result(value: boolean) {
+    this.success = value;
   }
 }

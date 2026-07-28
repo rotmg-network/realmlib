@@ -66,3 +66,7 @@ export enum ContainerType {
     PlayerSpawnedObject = 60
 }
 
+/** Current client name for {@link ContainerType}. */
+export const MapObjectType = ContainerType;
+/** Current client name for {@link ContainerType}. */
+export type MapObjectType = ContainerType;

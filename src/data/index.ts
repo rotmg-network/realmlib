@@ -1,3 +1,5 @@
+export * from './color-data';
+export * from './custom-map-data';
 export * from './fame-data';
 export * from './ground-tile-data';
 export * from './move-record';
@@ -6,6 +8,7 @@ export * from './object-status-data';
 export * from './parser';
 export * from './quest-data';
 export * from './slot-object-data';
+export * from './stacks-state';
 export * from './stat-data';
 export * from './trade-item';
 export * from './world-pos-data';

@@ -26,12 +26,13 @@ if (!fs.existsSync(inputPath)) {
 
 const catalog = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
 const { PACKET_REGISTRY } = require('../lib/packet-registry');
-const localById = new Map();
+const wireKey = (id, direction) => `${direction ?? 'unknown'}:${id}`;
+const localByWire = new Map();
 const localByType = new Map();
 for (const definition of PACKET_REGISTRY) {
   localByType.set(definition.type, definition);
   if (definition.id !== undefined && definition.id <= 255) {
-    localById.set(definition.id, definition);
+    localByWire.set(wireKey(definition.id, definition.direction), definition);
   }
 }
 
@@ -40,10 +41,13 @@ const conflicts = [];
 const missingLocal = [];
 const directionConflicts = [];
 for (const mapping of mappings) {
-  const byId = localById.get(mapping.id);
+  const byId = localByWire.get(wireKey(mapping.id, mapping.direction))
+    ?? localByWire.get(wireKey(mapping.id, 'unknown'));
   const byType = localByType.get(mapping.type);
   if (byId && byId.type !== mapping.type) {
-    conflicts.push(`id ${mapping.id}: extractor=${mapping.type}, realmlib=${byId.type}`);
+    conflicts.push(
+      `${mapping.direction} id ${mapping.id}: extractor=${mapping.type}, realmlib=${byId.type}`,
+    );
   }
   if (byType && byType.id !== mapping.id) {
     conflicts.push(`type ${mapping.type}: extractor=${mapping.id}, realmlib=${byType.id}`);
@@ -63,11 +67,13 @@ for (const mapping of mappings) {
   }
 }
 
-const extractedTypes = new Set(mappings.map((mapping) => mapping.type));
-const staleLocal = [...localById.values()]
-  .filter((definition) => !extractedTypes.has(definition.type))
+const extractedWireMappings = new Set(
+  mappings.map((mapping) => wireKey(mapping.id, mapping.direction)),
+);
+const staleLocal = [...localByWire.values()]
+  .filter((definition) => !extractedWireMappings.has(wireKey(definition.id, definition.direction)))
   .map((definition) => `${definition.id}:${definition.type}`);
-const missingFactories = [...localById.values()]
+const missingFactories = [...localByWire.values()]
   .filter((definition) => !definition.factory)
   .map((definition) => `${definition.id}:${definition.type}`);
 const unmappedIncoming = catalog.unmapped_incoming ?? [];
@@ -75,7 +81,7 @@ const unmappedOutgoing = catalog.unmapped_outgoing ?? [];
 
 console.log(`Exalt reconciliation: ${path.basename(inputPath)}`);
 console.log(`  extractor mappings: ${mappings.length}`);
-console.log(`  realmlib wire mappings: ${localById.size}`);
+console.log(`  realmlib wire mappings: ${localByWire.size}`);
 console.log(`  id/type conflicts: ${conflicts.length}`);
 console.log(`  direction conflicts: ${directionConflicts.length}`);
 console.log(`  extractor mappings missing locally: ${missingLocal.length}`);

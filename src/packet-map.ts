@@ -19,6 +19,11 @@ for (const definition of PACKET_REGISTRY) {
   if (definition.id === undefined) {
     continue;
   }
-  DEFAULT_PACKET_MAP[definition.id] = definition.type;
   DEFAULT_PACKET_MAP[definition.type] = definition.id;
+  // Numeric lookups are used for packets received by a normal game client.
+  // Preserve an outgoing-only entry for compatibility, but always let an
+  // incoming definition win when an id is reused in both directions.
+  if (DEFAULT_PACKET_MAP[definition.id] === undefined || definition.direction === 'incoming') {
+    DEFAULT_PACKET_MAP[definition.id] = definition.type;
+  }
 }

@@ -9,8 +9,8 @@ import {
   Packet,
   PacketType,
   Reader,
+  StacksPacket,
   TradeStartPacket,
-  Unknown231Packet,
   Writer,
   createPacket,
 } from '../src';
@@ -74,18 +74,17 @@ describe('log corpus findings (2026-07-28)', () => {
     expect(writeHex(packet)).to.equal(hex);
   });
 
-  it('maps and round-trips incoming id 231 activation states as raw int32 values', () => {
-    expect(DEFAULT_PACKET_MAP[231]).to.equal(PacketType.UNKNOWN231);
-    expect(createPacket(PacketType.UNKNOWN231)).to.be.instanceOf(Unknown231Packet);
+  it('maps and round-trips incoming id 231 as eight stat-stack counters', () => {
+    expect(DEFAULT_PACKET_MAP[231]).to.equal(PacketType.STACKS);
+    expect(createPacket(PacketType.STACKS)).to.be.instanceOf(StacksPacket);
 
-    const active = parse(new Unknown231Packet(), '0000000000000001');
-    expect(active.unknownInt).to.equal(0);
-    expect(active.active).to.equal(1);
+    const active = parse(new StacksPacket(), '0000000000000001');
+    expect(active.state.hp).to.equal(0);
+    expect(active.state.dexterity).to.equal(1);
     expect(writeHex(active)).to.equal('0000000000000001');
 
-    const inactive = parse(new Unknown231Packet(), '0000000000000000');
-    expect(inactive.unknownInt).to.equal(0);
-    expect(inactive.active).to.equal(0);
+    const inactive = parse(new StacksPacket(), '0000000000000000');
+    expect(inactive.state.dexterity).to.equal(0);
     expect(writeHex(inactive)).to.equal('0000000000000000');
   });
 

@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import {
   DEFAULT_PACKET_MAP,
+  BuyDustsPacket,
+  BuyDustsResultPacket,
   EnchantPacket,
   PacketType,
   Reader,
-  ResetEnchantmentRerollCountPacket,
-  ResetEnchantmentRerollCountResultPacket,
   ClaimDailyItemPacket,
   Writer,
   createPacket,
@@ -28,23 +28,23 @@ function roundTripsTo(packet: { write(w: Writer): void }, hex: string): void {
 }
 
 describe('enchant packets (biglog)', () => {
-  it('RESET_ENCHANTMENT_REROLL_COUNT (191) parses its "tier:qty" dust buy', () => {
+  it('BUY_DUSTS (191) parses its "tier:qty" dust buy', () => {
     // Captured "4:7" = buy 7 tier-4 dust; gold went 250->222, dust t4 73->80.
-    const p = fromHex(new ResetEnchantmentRerollCountPacket(), '0003343a37');
+    const p = fromHex(new BuyDustsPacket(), '0003343a37');
     expect(p.value).to.equal('4:7');
     roundTripsTo(p, '0003343a37');
   });
 
   it('191 is now registered (was nofactory)', () => {
-    expect(DEFAULT_PACKET_MAP[191]).to.equal(PacketType.RESET_ENCHANTMENT_REROLL_COUNT);
-    expect(createPacket(PacketType.RESET_ENCHANTMENT_REROLL_COUNT))
-      .to.be.instanceOf(ResetEnchantmentRerollCountPacket);
+    expect(DEFAULT_PACKET_MAP[191]).to.equal(PacketType.BUY_DUSTS);
+    expect(createPacket(PacketType.BUY_DUSTS))
+      .to.be.instanceOf(BuyDustsPacket);
   });
 
-  it('RESET_ENCHANTMENT_REROLL_COUNT_RESULT (192) parses the success byte', () => {
-    const p = fromHex(new ResetEnchantmentRerollCountResultPacket(), '01');
+  it('BUY_DUSTS_RESULT (192) parses the success byte', () => {
+    const p = fromHex(new BuyDustsResultPacket(), '01');
     expect(p.success).to.equal(true);
-    expect(DEFAULT_PACKET_MAP[192]).to.equal(PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT);
+    expect(DEFAULT_PACKET_MAP[192]).to.equal(PacketType.BUY_DUSTS_RESULT);
     roundTripsTo(p, '01');
   });
 

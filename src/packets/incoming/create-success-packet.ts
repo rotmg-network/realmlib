@@ -18,9 +18,7 @@ export class CreateSuccessPacket implements Packet {
    * The character id of the player's character
    */
   charId: number;
-  /**
-   * some fucking stat i couldnt tell you which
-   */
+  /** Opaque player-stat payload named `PCStat` by the current client. */
   PCStat: string;
   constructor() {
     this.objectId = 0;

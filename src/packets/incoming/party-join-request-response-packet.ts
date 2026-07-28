@@ -3,8 +3,8 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
-/** The result of a request to join a party. */
-export class PartyJoinRequestResponsePacket implements Packet {
+/** Details of another player's party request and its current state. */
+export class PartyRequestResponsePacket implements Packet {
   readonly type = PacketType.PARTY_REQUEST_RESPONSE;
 
   /** Name of the player who requested to join. */
@@ -32,3 +32,8 @@ export class PartyJoinRequestResponsePacket implements Packet {
     writer.writeUnsignedByte(this.state);
   }
 }
+
+/** @deprecated Use {@link PartyRequestResponsePacket}. */
+export const PartyJoinRequestResponsePacket = PartyRequestResponsePacket;
+/** @deprecated Use {@link PartyRequestResponsePacket}. */
+export type PartyJoinRequestResponsePacket = PartyRequestResponsePacket;

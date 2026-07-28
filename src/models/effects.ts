@@ -178,6 +178,20 @@ export enum DamageFlags {
 }
 
 /**
+ * Source discriminator carried by `PlayerShootPacket`.
+ */
+export enum PlayerShootSource {
+  Primary = 0,
+  Ability = 1
+}
+
+/** Shape discriminator used by the server's debug-drawing packets. */
+export enum DebugShape {
+  Square = 0,
+  Circle = 1
+}
+
+/**
  * Status-bar type bitmask (channeling/breath state), from client enum
  * `DPJGGPGKEJJ` (build 6.12.0.2.0).
  */

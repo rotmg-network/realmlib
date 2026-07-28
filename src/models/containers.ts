@@ -38,3 +38,12 @@ export enum ExpansionTarget {
   SeasonalPotion = 2,
   None = 3
 }
+
+/** Owner category used by inventory UI and transfer state. */
+export enum InventoryOwnerType {
+  Player = 0,
+  OtherPlayer = 1,
+  Npc = 2,
+  Lootbag = 3,
+  Pet = 4
+}

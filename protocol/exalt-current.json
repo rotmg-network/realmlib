@@ -1235,6 +1235,14 @@
       "provenance": "realmlib packet-map.ts; Exalt embedded catalog match"
     },
     {
+      "id": 116,
+      "type": "EXALTATION_REDEEM_INFO",
+      "name": "ExaltationRedeemInfoMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
       "id": 117,
       "type": "VAULT_CONTENT",
       "class": "VaultContentPacket",
@@ -1295,13 +1303,11 @@
     },
     {
       "id": 123,
-      "type": "GET_PLAYERS_LIST_MESSAGE",
-      "class": "GetPlayersListPacket",
-      "name": "GetPlayersListMessage",
-      "catalog_name": "GetPlayersListMessage",
-      "direction": "outgoing",
-      "confidence": 85,
-      "provenance": "realmlib packet-map.ts + create-packet.ts; Exalt embedded catalog match"
+      "type": "PLAYERS_LIST_MESSAGE",
+      "name": "PlayersListMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 124,
@@ -1312,6 +1318,14 @@
       "direction": "outgoing",
       "confidence": 85,
       "provenance": "realmlib packet-map.ts + create-packet.ts; Exalt embedded catalog match"
+    },
+    {
+      "id": 125,
+      "type": "GET_PLAYERS_LIST_MESSAGE",
+      "name": "GetPlayersListMessage",
+      "direction": "outgoing",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 126,
@@ -1333,6 +1347,14 @@
       "provenance": "realmlib packet-map.ts; Exalt embedded catalog match"
     },
     {
+      "id": 130,
+      "type": "CUSTOM_MAP_DELETE_RESPONSE",
+      "name": "CustomMapDeleteResponse",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
       "id": 131,
       "type": "CUSTOM_MAP_LIST",
       "name": "CustomMapListMessage",
@@ -1340,6 +1362,14 @@
       "direction": "outgoing",
       "confidence": 85,
       "provenance": "realmlib packet-map.ts; Exalt embedded catalog match"
+    },
+    {
+      "id": 132,
+      "type": "CUSTOM_MAP_LIST_RESPONSE",
+      "name": "CustomMapListResponse",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 133,
@@ -1359,6 +1389,14 @@
       "direction": "outgoing",
       "confidence": 85,
       "provenance": "realmlib packet-map.ts + create-packet.ts; Exalt embedded catalog match"
+    },
+    {
+      "id": 135,
+      "type": "REFINE_RESULT",
+      "name": "RefineResultMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 136,
@@ -1404,6 +1442,38 @@
       "direction": "outgoing",
       "confidence": 85,
       "provenance": "realmlib packet-map.ts; Exalt embedded catalog match"
+    },
+    {
+      "id": 141,
+      "type": "BUY_CUSTOMISATION_SOCKET_RESULT",
+      "name": "BuyCustomisationSocketResult",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 142,
+      "type": "DRAW_DEBUG_SHAPE",
+      "name": "DrawDebugShape",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 143,
+      "type": "DRAW_DEBUG_ARROW",
+      "name": "DrawDebugArrow",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 144,
+      "type": "DASH_RESET",
+      "name": "DashResetMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 145,
@@ -1466,6 +1536,22 @@
       "direction": "outgoing",
       "confidence": 85,
       "provenance": "realmlib packet-map.ts; Exalt embedded catalog match"
+    },
+    {
+      "id": 152,
+      "type": "BOOST_BP_MILESTONE_RESULT",
+      "name": "BoostBPMilestoneResultMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 153,
+      "type": "ACCELERATOR_UPDATED",
+      "name": "AcceleratorUpdatedMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 154,
@@ -1637,6 +1723,14 @@
       "provenance": "realmlib packet-map.ts"
     },
     {
+      "id": 179,
+      "type": "ACCELERATOR_ADDED",
+      "name": "AcceleratorAddedMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
       "id": 180,
       "type": "ACTIVATE_CRUCIBLE",
       "class": "ActivateCruciblePacket",
@@ -1672,6 +1766,14 @@
       "direction": "incoming",
       "confidence": 80,
       "provenance": "realmlib packet-map.ts + create-packet.ts"
+    },
+    {
+      "id": 184,
+      "type": "TUTORIAL_STATE_CHANGED",
+      "name": "TutorialStateChangedMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 185,
@@ -1710,21 +1812,35 @@
     },
     {
       "id": 191,
-      "type": "RESET_ENCHANTMENT_REROLL_COUNT",
-      "class": "ResetEnchantmentRerollCountPacket",
-      "name": "ResetEnchantmentRerollCount",
+      "type": "BUY_DUSTS",
+      "name": "BuyDusts",
       "direction": "outgoing",
-      "confidence": 80,
-      "provenance": "realmlib packet-map.ts + create-packet.ts"
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 192,
-      "type": "RESET_ENCHANTMENT_REROLL_COUNT_RESULT",
-      "class": "ResetEnchantmentRerollCountResultPacket",
-      "name": "ResetEnchantmentRerollCountResult",
+      "type": "BUY_DUSTS_RESULT",
+      "name": "BuyDustsResult",
       "direction": "incoming",
-      "confidence": 80,
-      "provenance": "realmlib packet-map.ts + create-packet.ts"
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 193,
+      "type": "PURCHASE_PET_SHADER",
+      "name": "PurchasePetShader",
+      "direction": "outgoing",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 194,
+      "type": "PET_SHADER_PURCHASE_RESULT",
+      "name": "PetShaderPurchaseResult",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 195,
@@ -1752,6 +1868,22 @@
       "direction": "outgoing",
       "confidence": 80,
       "provenance": "realmlib packet-map.ts + create-packet.ts"
+    },
+    {
+      "id": 198,
+      "type": "RESET_ENCHANTMENT_REROLL_COUNT",
+      "name": "ResetEnchantmentRerollCount",
+      "direction": "outgoing",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 199,
+      "type": "RESET_ENCHANTMENT_REROLL_COUNT_RESULT",
+      "name": "ResetEnchantmentRerollCountResult",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 200,
@@ -1835,24 +1967,35 @@
     },
     {
       "id": 215,
-      "type": "PARTY_JOIN_REQUEST",
-      "class": "PartyJoinRequestPacket",
+      "type": "PARTY_JOIN_RESULT",
       "name": "PartyJoinRequest",
-      "catalog_name": "PartyJoinRequest",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 215,
+      "type": "PARTY_JOIN_REQUEST",
+      "name": "PartyJoinRequest",
       "direction": "outgoing",
-      "confidence": 85,
-      "provenance": "realmlib packet-map.ts + create-packet.ts; Exalt embedded catalog match"
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 217,
       "type": "PARTY_REQUEST_RESPONSE",
-      "class": "PartyJoinRequestResponsePacket",
-      "name": "PartyJoinRequestResponse",
-      "catalog_name": "PartyRequestResponse",
+      "name": "PartyRequestResponse",
       "direction": "incoming",
-      "confidence": 40,
-      "provenance": "realmlib packet-map.ts + create-packet.ts; metadata direction conflict",
-      "conflict": "realmlib says incoming but metadata catalog says outgoing"
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 217,
+      "type": "PARTY_JOIN_REQUEST_RESPONSE",
+      "name": "PartyJoinRequestResponse",
+      "direction": "outgoing",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 218,
@@ -1906,6 +2049,38 @@
       "provenance": "realmlib packet-map.ts + create-packet.ts"
     },
     {
+      "id": 225,
+      "type": "UNLOCK_MISSION",
+      "name": "UnlockMission",
+      "direction": "outgoing",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 226,
+      "type": "GIFT_ITEMS",
+      "name": "GiftItemsMessage",
+      "direction": "outgoing",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 227,
+      "type": "GIFT_RESULT",
+      "name": "GiftResultMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
+      "id": 231,
+      "type": "STACKS",
+      "name": "StacksMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
       "id": 232,
       "type": "CLAIM_ACCOUNT_LEVEL_REWARD",
       "class": "ClaimAccountLevelRewardPacket",
@@ -1942,6 +2117,14 @@
       "provenance": "realmlib packet-map.ts + create-packet.ts"
     },
     {
+      "id": 236,
+      "type": "SLIPPING_INFO",
+      "name": "SlippingInfoMessage",
+      "direction": "incoming",
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
+    },
+    {
       "id": 237,
       "type": "CLAIM_DAILY_ITEM",
       "class": "ClaimDailyItemPacket",
@@ -1953,11 +2136,10 @@
     {
       "id": 238,
       "type": "GIFT_NOTIFICATION",
-      "name": "GiftNotificationMessage",
-      "catalog_name": "GiftNotificationMessage",
+      "name": "GiftInfo",
       "direction": "incoming",
-      "confidence": 85,
-      "provenance": "realmlib packet-map.ts; Exalt embedded catalog match"
+      "confidence": 100,
+      "provenance": "6.12.0.2.0 native packet registration and recovered class labels"
     },
     {
       "id": 239,

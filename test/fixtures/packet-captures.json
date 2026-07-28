@@ -84,10 +84,10 @@
       "roundTrip": true
     },
     {
-      "name": "reset enchantment reroll count",
+      "name": "buy enchantment dust",
       "category": "enchanting",
       "id": 191,
-      "type": "RESET_ENCHANTMENT_REROLL_COUNT",
+      "type": "BUY_DUSTS",
       "direction": "outgoing",
       "body": "0003343a37",
       "roundTrip": true

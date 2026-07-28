@@ -1,3 +1,12 @@
+/** Character modes eligible to progress a mission. Values form a bitmask. */
+export enum MissionParticipants {
+  None = 0,
+  RegularOnly = 1,
+  SeasonalOnly = 2,
+  CrucibleOnly = 4,
+  All = 255
+}
+
 /** Objective kinds used by the current mission system. */
 export enum MissionObjectiveType {
   Unknown = -1,

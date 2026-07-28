@@ -83,17 +83,19 @@ describe('UpdatePacket', () => {
 
 describe('packet factory coverage', () => {
   it('derives unique ids, mappings, and factories from one registry', () => {
-    const ids = PACKET_REGISTRY
-      .map((definition) => definition.id)
-      .filter((id): id is number => id !== undefined);
+    const wireKeys = PACKET_REGISTRY
+      .filter((definition) => definition.id !== undefined)
+      .map((definition) => `${definition.direction}:${definition.id}`);
     const types = PACKET_REGISTRY.map((definition) => definition.type);
-    expect(new Set(ids).size).to.equal(ids.length);
+    expect(new Set(wireKeys).size).to.equal(wireKeys.length);
     expect(new Set(types).size).to.equal(types.length);
 
     for (const definition of PACKET_REGISTRY) {
       if (definition.id !== undefined) {
-        expect(DEFAULT_PACKET_MAP[definition.id]).to.equal(definition.type);
         expect(DEFAULT_PACKET_MAP[definition.type]).to.equal(definition.id);
+        if (definition.direction === 'incoming') {
+          expect(DEFAULT_PACKET_MAP[definition.id]).to.equal(definition.type);
+        }
       }
       if (definition.factory) {
         expect(createPacket(definition.type).type).to.equal(definition.type);

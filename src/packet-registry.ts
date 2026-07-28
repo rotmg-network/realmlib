@@ -125,21 +125,21 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 113, type: PacketType.QUEUE_CANCEL, direction: 'outgoing', factory: () => new OutgoingPackets.QueueCancelPacket() },
   { id: 114, type: PacketType.EXALTATION_BONUS_CHANGED, direction: 'incoming', factory: () => new IncomingPackets.ExaltationUpdatePacket() },
   { id: 115, type: PacketType.REDEEM_EXALTATION_REWARD, direction: 'outgoing', factory: () => new OutgoingPackets.RedeemExaltationRewardPacket() },
-  { id: 116, type: PacketType.UNKNOWN116, direction: 'incoming', factory: () => new IncomingPackets.Unknown116Packet() },
+  { id: 116, type: PacketType.EXALTATION_REDEEM_INFO, direction: 'incoming', factory: () => new IncomingPackets.ExaltationRedeemInfoPacket() },
   { id: 117, type: PacketType.VAULT_CONTENT, direction: 'incoming', factory: () => new IncomingPackets.VaultContentPacket() },
   { id: 118, type: PacketType.FORGE_REQUEST, direction: 'outgoing', factory: () => new OutgoingPackets.ForgeRequestPacket() },
   { id: 119, type: PacketType.FORGE_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ForgeResultPacket() },
   { id: 120, type: PacketType.FORGE_UNLOCKED_BLUEPRINTS, direction: 'incoming', factory: () => new IncomingPackets.ForgeUnlockedBlueprints() },
   { id: 121, type: PacketType.SHOOTACK, direction: 'outgoing', factory: () => new OutgoingPackets.ShootAckPacket() },
   { id: 122, type: PacketType.CHANGE_ALLY_SHOOT, direction: 'outgoing', factory: () => new OutgoingPackets.ChangeAllyShootPacket() },
-  { id: 123, type: PacketType.GET_PLAYERS_LIST_MESSAGE, direction: 'outgoing', factory: () => new OutgoingPackets.GetPlayersListPacket() },
+  { id: 123, type: PacketType.PLAYERS_LIST_MESSAGE, direction: 'incoming', factory: () => new IncomingPackets.PlayersListPacket() },
   { id: 124, type: PacketType.MODERATOR_ACTION_MESSAGE, direction: 'outgoing', factory: () => new OutgoingPackets.ModeratorActionMessagePacket() },
+  { id: 125, type: PacketType.GET_PLAYERS_LIST_MESSAGE, direction: 'outgoing', factory: () => new OutgoingPackets.GetPlayersListPacket() },
   { id: 126, type: PacketType.CREEP_MOVE_MESSAGE, direction: 'outgoing', factory: () => new OutgoingPackets.CreepMoveMessagePacket() },
   { id: 129, type: PacketType.CUSTOM_MAP_DELETE, direction: 'outgoing', factory: () => new OutgoingPackets.CustomMapDeletePacket() },
   { id: 130, type: PacketType.CUSTOM_MAP_DELETE_RESPONSE, direction: 'incoming', factory: () => new IncomingPackets.CustomMapDeleteResponsePacket() },
-  { id: 131, type: PacketType.CUSTOM_MAP_LIST, direction: 'outgoing' },
-  // 132: List<CustomMapData{string,bool,int32,int32}>; nested framing unconfirmed, so no factory yet.
-  { id: 132, type: PacketType.CUSTOM_MAP_LIST_RESPONSE, direction: 'incoming' },
+  { id: 131, type: PacketType.CUSTOM_MAP_LIST, direction: 'outgoing', factory: () => new OutgoingPackets.CustomMapListPacket() },
+  { id: 132, type: PacketType.CUSTOM_MAP_LIST_RESPONSE, direction: 'incoming', factory: () => new IncomingPackets.CustomMapListResponsePacket() },
   { id: 133, type: PacketType.CREEP_HIT, direction: 'outgoing', factory: () => new OutgoingPackets.CreepHitPacket() },
   // 135: bool + SlotObjectData + UniqueDataContainer + string; container framing unknown, no factory.
   { id: 135, type: PacketType.REFINE_RESULT, direction: 'incoming' },
@@ -150,6 +150,9 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 139, type: PacketType.STATS, direction: 'incoming', factory: () => new IncomingPackets.StatsPacket() },
   { id: 140, type: PacketType.BUY_CUSTOMISATION_SOCKET, direction: 'outgoing', factory: () => new OutgoingPackets.BuyCustomisationSocketPacket() },
   { id: 141, type: PacketType.BUY_CUSTOMISATION_SOCKET_RESULT, direction: 'incoming', factory: () => new IncomingPackets.BuyCustomisationSocketResultPacket() },
+  { id: 142, type: PacketType.DRAW_DEBUG_SHAPE, direction: 'incoming', factory: () => new IncomingPackets.DrawDebugShapePacket() },
+  { id: 143, type: PacketType.DRAW_DEBUG_ARROW, direction: 'incoming', factory: () => new IncomingPackets.DrawDebugArrowPacket() },
+  { id: 144, type: PacketType.DASH_RESET, direction: 'incoming', factory: () => new IncomingPackets.DashResetPacket() },
   { id: 145, type: PacketType.FAVOUR_PET, direction: 'outgoing', factory: () => new OutgoingPackets.FavourPetPacket() },
   { id: 146, type: PacketType.SKIN_RECYCLE, direction: 'outgoing', factory: () => new OutgoingPackets.SkinRecyclePacket() },
   { id: 147, type: PacketType.SKIN_RECYCLE_RESPONSE, direction: 'incoming', factory: () => new IncomingPackets.SkinRecycleResponsePacket() },
@@ -186,23 +189,21 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 181, type: PacketType.ACTIVATE_CRUCIBLE_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ActivateCrucibleResultPacket() },
   { id: 182, type: PacketType.CRUCIBLE_REQUEST, direction: 'outgoing', factory: () => new OutgoingPackets.CrucibleRequestPacket() },
   { id: 183, type: PacketType.CRUCIBLE_RESPONSE, direction: 'incoming', factory: () => new IncomingPackets.CrucibleResponsePacket() },
+  { id: 184, type: PacketType.TUTORIAL_STATE_CHANGED, direction: 'incoming', factory: () => new IncomingPackets.TutorialStateChangedPacket() },
   { id: 185, type: PacketType.UPGRADE_ENCHANTER, direction: 'incoming', factory: () => new IncomingPackets.UpgradeEnchanterPacket() },
   { id: 187, type: PacketType.UPGRADE_ENCHANTMENT, direction: 'unknown' },
   { id: 189, type: PacketType.REROLL_ALL_ENCHANTMENTS, direction: 'outgoing', factory: () => new OutgoingPackets.RerollAllEnchantmentsPacket() },
   { id: 190, type: PacketType.ENCHANT, direction: 'incoming', factory: () => new IncomingPackets.EnchantPacket() },
-  // 191/192 naming caveat: the client's dust-purchase handler ("Enchantments.Dust.Purchased")
-  // matches these shapes exactly (BuyDusts {string} / BuyDustsResult {bool}); the current
-  // names came from earlier reverse-engineering. A dust purchase capture would settle it.
-  { id: 191, type: PacketType.RESET_ENCHANTMENT_REROLL_COUNT, direction: 'outgoing', factory: () => new OutgoingPackets.ResetEnchantmentRerollCountPacket() },
-  { id: 192, type: PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ResetEnchantmentRerollCountResultPacket() },
+  { id: 191, type: PacketType.BUY_DUSTS, direction: 'outgoing', factory: () => new OutgoingPackets.BuyDustsPacket() },
+  { id: 192, type: PacketType.BUY_DUSTS_RESULT, direction: 'incoming', factory: () => new IncomingPackets.BuyDustsResultPacket() },
   { id: 193, type: PacketType.PURCHASE_PET_SHADER, direction: 'outgoing', factory: () => new OutgoingPackets.PurchasePetShaderPacket() },
   { id: 194, type: PacketType.PET_SHADER_PURCHASE_RESULT, direction: 'incoming', factory: () => new IncomingPackets.PetShaderPurchaseResultPacket() },
   // 195/196 catalog names are DismantleItemsMessage / DismantleItemsResultMessage.
   { id: 195, type: PacketType.BLACKSMITH_REQUEST, direction: 'outgoing', factory: () => new OutgoingPackets.BlacksmithRequestPacket() },
   { id: 196, type: PacketType.BLACKSMITH_DISMANTLE, direction: 'incoming', factory: () => new IncomingPackets.BlacksmithDismantlePacket() },
   { id: 197, type: PacketType.SELECT_ENTRANCE, direction: 'outgoing', factory: () => new OutgoingPackets.SelectEntrancePacket() },
-  { id: 198, type: PacketType.UNKNOWN198, direction: 'outgoing', factory: () => new OutgoingPackets.Unknown198Packet() },
-  { id: 199, type: PacketType.UNKNOWN199, direction: 'incoming', factory: () => new IncomingPackets.Unknown199Packet() },
+  { id: 198, type: PacketType.RESET_ENCHANTMENT_REROLL_COUNT, direction: 'outgoing', factory: () => new OutgoingPackets.ResetEnchantmentRerollCountPacket() },
+  { id: 199, type: PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ResetEnchantmentRerollCountResultPacket() },
   { id: 200, type: PacketType.CREATE_PARTY_MESSAGE, direction: 'outgoing', factory: () => new OutgoingPackets.CreatePartyPacket() },
   { id: 204, type: PacketType.PARTY_ACTION_RESULT, direction: 'outgoing', factory: () => new OutgoingPackets.PartyActionResultPacket() },
   { id: 207, type: PacketType.PARTY_ACTION, direction: 'incoming', factory: () => new IncomingPackets.PartyActionPacket() },
@@ -212,7 +213,9 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 212, type: PacketType.PARTY_MEMBER_ADDED, direction: 'incoming', factory: () => new IncomingPackets.PartyMemberAddedPacket() },
   { id: 214, type: PacketType.PARTY_LIST_MESSAGE, direction: 'incoming', factory: () => new IncomingPackets.PartyListPacket() },
   { id: 215, type: PacketType.PARTY_JOIN_REQUEST, direction: 'outgoing', factory: () => new OutgoingPackets.PartyJoinRequestPacket() },
-  { id: 217, type: PacketType.PARTY_REQUEST_RESPONSE, direction: 'incoming', factory: () => new IncomingPackets.PartyJoinRequestResponsePacket() },
+  { id: 215, type: PacketType.PARTY_JOIN_RESULT, direction: 'incoming', factory: () => new IncomingPackets.PartyJoinResultPacket() },
+  { id: 217, type: PacketType.PARTY_REQUEST_RESPONSE, direction: 'incoming', factory: () => new IncomingPackets.PartyRequestResponsePacket() },
+  { id: 217, type: PacketType.PARTY_JOIN_REQUEST_RESPONSE, direction: 'outgoing', factory: () => new OutgoingPackets.PartyJoinResponsePacket() },
   // 218: List<string> serverNames per the client dump (ForceReconnect/Queue);
   // list prefix width unconfirmed, so no factory yet.
   { id: 218, type: PacketType.FOR_RECONNECT, direction: 'incoming' },
@@ -222,11 +225,9 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 223, type: PacketType.PURCHASE_REQUEST, direction: 'outgoing', factory: () => new OutgoingPackets.PurchaseRequestPacket() },
   { id: 224, type: PacketType.UNLOCK_MISSION_TREE, direction: 'outgoing', factory: () => new OutgoingPackets.UnlockMissionTreePacket() },
   { id: 225, type: PacketType.UNLOCK_MISSION, direction: 'outgoing', factory: () => new OutgoingPackets.UnlockMissionPacket() },
-  { id: 226, type: PacketType.UNKNOWN226, direction: 'outgoing', factory: () => new OutgoingPackets.Unknown226Packet() },
+  { id: 226, type: PacketType.GIFT_ITEMS, direction: 'outgoing', factory: () => new OutgoingPackets.GiftItemsPacket() },
   { id: 227, type: PacketType.GIFT_RESULT, direction: 'incoming', factory: () => new IncomingPackets.GiftResultPacket() },
-  // Observed as two raw int32 values around activation/deactivation of a
-  // multi-phase ability. Semantics remain provisional.
-  { id: 231, type: PacketType.UNKNOWN231, direction: 'incoming', factory: () => new IncomingPackets.Unknown231Packet() },
+  { id: 231, type: PacketType.STACKS, direction: 'incoming', factory: () => new IncomingPackets.StacksPacket() },
   { id: 232, type: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD, direction: 'outgoing', factory: () => new OutgoingPackets.ClaimAccountLevelRewardPacket() },
   { id: 233, type: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ClaimAccountLevelRewardResultPacket() },
   { id: 234, type: PacketType.CLAIM_REWARD, direction: 'outgoing', factory: () => new OutgoingPackets.ClaimRewardPacket() },
@@ -245,17 +246,19 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
 ];
 
 const BY_TYPE = new Map<PacketType, PacketDefinition>();
-const BY_ID = new Map<number, PacketDefinition>();
+const BY_ID_AND_DIRECTION = new Map<string, PacketDefinition>();
+const idDirectionKey = (id: number, direction: PacketDirection): string => `${direction}:${id}`;
 for (const definition of PACKET_REGISTRY) {
   if (BY_TYPE.has(definition.type)) {
     throw new Error(`Duplicate packet type in registry: ${definition.type}`);
   }
   BY_TYPE.set(definition.type, definition);
   if (definition.id !== undefined) {
-    if (BY_ID.has(definition.id)) {
-      throw new Error(`Duplicate packet id in registry: ${definition.id}`);
+    const key = idDirectionKey(definition.id, definition.direction);
+    if (BY_ID_AND_DIRECTION.has(key)) {
+      throw new Error(`Duplicate ${definition.direction} packet id in registry: ${definition.id}`);
     }
-    BY_ID.set(definition.id, definition);
+    BY_ID_AND_DIRECTION.set(key, definition);
   }
 }
 
@@ -264,7 +267,16 @@ export function getPacketDefinition(type: PacketType): PacketDefinition | undefi
   return BY_TYPE.get(type);
 }
 
-/** Looks up packet metadata by numeric wire id. */
-export function getPacketDefinitionById(id: number): PacketDefinition | undefined {
-  return BY_ID.get(id);
+/**
+ * Looks up packet metadata by numeric wire id and direction.
+ *
+ * Packet ids are direction-scoped in the current protocol: for example, ids
+ * 215 and 217 each identify different incoming and outgoing party messages.
+ */
+export function getPacketDefinitionById(
+  id: number,
+  direction: PacketDirection = 'incoming',
+): PacketDefinition | undefined {
+  return BY_ID_AND_DIRECTION.get(idDirectionKey(id, direction))
+    ?? BY_ID_AND_DIRECTION.get(idDirectionKey(id, 'unknown'));
 }

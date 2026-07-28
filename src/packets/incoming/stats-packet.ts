@@ -2,13 +2,10 @@ import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
+import { StacksState } from '../../data';
 
 /**
- * Received server-to-client for the active local class/object. The first
- * trailing int32 is correlated with class/ability state: controlled Kensei
- * captures use multiples of 256 from 0 through 1280, while Druid samples stay
- * zero. Its exact transition meaning is still unconfirmed. The second int32
- * remains zero in current captures.
+ * Updates the eight temporary base-stat stack counters for a character.
  */
 export class StatsPacket implements Packet {
 
@@ -17,35 +14,53 @@ export class StatsPacket implements Packet {
   //#region packet-specific members
   /** The object id the stats are for. */
   objectId: number;
-  /** Raw class/ability-state value; observed in increments of 256 on Kensei. */
-  unknownInt1: number;
-  /** Trailing int32 (observed 0). */
-  unknownInt2: number;
+  /** HP/MP/attack/defense/speed/vitality/wisdom/dexterity stack counters. */
+  state: StacksState;
   //#endregion
 
   constructor() {
     this.objectId = 0;
-    this.unknownInt1 = 0;
-    this.unknownInt2 = 0;
+    this.state = new StacksState();
   }
 
   /**
-   * Diagnostic view of `unknownInt1 / 256`. This exposes the captured step
-   * pattern without assigning unproven gameplay semantics to the raw field.
+   * @deprecated The former int32 parser combined hp/mp/attack/defense. Use
+   * `state` instead.
    */
+  get unknownInt1(): number {
+    return (
+      (this.state.hp << 24)
+      | (this.state.mp << 16)
+      | (this.state.attack << 8)
+      | this.state.defense
+    );
+  }
+
+  /**
+   * @deprecated The former int32 parser combined speed/vitality/wisdom/
+   * dexterity. Use `state` instead.
+   */
+  get unknownInt2(): number {
+    return (
+      (this.state.speed << 24)
+      | (this.state.vitality << 16)
+      | (this.state.wisdom << 8)
+      | this.state.dexterity
+    );
+  }
+
+  /** @deprecated Use the named byte counters on `state`. */
   get abilityStateUnits(): number {
     return this.unknownInt1 / 256;
   }
 
   read(reader: Reader): void {
     this.objectId = reader.readCompressedInt();
-    this.unknownInt1 = reader.readInt32();
-    this.unknownInt2 = reader.readInt32();
+    this.state.read(reader);
   }
 
   write(writer: Writer): void {
     writer.writeCompressedInt(this.objectId);
-    writer.writeInt32(this.unknownInt1);
-    writer.writeInt32(this.unknownInt2);
+    this.state.write(writer);
   }
 }
