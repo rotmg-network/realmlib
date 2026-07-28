@@ -10,6 +10,40 @@
       "types": "./lib/index.d.ts",
       "require": "./lib/index.js",
       "default": "./lib/index.js"
+    },
+    "./core": {
+      "types": "./lib/core.d.ts",
+      "require": "./lib/core.js",
+      "default": "./lib/core.js"
+    },
+    "./protocol": {
+      "types": "./lib/protocol.d.ts",
+      "require": "./lib/protocol.js",
+      "default": "./lib/protocol.js"
+    },
+    "./packets": {
+      "types": "./lib/packets.d.ts",
+      "require": "./lib/packets.js",
+      "default": "./lib/packets.js"
+    },
+    "./models": {
+      "types": "./lib/models.d.ts",
+      "require": "./lib/models.js",
+      "default": "./lib/models.js"
+    },
+    "./data": {
+      "types": "./lib/data.d.ts",
+      "require": "./lib/data.js",
+      "default": "./lib/data.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "core": ["lib/core.d.ts"],
+      "protocol": ["lib/protocol.d.ts"],
+      "packets": ["lib/packets.d.ts"],
+      "models": ["lib/models.d.ts"],
+      "data": ["lib/data.d.ts"]
     }
   },
   "sideEffects": false,
