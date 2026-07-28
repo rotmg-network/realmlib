@@ -15,6 +15,7 @@ import {
   MissionState,
   MissionTrackingState,
   NotificationEffect,
+  LegacyNotificationValue,
   PartyAction,
   PartyActionPacket,
   PartyActionResult,
@@ -59,6 +60,10 @@ describe('current-build metadata enums', () => {
     expect(NotificationEffect.MISSIONS_REFRESH).to.equal(15);
     expect(NotificationEffect.MISSIONS_PROGRESS_ONLY_REFRESH).to.equal(99);
     expect(NotificationEffect.MISSIONS_PROGRESS_REFRESH).to.equal(99);
+    expect(LegacyNotificationValue.REALM_THRESHOLD).to.equal(1001);
+    expect(LegacyNotificationValue.DUST).to.equal(1002);
+    expect(NotificationEffect.REALM_THRESHOLD).to.equal(LegacyNotificationValue.REALM_THRESHOLD);
+    expect(NotificationEffect.DUST).to.equal(LegacyNotificationValue.DUST);
   });
 
   it('maps mission metadata values', () => {

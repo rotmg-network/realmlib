@@ -513,6 +513,45 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
   });
 
+  it('NotificationPacket effect 17 preserves an absent optional uiExtra', () => {
+    const bytes = Buffer.from('11000003786d6c', 'hex');
+    const packet = new NotificationPacket();
+    const reader = new Reader(bytes.length);
+    bytes.copy(reader.buffer);
+    packet.read(reader);
+
+    expect(reader.remaining).to.equal(0);
+    expect(packet.message).to.equal('xml');
+    expect(packet.hasUiExtra).to.equal(false);
+    expect(packet.payload).to.deep.equal({
+      kind: 'purchase',
+      effect: 17,
+      extra: 0,
+      receiptXml: 'xml',
+      uiExtra: undefined,
+    });
+
+    const writer = new Writer();
+    packet.write(writer);
+    expect(writer.buffer.subarray(0, writer.index)).to.deep.equal(bytes);
+  });
+
+  it('NotificationPacket effect 17 preserves a present zero uiExtra', () => {
+    const bytes = Buffer.from('11000003786d6c0000', 'hex');
+    const packet = new NotificationPacket();
+    const reader = new Reader(bytes.length);
+    bytes.copy(reader.buffer);
+    packet.read(reader);
+
+    expect(reader.remaining).to.equal(0);
+    expect(packet.hasUiExtra).to.equal(true);
+    expect(packet.uiExtra).to.equal(0);
+
+    const writer = new Writer();
+    packet.write(writer);
+    expect(writer.buffer.subarray(0, writer.index)).to.deep.equal(bytes);
+  });
+
   it('RealmScoreUpdatePacket reads a single int32 (no leftover)', () => {
     const reader = hexReader('00010510');
     const p = new RealmScoreUpdatePacket();

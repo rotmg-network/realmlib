@@ -26,6 +26,8 @@ export class NotificationPacket implements Packet {
    * extra UI component for some notifications
    */
   uiExtra: number;
+  /** Whether effect 17 carried its optional trailing short. */
+  hasUiExtra: boolean;
   /**
    * The player's position in the realm queue.
    */
@@ -69,6 +71,7 @@ export class NotificationPacket implements Packet {
 
     this.objectId = 0;
     this.uiExtra = 0;
+    this.hasUiExtra = false;
     this.queuePos = 0;
     this.color = 0;
     this.pictureType = 0;
@@ -162,7 +165,7 @@ export class NotificationPacket implements Packet {
           effect: NotificationEffect.ITEM_BOUGHT_FOR_INVENTORY,
           extra: this.extra,
           receiptXml: this.message,
-          uiExtra: this.uiExtra,
+          uiExtra: this.hasUiExtra ? this.uiExtra : undefined,
         };
       case NotificationEffect.TREE_UNLOCKED:
         return {
@@ -186,6 +189,23 @@ export class NotificationPacket implements Packet {
   read(reader: Reader): void {
     this.effect = reader.readByte();
     this.extra = reader.readByte();
+    this.message = '';
+    this.objectId = 0;
+    this.uiExtra = 0;
+    this.hasUiExtra = false;
+    this.queuePos = 0;
+    this.color = 0;
+    this.pictureType = 0;
+    this.senderObjectId = 0;
+    this.numberOfStars = 0;
+    this.progressMax = 0;
+    this.progressValue = 0;
+    this.hasProgressMax = false;
+    this.hasProgressValue = false;
+    this.objectTypeOrId = 0;
+    this.colorOrType = 0;
+    this.emoteType = 0;
+    this.unknownInt = 0;
     if (this.effect === 0) { // StatIncrease
       this.message = reader.readString();
     } else if (this.effect === 1) { // ServerMessage
@@ -250,6 +270,7 @@ export class NotificationPacket implements Packet {
       this.message = reader.readString();
       if (reader.remaining >= 2) {
         this.uiExtra = reader.readShort();
+        this.hasUiExtra = true;
       }
     } else if (this.effect === 18) { // reverse-engineered from a single sample
       // int32 echoes the value sent in the preceding packet 224.
@@ -311,7 +332,9 @@ export class NotificationPacket implements Packet {
       writer.writeInt32(this.emoteType);
     } else if (this.effect === 17) { // PurchaseResult
       writer.writeString(this.message);
-      writer.writeShort(this.uiExtra);
+      if (this.hasUiExtra || this.uiExtra !== 0) {
+        writer.writeShort(this.uiExtra);
+      }
     } else if (this.effect === 18) { // reverse-engineered from a single sample
       writer.writeInt32(this.unknownInt);
       writer.writeShort(this.uiExtra);

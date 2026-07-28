@@ -33,8 +33,31 @@ export enum NotificationEffect {
   MISSIONS_PROGRESS_REFRESH = 99,
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values -- compatibility alias
   MISSIONS_PROGRESS_ONLY_REFRESH = 99,
+}
+
+/**
+ * Legacy notification values which do not fit the signed-byte effect field of
+ * {@link NotificationPacket}. Their wire channel remains unresolved.
+ */
+export enum LegacyNotificationValue {
   REALM_THRESHOLD = 1001,
   DUST = 1002,
+}
+
+// Namespace merge preserves the deprecated runtime property without admitting
+// these values into the signed-byte NotificationEffect enum type.
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace NotificationEffect {
+  /**
+   * @deprecated This value is not serializable as a `NotificationPacket`
+   * effect. Use {@link LegacyNotificationValue.REALM_THRESHOLD}.
+   */
+  export const REALM_THRESHOLD = LegacyNotificationValue.REALM_THRESHOLD;
+  /**
+   * @deprecated This value is not serializable as a `NotificationPacket`
+   * effect. Use {@link LegacyNotificationValue.DUST}.
+   */
+  export const DUST = LegacyNotificationValue.DUST;
 }
 
 /** Typed view of the effect-specific NOTIFICATION payload. */
@@ -99,7 +122,7 @@ export type NotificationPayload =
       effect: NotificationEffect.ITEM_BOUGHT_FOR_INVENTORY;
       extra: number;
       receiptXml: string;
-      uiExtra: number;
+      uiExtra?: number;
     }
   | {
       kind: 'tree-unlocked';
