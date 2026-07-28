@@ -94,7 +94,9 @@ export class ShowEffectPacket implements Packet {
     if(loc2 & 1) {
       this.color = reader.readInt32();
     } else {
-      this.color = 4294967295;
+      // The wire field is signed int32, so retain the all-bits-set sentinel as
+      // -1. This remains serializable if a caller later enables the color bit.
+      this.color = -1;
     }
     if(loc2 & 32) {
       this.duration = reader.readFloat();

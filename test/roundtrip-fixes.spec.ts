@@ -60,8 +60,20 @@ describe('read/write round-trip fixes', () => {
     const back = roundTrip(fx, new ShowEffectPacket());
     expect(back.effectType).to.equal(3);
     expect(back.flags).to.equal(0);
-    expect(back.color).to.equal(4294967295); // sentinel from read()
+    expect(back.color).to.equal(-1); // signed int32 all-bits-set sentinel
     expect(back.duration).to.equal(1); // sentinel from read()
+  });
+
+  it('ShowEffectPacket can serialize its absent-color sentinel after enabling color', () => {
+    const fx = new ShowEffectPacket();
+    fx.effectType = 3;
+    fx.flags = 0;
+    const back = roundTrip(fx, new ShowEffectPacket());
+
+    back.flags |= 1;
+    const withColor = roundTrip(back, new ShowEffectPacket());
+    expect(withColor.flags & 1).to.equal(1);
+    expect(withColor.color).to.equal(-1);
   });
 
   it('ShowEffectPacket decodes the size flag', () => {
