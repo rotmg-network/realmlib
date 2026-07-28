@@ -79,12 +79,25 @@ each side with the key for the traffic it reads and writes:
 ```typescript
 import { PacketIO, INCOMING_KEY, OUTGOING_KEY } from 'realmlib';
 
-// listens to server → client traffic
-const serverIO = new PacketIO({ rc4: { incomingKey: INCOMING_KEY, outgoingKey: INCOMING_KEY } });
+// Reads and forwards server → client traffic.
+const serverIO = new PacketIO({
+  rc4: { incomingKey: INCOMING_KEY, outgoingKey: INCOMING_KEY },
+  incomingDirection: 'incoming',
+  outgoingDirection: 'incoming',
+});
 
-// listens to client → server traffic
-const clientIO = new PacketIO({ rc4: { incomingKey: OUTGOING_KEY, outgoingKey: OUTGOING_KEY } });
+// Reads and forwards client → server traffic.
+const clientIO = new PacketIO({
+  rc4: { incomingKey: OUTGOING_KEY, outgoingKey: OUTGOING_KEY },
+  incomingDirection: 'outgoing',
+  outgoingDirection: 'outgoing',
+});
 ```
+
+The direction options are required for proxies because numeric ids are scoped
+by protocol direction. For example, ids 215 and 217 each have different
+client-to-server and server-to-client packet types. A normal client can omit
+both options and use the defaults shown by its traffic flow.
 
 ### The packet map
 

@@ -9,6 +9,7 @@ import { createPacket } from './create-packet';
 import { INCOMING_KEY, OUTGOING_KEY, RC4 } from './crypto/rc4';
 import { RealmlibError } from './errors';
 import { PacketFieldProbe, probePacketFields } from './debug';
+import { getPacketDefinitionById, PacketDirection } from './packet-registry';
 
 /**
  * The configuration for the RC4 ciphers used by this PacketIO
@@ -22,9 +23,21 @@ export interface PacketIOOptions {
   socket?: Socket;
   rc4?: RC4Config;
   packetMap?: PacketMap;
+  /**
+   * Protocol direction represented by numeric ids received from the socket.
+   * Set this to `outgoing` for the client-to-server side of a proxy.
+   */
+  incomingDirection?: WirePacketDirection;
+  /**
+   * Protocol direction represented by numeric ids written to the socket.
+   * Set this to `incoming` for the server-to-client side of a proxy.
+   */
+  outgoingDirection?: WirePacketDirection;
   /** Maximum typed/raw packets waiting behind the current socket write. */
   maxOutgoingQueue?: number;
 }
+
+export type WirePacketDirection = Exclude<PacketDirection, 'unknown'>;
 
 export type SendStatus =
   | 'sent'
@@ -156,6 +169,9 @@ export class PacketIO extends EventEmitter {
   private readonly writer: Writer;
   private readonly reader: Reader;
   private readonly eventHandlers: Map<string, (...args: any[]) => void>;
+  private readonly incomingDirection: WirePacketDirection;
+  private readonly outgoingDirection: WirePacketDirection;
+  private readonly useDirectionalRegistry: boolean;
   private lastIncoming: Packet | undefined;
   private lastOutgoing: Packet | undefined;
 
@@ -180,6 +196,9 @@ export class PacketIO extends EventEmitter {
     this.sendRC4 = new RC4(opts.rc4.outgoingKey);
     this.receiveRC4 = new RC4(opts.rc4.incomingKey);
     this.packetMap = opts.packetMap || DEFAULT_PACKET_MAP;
+    this.incomingDirection = opts.incomingDirection ?? 'incoming';
+    this.outgoingDirection = opts.outgoingDirection ?? 'outgoing';
+    this.useDirectionalRegistry = this.packetMap === DEFAULT_PACKET_MAP;
 
     this.eventHandlers = new Map([
       ['data', this.onData.bind(this)],
@@ -309,8 +328,8 @@ export class PacketIO extends EventEmitter {
     frame.writeInt32BE(frame.length, 0);
     frame.writeUInt8(id, 4);
     body.copy(frame, 5);
-    const type = this.packetMap[id];
-      if (this.listenerCount('sentRawPacket') !== 0) {
+    const type = this.resolvePacketType(id, this.outgoingDirection);
+    if (this.listenerCount('sentRawPacket') !== 0) {
       this.emit('sentRawPacket', {
         id,
         type,
@@ -469,7 +488,7 @@ export class PacketIO extends EventEmitter {
     this.receiveRC4.cipher(this.reader.buffer.subarray(5, this.reader.length));
     try {
       const id = this.reader.buffer.readUInt8(4);
-      const type = this.packetMap[id];
+      const type = this.resolvePacketType(id, this.incomingDirection);
       this.reader.index = 5;
 
       // Debug hook: surface the raw bytes of every incoming packet (mapped
@@ -554,6 +573,17 @@ export class PacketIO extends EventEmitter {
       probes: probePacketFields(payload, safeOffset),
       error,
     };
+  }
+
+  private resolvePacketType(
+    id: number,
+    direction: WirePacketDirection,
+  ): PacketType | undefined {
+    if (this.useDirectionalRegistry) {
+      return getPacketDefinitionById(id, direction)?.type;
+    }
+    const mapped = this.packetMap[id];
+    return typeof mapped === 'string' ? mapped as PacketType : undefined;
   }
 
   /**

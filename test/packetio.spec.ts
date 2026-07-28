@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { Socket } from 'net';
 import {
   CheckCreditsPacket,
+  Packet,
   PacketIO,
   PacketDiagnostic,
   PacketType,
@@ -92,6 +93,64 @@ describe('PacketIO outgoing queue', () => {
 });
 
 describe('PacketIO diagnostics', () => {
+  const directionCases: Array<{
+    direction: 'incoming' | 'outgoing';
+    id: number;
+    payload: string;
+    type: PacketType;
+  }> = [
+    { direction: 'incoming', id: 215, payload: '0000002a01', type: PacketType.PARTY_JOIN_RESULT },
+    { direction: 'outgoing', id: 215, payload: '0000002a', type: PacketType.PARTY_JOIN_REQUEST },
+    {
+      direction: 'incoming',
+      id: 217,
+      payload: '0001410300010002',
+      type: PacketType.PARTY_REQUEST_RESPONSE,
+    },
+    {
+      direction: 'outgoing',
+      id: 217,
+      payload: '0001410300010002',
+      type: PacketType.PARTY_JOIN_REQUEST_RESPONSE,
+    },
+  ];
+
+  for (const fixture of directionCases) {
+    it(`resolves ${fixture.direction} id ${fixture.id} by protocol direction`, () => {
+      const { socket } = socketWithWrites([]);
+      const io = new PacketIO({
+        socket,
+        rc4: { incomingKey: '00', outgoingKey: '00' },
+        incomingDirection: fixture.direction,
+      });
+      let packet: Packet | undefined;
+      io.on(fixture.type, (event) => {
+        packet = event;
+      });
+
+      emitIncoming(socket, fixture.id, Buffer.from(fixture.payload, 'hex'));
+
+      expect(packet?.type).to.equal(fixture.type);
+    });
+  }
+
+  it('labels raw sends with the configured protocol direction', () => {
+    const { socket } = socketWithWrites([true]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+      outgoingDirection: 'incoming',
+    });
+    let sentType: PacketType | undefined;
+    io.on('sentRawPacket', (event) => {
+      sentType = event.type;
+    });
+
+    io.sendRaw(215);
+
+    expect(sentType).to.equal(PacketType.PARTY_JOIN_RESULT);
+  });
+
   it('includes payload bytes and field probes for unknown packets', () => {
     const { socket } = socketWithWrites([]);
     const io = new PacketIO({
