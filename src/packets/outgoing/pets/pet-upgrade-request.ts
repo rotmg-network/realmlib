@@ -4,40 +4,15 @@ import { Packet } from '../../../packet';
 import { PacketType } from '../../../packet-type';
 import { Reader } from '../../../reader';
 import { Writer } from '../../../writer';
-
-export type PetUpgradeOperation =
-  | {
-      kind: 'yard';
-      objectId: number;
-      paymentType: PaymentType;
-    }
-  | {
-      kind: 'feed';
-      petId: number;
-      objectId: number;
-      paymentType: PaymentType;
-      slots: SlotObjectData[];
-    }
-  | {
-      kind: 'fuse';
-      firstPetId: number;
-      secondPetId: number;
-      objectId: number;
-      paymentType: PaymentType;
-    }
-  | {
-      kind: 'backpack';
-      petId: number;
-    }
-  | {
-      kind: 'unknown';
-      transactionType: number;
-      firstPetId: number;
-      secondPetId: number;
-      objectId: number;
-      paymentType: PaymentType;
-      slots: SlotObjectData[];
-    };
+import {
+  applyPetUpgradeOperation,
+  expandPetBackpack,
+  feedPet,
+  fusePets,
+  PetUpgradeOperation,
+  petYardUpgrade,
+  projectPetUpgradeOperation,
+} from './pet-upgrade-operation';
 
 /**
  * Sent when feeding/fusing pets or upgrading the pet yard.
@@ -88,9 +63,7 @@ export class PetUpgradeRequestPacket implements Packet {
   /** Builds a pet-yard upgrade request with no item slots. */
   static yard(objectId: number, paymentType: PaymentType): PetUpgradeRequestPacket {
     const packet = new PetUpgradeRequestPacket();
-    packet.petTransType = PetUpgradeType.PetYard;
-    packet.objectId = objectId;
-    packet.paymentType = paymentType;
+    applyPetUpgradeOperation(packet, petYardUpgrade(objectId, paymentType));
     return packet;
   }
 
@@ -102,11 +75,7 @@ export class PetUpgradeRequestPacket implements Packet {
     objectId: number = 0,
   ): PetUpgradeRequestPacket {
     const packet = new PetUpgradeRequestPacket();
-    packet.petTransType = PetUpgradeType.FeedPet;
-    packet.pIdOne = petId;
-    packet.objectId = objectId;
-    packet.paymentType = paymentType;
-    packet.slotObjects = slots.map((slot) => slot.clone());
+    applyPetUpgradeOperation(packet, feedPet(petId, slots, paymentType, objectId));
     return packet;
   }
 
@@ -118,56 +87,23 @@ export class PetUpgradeRequestPacket implements Packet {
     objectId: number = 0,
   ): PetUpgradeRequestPacket {
     const packet = new PetUpgradeRequestPacket();
-    packet.petTransType = PetUpgradeType.FusePet;
-    packet.pIdOne = firstPetId;
-    packet.pIdTwo = secondPetId;
-    packet.objectId = objectId;
-    packet.paymentType = paymentType;
+    applyPetUpgradeOperation(
+      packet,
+      fusePets(firstPetId, secondPetId, paymentType, objectId),
+    );
     return packet;
   }
 
   /** Builds a request to expand a pet's backpack capacity. */
   static backpack(petId: number): PetUpgradeRequestPacket {
     const packet = new PetUpgradeRequestPacket();
-    packet.petTransType = PetUpgradeType.PetBackpack;
-    packet.pIdOne = petId;
+    applyPetUpgradeOperation(packet, expandPetBackpack(petId));
     return packet;
   }
 
   /** Returns a discriminator-based view of the current request. */
   get operation(): PetUpgradeOperation {
-    switch (this.petTransType) {
-      case PetUpgradeType.PetYard:
-        return { kind: 'yard', objectId: this.objectId, paymentType: this.paymentType };
-      case PetUpgradeType.FeedPet:
-        return {
-          kind: 'feed',
-          petId: this.pIdOne,
-          objectId: this.objectId,
-          paymentType: this.paymentType,
-          slots: this.slotObjects.map((slot) => slot.clone()),
-        };
-      case PetUpgradeType.FusePet:
-        return {
-          kind: 'fuse',
-          firstPetId: this.pIdOne,
-          secondPetId: this.pIdTwo,
-          objectId: this.objectId,
-          paymentType: this.paymentType,
-        };
-      case PetUpgradeType.PetBackpack:
-        return { kind: 'backpack', petId: this.pIdOne };
-      default:
-        return {
-          kind: 'unknown',
-          transactionType: this.petTransType,
-          firstPetId: this.pIdOne,
-          secondPetId: this.pIdTwo,
-          objectId: this.objectId,
-          paymentType: this.paymentType,
-          slots: this.slotObjects.map((slot) => slot.clone()),
-        };
-    }
+    return projectPetUpgradeOperation(this);
   }
 
   write(writer: Writer): void {

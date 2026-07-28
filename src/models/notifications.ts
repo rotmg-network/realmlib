@@ -131,7 +131,7 @@ export type NotificationPayload =
       value: number;
       uiExtra: number;
     }
-  | { kind: 'unknown'; effect: number; extra: number };
+  | { kind: 'unknown'; effect: number; extra: number; rawPayload?: Buffer };
 
 /**
  * Chat text kind on the `TEXT` packet, from client enum `FBAIGIMMLKK`
