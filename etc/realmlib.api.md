@@ -623,6 +623,11 @@ export enum CharacterStatAxis {
 }
 
 // @public
+export class CharacterXmlParseError extends Error {
+    constructor(message: string);
+}
+
+// @public
 export class ChatHelloPacket implements Packet {
     constructor();
     accountId: string;
@@ -1711,7 +1716,6 @@ export class DashResetPacket implements Packet {
 // @public
 export interface DataPacket {
     read(reader: Reader): void;
-    toString(): string;
     write(writer: Writer): void;
 }
 
@@ -2330,6 +2334,12 @@ export class GiftItemsPacket implements Packet {
     recipient: string;
     // (undocumented)
     readonly type = PacketType.GIFT_ITEMS;
+    // @deprecated (undocumented)
+    get unknownString(): string;
+    set unknownString(value: string);
+    // @deprecated (undocumented)
+    get unknownString2(): string;
+    set unknownString2(value: string);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -2793,6 +2803,14 @@ export class KeyInfoResponsePacket implements Packet {
 }
 
 // @public
+export enum LegacyNotificationValue {
+    // (undocumented)
+    DUST = 1002,
+    // (undocumented)
+    REALM_THRESHOLD = 1001
+}
+
+// @public
 export class LoadingScreenPacket implements Packet {
     constructor();
     // (undocumented)
@@ -3106,8 +3124,6 @@ export enum NotificationEffect {
     // (undocumented)
     CRUCIBLE_DATA_REFRESH = 16,
     // (undocumented)
-    DUST = 1002,
-    // (undocumented)
     EMOTE = 13,
     // (undocumented)
     ERROR = 2,
@@ -3143,8 +3159,6 @@ export enum NotificationEffect {
     // (undocumented)
     REALM_QUEUE = 5,
     // (undocumented)
-    REALM_THRESHOLD = 1001,
-    // (undocumented)
     STICKY = 3,
     // (undocumented)
     SYSTEM = 1,
@@ -3160,6 +3174,14 @@ export enum NotificationEffect {
     WITH_ICON = 21
 }
 
+// @public (undocumented)
+export namespace NotificationEffect {
+    const // @deprecated (undocumented)
+    REALM_THRESHOLD = LegacyNotificationValue.REALM_THRESHOLD;
+    const // @deprecated (undocumented)
+    DUST = LegacyNotificationValue.DUST;
+}
+
 // @public
 export class NotificationPacket implements Packet {
     constructor();
@@ -3170,6 +3192,7 @@ export class NotificationPacket implements Packet {
     extra: number;
     hasProgressMax: boolean;
     hasProgressValue: boolean;
+    hasUiExtra: boolean;
     message: string;
     numberOfStars: number;
     objectId: number;
@@ -3255,7 +3278,7 @@ export type NotificationPayload = {
     effect: NotificationEffect.ITEM_BOUGHT_FOR_INVENTORY;
     extra: number;
     receiptXml: string;
-    uiExtra: number;
+    uiExtra?: number;
 } | {
     kind: 'tree-unlocked';
     effect: NotificationEffect.TREE_UNLOCKED;
@@ -3341,10 +3364,11 @@ export interface PacketDiagnostic extends RawPacket {
     // (undocumented)
     error?: unknown;
     offset: number;
+    opaqueBytes?: number;
     probes: PacketFieldProbe[];
     remaining: number;
     // (undocumented)
-    status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error' | 'leftover';
+    status: 'unknown' | 'unimplemented' | 'parsed' | 'parse-error' | 'leftover' | 'opaque';
 }
 
 // @public (undocumented)
@@ -4449,11 +4473,11 @@ export interface PlayerData {
     nextLevelExp: number;
     objectId: number;
     potionBelt: boolean;
-    potionOneAmount: number;
+    potionOneAmount?: number;
     potionOneType: number;
-    potionThreeAmount: number;
+    potionThreeAmount?: number;
     potionThreeType: number;
-    potionTwoAmount: number;
+    potionTwoAmount?: number;
     potionTwoType: number;
     projLifeMult: number;
     projSpeedMult: number;
@@ -5010,6 +5034,9 @@ export class ResetEnchantmentRerollCountPacket implements Packet {
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.RESET_ENCHANTMENT_REROLL_COUNT;
+    // @deprecated (undocumented)
+    get unknownString(): string;
+    set unknownString(value: string);
     value: string;
     // (undocumented)
     write(writer: Writer): void;
@@ -5999,11 +6026,10 @@ export const Unknown181Packet: typeof ActivateCrucibleResultPacket;
 export type Unknown181Packet = ActivateCrucibleResultPacket;
 
 // @public @deprecated (undocumented)
-export class Unknown198Packet extends ResetEnchantmentRerollCountPacket {
-    // (undocumented)
-    get unknownString(): string;
-    set unknownString(value: string);
-}
+export const Unknown198Packet: typeof ResetEnchantmentRerollCountPacket;
+
+// @public @deprecated (undocumented)
+export type Unknown198Packet = ResetEnchantmentRerollCountPacket;
 
 // @public @deprecated (undocumented)
 export class Unknown199Packet extends ResetEnchantmentRerollCountResultPacket {
@@ -6019,14 +6045,10 @@ export const Unknown224Packet: typeof UnlockMissionTreePacket;
 export type Unknown224Packet = UnlockMissionTreePacket;
 
 // @public @deprecated (undocumented)
-export class Unknown226Packet extends GiftItemsPacket {
-    // (undocumented)
-    get unknownString(): string;
-    set unknownString(value: string);
-    // (undocumented)
-    get unknownString2(): string;
-    set unknownString2(value: string);
-}
+export const Unknown226Packet: typeof GiftItemsPacket;
+
+// @public @deprecated (undocumented)
+export type Unknown226Packet = GiftItemsPacket;
 
 // @public @deprecated (undocumented)
 export class Unknown231Packet extends StacksPacket {
@@ -6159,6 +6181,7 @@ export class VaultContentPacket implements Packet {
     materialObjectId: number;
     materialUpgradeCost: number;
     nextPotionMax: number;
+    opaqueTail: Buffer;
     potionContents: number[];
     potionObjectId: number;
     potionUpgradeCost: number;
@@ -6168,7 +6191,9 @@ export class VaultContentPacket implements Packet {
     spoilsObjectId: number;
     // (undocumented)
     readonly type = PacketType.VAULT_CONTENT;
-    unknownBytes: number[];
+    // @deprecated
+    get unknownBytes(): number[];
+    set unknownBytes(bytes: number[]);
     vaultContents: number[];
     vaultUpgradeCost: number;
     // (undocumented)

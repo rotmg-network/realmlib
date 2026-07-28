@@ -142,7 +142,6 @@ export class VaultContentPacket implements Packet {
     return Array.from(this.opaqueTail, (byte) => byte > 127 ? byte - 256 : byte);
   }
 
-  /** @deprecated Use {@link opaqueTail}. */
   set unknownBytes(bytes: number[]) {
     if (bytes.some((byte) => !Number.isInteger(byte) || byte < -128 || byte > 255)) {
       throw new RangeError('VaultContentPacket unknownBytes must contain byte values');

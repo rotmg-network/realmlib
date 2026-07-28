@@ -34,7 +34,6 @@ export class ResetEnchantmentRerollCountPacket implements Packet {
     return this.value;
   }
 
-  /** @deprecated Use {@link value}. */
   set unknownString(value: string) {
     this.value = value;
   }

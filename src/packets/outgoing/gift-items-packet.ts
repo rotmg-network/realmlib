@@ -39,7 +39,6 @@ export class GiftItemsPacket implements Packet {
     return this.items;
   }
 
-  /** @deprecated Use {@link items}. */
   set unknownString(value: string) {
     this.items = value;
   }
@@ -49,7 +48,6 @@ export class GiftItemsPacket implements Packet {
     return this.recipient;
   }
 
-  /** @deprecated Use {@link recipient}. */
   set unknownString2(value: string) {
     this.recipient = value;
   }
