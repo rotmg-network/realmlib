@@ -43,7 +43,7 @@ export class TradeStartPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const clientItemsLen = reader.validateCollectionCount(reader.readShort(), 10, 'client trade items');
+    const clientItemsLen = reader.validateCollectionCount(reader.readShort(), 12, 'client trade items');
     this.clientItems = new Array(clientItemsLen);
     for (let i = 0; i < clientItemsLen; i++) {
       const item = new TradeItem();
@@ -51,7 +51,7 @@ export class TradeStartPacket implements Packet {
       this.clientItems[i] = item;
     }
     this.partnerName = reader.readString();
-    const partnerItemsLen = reader.validateCollectionCount(reader.readShort(), 10, 'partner trade items');
+    const partnerItemsLen = reader.validateCollectionCount(reader.readShort(), 12, 'partner trade items');
     this.partnerItems = new Array(partnerItemsLen);
     for (let i = 0; i < partnerItemsLen; i++) {
       const item = new TradeItem();

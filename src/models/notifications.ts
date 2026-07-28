@@ -80,6 +80,14 @@ export type NotificationPayload =
       value?: number;
     }
   | {
+      kind: 'behaviour';
+      effect: NotificationEffect.BEHAVIOUR;
+      extra: number;
+      message: string;
+      objectTypeOrId: number;
+      colorOrType: number;
+    }
+  | {
       kind: 'emote';
       effect: NotificationEffect.EMOTE;
       extra: number;

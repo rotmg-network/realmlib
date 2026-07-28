@@ -50,6 +50,10 @@ export class NotificationPacket implements Packet {
   hasProgressMax: boolean;
   /** Whether effect 11 carried its trailing int16 current value. */
   hasProgressValue: boolean;
+  /** First raw int32 carried by effect 12; observed to vary by event/object. */
+  objectTypeOrId: number;
+  /** Second raw int32 carried by effect 12; stable within encounter families. */
+  colorOrType: number;
   /** Effect-13 emote type. */
   emoteType: number;
   /**
@@ -74,6 +78,8 @@ export class NotificationPacket implements Packet {
     this.progressValue = 0;
     this.hasProgressMax = false;
     this.hasProgressValue = false;
+    this.objectTypeOrId = 0;
+    this.colorOrType = 0;
     this.emoteType = 0;
     this.unknownInt = 0;
   }
@@ -132,6 +138,15 @@ export class NotificationPacket implements Packet {
           message: (this.extra & 3) !== 0 ? this.message : undefined,
           maximum: this.hasProgressMax ? this.progressMax : undefined,
           value: this.hasProgressValue ? this.progressValue : undefined,
+        };
+      case NotificationEffect.BEHAVIOUR:
+        return {
+          kind: 'behaviour',
+          effect: NotificationEffect.BEHAVIOUR,
+          extra: this.extra,
+          message: this.message,
+          objectTypeOrId: this.objectTypeOrId,
+          colorOrType: this.colorOrType,
         };
       case NotificationEffect.EMOTE:
         return {
@@ -217,6 +232,10 @@ export class NotificationPacket implements Packet {
         this.progressValue = reader.readShort();
         this.hasProgressValue = true;
       }
+    } else if (this.effect === 12) { // Behaviour/event announcement
+      this.message = reader.readString();
+      this.objectTypeOrId = reader.readInt32();
+      this.colorOrType = reader.readInt32();
     } else if (this.effect === 13) { // Emote
       this.objectId = reader.readInt32();
       this.emoteType = reader.readInt32();
@@ -283,6 +302,10 @@ export class NotificationPacket implements Packet {
       if (this.hasProgressValue || this.progressValue !== 0) {
         writer.writeShort(this.progressValue);
       }
+    } else if (this.effect === 12) { // Behaviour/event announcement
+      writer.writeString(this.message);
+      writer.writeInt32(this.objectTypeOrId);
+      writer.writeInt32(this.colorOrType);
     } else if (this.effect === 13) { // Emote
       writer.writeInt32(this.objectId);
       writer.writeInt32(this.emoteType);
