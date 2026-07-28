@@ -24,40 +24,106 @@ export interface CharacterData {
   equipment: number[];
 }
 
-function tagText(xml: string, name: string): string | undefined {
-  return new RegExp(`<${name}>([\\s\\S]*?)</${name}>`).exec(xml)?.[1];
+/** Raised when a present `<Char>` block violates the supported XML schema. */
+export class CharacterXmlParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'CharacterXmlParseError';
+  }
 }
 
-function tagInt(xml: string, name: string, fallback = 0): number {
+function decodeXmlText(value: string): string {
+  return value.replace(/&(#x[0-9a-f]+|#\d+|amp|apos|gt|lt|quot);/gi, (entity, body: string) => {
+    if (body[0] === '#') {
+      const hex = body[1].toLowerCase() === 'x';
+      const codePoint = Number.parseInt(body.slice(hex ? 2 : 1), hex ? 16 : 10);
+      if (!Number.isSafeInteger(codePoint) || codePoint > 0x10ffff) {
+        throw new CharacterXmlParseError(`Invalid XML numeric entity: ${entity}`);
+      }
+      return String.fromCodePoint(codePoint);
+    }
+    const named: Record<string, string> = {
+      amp: '&',
+      apos: '\'',
+      gt: '>',
+      lt: '<',
+      quot: '"',
+    };
+    return named[body.toLowerCase()];
+  });
+}
+
+function tagText(xml: string, name: string): string | undefined {
+  const value = new RegExp(`<${name}\\s*>([\\s\\S]*?)</${name}\\s*>`).exec(xml)?.[1];
+  return value === undefined ? undefined : decodeXmlText(value.trim());
+}
+
+function parseInteger(raw: string, field: string): number {
+  if (!/^[+-]?\d+$/.test(raw)) {
+    throw new CharacterXmlParseError(`${field} must be an integer`);
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value)) {
+    throw new CharacterXmlParseError(`${field} exceeds the safe integer range`);
+  }
+  return value;
+}
+
+function tagInt(xml: string, name: string, required = false): number {
   const raw = tagText(xml, name);
-  const value = raw === undefined ? NaN : parseInt(raw, 10);
-  return Number.isFinite(value) ? value : fallback;
+  if (raw === undefined) {
+    if (required) {
+      throw new CharacterXmlParseError(`Missing required <${name}> value`);
+    }
+    return 0;
+  }
+  return parseInteger(raw, `<${name}>`);
 }
 
 /** Parses an `<Equipment>` body (`2504,2648#...,-1,...`) into item ids. */
 function parseEquipment(body: string | undefined): number[] {
-  if (!body) {
+  if (body === undefined || body === '') {
     return [];
   }
-  return body.split(',').map((slot) => {
-    const id = parseInt(slot.split('#', 1)[0], 10);
-    return Number.isFinite(id) ? id : -1;
+  return body.split(',').map((slot, index) => {
+    const id = slot.split('#', 1)[0].trim();
+    return parseInteger(id, `<Equipment> slot ${index}`);
   });
+}
+
+function characterId(block: string): number {
+  const openingTag = /^<Char\b[^>]*>/.exec(block)?.[0];
+  const raw = openingTag
+    ? /\bid\s*=\s*(?:"([^"]*)"|'([^']*)')/.exec(openingTag)
+    : undefined;
+  if (!raw) {
+    throw new CharacterXmlParseError('Missing required Char id attribute');
+  }
+  return parseInteger(decodeXmlText((raw[1] ?? raw[2]).trim()), 'Char id');
 }
 
 /**
  * Parses the first `<Char>` block in `xml` into a {@link CharacterData}.
- * Returns `undefined` if there is no `<Char>` element.
+ * Returns `undefined` if there is no `<Char>` element. The accepted schema is
+ * deliberately small; malformed required ids and numeric fields throw instead
+ * of being converted into plausible zero values.
  */
 export function parseCharacterXml(xml: string): CharacterData | undefined {
-  const block = /<Char\b[^>]*>[\s\S]*?<\/Char>/.exec(xml)?.[0];
+  const block = /<Char\b[^>]*>[\s\S]*?<\/Char\s*>/.exec(xml)?.[0];
   if (!block) {
+    if (/<Char\b/.test(xml)) {
+      throw new CharacterXmlParseError('Incomplete <Char> block');
+    }
     return undefined;
   }
+  const seasonal = tagText(block, 'Seasonal');
+  if (seasonal !== undefined && !/^(?:true|false)$/i.test(seasonal)) {
+    throw new CharacterXmlParseError('<Seasonal> must be true or false');
+  }
   return {
-    id: Number(/<Char\b[^>]*\bid="(\d+)"/.exec(block)?.[1] ?? 0),
-    classType: tagInt(block, 'ObjectType'),
-    seasonal: /^true$/i.test(tagText(block, 'Seasonal') ?? ''),
+    id: characterId(block),
+    classType: tagInt(block, 'ObjectType', true),
+    seasonal: /^true$/i.test(seasonal ?? ''),
     level: tagInt(block, 'Level'),
     exp: tagInt(block, 'Exp'),
     currentFame: tagInt(block, 'CurrentFame'),
@@ -71,11 +137,17 @@ export function parseCharacterXml(xml: string): CharacterData | undefined {
  */
 export function parseCharacterListXml(xml: string): CharacterData[] {
   const chars: CharacterData[] = [];
-  for (const match of xml.matchAll(/<Char\b[^>]*>[\s\S]*?<\/Char>/g)) {
+  let blockCount = 0;
+  for (const match of xml.matchAll(/<Char\b[^>]*>[\s\S]*?<\/Char\s*>/g)) {
+    blockCount++;
     const parsed = parseCharacterXml(match[0]);
     if (parsed) {
       chars.push(parsed);
     }
+  }
+  const openingCount = xml.match(/<Char\b/g)?.length ?? 0;
+  if (openingCount !== blockCount) {
+    throw new CharacterXmlParseError('Incomplete <Char> block in character list');
   }
   return chars;
 }
