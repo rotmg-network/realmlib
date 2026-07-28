@@ -84,6 +84,7 @@ export * from './accelerator-updated-packet';
 export * from './pet-shader-purchase-result-packet';
 export * from './unknown116-packet';
 export * from './unknown199-packet';
+export * from './unknown231-packet';
 export * from './gift-result-packet';
 export * from './slipping-info-packet';
 export * from './loading-screen-packet';

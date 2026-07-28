@@ -6,7 +6,7 @@ The rotmg-extractor dump (packet_structures.json, 178 vtable-exact layouts +
 the incoming message factory) resolved most of this playbook without captures.
 Landed in realmlib: 115, 129, 130, 133, 136(doc), 146, 147, 148, 151, 152, 153,
 156, 166 (= DamageWithEffect, ex-STASIS), 167, 181 (= ActivateCrucibleResult),
-193/194, 198/199, 222, 224 (= UnlockMissionTree), 225, 226, 227, 231(id),
+193/194, 198/199, 222, 224 (= UnlockMissionTree), 225, 226, 227, 231,
 236, 116, 135(id), 132(id), plus enum batches. **173/175/177/187 and 162 do
 not exist in build 6.12.0.2.0** (superseded by the 189–198 cluster), and
 **1000 cannot be a wire id** (ids are single bytes).
@@ -18,7 +18,7 @@ What captures are still worth taking, in order:
    Highest value: 115+116 (exaltation redeem), 146→147 (skin recycle),
    151→152 (BP milestone boost), 156, 167, 236.
 2. **Nested-framing blockers** — 132 (custom map list), 135 (refine result),
-   218 (server-name list), 231 (stat-bonus/stacks block), 238 (GiftInfo).
+   218 (server-name list), 238 (GiftInfo).
    A single body each pins the list/struct framing.
 3. **Naming ambiguities** — buy a **dust bundle** at the enchanter (settles
    whether 191/192 are BuyDusts/Result vs reroll-count reset); trigger an
@@ -94,12 +94,13 @@ with **141** = `01 0000` = `byte success(1) + short code(0)`. Both confirmed.
 | **156 SET_GRAVE_STONE** | C→S | `int32 gravestoneType` | type in objects.xml (gravestone); follow-up `47 RESKIN_UNLOCK` type `4` (Gravestone) |
 | **162 SET_TRACKED_SEASON** | C→S | `int32 seasonId` (e.g. 50/51) or `string seasonId` | value = a season id from `/missions/getClientSeasons`; int32 50 = `00000032`, a string starts `0002…` |
 | **167 SET_DISCOVERABLE** | C→S | `byte discoverable` (0/1) | capture both toggles — a single `00` / `01` |
+| **231 UNKNOWN231** | S→C | `int32 unknown + int32 active` | trigger item `0x946e` while logging local ability phase/cooldown; the corpus confirms `0,1` activation and `0,0` deactivation, but not field-one semantics |
 | **173 UNLOCK_ENCHANTMENT_SLOT** | C→S | `SlotObjectData target` (12B) `[+ byte slotIndex]` | the 12B triple = (playerId, invSlot, itemType) of a preceding INVSWAP/USEITEM; stat-80 blob gains a slot |
 | **175 UNLOCK_ENCHANTMENT** | C→S | `SlotObjectData target + int32 enchantmentType` | enchantmentType resolves via `EnchantType`; item's `parseEnchantments` changes |
 | **177 APPLY_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot + int32 enchantmentType` | which enchant slot filled matches `byte`; new id in the stat-80 blob = `int32` |
 | **187 UPGRADE_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot` | the upgraded slot index = `byte`; blob's id at that slot bumps |
 | **238 GIFT_NOTIFICATION** | S→C | `int32 giftId` or `short count + …` | fires on a received/pending gift; cross-ref `/craigsgift/info`; keep neighbours |
-| **166 STASIS** | S→C? | `int32 objectId +` known 12B tail `01 16 00×6 ff ff ff 16` | **confirm direction + the bytes before the tail first**; if S→C the int32 = an enemy objectId entering stasis |
+| **166 DAMAGE_WITH_EFFECT** | S→C | `int32 targetId + u8 effectCount + u8[] effects + u16 damage + u8 info + u16 bulletId + int32 ownerObjectId + u8 magnitudeEffect + float magnitude` | vary the leading and magnitude-bearing effects independently; Curse (38) before a Stasis (22) magnitude is already confirmed |
 | **148 DAMAGE_BOOST** | S→C | `int32 objectId + int32 amount [+ int32 durationMs]` | objectId = the buffed entity; fires when a damage buff applies |
 
 Each result packet you find that isn't already registered is itself a new id to
@@ -221,9 +222,9 @@ Fresh client launch, proxy on, keep both logs.
 
 - **[P] 148 DAMAGE_BOOST** (incoming) — trigger a damage-boost effect (berserk /
   damaging buff consumable) and capture it mid-combat.
-- **[P] 166 STASIS** — fight enemies with a stasis mechanic; capture the packet
-  **with its surrounding bytes and direction** (the constant 12-byte tail is
-  known, the head and direction are not — needed before it can be registered).
+- **166 DAMAGE_WITH_EFFECT** — fight enemies with several magnitude-bearing
+  conditions. The generic layout and incoming direction are confirmed; vary
+  the leading and trailing effects independently to refine semantics.
 - **[F]** shooting packets with unknown fields, captured in live combat:
   `49 ALLYSHOOT` (2), `12 SERVERPLAYERSHOOT` (2), `30 PLAYERSHOOT` (2),
   `46 DEATH` (1), `18 GOTO` (1), `42 UPDATE` (1), `92 MAPINFO` (3).

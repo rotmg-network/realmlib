@@ -224,8 +224,9 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 225, type: PacketType.UNLOCK_MISSION, direction: 'outgoing', factory: () => new OutgoingPackets.UnlockMissionPacket() },
   { id: 226, type: PacketType.UNKNOWN226, direction: 'outgoing', factory: () => new OutgoingPackets.Unknown226Packet() },
   { id: 227, type: PacketType.GIFT_RESULT, direction: 'incoming', factory: () => new IncomingPackets.GiftResultPacket() },
-  // 231: single nested stat-bonus/stacks block; framing unconfirmed, no factory.
-  { id: 231, type: PacketType.UNKNOWN231, direction: 'incoming' },
+  // Observed as two raw int32 values around activation/deactivation of a
+  // multi-phase ability. Semantics remain provisional.
+  { id: 231, type: PacketType.UNKNOWN231, direction: 'incoming', factory: () => new IncomingPackets.Unknown231Packet() },
   { id: 232, type: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD, direction: 'outgoing', factory: () => new OutgoingPackets.ClaimAccountLevelRewardPacket() },
   { id: 233, type: PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT, direction: 'incoming', factory: () => new IncomingPackets.ClaimAccountLevelRewardResultPacket() },
   { id: 234, type: PacketType.CLAIM_REWARD, direction: 'outgoing', factory: () => new OutgoingPackets.ClaimRewardPacket() },

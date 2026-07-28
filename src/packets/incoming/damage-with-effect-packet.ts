@@ -9,14 +9,14 @@ import { Writer } from '../../writer';
  * `AHOLOBFDLMN : Damage` (= the catalog's `DamageWithEffect`), bound to id 166
  * in the client's incoming message factory.
  *
- * Id 166 was carried in realmlib as `STASIS` (a pyrelay-era name): every
- * captured sample so far IS a stasis application, e.g.
+ * Id 166 was carried in realmlib as `STASIS` (a pyrelay-era name). Captures
+ * confirm that it is generic: the leading effect list can contain Curse (38)
+ * while the magnitude-bearing trailing effect is Stasis (22). A stasis sample:
  * `000003af 01 16 0000 00 0000 00ffffff 16 40e00000` = target 943, effects
  * [22 = Stasis], 0 damage, no bullet, owner 0xffffff (sentinel), effect 22,
  * value 7.0. The value counts down across updates for the same target
  * (7.0 → ~2.98) and 0.0 clears it, so for stasis it is the remaining duration
- * in seconds. Ten samples from the 2026-07-27 19:40 session all parse this way
- * with zero leftover.
+ * in seconds.
  */
 export class DamageWithEffectPacket implements Packet {
 
@@ -25,7 +25,7 @@ export class DamageWithEffectPacket implements Packet {
   //#region packet-specific members
   /** The object id of the entity receiving the damage/effect. */
   targetId: number;
-  /** Status effects applied with the damage (22 = Stasis in all captures). */
+  /** Status effects applied with the damage (observed 22 = Stasis, 38 = Curse). */
   effects: number[];
   /** The amount of damage taken (0 in all captures). */
   damageAmount: number;

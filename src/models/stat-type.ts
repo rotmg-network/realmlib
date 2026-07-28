@@ -156,7 +156,10 @@ export enum StatType {
   /** Current metadata defines this stat, but its payload semantics are unknown. */
   UNKNOWN_151 = 151,
   UNKNOWN_155 = 155,
-  /** Unresolved numeric stat; observed values range from 0 to 10000. */
+  /**
+   * Unresolved numeric stat seen across many object families; observed range
+   * 0-60000 with common values 0, 7000, and 10000.
+   */
   UNKNOWN_158 = 158,
 
   // Resolved via RealmShark/ProdMafia. 125 varies over an object's lifetime
@@ -191,7 +194,9 @@ export enum StatType {
   ACCOUNT_LEVEL_STAT = 152,
   ACCOUNT_LEVEL_EXP_STAT = 153,
   UNKNOWN_154 = 154,
+  /** Unresolved numeric stat; observed values range from 9 to 18. */
   UNKNOWN_156 = 156,
+  /** Unresolved numeric stat; observed values range from 0 to 9. */
   UNKNOWN_157 = 157,
 }
 
