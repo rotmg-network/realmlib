@@ -21,6 +21,29 @@ The accepted raw-token policy remains unchanged: authentication tokens and
 reconnect key material are still included in their packet `toString()` output
 and covered by regression tests.
 
+## P2 implementation status
+
+All P2 findings in this review were implemented on 2026-07-28:
+
+- `027c854` models the complete `PacketIO` connection lifecycle and rejects
+  invalid byte ids before queueing;
+- `bfe380c` preserves the optional effect-17 notification tail and separates
+  legacy values that cannot fit the notification effect byte;
+- `1dbcfc3` validates PIC bodies, makes deprecated packet constructors true
+  aliases, removes `toString()` from the codec contract, fixes `StatData`
+  output, and marks unresolved potion amounts optional;
+- `609f046` scopes and hardens character XML parsing, including required-field,
+  quote-style, entity, and malformed-number handling;
+- `aba9c58` models vault trailing data as an unsigned opaque buffer and reports
+  it honestly through live and corpus diagnostics;
+- `4ed643b` typechecks test sources and exercises the default write/read
+  contract of every registered packet factory, with explicit invariant-bound
+  exemptions;
+- `feb2dec` restores the project’s historical MIT license declaration and
+  canonical license text.
+
+The accepted raw-token policy was not changed by any P2 work.
+
 ## Executive summary
 
 RealmLib has a sound protocol-library core: packet metadata is centralized,
