@@ -1,312 +1,130 @@
-import {Classes, GuildRank} from '.';
-import {WorldPosData} from '../data';
+import type { WorldPosData } from '../data';
+import { Classes } from './classes';
+import { GuildRank } from './guild-rank';
 
-/**
- * The properties of a player, or other entity such as an enemy
- */
-export interface PlayerData {
-    /**
-     * The unique identifier of this entity
-     * This is session-based and will be different each time an entity enters a map
-     */
-    objectId: number;
-    /**
-     * The position of the entity
-     */
-    worldPos: WorldPosData;
-    /**
-     * The name of the player
-     */
-    name: string;
-    /** Optional title/name-decoration token appended to NAME_STAT. */
-    nameTitle?: string;
-    /** Optional name-background token appended to NAME_STAT. */
-    nameBackground?: string;
-    /**
-     * The level of the player
-     */
-    level: number;
-    /**
-     * The total XP points of the player
-     */
-    exp: number;
-    /** Account-wide BXP (stat 61). */
-    bxp: number;
-    /** Whether this character is seasonal (stat 24). */
-    seasonal: boolean;
-    /** Account level (stat 152). */
-    accountLevel: number;
-    /** Account-level XP / ALXPCurrent (stat 153). */
-    accountLevelExp: number;
-    /**
-     * The current character fame of the player
-     */
-    currentFame: number;
-    /**
-     * The number of stars of the player
-     */
-    stars: number;
-    /**
-     * The account id of the player. This will never change for any given player
-     */
-    accountId: string;
-    /**
-     * The account fame of the player
-     */
-    accountFame: number;
-    /**
-     * Whether or not the player has chosen a unique name
-     */
-    nameChosen: boolean;
-    /**
-     * The name of the player's guild, if they are in one
-     */
-    guildName: string;
-    /**
-     * The guild rank of this player, if they are in a guild
-     */
-    guildRank: GuildRank;
-    /**
-     * The account gold of this player
-     */
-    gold: number;
-    /**
-     * The class of the character
-     */
-    class: Classes;
-    /**
-     * The name of the character's class
-     */
-    className: string;
-    /**
-     * The maximum HP of the entity
-     */
-    maxHP: number;
-    /**
-     * The increase in max HP which has been added due to bonuses (e.g. equipping a ring)
-     */
-    maxHPBoost: number;
-    /**
-     * The maximum MP of the player
-     */
-    maxMP: number;
-    /**
-     * The increase in max MP which has been added due to bonuses (e.g. equipping a ring)
-     */
-    maxMPBoost: number;
-    /**
-     * The current HP of the entity
-     */
-    hp: number;
-    /**
-     * The current MP of the player
-     */
-    mp: number;
-    /**
-     * The attack stat of this player. This includes stat bonuses from equipped items
-     */
-    atk: number;
-    /**
-     * The amount of attack which has been added due to bonuses (e.g. equipping armor)
-     */
-    atkBoost: number;
-    /**
-     * The defense stat of this player. This includes stat bonuses from equipped items
-     */
-    def: number;
-    /**
-     * The amount of defense which has been added due to bonuses (e.g. equipping armor)
-     */
-    defBoost: number;
-    /**
-     * The speed stat of this player. This includes stat bonuses from equipped items
-     */
-    spd: number;
-    /**
-     * The amount of speed which has been added due to bonuses (e.g. equipping armor)
-     */
-    spdBoost: number;
-    /**
-     * The dexterity stat of this player. This includes stat bonuses from equipped items
-     */
-    dex: number;
-    /**
-     * The amount of dexterity which has been added due to bonuses (e.g. equipping armor)
-     */
-    dexBoost: number;
-    /**
-     * The wisdom stat of this player. This includes stat bonuses from equipped items
-     */
-    wis: number;
-    /**
-     * The amount of wisdom which has been added due to bonuses (e.g. equipping armor)
-     */
-    wisBoost: number;
-    /**
-     * The vitality stat of this player. This includes stat bonuses from equipped items
-     */
-    vit: number;
-    /**
-     * The amount of vitality which has been added due to bonuses (e.g. equipping armor)
-     */
-    vitBoost: number;
-    /**
-     * The condition flags for this entity (first word, CONDITION_STAT).
-     * The number itself will be meaningless, the effects are represented with individual bits of the number.
-     * Test bits against `ConditionEffectBits`.
-     */
-    condition: number;
-    /**
-     * The second condition-flags word for this entity (NEW_CON_STAT), holding
-     * effect indices 32-59. Test bits against `ConditionEffectBits2`.
-     */
-    condition2: number;
-    /**
-     * The number of HP potions this player has stored
-     */
-    hpPots: number;
-    /**
-     * The number of MP potions this player has stored
-     */
-    mpPots: number;
-    /**
-     * Whether or not this player has a backpack
-     */
-    hasBackpack: boolean;
-    /**
-     * The contents of the players inventory.
-     * Items are represented by their item id, or `-1` if the slot is empty
-     */
-    inventory: number[];
-    /**
-     * The server this entity is connected to.
-     * @deprecated This is only guaranteed to be correct for players tracked by the player tracker
-     */
-    server: string;
-    /**
-     * The size of this player
-     */
-    size: number;
-    /**
-     * The amount of EXP required to advance to the next level
-     */
-    nextLevelExp: number;
-    /**
-     * The clothing dye of this player
-     */
-    clothingDye: number;
-    /**
-     * The accessory dye of this player
-     */
-    accessoryDye: number;
-    /**
-     * The amount of fame required to achieve the next class quest
-     */
-    nextClassQuestFame: number;
-    /**
-     * > Unknown
-     */
-    legendaryRank: number;
-    /**
-     * Whether or not this player has an active XP booster
-     */
-    xpBoosted: boolean;
-    /**
-     * The amount of time left of this player's XP booster
-     */
-    xpBoostTime: number;
-    /**
-     * The skin of this player
-     */
-    texture: number;
-    /**
-     * The number of fortune tokens this player has
-     */
-    fortuneTokens: number;
-    /**
-     * The multiplier for projectile speed for shots from this player
-     */
-    projSpeedMult: number;
-    /**
-     * The multiplier for projectile lifetime for shots from this player
-     */
-    projLifeMult: number;
-    /**
-     * The players exalted HP stat
-     */
-    exaltedHP: number;
-    /**
-     * The players exalted MP stat
-     */
-    exaltedMP: number;
-    /**
-     * The players exalted Attack stat
-     */
-    exaltedAtt: number;
-    /**
-     * The players exalted Defense stat
-     */
-    exaltedDef: number;
-    /**
-     * The players exalted Speed stat
-     */
-    exaltedSpd: number;
-    /**
-     * The players exalted Dexterity stat
-     */
-    exaltedDex: number;
-    /**
-     * The players exalted Vitality stat
-     */
-    exaltedVit: number;
-    /**
-     * The players exalted Wisdom stat
-     */
-    exaltedWis: number;
-    /**
-     * The potion type in the first quickslot
-     */
-    potionOneType: number;
-    /**
-     * The amount of potions in the first quickslot, when known. The current
-     * stat projection does not infer this from the unresolved secondary value.
-     */
-    potionOneAmount?: number;
-    /**
-     * The potion type in the second quickslot
-     */
-    potionTwoType: number;
-    /**
-     * The amount of potions in the second quickslot, when known. The current
-     * stat projection does not infer this from the unresolved secondary value.
-     */
-    potionTwoAmount?: number;
-    /**
-     * The potion type in the third quickslot
-     */
-    potionThreeType: number;
-    /**
-     * The amount of potions in the third quickslot, when known. The current
-     * stat projection does not infer this from the unresolved secondary value.
-     */
-    potionThreeAmount?: number;
-    /**
-     * Whether or not the player has the third quickslot unlocked
-     */
-    potionBelt: boolean;
-    /**
-     * The amount of forgefire the player has
-     */
-    forgefire: number;
+/** Identity, appearance, and map-local location fields. */
+export interface PlayerIdentityLocationData {
+  /** Session-local entity id. */
+  objectId: number;
+  worldPos: WorldPosData;
+  name: string;
+  /** Optional title/name-decoration token appended to NAME_STAT. */
+  nameTitle?: string;
+  /** Optional name-background token appended to NAME_STAT. */
+  nameBackground?: string;
+  class: Classes;
+  className: string;
+  /** @deprecated Only guaranteed for entities managed by the player tracker. */
+  server: string;
+  size: number;
+  texture: number;
+  clothingDye: number;
+  accessoryDye: number;
+}
+
+/** Account and guild fields shared across character projections. */
+export interface PlayerAccountGuildData {
+  accountId: string;
+  accountFame: number;
+  nameChosen: boolean;
+  guildName: string;
+  guildRank: GuildRank;
+  gold: number;
+}
+
+/** Current and maximum combat stats, bonuses, and condition flags. */
+export interface PlayerCombatData {
+  maxHP: number;
+  maxHPBoost: number;
+  maxMP: number;
+  maxMPBoost: number;
+  hp: number;
+  mp: number;
+  atk: number;
+  atkBoost: number;
+  def: number;
+  defBoost: number;
+  spd: number;
+  spdBoost: number;
+  dex: number;
+  dexBoost: number;
+  wis: number;
+  wisBoost: number;
+  vit: number;
+  vitBoost: number;
+  /** First condition bit field (`CONDITION_STAT`). */
+  condition: number;
+  /** Second condition bit field (`NEW_CON_STAT`). */
+  condition2: number;
+  /** Projectile-speed multiplier represented as a decimal multiplier. */
+  projSpeedMult: number;
+  /** Projectile-lifetime multiplier represented as a decimal multiplier. */
+  projLifeMult: number;
+}
+
+/** Inventory, backpack, and storage-potion fields. */
+export interface PlayerInventoryData {
+  hpPots: number;
+  mpPots: number;
+  hasBackpack: boolean;
+  /** Flat equipment/inventory/backpack slots; `-1` denotes an empty slot. */
+  inventory: number[];
+}
+
+/** Quick-slot potion selections whose amount semantics remain unresolved. */
+export interface PlayerPotionQuickSlotData {
+  potionOneType: number;
+  potionOneAmount?: number;
+  potionTwoType: number;
+  potionTwoAmount?: number;
+  potionThreeType: number;
+  potionThreeAmount?: number;
+  potionBelt: boolean;
+}
+
+/** Character/account progression, boosters, currencies, and exaltations. */
+export interface PlayerProgressionData {
+  level: number;
+  exp: number;
+  bxp: number;
+  seasonal: boolean;
+  accountLevel: number;
+  accountLevelExp: number;
+  currentFame: number;
+  stars: number;
+  nextLevelExp: number;
+  nextClassQuestFame: number;
+  legendaryRank: number;
+  xpBoosted: boolean;
+  xpBoostTime: number;
+  fortuneTokens: number;
+  exaltedHP: number;
+  exaltedMP: number;
+  exaltedAtt: number;
+  exaltedDef: number;
+  exaltedSpd: number;
+  exaltedDex: number;
+  exaltedVit: number;
+  exaltedWis: number;
+  forgefire: number;
 }
 
 /**
+ * Compatibility aggregate for the complete consumer-facing player/entity
+ * model. Facet interfaces can be used independently by narrower consumers.
+ */
+export interface PlayerData
+  extends PlayerIdentityLocationData,
+  PlayerAccountGuildData,
+  PlayerCombatData,
+  PlayerInventoryData,
+  PlayerPotionQuickSlotData,
+  PlayerProgressionData {}
+
+/**
  * Incremental player/entity data produced from UPDATE and NEWTICK stat lists.
- *
- * A wire update only includes fields that changed, so callers must not treat
- * this as a complete {@link PlayerData} snapshot. `inventory` is always present
- * because slot stats are projected into a stable flat array.
+ * `inventory` is always present so slot updates have a stable target.
  */
 export type PlayerDataPatch = Partial<Omit<PlayerData, 'inventory'>> & {
-    inventory: number[];
+  inventory: number[];
 };

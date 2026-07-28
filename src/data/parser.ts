@@ -1,255 +1,160 @@
-import { ObjectData, ObjectStatusData, StatData} from '.';
+import { ObjectData, ObjectStatusData, StatData } from '.';
 import { inventorySlotIndex, PlayerData, PlayerDataPatch, StatType } from '../models';
 
-/**
- * Processes the `data` and returns the resulting `PlayerData` object
- * @param data The data to process.
- */
+type StatHandler = (playerData: PlayerDataPatch, stat: StatData) => void;
+
+const assignNumber = (field: keyof PlayerData): StatHandler => (playerData, stat) => {
+  Object.assign(playerData, { [field]: stat.statValue });
+};
+const assignString = (field: keyof PlayerData): StatHandler => (playerData, stat) => {
+  Object.assign(playerData, { [field]: stat.stringStatValue });
+};
+const assignBoolean = (field: keyof PlayerData): StatHandler => (playerData, stat) => {
+  Object.assign(playerData, { [field]: stat.statValue !== 0 });
+};
+
+const statHandlers = new Map<number, StatHandler>();
+
+const numberFields: Array<[number, keyof PlayerData]> = [
+  [StatType.LEVEL_STAT, 'level'],
+  [StatType.BXP_STAT, 'bxp'],
+  [StatType.ACCOUNT_LEVEL_STAT, 'accountLevel'],
+  [StatType.ACCOUNT_LEVEL_EXP_STAT, 'accountLevelExp'],
+  [StatType.CURR_FAME_STAT, 'currentFame'],
+  [StatType.NUM_STARS_STAT, 'stars'],
+  [StatType.FAME_STAT, 'accountFame'],
+  [StatType.CREDITS_STAT, 'gold'],
+  [StatType.MAX_HP_STAT, 'maxHP'],
+  [StatType.MAX_MP_STAT, 'maxMP'],
+  [StatType.HP_STAT, 'hp'],
+  [StatType.MP_STAT, 'mp'],
+  [StatType.ATTACK_STAT, 'atk'],
+  [StatType.ATTACK_BOOST_STAT, 'atkBoost'],
+  [StatType.DEFENSE_STAT, 'def'],
+  [StatType.DEFENSE_BOOST_STAT, 'defBoost'],
+  [StatType.SPEED_STAT, 'spd'],
+  [StatType.SPEED_BOOST_STAT, 'spdBoost'],
+  [StatType.DEXTERITY_STAT, 'dex'],
+  [StatType.DEXTERITY_BOOST_STAT, 'dexBoost'],
+  [StatType.VITALITY_STAT, 'vit'],
+  [StatType.VITALITY_BOOST_STAT, 'vitBoost'],
+  [StatType.CONDITION_STAT, 'condition'],
+  [StatType.NEW_CON_STAT, 'condition2'],
+  [StatType.WISDOM_STAT, 'wis'],
+  [StatType.WISDOM_BOOST_STAT, 'wisBoost'],
+  [StatType.HEALTH_POTION_STACK_STAT, 'hpPots'],
+  [StatType.MAGIC_POTION_STACK_STAT, 'mpPots'],
+  [StatType.GUILD_RANK_STAT, 'guildRank'],
+  [StatType.SIZE_STAT, 'size'],
+  [StatType.NEXT_LEVEL_EXP_STAT, 'nextLevelExp'],
+  [StatType.TEX1_STAT, 'clothingDye'],
+  [StatType.TEX2_STAT, 'accessoryDye'],
+  [StatType.MAX_HP_BOOST_STAT, 'maxHPBoost'],
+  [StatType.MAX_MP_BOOST_STAT, 'maxMPBoost'],
+  [StatType.NEXT_CLASS_QUEST_FAME_STAT, 'nextClassQuestFame'],
+  [StatType.LEGENDARY_RANK_STAT, 'legendaryRank'],
+  [StatType.XP_TIMER_STAT, 'xpBoostTime'],
+  [StatType.TEXTURE_STAT, 'texture'],
+  [StatType.FORTUNE_TOKEN_STAT, 'fortuneTokens'],
+  [StatType.EXALTED_HP, 'exaltedHP'],
+  [StatType.EXALTED_MP, 'exaltedMP'],
+  [StatType.EXALTED_ATT, 'exaltedAtt'],
+  [StatType.EXALTED_DEF, 'exaltedDef'],
+  [StatType.EXALTED_SPEED, 'exaltedSpd'],
+  [StatType.EXALTED_DEX, 'exaltedDex'],
+  [StatType.EXALTED_VIT, 'exaltedVit'],
+  [StatType.EXALTED_WIS, 'exaltedWis'],
+  [StatType.POTION_ONE_TYPE, 'potionOneType'],
+  [StatType.POTION_TWO_TYPE, 'potionTwoType'],
+  [StatType.POTION_THREE_TYPE, 'potionThreeType'],
+  [StatType.FORGEFIRE, 'forgefire'],
+];
+for (const [statType, field] of numberFields) {
+  statHandlers.set(statType, assignNumber(field));
+}
+
+const stringFields: Array<[number, keyof PlayerData]> = [
+  [StatType.ACCOUNT_ID_STAT, 'accountId'],
+  [StatType.GUILD_NAME_STAT, 'guildName'],
+];
+for (const [statType, field] of stringFields) {
+  statHandlers.set(statType, assignString(field));
+}
+
+const booleanFields: Array<[number, keyof PlayerData]> = [
+  [StatType.SEASONAL_CHARACTER_STAT, 'seasonal'],
+  [StatType.NAME_CHOSEN_STAT, 'nameChosen'],
+  [StatType.XP_BOOSTED_STAT, 'xpBoosted'],
+  [StatType.POTION_BELT, 'potionBelt'],
+];
+for (const [statType, field] of booleanFields) {
+  statHandlers.set(statType, assignBoolean(field));
+}
+statHandlers.set(StatType.HASBACKPACK_STAT, (playerData, stat) => {
+  playerData.hasBackpack = stat.statValue === 1;
+});
+statHandlers.set(StatType.EXP_STAT, (playerData, stat) => {
+  playerData.exp = Number.parseInt(stat.stringStatValue, 10) || 0;
+});
+statHandlers.set(StatType.PROJECTILE_SPEED_MULT, (playerData, stat) => {
+  playerData.projSpeedMult = stat.statValue / 1000;
+});
+statHandlers.set(StatType.PROJECTILE_LIFE_MULT, (playerData, stat) => {
+  playerData.projLifeMult = stat.statValue / 1000;
+});
+statHandlers.set(StatType.NAME_STAT, (playerData, stat) => {
+  const [name, title, background, ...rest] = stat.stringStatValue.split(',');
+  playerData.name = name;
+  playerData.nameTitle = title;
+  playerData.nameBackground = [background, ...rest].filter(Boolean).join(',') || undefined;
+});
+
+/** Stat ids with an explicit non-inventory player projection handler. */
+export const PLAYER_STAT_HANDLED_TYPES: readonly number[] = Object.freeze(
+  Array.from(statHandlers.keys()),
+);
+
+/** Processes an object and returns its incremental player/entity projection. */
 export function processObject(data: ObjectData): PlayerDataPatch {
-    const playerData = processObjectStatus(data.status);
-    playerData.class = data.objectType;
-    return playerData;
+  const playerData = processObjectStatus(data.status);
+  playerData.class = data.objectType;
+  return playerData;
 }
 
-/**
- * Processes the `data` and returns the result. If `currentData` is provided, it will be
- * used as a starting point for the returned `PlayerData`
- * @param data The data to process.
- * @param currentData The existing `PlayerData`
- */
 export function processObjectStatus(data: ObjectStatusData, currentData: PlayerData): PlayerData;
-export function processObjectStatus(data: ObjectStatusData, currentData?: PlayerDataPatch): PlayerDataPatch;
 export function processObjectStatus(
-    data: ObjectStatusData,
-    currentData?: PlayerDataPatch,
+  data: ObjectStatusData,
+  currentData?: PlayerDataPatch,
+): PlayerDataPatch;
+export function processObjectStatus(
+  data: ObjectStatusData,
+  currentData?: PlayerDataPatch,
 ): PlayerDataPatch {
-    const playerData = processStatData(data.stats, currentData);
-    playerData.worldPos = data.pos;
-    playerData.objectId = data.objectId;
-
-    return playerData;
+  const playerData = processStatData(data.stats, currentData);
+  playerData.worldPos = data.pos;
+  playerData.objectId = data.objectId;
+  return playerData;
 }
 
-/**
- * Process a list of stats and returns the result. If `currentData` is provided, it will be
- * used as a starting point for the returned `PlayerData`
- * @param stats The stats to process
- * @param currentData The existing `PlayerData`
- */
 export function processStatData(stats: StatData[], currentData: PlayerData): PlayerData;
 export function processStatData(stats: StatData[], currentData?: PlayerDataPatch): PlayerDataPatch;
 export function processStatData(
-    stats: StatData[],
-    currentData?: PlayerDataPatch,
+  stats: StatData[],
+  currentData?: PlayerDataPatch,
 ): PlayerDataPatch {
-    const playerData: PlayerDataPatch = currentData || { inventory: [] };
-    if (!playerData.inventory) {
-        playerData.inventory = [];
+  const playerData: PlayerDataPatch = currentData || { inventory: [] };
+  playerData.inventory ||= [];
+
+  for (const stat of stats) {
+    const handler = statHandlers.get(stat.statType);
+    if (handler) {
+      handler(playerData, stat);
+      continue;
     }
-    for (const stat of stats) {
-        switch (stat.statType) {
-            case StatType.NAME_STAT: {
-                // Current Exalt may append title/background metadata as hex tokens.
-                // Keep the visible name separate while retaining those raw tokens.
-                const [name, title, background, ...rest] = stat.stringStatValue.split(',');
-                playerData.name = name;
-                playerData.nameTitle = title;
-                playerData.nameBackground = [background, ...rest].filter(Boolean).join(',') || undefined;
-                continue;
-            }
-            case StatType.LEVEL_STAT:
-                playerData.level = stat.statValue;
-                continue;
-            case StatType.EXP_STAT:
-                playerData.exp = parseInt(stat.stringStatValue, 10) || 0;
-                continue;
-            case StatType.SEASONAL_CHARACTER_STAT:
-                playerData.seasonal = stat.statValue !== 0;
-                continue;
-            case StatType.BXP_STAT:
-                playerData.bxp = stat.statValue;
-                continue;
-            case StatType.ACCOUNT_LEVEL_STAT:
-                playerData.accountLevel = stat.statValue;
-                continue;
-            case StatType.ACCOUNT_LEVEL_EXP_STAT:
-                playerData.accountLevelExp = stat.statValue;
-                continue;
-            case StatType.CURR_FAME_STAT:
-                playerData.currentFame = stat.statValue;
-                continue;
-            case StatType.NUM_STARS_STAT:
-                playerData.stars = stat.statValue;
-                continue;
-            case StatType.ACCOUNT_ID_STAT:
-                playerData.accountId = stat.stringStatValue;
-                continue;
-            case StatType.FAME_STAT:
-                playerData.accountFame = stat.statValue;
-                continue;
-            case StatType.CREDITS_STAT:
-                playerData.gold = stat.statValue;
-                continue;
-            case StatType.MAX_HP_STAT:
-                playerData.maxHP = stat.statValue;
-                continue;
-            case StatType.MAX_MP_STAT:
-                playerData.maxMP = stat.statValue;
-                continue;
-            case StatType.HP_STAT:
-                playerData.hp = stat.statValue;
-                continue;
-            case StatType.MP_STAT:
-                playerData.mp = stat.statValue;
-                continue;
-            case StatType.ATTACK_STAT:
-                playerData.atk = stat.statValue;
-                continue;
-            case StatType.ATTACK_BOOST_STAT:
-                playerData.atkBoost = stat.statValue;
-                continue;
-            case StatType.DEFENSE_STAT:
-                playerData.def = stat.statValue;
-                continue;
-            case StatType.DEFENSE_BOOST_STAT:
-                playerData.defBoost = stat.statValue;
-                continue;
-            case StatType.SPEED_STAT:
-                playerData.spd = stat.statValue;
-                continue;
-            case StatType.SPEED_BOOST_STAT:
-                playerData.spdBoost = stat.statValue;
-                continue;
-            case StatType.DEXTERITY_STAT:
-                playerData.dex = stat.statValue;
-                continue;
-            case StatType.DEXTERITY_BOOST_STAT:
-                playerData.dexBoost = stat.statValue;
-                continue;
-            case StatType.VITALITY_STAT:
-                playerData.vit = stat.statValue;
-                continue;
-            case StatType.VITALITY_BOOST_STAT:
-                playerData.vitBoost = stat.statValue;
-                continue;
-            case StatType.CONDITION_STAT:
-                playerData.condition = stat.statValue;
-                continue;
-            case StatType.NEW_CON_STAT:
-                playerData.condition2 = stat.statValue;
-                continue;
-            case StatType.WISDOM_STAT:
-                playerData.wis = stat.statValue;
-                continue;
-            case StatType.WISDOM_BOOST_STAT:
-                playerData.wisBoost = stat.statValue;
-                continue;
-            case StatType.HEALTH_POTION_STACK_STAT:
-                playerData.hpPots = stat.statValue;
-                continue;
-            case StatType.MAGIC_POTION_STACK_STAT:
-                playerData.mpPots = stat.statValue;
-                continue;
-            case StatType.HASBACKPACK_STAT:
-                playerData.hasBackpack = stat.statValue === 1;
-                continue;
-            case StatType.NAME_CHOSEN_STAT:
-                playerData.nameChosen = stat.statValue !== 0;
-                continue;
-            case StatType.GUILD_NAME_STAT:
-                playerData.guildName = stat.stringStatValue;
-                continue;
-            case StatType.GUILD_RANK_STAT:
-                playerData.guildRank = stat.statValue;
-                continue;
-            case StatType.SIZE_STAT:
-                playerData.size = stat.statValue;
-                continue;
-            case StatType.NEXT_LEVEL_EXP_STAT:
-                playerData.nextLevelExp = stat.statValue;
-                continue;
-            case StatType.TEX1_STAT:
-                playerData.clothingDye = stat.statValue;
-                continue;
-            case StatType.TEX2_STAT:
-                playerData.accessoryDye = stat.statValue;
-                continue;
-            case StatType.MAX_HP_BOOST_STAT:
-                playerData.maxHPBoost = stat.statValue;
-                continue;
-            case StatType.MAX_MP_BOOST_STAT:
-                playerData.maxMPBoost = stat.statValue;
-                continue;
-            case StatType.NEXT_CLASS_QUEST_FAME_STAT:
-                playerData.nextClassQuestFame = stat.statValue;
-                continue;
-            case StatType.LEGENDARY_RANK_STAT:
-                playerData.legendaryRank = stat.statValue;
-                continue;
-            case StatType.XP_BOOSTED_STAT:
-                playerData.xpBoosted = stat.statValue === 1;
-                continue;
-            case StatType.XP_TIMER_STAT:
-                playerData.xpBoostTime = stat.statValue;
-                continue;
-            case StatType.TEXTURE_STAT:
-                playerData.texture = stat.statValue;
-                continue;
-            case StatType.FORTUNE_TOKEN_STAT:
-                playerData.fortuneTokens = stat.statValue;
-                continue;
-            case StatType.PROJECTILE_SPEED_MULT:
-                playerData.projSpeedMult = stat.statValue / 1000;
-                continue;
-            case StatType.PROJECTILE_LIFE_MULT:
-                playerData.projLifeMult = stat.statValue / 1000;
-                continue;
-            case StatType.EXALTED_HP:
-                playerData.exaltedHP = stat.statValue;
-                continue;
-            case StatType.EXALTED_MP:
-                playerData.exaltedMP = stat.statValue;
-                continue;
-            case StatType.EXALTED_ATT:
-                playerData.exaltedAtt = stat.statValue;
-                continue;
-            case StatType.EXALTED_DEF:
-                playerData.exaltedDef = stat.statValue;
-                continue;
-            case StatType.EXALTED_SPEED:
-                playerData.exaltedSpd = stat.statValue;
-                continue;
-            case StatType.EXALTED_DEX:
-                playerData.exaltedDex = stat.statValue;
-                continue;
-            case StatType.EXALTED_VIT:
-                playerData.exaltedVit = stat.statValue;
-                continue;
-            case StatType.EXALTED_WIS:
-                playerData.exaltedWis = stat.statValue;
-                continue;
-            case StatType.POTION_ONE_TYPE:
-                playerData.potionOneType = stat.statValue;
-                continue;
-            case StatType.POTION_TWO_TYPE:
-                playerData.potionTwoType = stat.statValue;
-                continue;
-            case StatType.POTION_THREE_TYPE:
-                playerData.potionThreeType = stat.statValue;
-                continue;
-            case StatType.POTION_BELT:
-                playerData.potionBelt = stat.statValue === 1;
-                continue;
-            case StatType.FORGEFIRE:
-                playerData.forgefire = stat.statValue;
-                continue;
-            default: {
-                const slotIndex = inventorySlotIndex(stat.statType);
-                if (slotIndex !== null) {
-                    playerData.inventory[slotIndex] = stat.statValue;
-                }
-            }
-        }
+    const slotIndex = inventorySlotIndex(stat.statType);
+    if (slotIndex !== null) {
+      playerData.inventory[slotIndex] = stat.statValue;
     }
-    return playerData;
+  }
+  return playerData;
 }

@@ -11,6 +11,7 @@ import {
   WorldPosData,
   Writer,
   processStatData,
+  PLAYER_STAT_HANDLED_TYPES,
 } from '../src';
 
 function statData(statType: number, value: number, str = ''): StatData {
@@ -70,6 +71,17 @@ describe('StatData.isStringStat (current build)', () => {
 });
 
 describe('processStatData (current build ids)', () => {
+  it('publishes the explicit projection-handler inventory', () => {
+    expect(new Set(PLAYER_STAT_HANDLED_TYPES).size).to.equal(PLAYER_STAT_HANDLED_TYPES.length);
+    expect(PLAYER_STAT_HANDLED_TYPES).to.include.members([
+      StatType.NAME_STAT,
+      StatType.HP_STAT,
+      StatType.GUILD_NAME_STAT,
+      StatType.POTION_THREE_TYPE,
+      StatType.EXALTED_WIS,
+    ]);
+  });
+
   it('maps stats onto the right PlayerData fields', () => {
     const playerData = processStatData([
       statData(StatType.MAX_HP_STAT, 444),
