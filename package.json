@@ -39,6 +39,7 @@
     "url": "git+https://github.com/rotmg-network/realmlib.git"
   },
   "author": "abrn",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rotmg-network/realmlib/issues"
   },
