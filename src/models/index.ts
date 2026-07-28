@@ -1,5 +1,6 @@
 export * from './account-list';
 export * from './account-reward-grant';
+export * from './battle-pass';
 export * from './character-data';
 export * from './campaigns';
 export * from './enchantments';
