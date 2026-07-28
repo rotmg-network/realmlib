@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when a new ability has been unlocked by the player.
  */
 export class NewAbilityMessage implements Packet {
-
   readonly type = PacketType.NEW_ABILITY;
 
   /**

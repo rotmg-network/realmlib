@@ -306,10 +306,7 @@ export function resetNotificationEffectState(state: NotificationEffectState): vo
   state.unknownPayload = Buffer.alloc(0);
 }
 
-export function readNotificationEffect(
-  state: NotificationEffectState,
-  reader: Reader,
-): void {
+export function readNotificationEffect(state: NotificationEffectState, reader: Reader): void {
   const codec = codecs.get(state.effect);
   if (codec) {
     codec.read(state, reader);
@@ -319,10 +316,7 @@ export function readNotificationEffect(
   }
 }
 
-export function writeNotificationEffect(
-  state: NotificationEffectState,
-  writer: Writer,
-): void {
+export function writeNotificationEffect(state: NotificationEffectState, writer: Writer): void {
   const codec = codecs.get(state.effect);
   if (codec) {
     codec.write(state, writer);
@@ -334,10 +328,12 @@ export function writeNotificationEffect(
 }
 
 export function notificationPayload(state: NotificationEffectState): NotificationPayload {
-  return codecs.get(state.effect)?.payload(state) ?? {
-    kind: 'unknown',
-    effect: state.effect,
-    extra: state.extra,
-    rawPayload: state.unknownPayload.length ? Buffer.from(state.unknownPayload) : undefined,
-  };
+  return (
+    codecs.get(state.effect)?.payload(state) ?? {
+      kind: 'unknown',
+      effect: state.effect,
+      extra: state.extra,
+      rawPayload: state.unknownPayload.length ? Buffer.from(state.unknownPayload) : undefined,
+    }
+  );
 }

@@ -17,7 +17,6 @@ export interface DataPacket {
    * @param reader The reader to read from
    */
   read(reader: Reader): void;
-
 }
 
 export interface Packet extends DataPacket {

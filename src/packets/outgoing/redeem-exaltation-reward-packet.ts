@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * conclusive — hence the unknown name.
  */
 export class RedeemExaltationRewardPacket implements Packet {
-
   readonly type = PacketType.REDEEM_EXALTATION_REWARD;
 
   //#region packet-specific members

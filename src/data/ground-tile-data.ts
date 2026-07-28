@@ -3,7 +3,6 @@ import { Reader } from '../reader';
 import { DataPacket } from '../packet';
 
 export class GroundTileData implements DataPacket {
-
   /**
    * The X coordinate of this tile.
    */

@@ -1,7 +1,7 @@
-import { Packet } from "../../packet";
-import { PacketType } from "../../packet-type";
-import { Reader } from "../../reader";
-import { Writer } from "../../writer";
+import { Packet } from '../../packet';
+import { PacketType } from '../../packet-type';
+import { Reader } from '../../reader';
+import { Writer } from '../../writer';
 
 /**
  * Received when the player enters or updates their vault. Item arrays hold
@@ -139,7 +139,7 @@ export class VaultContentPacket implements Packet {
    * @deprecated Use {@link VaultContentPacket.opaqueTail}.
    */
   get unknownBytes(): number[] {
-    return Array.from(this.opaqueTail, (byte) => byte > 127 ? byte - 256 : byte);
+    return Array.from(this.opaqueTail, (byte) => (byte > 127 ? byte - 256 : byte));
   }
 
   set unknownBytes(bytes: number[]) {

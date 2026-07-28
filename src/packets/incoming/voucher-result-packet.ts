@@ -17,7 +17,6 @@ import { Writer } from '../../writer';
  * exactly by this layout.
  */
 export class VoucherResultPacket implements Packet {
-
   readonly type = PacketType.VOUCHER_RESULT;
 
   //#region packet-specific members
@@ -29,22 +28,22 @@ export class VoucherResultPacket implements Packet {
 
   /** Localisation key / failure reason, or `''` when the redeem succeeded. */
   get resultKey(): string {
-    return !this.success ? this.strings[0] ?? '' : '';
+    return !this.success ? (this.strings[0] ?? '') : '';
   }
 
   /** Display name of the redeemed voucher, or `''` on failure. */
   get voucherName(): string {
-    return this.success ? this.strings[1] ?? '' : '';
+    return this.success ? (this.strings[1] ?? '') : '';
   }
 
   /** Description of what the voucher granted, or `''` on failure. */
   get description(): string {
-    return this.success ? this.strings[2] ?? '' : '';
+    return this.success ? (this.strings[2] ?? '') : '';
   }
 
   /** Comma-separated granted item types, or `''` on failure. */
   get grantedItems(): string {
-    return this.success ? this.strings[3] ?? '' : '';
+    return this.success ? (this.strings[3] ?? '') : '';
   }
 
   constructor() {

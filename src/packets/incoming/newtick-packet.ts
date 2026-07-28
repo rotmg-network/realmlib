@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received to notify the player of a new game tick
  */
 export class NewTickPacket implements Packet {
-
   readonly type = PacketType.NEWTICK;
 
   /**

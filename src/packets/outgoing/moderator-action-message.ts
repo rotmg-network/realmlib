@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Admin-only packet sent to the server to request a moderator action on a player.
  */
 export class ModeratorActionMessagePacket implements Packet {
-
   readonly type = PacketType.MODERATOR_ACTION_MESSAGE;
 
   //#region packet-specific members

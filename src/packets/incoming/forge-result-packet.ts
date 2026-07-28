@@ -1,12 +1,12 @@
-import { Packet } from "../../packet";
-import { PacketType } from "../../packet-type";
-import { Reader } from "../../reader";
-import { Writer } from "../../writer";
+import { Packet } from '../../packet';
+import { PacketType } from '../../packet-type';
+import { Reader } from '../../reader';
+import { Writer } from '../../writer';
 import { SlotObjectData } from '../../data';
 
 /**
-* Received when the player uses the item forge
-*/
+ * Received when the player uses the item forge
+ */
 export class ForgeResultPacket implements Packet {
   readonly type = PacketType.FORGE_RESULT;
 
@@ -18,7 +18,6 @@ export class ForgeResultPacket implements Packet {
    * The SlotObjectData of the items forged
    */
   results: SlotObjectData[];
-
 
   constructor() {
     this.success = false;
@@ -55,8 +54,8 @@ export class ForgeResultPacket implements Packet {
     if (this.results.length == 0) {
       return str + `Results: No SlotObjectData`;
     }
-    for(let i = 0; i < this.results.length; i++) {
-      if (i == (this.results.length - 1)) {
+    for (let i = 0; i < this.results.length; i++) {
+      if (i == this.results.length - 1) {
         str += this.results[i].toString();
       } else {
         str += this.results[i].toString() + `\n`;

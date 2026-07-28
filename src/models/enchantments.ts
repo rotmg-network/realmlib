@@ -58,7 +58,8 @@ function parseEnchantmentBlob(raw: string, slot: number): SlotEnchantments {
   const version = bytes.length >= 2 ? bytes[1] : undefined;
   const declaredCount = bytes.length >= 3 ? bytes[2] : undefined;
   const requiredLength = declaredCount === undefined ? Infinity : 3 + declaredCount * 2;
-  const recognized = bytes.length >= 3 && bytes[0] === 0 && version === 2 && bytes.length >= requiredLength;
+  const recognized =
+    bytes.length >= 3 && bytes[0] === 0 && version === 2 && bytes.length >= requiredLength;
   const slotCount = recognized ? declaredCount : undefined;
   const enchantmentTypeIds: number[] = [];
   if (recognized) {
@@ -98,9 +99,9 @@ export function parseEnchantmentSlots(
   if (!value) {
     return [];
   }
-  return value.split(',').map((raw, slot) => (
-    raw.length > 0 ? parseEnchantmentBlob(raw, slot) : undefined
-  ));
+  return value
+    .split(',')
+    .map((raw, slot) => (raw.length > 0 ? parseEnchantmentBlob(raw, slot) : undefined));
 }
 
 /**

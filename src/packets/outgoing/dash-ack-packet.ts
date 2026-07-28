@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * per {@link DashPacket}, sent after the local distance/speed travel time.
  */
 export class DashAckPacket implements Packet {
-
   readonly type = PacketType.DASH_ACK;
 
   //#region packet-specific members

@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when a global notification is sent out to all players.
  */
 export class GlobalNotificationPacket implements Packet {
-
   readonly type = PacketType.GLOBAL_NOTIFICATION;
 
   //#region packet-specific members

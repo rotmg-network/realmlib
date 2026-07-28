@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * `0x9a0a 0x9a12` (two titles). The ids index the client's title definitions.
  */
 export class RetitlePacket implements Packet {
-
   readonly type = PacketType.RETITLE;
 
   //#region packet-specific members

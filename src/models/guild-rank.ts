@@ -7,7 +7,7 @@ export enum GuildRank {
   Member = 10,
   Officer = 20,
   Leader = 30,
-  Founder = 40
+  Founder = 40,
 }
 
 /**
@@ -15,14 +15,21 @@ export enum GuildRank {
  * @param rank The rank ID
  */
 export function parseGuildRank(rank: number): string {
-  switch(rank) {
-    case GuildRank.NoRank: return "No Rank";
-    case GuildRank.Initiate: return "Initiate";
-    case GuildRank.Member: return "Member";
-    case GuildRank.Officer: return "Officer";
-    case GuildRank.Leader: return "Leader";
-    case GuildRank.Founder: return "Founder";
-    default: return "Unknown";
+  switch (rank) {
+    case GuildRank.NoRank:
+      return 'No Rank';
+    case GuildRank.Initiate:
+      return 'Initiate';
+    case GuildRank.Member:
+      return 'Member';
+    case GuildRank.Officer:
+      return 'Officer';
+    case GuildRank.Leader:
+      return 'Leader';
+    case GuildRank.Founder:
+      return 'Founder';
+    default:
+      return 'Unknown';
   }
 }
 
@@ -33,5 +40,5 @@ export function parseGuildRank(rank: number): string {
 export enum GuildMemberAction {
   None = 0,
   ChangeRank = 1,
-  Remove = 2
+  Remove = 2,
 }

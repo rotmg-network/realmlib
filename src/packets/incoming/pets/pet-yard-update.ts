@@ -8,7 +8,6 @@ import { Writer } from '../../../writer';
  * Received when the pet yard is updated to a new type of yard
  */
 export class PetYardUpdate implements Packet {
-
   readonly type = PacketType.PETYARDUPDATE;
 
   /**

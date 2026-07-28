@@ -50,9 +50,12 @@ describe('current Exalt packet structures', () => {
   it('models direction-scoped party packet ids', () => {
     expect(getPacketDefinitionById(215, 'outgoing')?.type).to.equal(PacketType.PARTY_JOIN_REQUEST);
     expect(getPacketDefinitionById(215, 'incoming')?.type).to.equal(PacketType.PARTY_JOIN_RESULT);
-    expect(getPacketDefinitionById(217, 'incoming')?.type).to.equal(PacketType.PARTY_REQUEST_RESPONSE);
-    expect(getPacketDefinitionById(217, 'outgoing')?.type)
-      .to.equal(PacketType.PARTY_JOIN_REQUEST_RESPONSE);
+    expect(getPacketDefinitionById(217, 'incoming')?.type).to.equal(
+      PacketType.PARTY_REQUEST_RESPONSE,
+    );
+    expect(getPacketDefinitionById(217, 'outgoing')?.type).to.equal(
+      PacketType.PARTY_JOIN_REQUEST_RESPONSE,
+    );
 
     expect(DEFAULT_PACKET_MAP[215]).to.equal(PacketType.PARTY_JOIN_RESULT);
     expect(DEFAULT_PACKET_MAP[PacketType.PARTY_JOIN_REQUEST]).to.equal(215);
@@ -127,8 +130,7 @@ describe('current Exalt packet structures', () => {
     expect(DEFAULT_PACKET_MAP[191]).to.equal(PacketType.BUY_DUSTS);
     expect(DEFAULT_PACKET_MAP[192]).to.equal(PacketType.BUY_DUSTS_RESULT);
     expect(DEFAULT_PACKET_MAP[PacketType.RESET_ENCHANTMENT_REROLL_COUNT]).to.equal(198);
-    expect(DEFAULT_PACKET_MAP[199])
-      .to.equal(PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT);
+    expect(DEFAULT_PACKET_MAP[199]).to.equal(PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT);
 
     const reset = new ResetEnchantmentRerollCountPacket();
     reset.value = 'payload';
@@ -192,7 +194,8 @@ describe('current Exalt packet structures', () => {
     outgoingResponse.classId = 0x0300;
     outgoingResponse.skinId = 0;
     outgoingResponse.state = PartyResponse.Declined;
-    expect(roundTrip(outgoingResponse, new PartyJoinResponsePacket()).state)
-      .to.equal(PartyResponse.Declined);
+    expect(roundTrip(outgoingResponse, new PartyJoinResponsePacket()).state).to.equal(
+      PartyResponse.Declined,
+    );
   });
 });

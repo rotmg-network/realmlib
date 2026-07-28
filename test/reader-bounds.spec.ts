@@ -15,14 +15,18 @@ function readerOf(bytes: number[]): Reader {
 describe('Reader bounds checking', () => {
   it('rejects negative collection counts before allocation', () => {
     const reader = new Reader(0);
-    expect(() => reader.validateCollectionCount(-1, 4, 'items'))
-      .to.throw(PacketReadError, 'invalid items count -1');
+    expect(() => reader.validateCollectionCount(-1, 4, 'items')).to.throw(
+      PacketReadError,
+      'invalid items count -1',
+    );
   });
 
   it('rejects collection counts that cannot fit in the packet', () => {
     const reader = new Reader(8);
-    expect(() => reader.validateCollectionCount(3, 4, 'items'))
-      .to.throw(PacketReadError, 'items count 3 cannot fit in 8 remaining byte(s)');
+    expect(() => reader.validateCollectionCount(3, 4, 'items')).to.throw(
+      PacketReadError,
+      'items count 3 cannot fit in 8 remaining byte(s)',
+    );
   });
 
   it('accepts collection counts that fit exactly', () => {
@@ -56,8 +60,10 @@ describe('Reader bounds checking', () => {
     ];
 
     for (const bytes of invalid) {
-      expect(() => readerOf(bytes).readCompressedInt(), Buffer.from(bytes).toString('hex'))
-        .to.throw(PacketReadError);
+      expect(
+        () => readerOf(bytes).readCompressedInt(),
+        Buffer.from(bytes).toString('hex'),
+      ).to.throw(PacketReadError);
     }
   });
 

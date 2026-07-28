@@ -39,8 +39,8 @@ for (const operations of [
   for (const [label, operation] of operations) {
     const result = measure(label, operation);
     console.log(
-      `${result.label}: ${result.milliseconds.toFixed(2)}ms `
-      + `(${iterations.toLocaleString()} ignored frames, checksum ${result.checksum})`,
+      `${result.label}: ${result.milliseconds.toFixed(2)}ms ` +
+        `(${iterations.toLocaleString()} ignored frames, checksum ${result.checksum})`,
     );
   }
 }

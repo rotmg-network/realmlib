@@ -19,7 +19,7 @@ export * from './items';
 export * from './missions';
 export * from './notifications';
 export * from './object-type';
-export * from './party'
+export * from './party';
 export * from './payment-type';
 export * from './pets';
 export * from './player-data';

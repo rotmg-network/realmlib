@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to change the guild rank of a member in the player's guild.
  */
 export class ChangeGuildRankPacket implements Packet {
-
   readonly type = PacketType.CHANGEGUILDRANK;
 
   //#region packet-specific members

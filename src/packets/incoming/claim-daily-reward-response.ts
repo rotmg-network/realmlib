@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received in response to a `ClaimDailyRewardMessage`.
  */
 export class ClaimDailyRewardResponse implements Packet {
-
   readonly type = PacketType.LOGIN_REWARD_MSG;
 
   //#region packet-specific members

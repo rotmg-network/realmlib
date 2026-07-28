@@ -16,7 +16,6 @@ import { Writer } from '../../writer';
  * which is what the count prefix is for.
  */
 export class ChestRewardResultPacket implements Packet {
-
   readonly type = PacketType.CHEST_REWARD_RESULT;
 
   //#region packet-specific members

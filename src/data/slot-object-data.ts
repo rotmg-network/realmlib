@@ -3,7 +3,6 @@ import { Reader } from '../reader';
 import { DataPacket } from '../packet';
 
 export class SlotObjectData implements DataPacket {
-
   /**
    * The object id of the entity which owns the slot
    */
@@ -57,9 +56,11 @@ export class SlotObjectData implements DataPacket {
    * Whether this slot refers to the same owner/slot/item as `other`.
    */
   equals(other: SlotObjectData): boolean {
-    return this.objectId === other.objectId
-      && this.slotId === other.slotId
-      && this.objectType === other.objectType;
+    return (
+      this.objectId === other.objectId &&
+      this.slotId === other.slotId &&
+      this.objectType === other.objectType
+    );
   }
 
   clone(): SlotObjectData {

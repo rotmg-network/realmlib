@@ -59,9 +59,10 @@ For each packet of interest note: **id**, **direction** (C→S vs S→C), the **
 hex body**, the **packets immediately before/after it** (request/response pairing
 is how we tell echoes from new data), and the **account/char state** at the time.
 
-**Wrong beats missing.** A single sample that happens to round-trip is *not*
+**Wrong beats missing.** A single sample that happens to round-trip is _not_
 proof of structure (that mistake is why 0.1–0.4 needed re-doing). Prefer:
-- ≥2 samples with a field that actually *varies*, so lockstep coincidences show.
+
+- ≥2 samples with a field that actually _varies_, so lockstep coincidences show.
 - at least one value that breaks an ambiguity (a count ≥ 65536 to kill int32-vs-
   short; a discriminator taking a third value; a negative to prove signedness).
 
@@ -88,23 +89,23 @@ Worked example (this is the method): **140** was predicted `short count + {byte,
 int32, byte}` and the 19:40 session's `0001 00 00001007 01` matched byte-exact,
 with **141** = `01 0000` = `byte success(1) + short code(0)`. Both confirmed.
 
-| id | dir | predicted layout | how to confirm |
-|---|---|---|---|
-| **115 REDEEM_EXALTATION_REWARD** | C→S | `int32 objType` (class, e.g. 785) `[+ byte stat/index]` | first 4 bytes = the class you exalted; expect a fresh `114` for that class in reply; watch for `ExaltationRedeemInfoMessage` |
-| **136 BUY_REFINEMENT** | C→S | `int32 itemType [+ int32 count]` | itemType resolves in objects.xml; reply is `byte success + short code` (new incoming id — flag it) |
-| **146 SKIN_RECYCLE** | C→S | `short count + int32[count] skinTypes` (or bare `int32`) | **recycle exactly 2 skins in one action** to prove the count prefix; cross-ref `/account/ownedSkins` |
-| **151 BOOST_BP_MILESTONE** | C→S | `string passId + byte milestone` (parallels 149) | passId = `uint16 len`+digits; cross-ref `/season/bpInfo`; reply `BoostBPMilestoneResultMessage` |
-| **156 SET_GRAVE_STONE** | C→S | `int32 gravestoneType` | type in objects.xml (gravestone); follow-up `47 RESKIN_UNLOCK` type `4` (Gravestone) |
-| **162 SET_TRACKED_SEASON** | C→S | `int32 seasonId` (e.g. 50/51) or `string seasonId` | value = a season id from `/missions/getClientSeasons`; int32 50 = `00000032`, a string starts `0002…` |
-| **167 SET_DISCOVERABLE** | C→S | `byte discoverable` (0/1) | capture both toggles — a single `00` / `01` |
-| **231 STACKS** | S→C | `u8 hp, mp, attack, defense, speed, vitality, wisdom, dexterity` | vary one stack at a time and correlate the changed byte with the HUD counter |
-| **173 UNLOCK_ENCHANTMENT_SLOT** | C→S | `SlotObjectData target` (12B) `[+ byte slotIndex]` | the 12B triple = (playerId, invSlot, itemType) of a preceding INVSWAP/USEITEM; stat-80 blob gains a slot |
-| **175 UNLOCK_ENCHANTMENT** | C→S | `SlotObjectData target + int32 enchantmentType` | enchantmentType resolves via `EnchantType`; item's `parseEnchantments` changes |
-| **177 APPLY_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot + int32 enchantmentType` | which enchant slot filled matches `byte`; new id in the stat-80 blob = `int32` |
-| **187 UPGRADE_ENCHANTMENT** | C→S | `SlotObjectData target + byte enchantSlot` | the upgraded slot index = `byte`; blob's id at that slot bumps |
-| **238 GIFT_NOTIFICATION** | S→C | `int32 giftId` or `short count + …` | fires on a received/pending gift; cross-ref `/craigsgift/info`; keep neighbours |
-| **166 DAMAGE_WITH_EFFECT** | S→C | `int32 targetId + u8 effectCount + u8[] effects + u16 damage + u8 info + u16 bulletId + int32 ownerObjectId + u8 magnitudeEffect + float magnitude` | vary the leading and magnitude-bearing effects independently; Curse (38) before a Stasis (22) magnitude is already confirmed |
-| **148 DAMAGE_BOOST** | S→C | `int32 objectId + int32 amount [+ int32 durationMs]` | objectId = the buffed entity; fires when a damage buff applies |
+| id                               | dir | predicted layout                                                                                                                                    | how to confirm                                                                                                               |
+| -------------------------------- | --- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **115 REDEEM_EXALTATION_REWARD** | C→S | `int32 objType` (class, e.g. 785) `[+ byte stat/index]`                                                                                             | first 4 bytes = the class you exalted; expect a fresh `114` for that class in reply; watch for `ExaltationRedeemInfoMessage` |
+| **136 BUY_REFINEMENT**           | C→S | `int32 itemType [+ int32 count]`                                                                                                                    | itemType resolves in objects.xml; reply is `byte success + short code` (new incoming id — flag it)                           |
+| **146 SKIN_RECYCLE**             | C→S | `short count + int32[count] skinTypes` (or bare `int32`)                                                                                            | **recycle exactly 2 skins in one action** to prove the count prefix; cross-ref `/account/ownedSkins`                         |
+| **151 BOOST_BP_MILESTONE**       | C→S | `string passId + byte milestone` (parallels 149)                                                                                                    | passId = `uint16 len`+digits; cross-ref `/season/bpInfo`; reply `BoostBPMilestoneResultMessage`                              |
+| **156 SET_GRAVE_STONE**          | C→S | `int32 gravestoneType`                                                                                                                              | type in objects.xml (gravestone); follow-up `47 RESKIN_UNLOCK` type `4` (Gravestone)                                         |
+| **162 SET_TRACKED_SEASON**       | C→S | `int32 seasonId` (e.g. 50/51) or `string seasonId`                                                                                                  | value = a season id from `/missions/getClientSeasons`; int32 50 = `00000032`, a string starts `0002…`                        |
+| **167 SET_DISCOVERABLE**         | C→S | `byte discoverable` (0/1)                                                                                                                           | capture both toggles — a single `00` / `01`                                                                                  |
+| **231 STACKS**                   | S→C | `u8 hp, mp, attack, defense, speed, vitality, wisdom, dexterity`                                                                                    | vary one stack at a time and correlate the changed byte with the HUD counter                                                 |
+| **173 UNLOCK_ENCHANTMENT_SLOT**  | C→S | `SlotObjectData target` (12B) `[+ byte slotIndex]`                                                                                                  | the 12B triple = (playerId, invSlot, itemType) of a preceding INVSWAP/USEITEM; stat-80 blob gains a slot                     |
+| **175 UNLOCK_ENCHANTMENT**       | C→S | `SlotObjectData target + int32 enchantmentType`                                                                                                     | enchantmentType resolves via `EnchantType`; item's `parseEnchantments` changes                                               |
+| **177 APPLY_ENCHANTMENT**        | C→S | `SlotObjectData target + byte enchantSlot + int32 enchantmentType`                                                                                  | which enchant slot filled matches `byte`; new id in the stat-80 blob = `int32`                                               |
+| **187 UPGRADE_ENCHANTMENT**      | C→S | `SlotObjectData target + byte enchantSlot`                                                                                                          | the upgraded slot index = `byte`; blob's id at that slot bumps                                                               |
+| **238 GIFT_NOTIFICATION**        | S→C | `int32 giftId` or `short count + …`                                                                                                                 | fires on a received/pending gift; cross-ref `/craigsgift/info`; keep neighbours                                              |
+| **166 DAMAGE_WITH_EFFECT**       | S→C | `int32 targetId + u8 effectCount + u8[] effects + u16 damage + u8 info + u16 bulletId + int32 ownerObjectId + u8 magnitudeEffect + float magnitude` | vary the leading and magnitude-bearing effects independently; Curse (38) before a Stasis (22) magnitude is already confirmed |
+| **148 DAMAGE_BOOST**             | S→C | `int32 objectId + int32 amount [+ int32 durationMs]`                                                                                                | objectId = the buffed entity; fires when a damage buff applies                                                               |
 
 Each result packet you find that isn't already registered is itself a new id to
 add (like 141) — model it `byte success + short code` unless the bytes say
@@ -137,7 +138,7 @@ Fresh client launch, proxy on, keep both logs.
 
 - **[P] 115 REDEEM_EXALTATION_REWARD** — open the Exaltations panel and redeem
   one reward.
-- Capture whatever the panel *loads* on open, plus any `/account/*` HTTP it
+- Capture whatever the panel _loads_ on open, plus any `/account/*` HTTP it
   fetches — no exaltation state exists in any capture (`/char/list` doesn't carry
   it). This also finally decides whether id 114 is power-up-only or dual-purpose.
 - Note the class exalted and the stat, so the body can be cross-referenced.
@@ -186,7 +187,7 @@ Fresh client launch, proxy on, keep both logs.
 - **[F] 117 VAULT_CONTENT** (1 unknown) — open vault, gift chest, material
   storage; move items in/out. Cross-ref `/char/list` vault/material contents.
 - **[F] 95 INVRESULT** (1 unknown) + **[E] InvResultOrigin** / **[E]
-  InvResultFlags** — do inventory swaps/drops that succeed *and* fail (full
+  InvResultFlags** — do inventory swaps/drops that succeed _and_ fail (full
   inventory, soulbound, etc.) so more flag/origin values appear.
 - **[F] 139 STATS** (2 unknowns, `unknownInt1/256` step) — capture the STATS
   packet across a level-up / stat change to see what the step tracks.
@@ -249,7 +250,7 @@ Fresh client launch, proxy on, keep both logs.
 
 ## Session 15 — Currencies & failures
 
-- **[E] PaymentType** — buy the *same kind* of thing with **gold**, **fame**, and
+- **[E] PaymentType** — buy the _same kind_ of thing with **gold**, **fame**, and
   **realm gold / credits** so every payment enum value is seen (`85 BUY`,
   `102 CHECKCREDITS`, `223 PURCHASE_REQUEST`, `22 BUYRESULT`).
 - **[E] FailureCode / FailureMessage / ProtocolError** — deliberately trigger
@@ -272,21 +273,21 @@ from packet captures — fill them from `objects.xml` / assets, not proxy logs.
 
 ## Quick cross-reference: gap → session
 
-| Gap | Where |
-|---|---|
-| 115, exaltation state | S2 |
-| 136 | S6 |
-| 140 unknown bytes | S3 |
-| 146, 156, customization enums | S3 |
-| 148, 166, effect enums, shoot unknowns | S12 |
-| 151, 162, BP −1 tier | S4 |
-| 167, 238 | S10 |
-| 173/175/177/187, EnchantType, DustType | S1 |
-| 129/131 | S13 |
-| 218/222 | S14 |
-| Mission enums, CLAIM_MISSION spread | S4/S5 |
-| Vault/InvResult/STATS unknowns | S7 |
-| TradeResult | S8 |
-| Party enums + unknowns | S9 |
-| Forge blueprints unknown | S11 |
-| PaymentType, Failure enums | S15 |
+| Gap                                    | Where |
+| -------------------------------------- | ----- |
+| 115, exaltation state                  | S2    |
+| 136                                    | S6    |
+| 140 unknown bytes                      | S3    |
+| 146, 156, customization enums          | S3    |
+| 148, 166, effect enums, shoot unknowns | S12   |
+| 151, 162, BP −1 tier                   | S4    |
+| 167, 238                               | S10   |
+| 173/175/177/187, EnchantType, DustType | S1    |
+| 129/131                                | S13   |
+| 218/222                                | S14   |
+| Mission enums, CLAIM_MISSION spread    | S4/S5 |
+| Vault/InvResult/STATS unknowns         | S7    |
+| TradeResult                            | S8    |
+| Party enums + unknowns                 | S9    |
+| Forge blueprints unknown               | S11   |
+| PaymentType, Failure enums             | S15   |

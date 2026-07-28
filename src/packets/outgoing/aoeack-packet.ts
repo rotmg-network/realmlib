@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * damage events that immediately cause a nexus/escape decision.
  */
 export class AoeAckPacket implements Packet {
-
   readonly type = PacketType.AOEACK;
 
   //#region packet-specific members

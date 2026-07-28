@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Sent when playing the Summoner class and a spawned creep minion has to move.
  */
 export class CreepMoveMessagePacket implements Packet {
-
   readonly type = PacketType.CREEP_MOVE_MESSAGE;
 
   //#region packet-specific members

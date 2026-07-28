@@ -15,5 +15,5 @@ export enum TutorialType {
   ArmorBag = 12,
   ArmorBag2 = 13,
   EnterPortalType = 14,
-  JournalClickType = 15
+  JournalClickType = 15,
 }

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * and reply with a `MapInfoPacket`.
  */
 export class HelloPacket implements Packet {
-
   readonly type = PacketType.HELLO;
 
   /**
@@ -101,6 +100,6 @@ export class HelloPacket implements Packet {
     PlayPlatform: ${this.playPlatform}\n
     PlatformToken: ${this.platformToken}\n
     UserToken: ${this.userToken}\n
-    ClientToken: ${this.clientToken}`
+    ClientToken: ${this.clientToken}`;
   }
 }

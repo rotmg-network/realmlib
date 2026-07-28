@@ -53,12 +53,7 @@ describe('parseEnchantments (ENCHANTMENTS_STAT)', () => {
     expect(slot.enchantmentTypeIds).to.deep.equal([0x01e3, 0x047b]);
 
     const bytes = Buffer.from([
-      0, 2, 4,
-      0x11, 0x01,
-      0xfd, 0xff,
-      0xfd, 0xff,
-      0xfd, 0xff,
-      5, 1, 0, 0x6a, 0,
+      0, 2, 4, 0x11, 0x01, 0xfd, 0xff, 0xfd, 0xff, 0xfd, 0xff, 5, 1, 0, 0x6a, 0,
     ]);
     const [withSuffix] = parseEnchantments(bytes.toString('base64'));
     expect(withSuffix.enchantmentTypeIds).to.deep.equal([0x0111]);

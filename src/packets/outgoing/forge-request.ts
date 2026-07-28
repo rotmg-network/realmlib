@@ -4,7 +4,6 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
-
 /**
  * Sent to forge an item, dismantling other items to pay for it. The server
  * replies with a `ForgeResultPacket` (success byte), then toggles
@@ -16,7 +15,6 @@ import { Writer } from '../../writer';
  * (objectId 599, slots 8 and 4).
  */
 export class ForgeRequestPacket implements Packet {
-
   readonly type = PacketType.FORGE_REQUEST;
 
   /**

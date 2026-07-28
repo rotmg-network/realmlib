@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent when the player inflicts a condition effect.
  */
 export class SetConditionPacket implements Packet {
-
   readonly type = PacketType.SETCONDITION;
 
   //#region packet-specific members

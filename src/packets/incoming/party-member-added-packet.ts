@@ -16,7 +16,12 @@ export class PartyMemberAddedPacket implements Packet {
   /** Skin/texture id. */
   skinId: number;
 
-  constructor() { this.playerId = 0; this.name = ''; this.classId = 0; this.skinId = 0; }
+  constructor() {
+    this.playerId = 0;
+    this.name = '';
+    this.classId = 0;
+    this.skinId = 0;
+  }
 
   read(reader: Reader): void {
     this.playerId = reader.readUnsignedShort();

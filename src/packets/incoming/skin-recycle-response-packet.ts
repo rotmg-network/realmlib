@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * (129/130, 131/132, 180/181, 195/196). No wire capture exists yet.
  */
 export class SkinRecycleResponsePacket implements Packet {
-
   readonly type = PacketType.SKIN_RECYCLE_RESPONSE;
 
   //#region packet-specific members

@@ -54,23 +54,23 @@ The native inventory contains 191 direction-scoped packet registrations.
 RealmLib now has a registry entry for every one. Newly added or corrected
 registrations include:
 
-| ID | Direction | Current client name | RealmLib type |
-| --- | --- | --- | --- |
-| 116 | S to C | `ExaltationRedeemInfoMessage` | `EXALTATION_REDEEM_INFO` |
-| 123 | S to C | `PlayersListMessage` | `PLAYERS_LIST_MESSAGE` |
-| 125 | C to S | `GetPlayersListMessage` | `GET_PLAYERS_LIST_MESSAGE` |
-| 131 | C to S | `CustomMapList` | `CUSTOM_MAP_LIST` |
-| 132 | S to C | `CustomMapListResponse` | `CUSTOM_MAP_LIST_RESPONSE` |
-| 142 | S to C | `DrawDebugShape` | `DRAW_DEBUG_SHAPE` |
-| 143 | S to C | `DrawDebugArrow` | `DRAW_DEBUG_ARROW` |
-| 144 | S to C | `DashResetMessage` | `DASH_RESET` |
-| 184 | S to C | `TutorialStateChangedMessage` | `TUTORIAL_STATE_CHANGED` |
-| 191 | C to S | `BuyDusts` | `BUY_DUSTS` |
-| 192 | S to C | `BuyDustsResult` | `BUY_DUSTS_RESULT` |
-| 198 | C to S | `ResetEnchantmentRerollCount` | `RESET_ENCHANTMENT_REROLL_COUNT` |
-| 199 | S to C | `ResetEnchantmentRerollCountResult` | `RESET_ENCHANTMENT_REROLL_COUNT_RESULT` |
-| 226 | C to S | `GiftItemsMessage` | `GIFT_ITEMS` |
-| 231 | S to C | `StacksMessage` | `STACKS` |
+| ID  | Direction | Current client name                 | RealmLib type                           |
+| --- | --------- | ----------------------------------- | --------------------------------------- |
+| 116 | S to C    | `ExaltationRedeemInfoMessage`       | `EXALTATION_REDEEM_INFO`                |
+| 123 | S to C    | `PlayersListMessage`                | `PLAYERS_LIST_MESSAGE`                  |
+| 125 | C to S    | `GetPlayersListMessage`             | `GET_PLAYERS_LIST_MESSAGE`              |
+| 131 | C to S    | `CustomMapList`                     | `CUSTOM_MAP_LIST`                       |
+| 132 | S to C    | `CustomMapListResponse`             | `CUSTOM_MAP_LIST_RESPONSE`              |
+| 142 | S to C    | `DrawDebugShape`                    | `DRAW_DEBUG_SHAPE`                      |
+| 143 | S to C    | `DrawDebugArrow`                    | `DRAW_DEBUG_ARROW`                      |
+| 144 | S to C    | `DashResetMessage`                  | `DASH_RESET`                            |
+| 184 | S to C    | `TutorialStateChangedMessage`       | `TUTORIAL_STATE_CHANGED`                |
+| 191 | C to S    | `BuyDusts`                          | `BUY_DUSTS`                             |
+| 192 | S to C    | `BuyDustsResult`                    | `BUY_DUSTS_RESULT`                      |
+| 198 | C to S    | `ResetEnchantmentRerollCount`       | `RESET_ENCHANTMENT_REROLL_COUNT`        |
+| 199 | S to C    | `ResetEnchantmentRerollCountResult` | `RESET_ENCHANTMENT_REROLL_COUNT_RESULT` |
+| 226 | C to S    | `GiftItemsMessage`                  | `GIFT_ITEMS`                            |
+| 231 | S to C    | `StacksMessage`                     | `STACKS`                                |
 
 Packet ids are direction-scoped, not globally unique:
 

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Sample (2026-07-27 proxy capture): `01`.
  */
 export class ClaimBpMilestoneResultPacket implements Packet {
-
   readonly type = PacketType.CLAIM_BP_MILESTONE_RESULT;
 
   //#region packet-specific members

@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * server of the client's current position and time.
  */
 export class MovePacket implements Packet {
-
   readonly type = PacketType.MOVE;
 
   //#region packet-specific members

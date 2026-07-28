@@ -51,7 +51,10 @@ export class ProgressUpdatePacket implements Packet {
       .filter((part) => part.length > 0 && part !== '#')
       .map((part) => ({
         raw: part,
-        values: part.split(/[:,]/).map((value) => Number(value)).filter((value) => Number.isFinite(value)),
+        values: part
+          .split(/[:,]/)
+          .map((value) => Number(value))
+          .filter((value) => Number.isFinite(value)),
       }));
   }
 

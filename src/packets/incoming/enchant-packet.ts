@@ -22,7 +22,6 @@ import { Writer } from '../../writer';
  * from the stat update that follows, not from this packet.
  */
 export class EnchantPacket implements Packet {
-
   readonly type = PacketType.ENCHANT;
 
   //#region packet-specific members

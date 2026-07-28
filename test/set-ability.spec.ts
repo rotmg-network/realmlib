@@ -1,10 +1,5 @@
 import { expect } from 'chai';
-import {
-  createPacket,
-  DEFAULT_PACKET_MAP,
-  PacketType,
-  SetAbilityPacket,
-} from '../src';
+import { createPacket, DEFAULT_PACKET_MAP, PacketType, SetAbilityPacket } from '../src';
 import { expectRoundTripsTo, readerFromHex } from './support/codec';
 
 const CAPTURED_BODY = '0003056901442a14d54489ede2';

@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent when a dungeon is called out by a player. // todo: investigate further
  */
 export class PlayerCalloutPacket implements Packet {
-
   readonly type = PacketType.PLAYER_CALLOUT;
 
   //#region packet-specific members

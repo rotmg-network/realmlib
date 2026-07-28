@@ -59,7 +59,9 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(DEFAULT_PACKET_MAP[PacketType.CLAIM_BATTLE_PASS]).to.equal(149);
     expect(DEFAULT_PACKET_MAP[150]).to.equal(PacketType.CLAIM_BP_MILESTONE_RESULT);
     expect(createPacket(PacketType.CLAIM_BATTLE_PASS)).to.be.instanceOf(ClaimBattlePassPacket);
-    expect(createPacket(PacketType.CLAIM_BP_MILESTONE_RESULT)).to.be.instanceOf(ClaimBpMilestoneResultPacket);
+    expect(createPacket(PacketType.CLAIM_BP_MILESTONE_RESULT)).to.be.instanceOf(
+      ClaimBpMilestoneResultPacket,
+    );
   });
 
   it('replays the captured 149 -> 150 battle-pass exchange byte-exact', () => {
@@ -87,13 +89,20 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(DEFAULT_PACKET_MAP[140]).to.equal(PacketType.BUY_CUSTOMISATION_SOCKET);
     expect(DEFAULT_PACKET_MAP[141]).to.equal(PacketType.BUY_CUSTOMISATION_SOCKET_RESULT);
     expect(DEFAULT_PACKET_MAP[PacketType.BUY_CUSTOMISATION_SOCKET_RESULT]).to.equal(141);
-    expect(createPacket(PacketType.BUY_CUSTOMISATION_SOCKET)).to.be.instanceOf(BuyCustomisationSocketPacket);
-    expect(createPacket(PacketType.BUY_CUSTOMISATION_SOCKET_RESULT)).to.be.instanceOf(BuyCustomisationSocketResultPacket);
+    expect(createPacket(PacketType.BUY_CUSTOMISATION_SOCKET)).to.be.instanceOf(
+      BuyCustomisationSocketPacket,
+    );
+    expect(createPacket(PacketType.BUY_CUSTOMISATION_SOCKET_RESULT)).to.be.instanceOf(
+      BuyCustomisationSocketResultPacket,
+    );
   });
 
   it('parses the three captured 140 bodies as short count + {byte,int32,byte}', () => {
     // 0x12cf/0x1394 cloths + 0x3113 flipbook style; trailing 1 lands on the dyes.
-    const three = parse(new BuyCustomisationSocketPacket(), '000300000012cf00000000139400010000311300');
+    const three = parse(
+      new BuyCustomisationSocketPacket(),
+      '000300000012cf00000000139400010000311300',
+    );
     expect(three.selections).to.deep.equal([
       { unknownByte: 0, itemType: 0x12cf, unknownByte2: 0 },
       { unknownByte: 0, itemType: 0x1394, unknownByte2: 0 },
@@ -162,13 +171,15 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     const result = parse(new ClaimAccountLevelRewardResultPacket(), resultHex);
     expect(result.success).to.equal(true);
     expect(result.rewardId).to.equal(51);
-    expect(result.grants).to.deep.equal([{
-      raw: 'item:Staff of the Vital Unity:336_272_-3_-3',
-      kind: 'item',
-      value: 'Staff of the Vital Unity:336_272_-3_-3',
-      itemName: 'Staff of the Vital Unity',
-      skinData: '336_272_-3_-3',
-    }]);
+    expect(result.grants).to.deep.equal([
+      {
+        raw: 'item:Staff of the Vital Unity:336_272_-3_-3',
+        kind: 'item',
+        value: 'Staff of the Vital Unity:336_272_-3_-3',
+        itemName: 'Staff of the Vital Unity',
+        skinData: '336_272_-3_-3',
+      },
+    ]);
     expect(writeHex(result)).to.equal(resultHex);
   });
 

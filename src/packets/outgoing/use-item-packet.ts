@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * Sent to use an item, such as an ability or consumable.
  */
 export class UseItemPacket implements Packet {
-
   readonly type = PacketType.USEITEM;
 
   //#region packet-specific members

@@ -65,7 +65,10 @@ function toReader(writer: Writer): Reader {
 }
 
 /** Writes a packet, reads it back into a fresh instance of the same type. */
-function roundTrip<T extends { write(w: Writer): void; read(r: Reader): void }>(packet: T, fresh: T): T {
+function roundTrip<T extends { write(w: Writer): void; read(r: Reader): void }>(
+  packet: T,
+  fresh: T,
+): T {
   const writer = new Writer();
   packet.write(writer);
   fresh.read(toReader(writer));
@@ -207,7 +210,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.progressMax).to.equal(10);
     expect(p.progressValue).to.equal(4);
     expect(reader.remaining).to.equal(0);
-    const writer = new Writer(); p.write(writer);
+    const writer = new Writer();
+    p.write(writer);
     expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
   });
 
@@ -220,7 +224,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.hasProgressMax).to.equal(false);
     expect(p.hasProgressValue).to.equal(false);
     expect(reader.remaining).to.equal(0);
-    const writer = new Writer(); p.write(writer);
+    const writer = new Writer();
+    p.write(writer);
     expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
   });
 
@@ -577,7 +582,9 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(rp.code).to.equal('voucher_code');
     expect(req.remaining).to.equal(0);
 
-    const res = hexReader('000018566f7563686572732e566f75636865724e6f744578697374000c766f75636865725f636f6465');
+    const res = hexReader(
+      '000018566f7563686572732e566f75636865724e6f744578697374000c766f75636865725f636f6465',
+    );
     const vp = new VoucherResultPacket();
     vp.read(res);
     expect(vp.success).to.equal(false);
@@ -632,8 +639,8 @@ describe('current-build packets reconciled from captured bytes', () => {
   it('MapInfoPacket parses a Lost Halls boss room with dungeon modifiers (no leftover)', () => {
     const reader = hexReader(
       '0000010000000100000a4c6f73742048616c6c73000a4c6f73742048616c6c7300054e6578757340d57516' +
-      '000000004100000000000000326a4e85c8000a362e31322e302e302e30000f000f0000000000003145585045' +
-      '5249454e4345443b445241494e45445f343b53544f4e45424f53535f343b4845524f494344414d4147453b7c53ffff',
+        '000000004100000000000000326a4e85c8000a362e31322e302e302e30000f000f0000000000003145585045' +
+        '5249454e4345443b445241494e45445f343b53544f4e45424f53535f343b4845524f494344414d4147453b7c53ffff',
     );
     const p = new MapInfoPacket();
     p.read(reader);
@@ -651,8 +658,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     p.write(writer);
     expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(
       '0000010000000100000a4c6f73742048616c6c73000a4c6f73742048616c6c7300054e6578757340d57516' +
-      '000000004100000000000000326a4e85c8000a362e31322e302e302e30000f000f0000000000003145585045' +
-      '5249454e4345443b445241494e45445f343b53544f4e45424f53535f343b4845524f494344414d4147453b7c53ffff',
+        '000000004100000000000000326a4e85c8000a362e31322e302e302e30000f000f0000000000003145585045' +
+        '5249454e4345443b445241494e45445f343b53544f4e45424f53535f343b4845524f494344414d4147453b7c53ffff',
     );
   });
 
@@ -692,9 +699,21 @@ describe('current-build packets reconciled from captured bytes', () => {
       // Rogue, default skin => returned <Seasonal>True</Seasonal>, Texture 0.
       { hex: '03000000000101', classType: 0x0300, skinType: 0, seasonal: true, upgraded: true },
       // Wizard, custom skin => returned Seasonal false, Texture 30942 (0x78de).
-      { hex: '030e78de000001', classType: 0x030e, skinType: 0x78de, seasonal: false, upgraded: true },
+      {
+        hex: '030e78de000001',
+        classType: 0x030e,
+        skinType: 0x78de,
+        seasonal: false,
+        upgraded: true,
+      },
       // Same class/skin with only flag1 changed => Seasonal true.
-      { hex: '030e78de000101', classType: 0x030e, skinType: 0x78de, seasonal: true, upgraded: true },
+      {
+        hex: '030e78de000101',
+        classType: 0x030e,
+        skinType: 0x78de,
+        seasonal: true,
+        upgraded: true,
+      },
       // Current-build capture with starter gear disabled.
       { hex: '03240000000100', classType: 0x0324, skinType: 0, seasonal: true, upgraded: false },
     ];
@@ -723,7 +742,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     const s = new SlotObjectData();
     s.read(reader);
     expect(s.objectType).to.equal(-1);
-    const w = new Writer(); s.write(w);
+    const w = new Writer();
+    s.write(w);
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
   });
 
@@ -732,7 +752,9 @@ describe('current-build packets reconciled from captured bytes', () => {
     // unhandled, so 37 bytes were left unread.
     const json = '{"k":"s.teleport_target_not_found"}';
     const w = new Writer();
-    w.writeByte(9); w.writeByte(2); w.writeString(json);
+    w.writeByte(9);
+    w.writeByte(2);
+    w.writeString(json);
     const reader = hexReader(w.buffer.subarray(0, w.index).toString('hex'));
     const p = new NotificationPacket();
     p.read(reader);
@@ -749,7 +771,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.time).to.equal(0x000ab8d5);
     expect(p.unknownByte).to.equal(1);
     expect(reader.remaining).to.equal(0);
-    const w = new Writer(); p.write(w);
+    const w = new Writer();
+    p.write(w);
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('00001432000ab8d501');
   });
 
@@ -765,7 +788,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.abilityStateUnits).to.equal(2);
     expect(p.unknownInt2).to.equal(0);
     expect(reader.remaining).to.equal(0);
-    const w = new Writer(); p.write(w);
+    const w = new Writer();
+    p.write(w);
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal('8fc0200000020000000000');
   });
 
@@ -783,7 +807,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.toSlot.objectType).to.equal(2991);
     expect(p.flags).to.equal(0);
     expect(reader.remaining).to.equal(0);
-    const w = new Writer(); p.write(w);
+    const w = new Writer();
+    p.write(w);
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
   });
 
@@ -820,7 +845,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(p.toSlot.objectId).to.equal(0);
     expect(p.flags).to.equal(0x1000);
     expect(reader.remaining).to.equal(0);
-    const w = new Writer(); p.write(w);
+    const w = new Writer();
+    p.write(w);
     expect(w.buffer.subarray(0, w.index).toString('hex')).to.equal(hex);
   });
 
@@ -830,7 +856,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     p.read(reader);
     expect(p.unlockType).to.equal(UnlockInformationType.VAULT);
     expect(reader.remaining).to.equal(0);
-    const writer = new Writer(); p.write(writer);
+    const writer = new Writer();
+    p.write(writer);
     expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal('00000002');
   });
 
@@ -841,7 +868,8 @@ describe('current-build packets reconciled from captured bytes', () => {
     dash.read(dashReader);
     expect(dash.time).to.equal(518781);
     expect(dashReader.remaining).to.equal(0);
-    const dashWriter = new Writer(); dash.write(dashWriter);
+    const dashWriter = new Writer();
+    dash.write(dashWriter);
     expect(dashWriter.buffer.subarray(0, dashWriter.index).toString('hex')).to.equal(dashHex);
 
     const ackHex = '0007eaca';

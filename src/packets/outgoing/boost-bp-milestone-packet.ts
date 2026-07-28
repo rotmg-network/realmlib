@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * answers with `BOOST_BP_MILESTONE_RESULT` (152). No wire capture exists yet.
  */
 export class BoostBpMilestonePacket implements Packet {
-
   readonly type = PacketType.BOOST_BP_MILESTONE;
 
   //#region packet-specific members

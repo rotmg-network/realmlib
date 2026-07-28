@@ -22,19 +22,19 @@ direction/packet combinations.
 
 The most frequent packets are:
 
-| Packet | Direction | Count | Body bytes |
-|---|---:|---:|---:|
-| UPDATE | S→C | 6,582 | 12–20,102 |
-| UPDATEACK | C→S | 6,567 | 0 |
-| NEWTICK | S→C | 4,826 | 16–2,543 |
-| MOVE | C→S | 4,782 | 22–142 |
-| PLAYERSHOOT | C→S | 1,670 | 32 |
-| ENEMYSHOOT | S→C | 906 | 21–26 |
-| ENEMYHIT | C→S | 840 | 19 |
-| REALM_SCORE_UPDATE | S→C | 632 | 4 |
-| AOE / AOEACK | both | 597 each | 26 / 12 |
-| SHOOTACK | C→S | 568 | 6 |
-| SHOWEFFECT | S→C | 417 | 8–30 |
+| Packet             | Direction |    Count | Body bytes |
+| ------------------ | --------: | -------: | ---------: |
+| UPDATE             |       S→C |    6,582 |  12–20,102 |
+| UPDATEACK          |       C→S |    6,567 |          0 |
+| NEWTICK            |       S→C |    4,826 |   16–2,543 |
+| MOVE               |       C→S |    4,782 |     22–142 |
+| PLAYERSHOOT        |       C→S |    1,670 |         32 |
+| ENEMYSHOOT         |       S→C |      906 |      21–26 |
+| ENEMYHIT           |       C→S |      840 |         19 |
+| REALM_SCORE_UPDATE |       S→C |      632 |          4 |
+| AOE / AOEACK       |      both | 597 each |    26 / 12 |
+| SHOOTACK           |       C→S |      568 |          6 |
+| SHOWEFFECT         |       S→C |      417 |       8–30 |
 
 The activity sequence includes account-level claims 28–34, daily rewards,
 multiple character creations using default and custom skins, pet yard/vault
@@ -56,15 +56,15 @@ byte flag2
 Successful requests correlate with the immediately returned
 NEW_CHARACTER_INFORMATION XML as follows:
 
-| Class | Skin | Tail | Returned character | XML seasonal | XML texture |
-|---:|---:|---:|---:|---:|---:|
-| Rogue `0x0300` | 0 | `00 00 01` | 24 | False | 0 |
-| Rogue `0x0300` | 0 | `00 01 01` | 25 | True | 0 |
-| Rogue `0x0300` | `0x78da` | `00 01 01` | 26 | True | 30938 |
-| Rogue `0x0300` | `0x78da` | `00 01 01` | 27 | True | 30938 |
-| Wizard `0x030e` | 0 | `00 01 01` | 28 | True | 0 |
-| Wizard `0x030e` | `0x78de` | `00 00 01` | 29 | False | 30942 |
-| Wizard `0x030e` | `0x78de` | `00 01 01` | 30 | True | 30942 |
+|           Class |     Skin |       Tail | Returned character | XML seasonal | XML texture |
+| --------------: | -------: | ---------: | -----------------: | -----------: | ----------: |
+|  Rogue `0x0300` |        0 | `00 00 01` |                 24 |        False |           0 |
+|  Rogue `0x0300` |        0 | `00 01 01` |                 25 |         True |           0 |
+|  Rogue `0x0300` | `0x78da` | `00 01 01` |                 26 |         True |       30938 |
+|  Rogue `0x0300` | `0x78da` | `00 01 01` |                 27 |         True |       30938 |
+| Wizard `0x030e` |        0 | `00 01 01` |                 28 |         True |           0 |
+| Wizard `0x030e` | `0x78de` | `00 00 01` |                 29 |        False |       30942 |
+| Wizard `0x030e` | `0x78de` | `00 01 01` |                 30 |         True |       30942 |
 
 An earlier `030e 78de 00 00 01` attempt received a generic FAILURE, but an
 identical retry on the next connection succeeded and returned seasonal false.
@@ -117,15 +117,15 @@ The semantics of the version-1 pet blob itself remain unknown from one sample.
 Seven request/result pairs claim reward IDs 28–34. Every result succeeds and
 the confirmed layouts decode without leftovers:
 
-| Reward ID | Selected slots | Granted description |
-|---:|---|---|
-| 28 | `,1` | `item:Blueprint_48` |
-| 29 | `1` | `item:Superburger` |
-| 30 | `1` | `boost_loot:2` |
-| 31 | `1` | `item:Backpack` |
-| 32 | `1` | `char_start_with:all:3:Ring of Defense` |
-| 33 | `1` | `fame:800` |
-| 34 | `1,2,3` | three Stat Potion Choice Chests |
+| Reward ID | Selected slots | Granted description                     |
+| --------: | -------------- | --------------------------------------- |
+|        28 | `,1`           | `item:Blueprint_48`                     |
+|        29 | `1`            | `item:Superburger`                      |
+|        30 | `1`            | `boost_loot:2`                          |
+|        31 | `1`            | `item:Backpack`                         |
+|        32 | `1`            | `char_start_with:all:3:Ring of Defense` |
+|        33 | `1`            | `fame:800`                              |
+|        34 | `1,2,3`        | three Stat Potion Choice Chests         |
 
 This independently confirms the `rewardId` interpretation introduced after the
 master report and again demonstrates that empty choice positions are meaningful.

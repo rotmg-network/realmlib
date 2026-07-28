@@ -44,7 +44,7 @@ function decodeXmlText(value: string): string {
     }
     const named: Record<string, string> = {
       amp: '&',
-      apos: '\'',
+      apos: "'",
       gt: '>',
       lt: '<',
       quot: '"',
@@ -93,9 +93,7 @@ function parseEquipment(body: string | undefined): number[] {
 
 function characterId(block: string): number {
   const openingTag = /^<Char\b[^>]*>/.exec(block)?.[0];
-  const raw = openingTag
-    ? /\bid\s*=\s*(?:"([^"]*)"|'([^']*)')/.exec(openingTag)
-    : undefined;
+  const raw = openingTag ? /\bid\s*=\s*(?:"([^"]*)"|'([^']*)')/.exec(openingTag) : undefined;
   if (!raw) {
     throw new CharacterXmlParseError('Missing required Char id attribute');
   }

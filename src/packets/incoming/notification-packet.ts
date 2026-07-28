@@ -13,7 +13,6 @@ import {
 
 /** Received when the server displays a player or UI notification. */
 export class NotificationPacket implements Packet, NotificationEffectState {
-
   readonly type = PacketType.NOTIFICATION;
   /** Selects the per-effect payload layout. */
   effect: number;
@@ -39,7 +38,7 @@ export class NotificationPacket implements Packet, NotificationEffectState {
    * The player's position in the realm queue.
    */
   queuePos: number;
-    /**
+  /**
    * The color of the notification text
    */
   color: number;

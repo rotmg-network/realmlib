@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * {@link DashAckPacket} when local travel is complete.
  */
 export class DashPacket implements Packet {
-
   readonly type = PacketType.DASH;
 
   //#region packet-specific members

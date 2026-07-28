@@ -16,7 +16,6 @@ import { Writer } from '../../writer';
  * and `value` remains conservatively named.
  */
 export class UpgradeEnchanterPacket implements Packet {
-
   readonly type = PacketType.UPGRADE_ENCHANTER;
 
   //#region packet-specific members

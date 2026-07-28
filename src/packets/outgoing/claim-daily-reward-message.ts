@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * `"nonconsecutive"` as `claimType`.
  */
 export class ClaimDailyRewardMessage implements Packet {
-
   readonly type = PacketType.CLAIM_LOGIN_REWARD_MSG;
 
   //#region packet-specific members

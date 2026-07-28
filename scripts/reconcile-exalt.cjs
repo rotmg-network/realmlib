@@ -4,7 +4,9 @@ const fs = require('fs');
 const path = require('path');
 
 function usage() {
-  console.error('Usage: node scripts/reconcile-exalt.cjs [--strict] [--require-complete] <packets.json>');
+  console.error(
+    'Usage: node scripts/reconcile-exalt.cjs [--strict] [--require-complete] <packets.json>',
+  );
 }
 
 const args = process.argv.slice(2);
@@ -25,10 +27,7 @@ if (!fs.existsSync(inputPath)) {
 }
 
 const catalog = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
-const {
-  PACKET_REGISTRY,
-  protocolCompleteness,
-} = require('../lib/packet-registry');
+const { PACKET_REGISTRY, protocolCompleteness } = require('../lib/packet-registry');
 const wireKey = (id, direction) => `${direction ?? 'unknown'}:${id}`;
 const localByWire = new Map();
 const localByType = new Map();
@@ -44,8 +43,9 @@ const conflicts = [];
 const missingLocal = [];
 const directionConflicts = [];
 for (const mapping of mappings) {
-  const byId = localByWire.get(wireKey(mapping.id, mapping.direction))
-    ?? localByWire.get(wireKey(mapping.id, 'unknown'));
+  const byId =
+    localByWire.get(wireKey(mapping.id, mapping.direction)) ??
+    localByWire.get(wireKey(mapping.id, 'unknown'));
   const byType = localByType.get(mapping.type);
   if (byId && byId.type !== mapping.type) {
     conflicts.push(

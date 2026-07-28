@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * {@link SlotObjectData} entries. Dismantled slots have `objectType = -1`.
  */
 export class BlacksmithDismantlePacket implements Packet {
-
   readonly type = PacketType.BLACKSMITH_DISMANTLE;
 
   //#region packet-specific members

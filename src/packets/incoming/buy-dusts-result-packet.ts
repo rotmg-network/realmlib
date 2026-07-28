@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * id-191 request, 1:1, immediately before the player's gold/dust stats updated.
  */
 export class BuyDustsResultPacket implements Packet {
-
   readonly type = PacketType.BUY_DUSTS_RESULT;
 
   //#region packet-specific members

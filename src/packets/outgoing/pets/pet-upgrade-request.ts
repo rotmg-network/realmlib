@@ -23,7 +23,6 @@ import {
  * unknown operation values for debugging.
  */
 export class PetUpgradeRequestPacket implements Packet {
-
   readonly type = PacketType.PETUPGRADEREQUEST;
 
   /**
@@ -87,10 +86,7 @@ export class PetUpgradeRequestPacket implements Packet {
     objectId: number = 0,
   ): PetUpgradeRequestPacket {
     const packet = new PetUpgradeRequestPacket();
-    applyPetUpgradeOperation(
-      packet,
-      fusePets(firstPetId, secondPetId, paymentType, objectId),
-    );
+    applyPetUpgradeOperation(packet, fusePets(firstPetId, secondPetId, paymentType, objectId));
     return packet;
   }
 
@@ -124,7 +120,11 @@ export class PetUpgradeRequestPacket implements Packet {
     this.pIdTwo = reader.readInt32();
     this.objectId = reader.readInt32();
     this.paymentType = reader.readByte();
-    const slotObjectLen = reader.validateCollectionCount(reader.readShort(), 12, 'pet upgrade slots');
+    const slotObjectLen = reader.validateCollectionCount(
+      reader.readShort(),
+      12,
+      'pet upgrade slots',
+    );
     this.slotObjects = new Array<SlotObjectData>(slotObjectLen);
     for (let i = 0; i < slotObjectLen; i++) {
       this.slotObjects[i] = new SlotObjectData();
@@ -138,7 +138,7 @@ export class PetUpgradeRequestPacket implements Packet {
     if (!showSlots) {
       return str;
     } else {
-      for(let i = 0; i < this.slotObjects.length; i++) {
+      for (let i = 0; i < this.slotObjects.length; i++) {
         if (i == 0) {
           str += `\n${this.slotObjects[i].toString()}\n`;
         } else if (i == this.slotObjects.length - 1) {

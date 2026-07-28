@@ -27,7 +27,6 @@ import { Writer } from '../../writer';
  * meaning of that state still needs a controlled capture.
  */
 export class ClaimChestRewardPacket implements Packet {
-
   readonly type = PacketType.CLAIM_CHEST_REWARD;
 
   //#region packet-specific members

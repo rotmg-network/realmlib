@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received when another player shoots
  */
 export class ServerPlayerShootPacket implements Packet {
-
   readonly type = PacketType.SERVERPLAYERSHOOT;
 
   /**
@@ -39,7 +38,7 @@ export class ServerPlayerShootPacket implements Packet {
   unknownInt: number;
 
   unknownByte: number;
-  
+
   /** Whether the optional multi-projectile tail is present. */
   hasMultiShot: boolean;
   /** Projectile count carried by the optional tail. */

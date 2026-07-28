@@ -8,15 +8,15 @@ and layout evidence exists.
 
 ## Summary
 
-| Category | Count | Meaning |
-| --- | ---: | --- |
-| Modeled wire packets | 198 | One-byte id, known direction, packet factory |
-| Deliberately raw wire packets | 5 | One-byte id/direction known; layout not modeled |
-| Registry research candidates | 5 | One-byte id retained with unresolved direction/layout |
-| Legacy/non-wire metadata | 1 | Cannot be an active one-byte wire id |
-| Modeled id-less transports | 2 | Separate transport/handshake packet without a game-wire id |
-| Catalog nested/helper classes | 6 | Embedded class, not treated as a wire packet |
-| Catalog research names | 73 | Not presumed to be packets without further evidence |
+| Category                      | Count | Meaning                                                    |
+| ----------------------------- | ----: | ---------------------------------------------------------- |
+| Modeled wire packets          |   198 | One-byte id, known direction, packet factory               |
+| Deliberately raw wire packets |     5 | One-byte id/direction known; layout not modeled            |
+| Registry research candidates  |     5 | One-byte id retained with unresolved direction/layout      |
+| Legacy/non-wire metadata      |     1 | Cannot be an active one-byte wire id                       |
+| Modeled id-less transports    |     2 | Separate transport/handshake packet without a game-wire id |
+| Catalog nested/helper classes |     6 | Embedded class, not treated as a wire packet               |
+| Catalog research names        |    73 | Not presumed to be packets without further evidence        |
 
 ## Deliberately raw wire packets
 

@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * (`UnlockMissionTree`) carries just the boardId. No wire capture exists yet.
  */
 export class UnlockMissionPacket implements Packet {
-
   readonly type = PacketType.UNLOCK_MISSION;
 
   //#region packet-specific members

@@ -10,7 +10,9 @@ export class PartyJoinRequestPacket implements Packet {
   /** Id of the party to join. */
   partyId: number;
 
-  constructor() { this.partyId = 0; }
+  constructor() {
+    this.partyId = 0;
+  }
 
   read(reader: Reader): void {
     this.partyId = reader.readUInt32();

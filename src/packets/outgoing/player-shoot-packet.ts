@@ -1,91 +1,90 @@
-import {WorldPosData} from '../../data';
-import {Packet} from '../../packet';
-import {PacketType} from '../../packet-type';
-import {Reader} from '../../reader';
-import {Writer} from '../../writer';
-import {PlayerShootSource} from '../../models';
+import { WorldPosData } from '../../data';
+import { Packet } from '../../packet';
+import { PacketType } from '../../packet-type';
+import { Reader } from '../../reader';
+import { Writer } from '../../writer';
+import { PlayerShootSource } from '../../models';
 
 /**
  * Sent when the player shoots a projectile.
  */
 export class PlayerShootPacket implements Packet {
+  readonly type = PacketType.PLAYERSHOOT;
 
-    readonly type = PacketType.PLAYERSHOOT;
+  //#region packet-specific members
+  /**
+   * The current client time.
+   */
+  time: number;
+  /**
+   * The id of the bullet which was fired.
+   */
+  bulletId: number;
+  /**
+   * The item id of the weapon used to fire the projectile.
+   */
+  containerType: number;
+  /** Unresolved signed shot metadata byte. */
+  unknownByte: number;
+  /**
+   * The position of the starting point where the projectile was fired.
+   */
+  startingPos: WorldPosData;
+  /**
+   * The angle at which the projectile was fired.
+   */
+  angle: number;
+  /**
+   * If the projectile is related to a burst weapon projectile.
+   */
+  isBurst: boolean;
+  /** Unknown signed byte immediately before `shootSource`. */
+  unknownShort: number;
+  /** Whether the projectile came from the primary weapon or an ability. */
+  shootSource: PlayerShootSource;
+  /**
+   * The Player Position
+   */
+  playerPos: WorldPosData;
 
-    //#region packet-specific members
-    /**
-     * The current client time.
-     */
-    time: number;
-    /**
-     * The id of the bullet which was fired.
-     */
-    bulletId: number;
-    /**
-     * The item id of the weapon used to fire the projectile.
-     */
-    containerType: number;
-    /** Unresolved signed shot metadata byte. */
-    unknownByte: number;
-    /**
-     * The position of the starting point where the projectile was fired.
-     */
-    startingPos: WorldPosData;
-    /**
-     * The angle at which the projectile was fired.
-     */
-    angle: number;
-    /**
-     * If the projectile is related to a burst weapon projectile.
-     */
-    isBurst: boolean;
-    /** Unknown signed byte immediately before `shootSource`. */
-    unknownShort: number;
-    /** Whether the projectile came from the primary weapon or an ability. */
-    shootSource: PlayerShootSource;
-    /**
-     * The Player Position 
-     */
-    playerPos: WorldPosData;
+  //#endregion
 
-    //#endregion
+  constructor() {
+    this.time = 0;
+    this.bulletId = 0;
+    this.containerType = 0;
+    this.unknownByte = 0;
+    this.startingPos = new WorldPosData();
+    this.angle = 0;
+    this.isBurst = false;
+    this.unknownShort = 0;
+    this.shootSource = PlayerShootSource.Primary;
+    this.playerPos = new WorldPosData();
+  }
 
-    constructor() {
-        this.time = 0;
-        this.bulletId = 0;
-        this.containerType = 0;
-        this.unknownByte = 0;
-        this.startingPos = new WorldPosData();
-        this.angle = 0;
-        this.isBurst = false;
-        this.unknownShort = 0;
-        this.shootSource = PlayerShootSource.Primary;
-        this.playerPos = new WorldPosData();
-    }
+  write(writer: Writer): void {
+    writer.writeInt32(this.time);
+    writer.writeUnsignedShort(this.bulletId);
+    writer.writeShort(this.containerType);
+    writer.writeByte(this.unknownByte);
+    this.startingPos.write(writer);
+    writer.writeFloat(this.angle);
+    writer.writeBoolean(this.isBurst);
+    writer.writeByte(this.unknownShort);
+    writer.writeByte(this.shootSource);
+    this.playerPos.write(writer);
+  }
 
-    write(writer: Writer): void {
-        writer.writeInt32(this.time);
-        writer.writeUnsignedShort(this.bulletId);
-        writer.writeShort(this.containerType);
-        writer.writeByte(this.unknownByte);
-        this.startingPos.write(writer);
-        writer.writeFloat(this.angle);
-        writer.writeBoolean(this.isBurst);
-        writer.writeByte(this.unknownShort);
-        writer.writeByte(this.shootSource);
-        this.playerPos.write(writer);
-    }
-
-    read(reader: Reader): void {
-        this.time = reader.readInt32();
-        this.bulletId = reader.readUnsignedShort();
-        this.containerType = reader.readShort();
-        this.unknownByte = reader.readByte();
-        this.startingPos.read(reader);
-        this.angle = reader.readFloat();
-        this.isBurst = reader.readBoolean();
-        this.unknownShort = reader.readByte();
-        this.shootSource = reader.readByte() as PlayerShootSource;
-        this.playerPos.read(reader);
-    }
+  read(reader: Reader): void {
+    this.time = reader.readInt32();
+    this.bulletId = reader.readUnsignedShort();
+    this.containerType = reader.readShort();
+    this.unknownByte = reader.readByte();
+    this.startingPos.read(reader);
+    this.angle = reader.readFloat();
+    this.isBurst = reader.readBoolean();
+    this.unknownShort = reader.readByte();
+    this.shootSource = reader.readByte() as PlayerShootSource;
+    this.playerPos.read(reader);
+  }
 }

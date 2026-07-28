@@ -111,7 +111,7 @@ export enum StatType {
   /** Legacy stat retained for older captures; absent from current metadata. */
   CHALLENGER_STARBG_STAT = 100,
   PROJECTILE_SPEED_MULT = 102,
-  PLAYER_JOIN_TIME = 101, // server time the player joined the game 
+  PLAYER_JOIN_TIME = 101, // server time the player joined the game
   PROJECTILE_LIFE_MULT = 103,
   OPENED_AT_TIMESTAMP = 104,
   EXALTED_ATT = 105,
@@ -211,7 +211,7 @@ export enum CharacterStatAxis {
   Wisdom = 5,
   MaxHp = 6,
   MaxMp = 7,
-  SummonPower = 8
+  SummonPower = 8,
 }
 
 /**
@@ -272,7 +272,7 @@ export function slotIndexToStatType(slotIndex: number): StatType | null {
  */
 export enum PotionType {
   Health = 0,
-  Magic = 1
+  Magic = 1,
 }
 
 /**
@@ -288,5 +288,5 @@ export enum ExaltationStat {
   Speed = 4,
   Vitality = 5,
   Wisdom = 6,
-  Dexterity = 7
+  Dexterity = 7,
 }

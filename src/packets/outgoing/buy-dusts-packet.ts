@@ -18,7 +18,6 @@ import { Writer } from '../../writer';
  * The recovered current-client class name is `BuyDusts`.
  */
 export class BuyDustsPacket implements Packet {
-
   readonly type = PacketType.BUY_DUSTS;
 
   //#region packet-specific members

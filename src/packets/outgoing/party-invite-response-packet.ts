@@ -12,7 +12,10 @@ export class PartyInviteResponsePacket implements Packet {
   /** Non-zero to accept the invite. */
   accept: number;
 
-  constructor() { this.partyId = 0; this.accept = 0; }
+  constructor() {
+    this.partyId = 0;
+    this.accept = 0;
+  }
 
   read(reader: Reader): void {
     this.partyId = reader.readUInt32();

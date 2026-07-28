@@ -10,13 +10,12 @@ import { Writer } from '../../writer';
  * {@link NewCharacterInfoPacket.character} to parse it into structured {@link CharacterData}.
  */
 export class NewCharacterInfoPacket implements Packet {
-
   readonly type = PacketType.NEW_CHARACTER_INFORMATION;
 
   charXML: string;
 
   constructor() {
-    this.charXML = "";
+    this.charXML = '';
   }
 
   /** The parsed character, or `undefined` if `charXML` has no `<Char>` block. */

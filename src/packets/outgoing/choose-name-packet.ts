@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to change the client's account name.
  */
 export class ChooseNamePacket implements Packet {
-
   readonly type = PacketType.CHOOSENAME;
 
   //#region packet-specific members

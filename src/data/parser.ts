@@ -3,15 +3,21 @@ import { inventorySlotIndex, PlayerData, PlayerDataPatch, StatType } from '../mo
 
 type StatHandler = (playerData: PlayerDataPatch, stat: StatData) => void;
 
-const assignNumber = (field: keyof PlayerData): StatHandler => (playerData, stat) => {
-  Object.assign(playerData, { [field]: stat.statValue });
-};
-const assignString = (field: keyof PlayerData): StatHandler => (playerData, stat) => {
-  Object.assign(playerData, { [field]: stat.stringStatValue });
-};
-const assignBoolean = (field: keyof PlayerData): StatHandler => (playerData, stat) => {
-  Object.assign(playerData, { [field]: stat.statValue !== 0 });
-};
+const assignNumber =
+  (field: keyof PlayerData): StatHandler =>
+  (playerData, stat) => {
+    Object.assign(playerData, { [field]: stat.statValue });
+  };
+const assignString =
+  (field: keyof PlayerData): StatHandler =>
+  (playerData, stat) => {
+    Object.assign(playerData, { [field]: stat.stringStatValue });
+  };
+const assignBoolean =
+  (field: keyof PlayerData): StatHandler =>
+  (playerData, stat) => {
+    Object.assign(playerData, { [field]: stat.statValue !== 0 });
+  };
 
 const statHandlers = new Map<number, StatHandler>();
 
@@ -138,10 +144,7 @@ export function processObjectStatus(
 
 export function processStatData(stats: StatData[], currentData: PlayerData): PlayerData;
 export function processStatData(stats: StatData[], currentData?: PlayerDataPatch): PlayerDataPatch;
-export function processStatData(
-  stats: StatData[],
-  currentData?: PlayerDataPatch,
-): PlayerDataPatch {
+export function processStatData(stats: StatData[], currentData?: PlayerDataPatch): PlayerDataPatch {
   const playerData: PlayerDataPatch = currentData || { inventory: [] };
   playerData.inventory ||= [];
 

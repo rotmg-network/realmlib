@@ -38,15 +38,15 @@ The main exports are available from the package root. Stable focused entry
 points are also available as `realmlib/core`, `realmlib/protocol`,
 `realmlib/packets`, `realmlib/models`, and `realmlib/data`.
 
-| export | purpose |
-|--------|---------|
-| `PacketIO` | event-based packet send/receive over a socket |
-| `Reader` / `Writer` | binary readers and writers used by packet classes |
-| `RC4` | the cipher and current `INCOMING_KEY` / `OUTGOING_KEY` values |
-| `PacketType` | string enum of every packet |
-| `DEFAULT_PACKET_MAP` | immutable compatibility map for current one-byte wire ids |
-| `Packet` subclasses | one class per packet (`packets/`) |
-| models / enums / data | `StatType`, `PortalType`, `GameId`, `FameData`, … |
+| export                | purpose                                                       |
+| --------------------- | ------------------------------------------------------------- |
+| `PacketIO`            | event-based packet send/receive over a socket                 |
+| `Reader` / `Writer`   | binary readers and writers used by packet classes             |
+| `RC4`                 | the cipher and current `INCOMING_KEY` / `OUTGOING_KEY` values |
+| `PacketType`          | string enum of every packet                                   |
+| `DEFAULT_PACKET_MAP`  | immutable compatibility map for current one-byte wire ids     |
+| `Packet` subclasses   | one class per packet (`packets/`)                             |
+| models / enums / data | `StatType`, `PortalType`, `GameId`, `FameData`, …             |
 
 ## Using `PacketIO`
 

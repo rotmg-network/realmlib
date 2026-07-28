@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * > Unknown.
  */
 export class SquareHitPacket implements Packet {
-
   readonly type = PacketType.SQUAREHIT;
 
   //#region packet-specific members

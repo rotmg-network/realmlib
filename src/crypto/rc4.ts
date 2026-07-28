@@ -2,7 +2,6 @@
  * An inline-based implementation of the RC4 stream cipher
  */
 export class RC4 {
-
   private state: Buffer;
   private key: Buffer;
   private i: number;

@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * pairing with outgoing 180.
  */
 export class ActivateCrucibleResultPacket implements Packet {
-
   readonly type = PacketType.ACTIVATE_CRUCIBLE_RESULT;
 
   //#region packet-specific members

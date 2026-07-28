@@ -54,19 +54,10 @@ export interface PacketIOOptions {
 }
 
 export type PacketIOConnectionState =
-  | 'detached'
-  | 'connecting'
-  | 'connected'
-  | 'backpressured'
-  | 'closed';
+  'detached' | 'connecting' | 'connected' | 'backpressured' | 'closed';
 
 export type SendStatus =
-  | 'sent'
-  | 'queued'
-  | 'disconnected'
-  | 'missing-mapping'
-  | 'queue-full'
-  | 'invalid';
+  'sent' | 'queued' | 'disconnected' | 'missing-mapping' | 'queue-full' | 'invalid';
 
 export interface SendResult {
   readonly accepted: boolean;
@@ -90,8 +81,8 @@ export const DEFAULT_RC4: RC4Config = {
  */
 export const PROXY_INCOMING: RC4Config = {
   incomingKey: INCOMING_KEY,
-  outgoingKey: INCOMING_KEY
-}
+  outgoingKey: INCOMING_KEY,
+};
 
 /**
  * An outgoing data configuration for when the
@@ -99,14 +90,13 @@ export const PROXY_INCOMING: RC4Config = {
  */
 export const PROXY_OUTGOING: RC4Config = {
   incomingKey: OUTGOING_KEY,
-  outgoingKey: OUTGOING_KEY
-}
+  outgoingKey: OUTGOING_KEY,
+};
 
 /**
  * A utility class which implements the RotMG messaging protocol on top of a `Socket`.
  */
 export class PacketIO extends EventEmitter<PacketIOEventMap> {
-
   /**
    * The largest packet size (in bytes, including the 5 byte header) which
    * will be accepted. Anything outside `[5, MAX_PACKET_SIZE]` is treated as
@@ -119,10 +109,10 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
    * Registers a listener for a concrete packet type without widening its
    * parameter to the base {@link Packet} interface.
    */
-  override on<
-    TType extends PacketType,
-    TPacket extends Packet,
-  >(eventName: TType, listener: (packet: TPacket) => void): this;
+  override on<TType extends PacketType, TPacket extends Packet>(
+    eventName: TType,
+    listener: (packet: TPacket) => void,
+  ): this;
   override on<TEvent extends keyof PacketIOEventMap>(
     eventName: TEvent,
     listener: (...args: PacketIOEventMap[TEvent]) => void,
@@ -140,10 +130,10 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
    * Registers a one-shot listener with the same concrete-packet inference as
    * `PacketIO.on`.
    */
-  override once<
-    TType extends PacketType,
-    TPacket extends Packet,
-  >(eventName: TType, listener: (packet: TPacket) => void): this;
+  override once<TType extends PacketType, TPacket extends Packet>(
+    eventName: TType,
+    listener: (packet: TPacket) => void,
+  ): this;
   override once<TEvent extends keyof PacketIOEventMap>(
     eventName: TEvent,
     listener: (...args: PacketIOEventMap[TEvent]) => void,
@@ -312,17 +302,21 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
     }
     const id = this.resolver.idFor(packet.type);
     if (id === undefined) {
-      this.emitError(new PacketMappingError(
-        'MISSING_MAPPING',
-        `Mapper is missing an id for the packet type ${packet.type}`,
-      ));
+      this.emitError(
+        new PacketMappingError(
+          'MISSING_MAPPING',
+          `Mapper is missing an id for the packet type ${packet.type}`,
+        ),
+      );
       return this.sendResult(false, 'missing-mapping');
     }
     if (!Number.isInteger(id) || id < 0 || id > 255) {
-      this.emitError(new PacketMappingError(
-        'INVALID_PACKET_ID',
-        `Mapper id for ${packet.type} must be an integer in [0,255], got ${String(id)}`,
-      ));
+      this.emitError(
+        new PacketMappingError(
+          'INVALID_PACKET_ID',
+          `Mapper id for ${packet.type} must be an integer in [0,255], got ${String(id)}`,
+        ),
+      );
       return this.sendResult(false, 'invalid');
     }
     return this.enqueueOutgoing({ kind: 'packet', packet });
@@ -338,17 +332,18 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
       return this.sendResult(false, 'disconnected');
     }
     if (!Number.isInteger(id) || id < 0 || id > 255) {
-      this.emitError(new PacketMappingError(
-        'INVALID_RAW_ID',
-        `Raw packet id must be in [0,255], got ${id}`,
-      ));
+      this.emitError(
+        new PacketMappingError('INVALID_RAW_ID', `Raw packet id must be in [0,255], got ${id}`),
+      );
       return this.sendResult(false, 'invalid');
     }
     // Buffer.from copies a Buffer and materializes a number[], so one call
     // handles both input shapes (and always gives us an owned copy to cipher).
     const body = Buffer.from(payload as Buffer);
     if (body.length + 5 > PacketIO.MAX_PACKET_SIZE) {
-      this.emitError(new RealmlibError('FRAME_TOO_LARGE', `Raw packet size exceeds ${PacketIO.MAX_PACKET_SIZE}`));
+      this.emitError(
+        new RealmlibError('FRAME_TOO_LARGE', `Raw packet size exceeds ${PacketIO.MAX_PACKET_SIZE}`),
+      );
       return this.sendResult(false, 'invalid');
     }
     return this.enqueueOutgoing({ kind: 'raw', id, payload: body });
@@ -418,9 +413,10 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
 
     let frame: Buffer;
     try {
-      frame = item.kind === 'raw'
-        ? this.buildRawFrame(item.id, item.payload)
-        : this.buildPacketFrame(item.packet);
+      frame =
+        item.kind === 'raw'
+          ? this.buildRawFrame(item.id, item.payload)
+          : this.buildPacketFrame(item.packet);
     } catch (error) {
       this.emitError(new PacketWriteError(error instanceof Error ? error.message : String(error)));
       process.nextTick(() => this.drainQueue());
@@ -518,10 +514,12 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
   }
 
   private canAcceptOutgoing(): boolean {
-    return this.socket !== undefined
-      && !this.socket.destroyed
-      && this.state !== 'detached'
-      && this.state !== 'closed';
+    return (
+      this.socket !== undefined &&
+      !this.socket.destroyed &&
+      this.state !== 'detached' &&
+      this.state !== 'closed'
+    );
   }
 
   /**
@@ -575,8 +573,10 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
       }
 
       if (!type) {
-        if (this.listenerCount('unknownPacket') !== 0
-          || this.listenerCount('packetDiagnostic') !== 0) {
+        if (
+          this.listenerCount('unknownPacket') !== 0 ||
+          this.listenerCount('packetDiagnostic') !== 0
+        ) {
           const diagnostic = this.createDiagnostic(
             id,
             type,
@@ -590,11 +590,12 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
         }
         return undefined;
       }
-      const shouldParse = this.listenerCount(type) !== 0
-        || this.listenerCount('packetDiagnostic') !== 0
-        || this.listenerCount('packetParseError') !== 0
-        || this.listenerCount('packetLeftover') !== 0
-        || this.listenerCount('packetOpaque') !== 0;
+      const shouldParse =
+        this.listenerCount(type) !== 0 ||
+        this.listenerCount('packetDiagnostic') !== 0 ||
+        this.listenerCount('packetParseError') !== 0 ||
+        this.listenerCount('packetLeftover') !== 0 ||
+        this.listenerCount('packetOpaque') !== 0;
       if (shouldParse) {
         this.reader.resizeBuffer(frame.length);
         frame.copy(this.reader.buffer);

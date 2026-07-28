@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * yet.
  */
 export class BoostBpMilestoneResultPacket implements Packet {
-
   readonly type = PacketType.BOOST_BP_MILESTONE_RESULT;
 
   //#region packet-specific members

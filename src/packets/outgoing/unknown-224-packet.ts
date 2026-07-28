@@ -17,7 +17,6 @@ import { Writer } from '../../writer';
  *   the value is the "tree unlocked" toast.
  */
 export class UnlockMissionTreePacket implements Packet {
-
   readonly type = PacketType.UNLOCK_MISSION_TREE;
 
   //#region packet-specific members

@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * No wire capture exists yet.
  */
 export class SkinRecyclePacket implements Packet {
-
   readonly type = PacketType.SKIN_RECYCLE;
 
   //#region packet-specific members

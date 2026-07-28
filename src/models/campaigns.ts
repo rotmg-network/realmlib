@@ -7,7 +7,7 @@ export enum CharacterFilter {
   NonCrucible = 4,
   CrucibleSeasonal = 5,
   BloodRitual = 6,
-  OutsideBloodRitual = 7
+  OutsideBloodRitual = 7,
 }
 
 /** Boost kinds that can be attached to campaign or event definitions. */
@@ -26,5 +26,5 @@ export enum CampaignBoost {
   DropDustVolume = 10,
   ItemSlotChance = 11,
   HP = 20,
-  Damage = 21
+  Damage = 21,
 }

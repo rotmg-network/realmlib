@@ -1,10 +1,5 @@
 import { expect } from 'chai';
-import {
-  PACKET_REGISTRY,
-  PacketType,
-  Reader,
-  Writer,
-} from '../src';
+import { PACKET_REGISTRY, PacketType, Reader, Writer } from '../src';
 
 const defaultWriteExemptions = new Map<PacketType, string>([
   [PacketType.PIC, 'requires positive dimensions and an exact RGBA buffer'],
@@ -21,10 +16,7 @@ describe('registered packet codec contracts', () => {
       const packet = definition.factory!();
       const reason = defaultWriteExemptions.get(definition.type);
       if (reason) {
-        expect(
-          () => packet.write(new Writer()),
-          `${definition.type}: ${reason}`,
-        ).to.throw();
+        expect(() => packet.write(new Writer()), `${definition.type}: ${reason}`).to.throw();
         return;
       }
 
@@ -49,7 +41,9 @@ describe('registered packet codec contracts', () => {
 
   it('keeps every default-write exemption tied to a registered factory', () => {
     const factoryTypes = new Set(
-      PACKET_REGISTRY.filter((definition) => definition.factory).map((definition) => definition.type),
+      PACKET_REGISTRY.filter((definition) => definition.factory).map(
+        (definition) => definition.type,
+      ),
     );
     for (const type of defaultWriteExemptions.keys()) {
       expect(factoryTypes.has(type), `${type} exemption is stale`).to.equal(true);

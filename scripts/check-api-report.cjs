@@ -27,9 +27,10 @@ if (result.status === 0) {
 
 const output = `${result.stdout || ''}\n${result.stderr || ''}`;
 const normalize = (value) => value.replace(/\r\n/g, '\n');
-const reportsMatch = existsSync(temporaryReport)
-  && normalize(readFileSync(temporaryReport, 'utf8'))
-    === normalize(readFileSync(committedReport, 'utf8'));
+const reportsMatch =
+  existsSync(temporaryReport) &&
+  normalize(readFileSync(temporaryReport, 'utf8')) ===
+    normalize(readFileSync(committedReport, 'utf8'));
 
 // API Extractor intentionally exits nonzero for warning-level diagnostics in
 // CI mode. Preserve those diagnostics while still enforcing the API snapshot.

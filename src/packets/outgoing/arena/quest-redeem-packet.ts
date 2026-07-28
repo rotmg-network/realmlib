@@ -8,7 +8,6 @@ import { Writer } from '../../../writer';
  * > Unknown.
  */
 export class QuestRedeemPacket implements Packet {
-
   readonly type = PacketType.QUEST_REDEEM;
   propagate = true;
 

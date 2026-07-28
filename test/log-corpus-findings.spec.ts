@@ -102,19 +102,21 @@ describe('log corpus findings (2026-07-28)', () => {
         title: 'The Astral Path',
         start: 1_783_414_860,
         end: 1_785_833_999,
-        milestones: [{
-          bxp: 480_000_000,
-          bxp_interval: 50_000_000,
-          id: 77,
-          rewards: {
-            coupons: 0,
-            exaltedCoupons: 0,
-            credits: 0,
-            exaltedCredits: 0,
-            items: [{ amount: 1, autoconsume: false, type: 42_345 }],
-            exaltItems: [],
+        milestones: [
+          {
+            bxp: 480_000_000,
+            bxp_interval: 50_000_000,
+            id: 77,
+            rewards: {
+              coupons: 0,
+              exaltedCoupons: 0,
+              credits: 0,
+              exaltedCredits: 0,
+              items: [{ amount: 1, autoconsume: false, type: 42_345 }],
+              exaltItems: [],
+            },
           },
-        }],
+        ],
         exaltedPrice: 1_200,
         boost: [{ price: 600, amount: 1 }],
         weeklyBxpCap: 700_000_000,

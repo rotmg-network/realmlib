@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to invite a player to the client's current guild.
  */
 export class GuildInvitePacket implements Packet {
-
   readonly type = PacketType.GUILDINVITE;
 
   //#region packet-specific members

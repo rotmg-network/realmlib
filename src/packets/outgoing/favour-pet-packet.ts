@@ -19,7 +19,6 @@ import { Writer } from '../../writer';
  * carry a pet at all.
  */
 export class FavourPetPacket implements Packet {
-
   readonly type = PacketType.FAVOUR_PET;
 
   //#region packet-specific members

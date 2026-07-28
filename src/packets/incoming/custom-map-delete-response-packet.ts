@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * "Something goes wrong, the dungeon still exist". No wire capture exists yet.
  */
 export class CustomMapDeleteResponsePacket implements Packet {
-
   readonly type = PacketType.CUSTOM_MAP_DELETE_RESPONSE;
 
   //#region packet-specific members

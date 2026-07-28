@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * Sent to swap the items of two slots.
  */
 export class InvSwapPacket implements Packet {
-
   readonly type = PacketType.INVSWAP;
 
   //#region packet-specific members

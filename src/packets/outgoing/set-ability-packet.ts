@@ -12,7 +12,6 @@ import { Writer } from '../../writer';
  * known, so {@link SetAbilityPacket.ability} intentionally remains a numeric byte.
  */
 export class SetAbilityPacket implements Packet {
-
   readonly type = PacketType.SET_ABILITY;
 
   //#region packet-specific members

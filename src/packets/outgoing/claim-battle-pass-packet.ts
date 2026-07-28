@@ -15,7 +15,6 @@ import { Writer } from '../../writer';
  * CLAIM_REWARD_RESULT (235) exchange.
  */
 export class ClaimBattlePassPacket implements Packet {
-
   readonly type = PacketType.CLAIM_BATTLE_PASS;
 
   //#region packet-specific members

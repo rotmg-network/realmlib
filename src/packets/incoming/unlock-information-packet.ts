@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * immediately followed by `s.vault_unlocked` and authoritative vault content.
  */
 export class UnlockInformationPacket implements Packet {
-
   readonly type = PacketType.UNLOCK_INFORMATION;
 
   /** Raw unlock kind; use {@link UnlockInformationType} for known values. */

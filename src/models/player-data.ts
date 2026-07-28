@@ -114,12 +114,13 @@ export interface PlayerProgressionData {
  * model. Facet interfaces can be used independently by narrower consumers.
  */
 export interface PlayerData
-  extends PlayerIdentityLocationData,
-  PlayerAccountGuildData,
-  PlayerCombatData,
-  PlayerInventoryData,
-  PlayerPotionQuickSlotData,
-  PlayerProgressionData {}
+  extends
+    PlayerIdentityLocationData,
+    PlayerAccountGuildData,
+    PlayerCombatData,
+    PlayerInventoryData,
+    PlayerPotionQuickSlotData,
+    PlayerProgressionData {}
 
 /**
  * Incremental player/entity data produced from UPDATE and NEWTICK stat lists.

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * contains the reconnect information for the used portal.
  */
 export class UsePortalPacket implements Packet {
-
   readonly type = PacketType.USEPORTAL;
 
   //#region packet-specific members

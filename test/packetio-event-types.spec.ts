@@ -1,10 +1,5 @@
 import { expect } from 'chai';
-import {
-  PacketIO,
-  PacketType,
-  ShootAckPacket,
-  UpdatePacket,
-} from '../src';
+import { PacketIO, PacketType, ShootAckPacket, UpdatePacket } from '../src';
 
 describe('PacketIO concrete event typing', () => {
   it('accepts handlers declared against concrete packet classes', () => {

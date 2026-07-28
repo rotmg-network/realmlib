@@ -1,4 +1,3 @@
-
 /**
  * The type of dust mapped to ID
  *  "assembly": "Assembly-CSharp",
@@ -13,7 +12,7 @@ export enum DustType {
   BlueDust = 2,
   YellowDust = 3,
   PurpleDust = 4,
-  RedDust = 5
+  RedDust = 5,
 }
 
 /**
@@ -98,5 +97,5 @@ export enum ForgeMaterialRarity {
   CommonMaterial = 1,
   RareMaterial = 2,
   LegendaryMaterial = 3,
-  MythicalMaterial = 4
+  MythicalMaterial = 4,
 }

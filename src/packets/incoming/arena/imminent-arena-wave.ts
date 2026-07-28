@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Received when a new arena wave is about to begin.
  */
 export class ImminentArenaWavePacket implements Packet {
-
   readonly type = PacketType.IMMINENT_ARENA_WAVE;
   propagate = true;
 

@@ -20,7 +20,6 @@ export class Reader {
     return this._length;
   }
 
-
   get remaining(): number {
     return this._length - this.index;
   }
@@ -55,7 +54,10 @@ export class Reader {
     if (!Number.isInteger(minimumBytesPerItem) || minimumBytesPerItem <= 0) {
       throw new RangeError('minimumBytesPerItem must be a positive integer');
     }
-    if (count > Reader.MAX_COLLECTION_ITEMS || count > Math.floor(this.remaining / minimumBytesPerItem)) {
+    if (
+      count > Reader.MAX_COLLECTION_ITEMS ||
+      count > Math.floor(this.remaining / minimumBytesPerItem)
+    ) {
       throw new PacketReadError(
         `${label} count ${count} cannot fit in ${this.remaining} remaining byte(s)`,
       );
@@ -140,7 +142,7 @@ export class Reader {
     const arraylen = this.readUnsignedShort();
     this.ensure(arraylen);
     const result = new Array<number>(arraylen);
-    for (let i = 0; i < arraylen; i++ , this.index++) {
+    for (let i = 0; i < arraylen; i++, this.index++) {
       result[i] = this.buffer[this.index];
     }
     return result;
@@ -152,7 +154,7 @@ export class Reader {
   readBytes(size: number): number[] {
     this.ensure(size);
     const result = new Array<number>(size);
-    for (let i = 0; i < size; i++ , this.index++) {
+    for (let i = 0; i < size; i++, this.index++) {
       result[i] = this.buffer[this.index];
     }
     return result;
@@ -219,7 +221,10 @@ export class Reader {
   resizeBuffer(newSize: number): void {
     this._length = newSize;
     if (this.buffer.length < newSize) {
-      this.buffer = Buffer.concat([this.buffer, Buffer.alloc(newSize - this.buffer.length)], newSize);
+      this.buffer = Buffer.concat(
+        [this.buffer, Buffer.alloc(newSize - this.buffer.length)],
+        newSize,
+      );
     }
   }
 

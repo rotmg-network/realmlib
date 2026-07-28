@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * byte count followed by that many {@link SlotObjectData} entries.
  */
 export class BlacksmithRequestPacket implements Packet {
-
   readonly type = PacketType.BLACKSMITH_REQUEST;
 
   //#region packet-specific members

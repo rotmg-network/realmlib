@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Received to give the player information about a newly hatched pet
  */
 export class HatchPetMessage implements Packet {
-
   readonly type = PacketType.HATCH_PET;
   propagate = true;
 

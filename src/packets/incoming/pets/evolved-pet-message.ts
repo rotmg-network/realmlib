@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Received to give the player information about a newly evolved pet.
  */
 export class EvolvedPetMessage implements Packet {
-
   readonly type = PacketType.EVOLVE_PET;
   propagate = true;
 

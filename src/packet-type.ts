@@ -103,8 +103,8 @@ export enum PacketType {
   PET_CHANGE_SKIN_MSG = 'PET_CHANGE_SKIN_MSG',
   REALM_HERO_LEFT_MSG = 'REALM_HERO_LEFT_MSG',
   RESET_DAILY_QUESTS = 'RESET_DAILY_QUESTS',
-  NEW_CHARACTER_INFORMATION = "NEW_CHARACTER_INFORMATION",
-  UNLOCK_INFORMATION = "UNLOCK_INFORMATION",
+  NEW_CHARACTER_INFORMATION = 'NEW_CHARACTER_INFORMATION',
+  UNLOCK_INFORMATION = 'UNLOCK_INFORMATION',
   QUEUE_INFORMATION = 'QUEUE_INFORMATION',
   QUEUE_CANCEL = 'QUEUE_CANCEL',
   VAULT_CONTENT = 'VAULT_CONTENT',
@@ -127,8 +127,8 @@ export enum PacketType {
   DRAW_DEBUG_ARROW = 'DRAW_DEBUG_ARROW',
   FAVOUR_PET = 'FAVOUR_PET',
 
-  // These packets are registered in packet-map.ts 
-  // (so they are recognized and name<->id mapped) but do not 
+  // These packets are registered in packet-map.ts
+  // (so they are recognized and name<->id mapped) but do not
   // yet have packet structures, so they are temporarily unusable..
   CUSTOM_MAP_DELETE = 'CUSTOM_MAP_DELETE',
   CUSTOM_MAP_DELETE_RESPONSE = 'CUSTOM_MAP_DELETE_RESPONSE',

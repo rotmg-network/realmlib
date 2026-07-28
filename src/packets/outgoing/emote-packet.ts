@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * fully confirmed.
  */
 export class EmotePacket implements Packet {
-
   readonly type = PacketType.EMOTE;
 
   //#region packet-specific members

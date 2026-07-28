@@ -56,8 +56,10 @@ export class StatData implements DataPacket {
 
   toString(): string {
     const value = this.isStringStat() ? this.stringStatValue : this.statValue;
-    return `[StatData] Type: ${this.statToName(this.statType)} - Value: ${value} `
-      + `(secondary value: ${this.statValueTwo})`;
+    return (
+      `[StatData] Type: ${this.statToName(this.statType)} - Value: ${value} ` +
+      `(secondary value: ${this.statValueTwo})`
+    );
   }
 
   /**

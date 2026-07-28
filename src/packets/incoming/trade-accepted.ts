@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when the active trade is accepted
  */
 export class TradeAcceptedPacket implements Packet {
-
   readonly type = PacketType.TRADEACCEPTED;
 
   //#region packet-specific members
@@ -32,12 +31,20 @@ export class TradeAcceptedPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    const clientOfferLen = reader.validateCollectionCount(reader.readShort(), 1, 'client trade offer');
+    const clientOfferLen = reader.validateCollectionCount(
+      reader.readShort(),
+      1,
+      'client trade offer',
+    );
     this.clientOffer = new Array<boolean>(clientOfferLen);
     for (let i = 0; i < clientOfferLen; i++) {
       this.clientOffer[i] = reader.readBoolean();
     }
-    const partnerOfferLen = reader.validateCollectionCount(reader.readShort(), 1, 'partner trade offer');
+    const partnerOfferLen = reader.validateCollectionCount(
+      reader.readShort(),
+      1,
+      'partner trade offer',
+    );
     this.partnerOffer = new Array<boolean>(partnerOfferLen);
     for (let i = 0; i < partnerOfferLen; i++) {
       this.partnerOffer[i] = reader.readBoolean();

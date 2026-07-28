@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * with a JSON blob for each requested index.
  */
 export class CrucibleRequestPacket implements Packet {
-
   readonly type = PacketType.CRUCIBLE_REQUEST;
 
   //#region packet-specific members

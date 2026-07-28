@@ -4,7 +4,7 @@ export enum MissionParticipants {
   RegularOnly = 1,
   SeasonalOnly = 2,
   CrucibleOnly = 4,
-  All = 255
+  All = 255,
 }
 
 /** Objective kinds used by the current mission system. */
@@ -30,14 +30,14 @@ export enum MissionObjectiveType {
   CompleteDailyQuests = 18,
   BiomeScore = 19,
   Consume = 20,
-  ForgeItemsTier = 41
+  ForgeItemsTier = 41,
 }
 
 /** Reward payload categories used in mission definitions. */
 export enum MissionRewardKind {
   Unknown = -1,
   Item = 0,
-  BXP = 1
+  BXP = 1,
 }
 
 /** Whether a mission can be selected for progress tracking. */
@@ -48,7 +48,7 @@ export enum MissionTrackingState {
   UnavailableToTrack = 2,
   Completed = 10,
   Claimed = 20,
-  ClaimedOnCooldown = 21
+  ClaimedOnCooldown = 21,
 }
 
 /** Lifecycle state of a mission. */
@@ -56,7 +56,7 @@ export enum MissionState {
   Active = 0,
   Completed = 1,
   Claimed = 2,
-  OnCooldown = 3
+  OnCooldown = 3,
 }
 
 /**
@@ -69,5 +69,5 @@ export enum MissionRepeatCadence {
   Weekly = 3,
   Monthly = 4,
   OnlyOnce = 5,
-  EveryOtherDay = 6
+  EveryOtherDay = 6,
 }

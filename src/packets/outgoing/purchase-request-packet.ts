@@ -16,7 +16,6 @@ import { Writer } from '../../writer';
  * packet id and the single-string shape are confirmed.
  */
 export class PurchaseRequestPacket implements Packet {
-
   readonly type = PacketType.PURCHASE_REQUEST;
 
   //#region packet-specific members

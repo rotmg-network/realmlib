@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * description of the grants applied to the account.
  */
 export class ClaimAccountLevelRewardPacket implements Packet {
-
   readonly type = PacketType.CLAIM_ACCOUNT_LEVEL_REWARD;
 
   //#region packet-specific members
@@ -36,5 +35,4 @@ export class ClaimAccountLevelRewardPacket implements Packet {
     writer.writeString(this.selectedChoiceSlots);
     writer.writeInt32(this.rewardId);
   }
-
 }

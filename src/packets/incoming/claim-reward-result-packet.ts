@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * `<Success><Tier>1</Tier><Rewards><Item><Id>3177</Id>...`.
  */
 export class ClaimRewardResultPacket implements Packet {
-
   readonly type = PacketType.CLAIM_REWARD_RESULT;
 
   //#region packet-specific members

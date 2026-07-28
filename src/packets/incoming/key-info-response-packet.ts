@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * > Unknown.
  */
 export class KeyInfoResponsePacket implements Packet {
-
   readonly type = PacketType.KEY_INFO_RESPONSE;
 
   //#region packet-specific members

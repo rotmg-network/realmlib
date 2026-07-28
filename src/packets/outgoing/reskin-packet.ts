@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to activate a new skin for the current character.
  */
 export class ReskinPacket implements Packet {
-
   readonly type = PacketType.RESKIN;
 
   //#region packet-specific members

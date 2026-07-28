@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * to accept a pending trade with a player.
  */
 export class RequestTradePacket implements Packet {
-
   readonly type = PacketType.REQUESTTRADE;
 
   //#region packet-specific members

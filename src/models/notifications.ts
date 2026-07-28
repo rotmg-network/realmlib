@@ -63,7 +63,13 @@ export namespace NotificationEffect {
 /** Typed view of the effect-specific NOTIFICATION payload. */
 export type NotificationPayload =
   | { kind: 'message'; effect: number; extra: number; message: string }
-  | { kind: 'ui'; effect: NotificationEffect.GLOBAL; extra: number; message: string; uiExtra: number }
+  | {
+      kind: 'ui';
+      effect: NotificationEffect.GLOBAL;
+      extra: number;
+      message: string;
+      uiExtra: number;
+    }
   | {
       kind: 'queue';
       effect: NotificationEffect.REALM_QUEUE;
@@ -139,7 +145,7 @@ export type NotificationPayload =
  */
 export enum TextKind {
   Normal = 1,
-  AutoTranslated = 2
+  AutoTranslated = 2,
 }
 
 /**
@@ -150,5 +156,5 @@ export enum ModerationAction {
   MuteAccount = 0,
   UnmuteAccount = 1,
   Kick = 2,
-  AccountBlock = 3
+  AccountBlock = 3,
 }

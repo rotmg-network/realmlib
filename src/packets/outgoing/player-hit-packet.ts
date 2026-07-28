@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent when the player is hit.
  */
 export class PlayerHitPacket implements Packet {
-
   readonly type = PacketType.PLAYERHIT;
 
   //#region packet-specific members

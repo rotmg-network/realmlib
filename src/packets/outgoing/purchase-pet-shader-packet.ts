@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * No wire capture exists yet.
  */
 export class PurchasePetShaderPacket implements Packet {
-
   readonly type = PacketType.PURCHASE_PET_SHADER;
 
   //#region packet-specific members

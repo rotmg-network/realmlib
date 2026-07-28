@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received when an entity has moved to a new position.
  */
 export class GotoPacket implements Packet {
-
   readonly type = PacketType.GOTO;
 
   //#region packet-specific members
@@ -21,7 +20,7 @@ export class GotoPacket implements Packet {
    */
   position: WorldPosData;
   /**
-   * unknown ass int 
+   * unknown ass int
    */
   unknownInt: number;
   //#endregion

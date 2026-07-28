@@ -48,16 +48,16 @@ export enum FailureCode {
   /**
    * Server is currently undergoing maintenance
    */
-  ServerMaintenance = 16
+  ServerMaintenance = 16,
 }
 
 /**
  * Common failure packet messages for when the error code is 0
  */
 export enum FailureMessage {
-  CharacterDead = "Character is dead",
-  CharacterNotFound = "Character not found",
-  TemporaryBan = "Your IP has been temporarily banned for abuse/hacking on this server"
+  CharacterDead = 'Character is dead',
+  CharacterNotFound = 'Character not found',
+  TemporaryBan = 'Your IP has been temporarily banned for abuse/hacking on this server',
 }
 
 /**
@@ -99,5 +99,5 @@ export enum ProtocolError {
   /**
    * Received when sending packets too quickly after getting "action not permitted at the moment" in-game
    */
-  RateLimit = 64
+  RateLimit = 64,
 }

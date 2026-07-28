@@ -76,15 +76,15 @@ not exercise.
 
 The review covered the complete repository layout and all production areas:
 
-| Area | Scope reviewed |
-| --- | ---: |
-| TypeScript production source | 271 files / about 15,700 lines |
-| Incoming packet source | 105 files |
-| Outgoing packet source | 101 files |
-| Data codecs/projection | 17 files |
-| Tests and support files | 23 files / about 3,600 lines |
-| Scripts | 2 corpus/protocol tools |
-| Documentation | 6 evidence/planning documents plus the README |
+| Area                          |                                                       Scope reviewed |
+| ----------------------------- | -------------------------------------------------------------------: |
+| TypeScript production source  |                                       271 files / about 15,700 lines |
+| Incoming packet source        |                                                            105 files |
+| Outgoing packet source        |                                                            101 files |
+| Data codecs/projection        |                                                             17 files |
+| Tests and support files       |                                         23 files / about 3,600 lines |
+| Scripts                       |                                              2 corpus/protocol tools |
+| Documentation                 |                        6 evidence/planning documents plus the README |
 | Package/release configuration | TypeScript, ESLint, Mocha, API Extractor, publint, CI, npm packaging |
 
 Review methods included a full file inventory, targeted line-by-line review of

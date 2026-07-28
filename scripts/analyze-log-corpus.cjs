@@ -23,11 +23,26 @@ function counterInc(object, key, amount = 1) {
 }
 
 function packetSummary() {
-  return { count: 0, minBody: null, maxBody: 0, originalStatuses: {}, currentStatuses: {}, samples: [] };
+  return {
+    count: 0,
+    minBody: null,
+    maxBody: 0,
+    originalStatuses: {},
+    currentStatuses: {},
+    samples: [],
+  };
 }
 
 function statSummary() {
-  return { count: 0, stringCount: 0, numericCount: 0, min: null, max: null, values: [], objectTypes: [] };
+  return {
+    count: 0,
+    stringCount: 0,
+    numericCount: 0,
+    min: null,
+    max: null,
+    values: [],
+    objectTypes: [],
+  };
 }
 
 function recordDirection(value) {
@@ -68,7 +83,12 @@ function parseCurrent(record) {
         opaqueBytes: packet.opaqueTail.length,
       };
     }
-    return { status: reader.remaining ? 'leftover' : 'ok', type, packet, leftover: reader.remaining };
+    return {
+      status: reader.remaining ? 'leftover' : 'ok',
+      type,
+      packet,
+      leftover: reader.remaining,
+    };
   } catch (error) {
     return { status: 'error', type, error: String(error).split('\n')[0] };
   }
@@ -103,21 +123,37 @@ function recordStats(report, packet, type) {
 
 async function analyzePacketFile(file, global) {
   const report = {
-    kind: 'packets', bytes: fs.statSync(file).size, records: 0, invalidJson: 0,
-    connections: [], firstTime: null, lastTime: null, packets: {}, unresolved: {},
-    modified: 0, dropped: 0, injected: 0,
+    kind: 'packets',
+    bytes: fs.statSync(file).size,
+    records: 0,
+    invalidJson: 0,
+    connections: [],
+    firstTime: null,
+    lastTime: null,
+    packets: {},
+    unresolved: {},
+    modified: 0,
+    dropped: 0,
+    injected: 0,
   };
   const connections = new Set();
   const input = readline.createInterface({ input: fs.createReadStream(file), crlfDelay: Infinity });
   for await (const line of input) {
     if (!line.trim()) continue;
     let record;
-    try { record = JSON.parse(line); } catch (_) { report.invalidJson++; continue; }
+    try {
+      record = JSON.parse(line);
+    } catch (_) {
+      report.invalidJson++;
+      continue;
+    }
     report.records++;
     connections.add(record.connId || 0);
     if (typeof record.time === 'number') {
-      report.firstTime = report.firstTime === null ? record.time : Math.min(report.firstTime, record.time);
-      report.lastTime = report.lastTime === null ? record.time : Math.max(report.lastTime, record.time);
+      report.firstTime =
+        report.firstTime === null ? record.time : Math.min(report.firstTime, record.time);
+      report.lastTime =
+        report.lastTime === null ? record.time : Math.max(report.lastTime, record.time);
     }
     if (record.modified) report.modified++;
     if (record.dropped) report.dropped++;
@@ -134,16 +170,21 @@ async function analyzePacketFile(file, global) {
     capAdd(summary.samples, record.body || '', 3);
     const globalSummary = global.packets[key] || (global.packets[key] = packetSummary());
     globalSummary.count++;
-    globalSummary.minBody = globalSummary.minBody === null ? bodyLength : Math.min(globalSummary.minBody, bodyLength);
+    globalSummary.minBody =
+      globalSummary.minBody === null ? bodyLength : Math.min(globalSummary.minBody, bodyLength);
     globalSummary.maxBody = Math.max(globalSummary.maxBody, bodyLength);
     counterInc(globalSummary.originalStatuses, record.status || 'missing');
     counterInc(globalSummary.currentStatuses, current.status);
     capAdd(globalSummary.samples, record.body || '', 3);
     if (current.status !== 'ok') {
       const unresolvedKey = `${key}|${current.status}|${current.leftover || 0}|${current.error || ''}`;
-      const unresolved = report.unresolved[unresolvedKey] || (report.unresolved[unresolvedKey] = { count: 0, sample: record.body || '' });
+      const unresolved =
+        report.unresolved[unresolvedKey] ||
+        (report.unresolved[unresolvedKey] = { count: 0, sample: record.body || '' });
       unresolved.count++;
-      const globalUnresolved = global.unresolved[unresolvedKey] || (global.unresolved[unresolvedKey] = { count: 0, sample: record.body || '', files: [] });
+      const globalUnresolved =
+        global.unresolved[unresolvedKey] ||
+        (global.unresolved[unresolvedKey] = { count: 0, sample: record.body || '', files: [] });
       globalUnresolved.count++;
       capAdd(globalUnresolved.files, path.basename(file), 30);
     }
@@ -153,10 +194,14 @@ async function analyzePacketFile(file, global) {
         capAdd(global.mapNames, current.packet.name, 100);
         capAdd(global.buildVersions, current.packet.buildVersion, 20);
       }
-      if (current.type === realm.PacketType.PROGRESS_UPDATE) capAdd(global.progressValues, current.packet.value, 100);
-      if (current.type === realm.PacketType.CREATE) capAdd(global.createBodies, record.body || '', 30);
-      if (current.type === realm.PacketType.SHOWEFFECT) capAdd(global.showEffects, current.packet.effectType ?? current.packet.effect, 100);
-      if (current.type === realm.PacketType.NOTIFICATION) capAdd(global.notificationEffects, current.packet.effect, 100);
+      if (current.type === realm.PacketType.PROGRESS_UPDATE)
+        capAdd(global.progressValues, current.packet.value, 100);
+      if (current.type === realm.PacketType.CREATE)
+        capAdd(global.createBodies, record.body || '', 30);
+      if (current.type === realm.PacketType.SHOWEFFECT)
+        capAdd(global.showEffects, current.packet.effectType ?? current.packet.effect, 100);
+      if (current.type === realm.PacketType.NOTIFICATION)
+        capAdd(global.notificationEffects, current.packet.effect, 100);
     }
   }
   report.connections = [...connections].sort((a, b) => a - b);
@@ -164,12 +209,25 @@ async function analyzePacketFile(file, global) {
 }
 
 async function analyzeAppEngineFile(file, global) {
-  const report = { kind: 'appengine', bytes: fs.statSync(file).size, records: 0, invalidJson: 0, endpoints: {}, statuses: {}, responseRoots: {} };
+  const report = {
+    kind: 'appengine',
+    bytes: fs.statSync(file).size,
+    records: 0,
+    invalidJson: 0,
+    endpoints: {},
+    statuses: {},
+    responseRoots: {},
+  };
   const input = readline.createInterface({ input: fs.createReadStream(file), crlfDelay: Infinity });
   for await (const line of input) {
     if (!line.trim()) continue;
     let record;
-    try { record = JSON.parse(line); } catch (_) { report.invalidJson++; continue; }
+    try {
+      record = JSON.parse(line);
+    } catch (_) {
+      report.invalidJson++;
+      continue;
+    }
     report.records++;
     const endpoint = `${record.method || '?'} ${record.url || '?'}`;
     counterInc(report.endpoints, endpoint);
@@ -187,8 +245,17 @@ async function analyzeAppEngineFile(file, global) {
 async function main() {
   const names = fs.readdirSync(root).sort();
   const global = {
-    packets: {}, unresolved: {}, stats: {}, endpoints: {}, responseRoots: {}, mapNames: [],
-    buildVersions: [], progressValues: [], createBodies: [], showEffects: [], notificationEffects: [],
+    packets: {},
+    unresolved: {},
+    stats: {},
+    endpoints: {},
+    responseRoots: {},
+    mapNames: [],
+    buildVersions: [],
+    progressValues: [],
+    createBodies: [],
+    showEffects: [],
+    notificationEffects: [],
   };
   const files = {};
   for (const name of names) {
@@ -203,11 +270,17 @@ async function main() {
     }
     console.error(`analyzed ${name}`);
   }
-  fs.writeFileSync(output, JSON.stringify({ generatedAt: new Date().toISOString(), root, files, global }, null, 2));
+  fs.writeFileSync(
+    output,
+    JSON.stringify({ generatedAt: new Date().toISOString(), root, files, global }, null, 2),
+  );
 }
 
 if (require.main === module) {
-  main().catch((error) => { console.error(error); process.exit(1); });
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
 }
 
 module.exports = { parseCurrent, recordDirection };

@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * can be named from the dump. No wire capture exists yet.
  */
 export class SetGraveStonePacket implements Packet {
-
   readonly type = PacketType.SET_GRAVE_STONE;
 
   //#region packet-specific members

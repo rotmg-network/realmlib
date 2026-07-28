@@ -112,9 +112,9 @@ describe('current-build metadata enums', () => {
 
     const observedSecondaryBits = [5, 10, 11, 15, 16, 18, 22, 27, 30];
     for (const bit of observedSecondaryBits) {
-      expect(
-        InvResultSecondaryFlags[`Bit${bit}` as keyof typeof InvResultSecondaryFlags],
-      ).to.equal(2 ** bit);
+      expect(InvResultSecondaryFlags[`Bit${bit}` as keyof typeof InvResultSecondaryFlags]).to.equal(
+        2 ** bit,
+      );
     }
   });
 

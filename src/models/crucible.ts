@@ -2,5 +2,5 @@
 export enum CrucibleType {
   Crucibles = 0,
   ModifierEvents = 1,
-  BloodRitual = 2
+  BloodRitual = 2,
 }

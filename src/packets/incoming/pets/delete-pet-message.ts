@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Received to notify the player that a pet has been deleted.
  */
 export class DeletePetMessage implements Packet {
-
   readonly type = PacketType.DELETE_PET;
   propagate = true;
 

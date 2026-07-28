@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received to instruct the client to connect to a new host
  */
 export class ReconnectPacket implements Packet {
-
   readonly type = PacketType.RECONNECT;
 
   /**

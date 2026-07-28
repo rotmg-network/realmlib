@@ -8,13 +8,12 @@ import { Writer } from '../../writer';
  *
  * The first string is a base64-encoded Google Cloud Datastore key/cursor
  * one captured value decodes to a key path through `Account` → `DailyLoginData`
- * 
+ *
  * and the second is a category label (`"nonconsecutive"`, `"all"`). In the
  * captured daily-login exchange, both strings echo the preceding client claim
  * request after the server reports `s.daily_reward_claimed`.
  */
 export class ClaimDailyItemPacket implements Packet {
-
   readonly type = PacketType.CLAIM_DAILY_ITEM;
 
   //#region packet-specific members
@@ -30,7 +29,7 @@ export class ClaimDailyItemPacket implements Packet {
 
   /** A category label — observed `"nonconsecutive"` and `"all"`. */
   category: string;
-  
+
   //#endregion
 
   constructor() {

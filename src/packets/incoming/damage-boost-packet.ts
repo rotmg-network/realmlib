@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * or amount. No wire capture exists yet.
  */
 export class DamageBoostPacket implements Packet {
-
   readonly type = PacketType.DAMAGE_BOOST;
 
   //#region packet-specific members

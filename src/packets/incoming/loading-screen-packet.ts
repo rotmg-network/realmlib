@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * surrounding context is needed to pick. No wire capture exists yet.
  */
 export class LoadingScreenPacket implements Packet {
-
   readonly type = PacketType.LOADING_SCREEN;
 
   //#region packet-specific members

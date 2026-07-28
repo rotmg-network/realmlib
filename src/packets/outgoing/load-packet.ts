@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent in response to a `MapInfoPacket` to load a character into the map.
  */
 export class LoadPacket implements Packet {
-
   readonly type = PacketType.LOAD;
 
   //#region packet-specific members

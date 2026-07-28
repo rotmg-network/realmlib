@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * yet.
  */
 export class SlippingInfoPacket implements Packet {
-
   readonly type = PacketType.SLIPPING_INFO;
 
   //#region packet-specific members

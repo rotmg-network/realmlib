@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * opaque to the packet layer.
  */
 export class GiftItemsPacket implements Packet {
-
   readonly type = PacketType.GIFT_ITEMS;
 
   //#region packet-specific members

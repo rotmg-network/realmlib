@@ -1,9 +1,5 @@
 import { expect } from 'chai';
-import {
-  PacketType,
-  protocolCompleteness,
-  protocolSupportKind,
-} from '../src';
+import { PacketType, protocolCompleteness, protocolSupportKind } from '../src';
 
 /* eslint-disable @typescript-eslint/no-require-imports -- CommonJS documentation generator */
 const currentProtocol: {
@@ -26,8 +22,9 @@ describe('protocol completeness taxonomy', () => {
       PacketType.FOR_RECONNECT,
       PacketType.GIFT_NOTIFICATION,
     ]);
-    expect(groups['research-candidate'].map((entry) => entry.type))
-      .to.include(PacketType.UPGRADE_ENCHANTMENT);
+    expect(groups['research-candidate'].map((entry) => entry.type)).to.include(
+      PacketType.UPGRADE_ENCHANTMENT,
+    );
     expect(groups['legacy-metadata'][0].type).to.equal(PacketType.IP_ADDRESS);
     expect(groups['modeled-transport'].map((entry) => entry.type)).to.have.members([
       PacketType.CHATTOKEN,

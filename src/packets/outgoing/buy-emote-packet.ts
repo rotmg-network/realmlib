@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * emote being bought (observed as 5170).
  */
 export class BuyEmotePacket implements Packet {
-
   readonly type = PacketType.BUY_EMOTE;
 
   //#region packet-specific members

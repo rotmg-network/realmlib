@@ -8,7 +8,6 @@ import { Writer } from '../../../writer';
  * Sent to change skin of a pet
  */
 export class ChangePetSkinPacket implements Packet {
-
   readonly type = PacketType.PET_CHANGE_SKIN_MSG;
 
   /**

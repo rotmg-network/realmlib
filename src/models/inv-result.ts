@@ -4,7 +4,7 @@
  * mutations and item uses, discriminated by its `ackType` byte. Mutation
  * acknowledgements cover both `InvSwapPacket` and `InvDropPacket`.
  *
- * Every `ackType = 1` INVRESULT arrived one RTT after a `USEITEM` of the 
+ * Every `ackType = 1` INVRESULT arrived one RTT after a `USEITEM` of the
  * same item — they are use acknowledgements, not server-initiated inventory corrections.
  */
 
@@ -68,5 +68,5 @@ export enum InvResultSecondaryFlags {
   Bit18 = 0x40000,
   Bit22 = 0x400000,
   Bit27 = 0x8000000,
-  Bit30 = 0x40000000
+  Bit30 = 0x40000000,
 }

@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * `Vouchers.VoucherNotExist`.)
  */
 export class RedeemVoucherPacket implements Packet {
-
   readonly type = PacketType.REDEEM_VOUCHER;
 
   //#region packet-specific members

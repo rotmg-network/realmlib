@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * `-1` in all captured samples (possibly "default entrance").
  */
 export class SelectEntrancePacket implements Packet {
-
   readonly type = PacketType.SELECT_ENTRANCE;
 
   //#region packet-specific members

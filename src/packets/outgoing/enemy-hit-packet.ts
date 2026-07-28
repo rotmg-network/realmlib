@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent when an enemy has been hit by the player.
  */
 export class EnemyHitPacket implements Packet {
-
   readonly type = PacketType.ENEMYHIT;
 
   //#region packet-specific members

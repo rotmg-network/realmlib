@@ -21,16 +21,16 @@ not reproduced in this report.
 
 ## Executive Findings
 
-| Priority | Finding | Evidence | Current status / RealmLib action |
-| --- | --- | --- | --- |
-| Done | `UPDATE.write()` added a byte absent from every captured frame | 469,625/469,625 frames parsed but re-encoded one byte longer | `hasTrailingByte` now preserves the legacy/variant tail only when present |
-| Done | `MAPINFO.write()` added realm-score fields to non-realm maps | 632/763 frames re-encoded eight bytes longer; only 131 realm frames have the score tail | `hasRealmScores` now preserves the optional `maxRealmScore`/`curRealmScore` pair |
-| Done | `INVRESULT.unknownInt2` documentation was false | 583/1,815 frames carry nonzero values with stable bit combinations | It is documented as a second unresolved bitfield and `InvResultSecondaryFlags` exposes raw bits without speculative names |
-| Done | `PLAYER_SHOOT` combined two bytes into one `int16` | Native serialization identifies a signed byte plus `PlayerShootSource` | The fields are now serialized separately; `ALLY_SHOOT` retains its native `int16` |
-| Done | `SERVERPLAYERSHOOT.spellBomb` was a generic multi-shot tail | 3,356 frames carry count 2-19 and an unresolved angle increment | The canonical names are `hasMultiShot`, `numShots`, and `angleIncrement`; deprecated compatibility aliases remain |
-| Done | Live `PacketIO` did not diagnose unread payload bytes | Strict replay checks leftovers, but the old live path did not | `packetLeftover` and `packetDiagnostic` report unread bytes without suppressing typed dispatch |
-| Done | `TRADESTART`, Notification 12, `STACKS` (id 231), id 166, chest claims, and Battle Pass read data were reconciled | The former 72 failures now parse and their regression fixtures pass | Current-client names are used where labels and native layout agree |
-| P3 | Stat ids 156-158 remain semantically unresolved | No stat id above 158; values alone do not establish names | Preserve conservative names and request controlled captures |
+| Priority | Finding                                                                                                           | Evidence                                                                                | Current status / RealmLib action                                                                                          |
+| -------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Done     | `UPDATE.write()` added a byte absent from every captured frame                                                    | 469,625/469,625 frames parsed but re-encoded one byte longer                            | `hasTrailingByte` now preserves the legacy/variant tail only when present                                                 |
+| Done     | `MAPINFO.write()` added realm-score fields to non-realm maps                                                      | 632/763 frames re-encoded eight bytes longer; only 131 realm frames have the score tail | `hasRealmScores` now preserves the optional `maxRealmScore`/`curRealmScore` pair                                          |
+| Done     | `INVRESULT.unknownInt2` documentation was false                                                                   | 583/1,815 frames carry nonzero values with stable bit combinations                      | It is documented as a second unresolved bitfield and `InvResultSecondaryFlags` exposes raw bits without speculative names |
+| Done     | `PLAYER_SHOOT` combined two bytes into one `int16`                                                                | Native serialization identifies a signed byte plus `PlayerShootSource`                  | The fields are now serialized separately; `ALLY_SHOOT` retains its native `int16`                                         |
+| Done     | `SERVERPLAYERSHOOT.spellBomb` was a generic multi-shot tail                                                       | 3,356 frames carry count 2-19 and an unresolved angle increment                         | The canonical names are `hasMultiShot`, `numShots`, and `angleIncrement`; deprecated compatibility aliases remain         |
+| Done     | Live `PacketIO` did not diagnose unread payload bytes                                                             | Strict replay checks leftovers, but the old live path did not                           | `packetLeftover` and `packetDiagnostic` report unread bytes without suppressing typed dispatch                            |
+| Done     | `TRADESTART`, Notification 12, `STACKS` (id 231), id 166, chest claims, and Battle Pass read data were reconciled | The former 72 failures now parse and their regression fixtures pass                     | Current-client names are used where labels and native layout agree                                                        |
+| P3       | Stat ids 156-158 remain semantically unresolved                                                                   | No stat id above 158; values alone do not establish names                               | Preserve conservative names and request controlled captures                                                               |
 
 ## Current Replay Result
 
@@ -340,21 +340,21 @@ otherwise recoverable protocol addition into a client disconnect.
 
 High-volume combat counts:
 
-| Packet | Count |
-| --- | ---: |
-| `ALLYSHOOT` | 3,900,958 |
-| `ENEMYSHOOT` | 167,123 |
-| `PLAYERSHOOT` | 140,204 |
-| `ENEMYHIT` | 55,972 |
-| `DAMAGE` | 50,828 |
-| `PLAYERHIT` | 27,830 |
-| `OTHERHIT` | 24,090 |
-| `AOE` | 17,444 |
-| `AOEACK` | 14,563 |
-| `ESCAPE` | 149 |
-| `DEATH` | 94 |
-| `GROUNDDAMAGE` | 6 |
-| `DAMAGE_WITH_EFFECT` | 2 |
+| Packet               |     Count |
+| -------------------- | --------: |
+| `ALLYSHOOT`          | 3,900,958 |
+| `ENEMYSHOOT`         |   167,123 |
+| `PLAYERSHOOT`        |   140,204 |
+| `ENEMYHIT`           |    55,972 |
+| `DAMAGE`             |    50,828 |
+| `PLAYERHIT`          |    27,830 |
+| `OTHERHIT`           |    24,090 |
+| `AOE`                |    17,444 |
+| `AOEACK`             |    14,563 |
+| `ESCAPE`             |       149 |
+| `DEATH`              |        94 |
+| `GROUNDDAMAGE`       |         6 |
+| `DAMAGE_WITH_EFFECT` |         2 |
 
 The proxy transformed combat traffic heavily:
 
@@ -398,12 +398,12 @@ consumers that correlate server damage with generated acknowledgements.
 
 The 829 `FAILURE` packets use only currently modeled codes:
 
-| Code | Count | Description |
-| ---: | ---: | --- |
-| 0 | 758 | 663 realm-full, 42 temporary-IP-ban, 13 dungeon-full, 40 empty |
-| 3 | 22 | empty; every frame immediately follows `LOAD` |
-| 5 | 15 | empty; every frame immediately follows `HELLO` |
-| 15 | 34 | empty; every frame immediately follows `QUEUE_INFORMATION` |
+| Code | Count | Description                                                    |
+| ---: | ----: | -------------------------------------------------------------- |
+|    0 |   758 | 663 realm-full, 42 temporary-IP-ban, 13 dungeon-full, 40 empty |
+|    3 |    22 | empty; every frame immediately follows `LOAD`                  |
+|    5 |    15 | empty; every frame immediately follows `HELLO`                 |
+|   15 |    34 | empty; every frame immediately follows `QUEUE_INFORMATION`     |
 
 The code-15 sequence confirms the current `FailureCode.ServerQueue` meaning:
 queue positions range 1-18, maximum positions range 5-18, then the server sends
@@ -446,13 +446,13 @@ It does contain 44 successful `POST /season/bpInfo` responses for pass
 
 Observed progression snapshots include:
 
-| BXP | Claimed count | Exalted | Repeatables |
-| ---: | ---: | --- | --- |
-| 138,035,180 | 0 | false | `{}` |
-| 139,076,601 | 0 | false | `{}` |
-| 266,517,571 | 0 | false | `{}` |
-| 347,835,301 | 24 | false | `{}` |
-| 600,944,869 | 77 | true | `{"77":3}` |
+|         BXP | Claimed count | Exalted | Repeatables |
+| ----------: | ------------: | ------- | ----------- |
+| 138,035,180 |             0 | false   | `{}`        |
+| 139,076,601 |             0 | false   | `{}`        |
+| 266,517,571 |             0 | false   | `{}`        |
+| 347,835,301 |            24 | false   | `{}`        |
+| 600,944,869 |            77 | true    | `{"77":3}`  |
 
 This validates the current separate Battle Pass read model only. State changes
 happened between packet-capture windows, so they cannot be attributed to a

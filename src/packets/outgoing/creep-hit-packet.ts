@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * No wire capture exists yet.
  */
 export class CreepHitPacket implements Packet {
-
   readonly type = PacketType.CREEP_HIT;
 
   //#region packet-specific members

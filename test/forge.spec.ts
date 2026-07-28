@@ -61,7 +61,8 @@ describe('forge / blacksmith packets (dupe log)', () => {
     expect(req.slots.map((slot) => slot.slotId)).to.deep.equal([4, 7, 5]);
     expectRoundTripsTo(req, requestHex);
 
-    const resultHex = '01030000024900000004ffffffff0000024900000007ffffffff0000024900000005ffffffff';
+    const resultHex =
+      '01030000024900000004ffffffff0000024900000007ffffffff0000024900000005ffffffff';
     const res = parseHex(new BlacksmithDismantlePacket(), resultHex);
     expect(res.success).to.equal(true);
     expect(res.slots.map((slot) => slot.slotId)).to.deep.equal([4, 7, 5]);

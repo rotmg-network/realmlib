@@ -1,18 +1,14 @@
 import { expect } from 'chai';
-import {
-  RealmlibError,
-  getPacketDefinitionById,
-} from '../src';
-import {
-  loadCaptureCorpus,
-  replayCaptureFixture,
-} from './support/capture-fixtures';
+import { RealmlibError, getPacketDefinitionById } from '../src';
+import { loadCaptureCorpus, replayCaptureFixture } from './support/capture-fixtures';
 
 describe('packet capture fixtures', () => {
   const corpus = loadCaptureCorpus();
 
   it('covers the protocol areas needed for offline client regression tests', () => {
-    expect(Array.from(new Set(corpus.fixtures.map((fixture) => fixture.category)))).to.include.members([
+    expect(
+      Array.from(new Set(corpus.fixtures.map((fixture) => fixture.category))),
+    ).to.include.members([
       'login',
       'reconnect',
       'queue',

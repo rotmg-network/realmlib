@@ -39,7 +39,7 @@ export enum SlotType {
   Lute = 28,
   Mace = 29,
   Sheath = 30,
-  Sigil = 31
+  Sigil = 31,
 }
 
 /** SlotTypes that hold a primary weapon. */
@@ -49,7 +49,7 @@ export const WEAPON_SLOT_TYPES: readonly SlotType[] = [
   SlotType.Bow,
   SlotType.Wand,
   SlotType.Staff,
-  SlotType.Katana
+  SlotType.Katana,
 ];
 
 /** SlotTypes that hold a class ability. */
@@ -72,14 +72,14 @@ export const ABILITY_SLOT_TYPES: readonly SlotType[] = [
   SlotType.Lute,
   SlotType.Mace,
   SlotType.Sheath,
-  SlotType.Sigil
+  SlotType.Sigil,
 ];
 
 /** SlotTypes that hold body armor. */
 export const ARMOR_SLOT_TYPES: readonly SlotType[] = [
   SlotType.LeatherArmor,
   SlotType.HeavyArmor,
-  SlotType.Robe
+  SlotType.Robe,
 ];
 
 /**
@@ -90,7 +90,7 @@ export enum EquipmentSlot {
   Weapon = 0,
   Ability = 1,
   Armor = 2,
-  Ring = 3
+  Ring = 3,
 }
 
 /** First inventory (non-equipment) slot index. */

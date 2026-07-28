@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to acknowledge the `PingPacket.`
  */
 export class PongPacket implements Packet {
-
   readonly type = PacketType.PONG;
 
   //#region packet-specific members

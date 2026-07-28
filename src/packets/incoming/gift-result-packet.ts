@@ -12,7 +12,6 @@ import { Writer } from '../../writer';
  * cannot be named from the dump. No wire capture exists yet.
  */
 export class GiftResultPacket implements Packet {
-
   readonly type = PacketType.GIFT_RESULT;
 
   //#region packet-specific members

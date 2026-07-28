@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Sent to enter the arena.
  */
 export class EnterArenaPacket implements Packet {
-
   readonly type = PacketType.ENTER_ARENA;
   propagate = true;
 

@@ -12,7 +12,10 @@ export class IncomingPartyInvitePacket implements Packet {
   /** Name of the player who sent the invite. */
   inviterName: string;
 
-  constructor() { this.partyId = 0; this.inviterName = ''; }
+  constructor() {
+    this.partyId = 0;
+    this.inviterName = '';
+  }
 
   read(reader: Reader): void {
     this.partyId = reader.readUInt32();

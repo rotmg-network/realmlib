@@ -15,15 +15,28 @@ export function hexdump(data: Buffer | number[], bytesPerRow: number = 16): stri
   for (let offset = 0; offset < buffer.length; offset += bytesPerRow) {
     const row = buffer.subarray(offset, offset + bytesPerRow);
     const hex = Array.from(row, (b) => b.toString(16).padStart(2, '0')).join(' ');
-    const ascii = Array.from(row, (b) => (b >= 0x20 && b < 0x7f ? String.fromCharCode(b) : '.')).join('');
-    lines.push(`${offset.toString(16).padStart(4, '0')}  ${hex.padEnd(bytesPerRow * 3 - 1)}  ${ascii}`);
+    const ascii = Array.from(row, (b) =>
+      b >= 0x20 && b < 0x7f ? String.fromCharCode(b) : '.',
+    ).join('');
+    lines.push(
+      `${offset.toString(16).padStart(4, '0')}  ${hex.padEnd(bytesPerRow * 3 - 1)}  ${ascii}`,
+    );
   }
   return lines.join('\n');
 }
 
 export interface PacketFieldProbe {
   /** Candidate primitive interpretation. */
-  kind: 'uint8' | 'int8' | 'uint16' | 'int16' | 'int32' | 'uint32' | 'float32' | 'string' | 'compressedInt';
+  kind:
+    | 'uint8'
+    | 'int8'
+    | 'uint16'
+    | 'int16'
+    | 'int32'
+    | 'uint32'
+    | 'float32'
+    | 'string'
+    | 'compressedInt';
   /** Number of bytes consumed by this interpretation. */
   bytes: number;
   value: number | string;

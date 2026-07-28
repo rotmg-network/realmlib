@@ -17,7 +17,6 @@ import { Writer } from '../../writer';
  * bool as success, matching this build's result-packet conventions.
  */
 export class ClaimMissionResultPacket implements Packet {
-
   readonly type = PacketType.CLAIM_MISSION_RESULT;
 
   //#region packet-specific members

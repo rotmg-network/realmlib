@@ -34,7 +34,13 @@ describe('character-data XML parser', () => {
   it('parses a full char-list into multiple entries', () => {
     const chars = parseCharacterListXml(CHAR_LIST_XML);
     expect(chars).to.have.length(2);
-    expect(chars[0]).to.include({ id: 173, classType: 797, seasonal: false, level: 20, currentFame: 2272 });
+    expect(chars[0]).to.include({
+      id: 173,
+      classType: 797,
+      seasonal: false,
+      level: 20,
+      currentFame: 2272,
+    });
     expect(chars[0].equipment).to.deep.equal([2504, 2667, 2812, -1]);
     expect(chars[1]).to.include({ id: 180, seasonal: true, level: 1 });
   });
@@ -46,9 +52,9 @@ describe('character-data XML parser', () => {
 
   it('accepts quote styles, reordered elements, and numeric XML entities', () => {
     const xml =
-      "<Char account='ignored' id='&#50;63'><Equipment>2676&#44;-1</Equipment>"
-      + '<CurrentFame>7</CurrentFame><ObjectType>&#55;&#54;&#56;</ObjectType>'
-      + '<Seasonal>true</Seasonal><Level>20</Level></Char>';
+      "<Char account='ignored' id='&#50;63'><Equipment>2676&#44;-1</Equipment>" +
+      '<CurrentFame>7</CurrentFame><ObjectType>&#55;&#54;&#56;</ObjectType>' +
+      '<Seasonal>true</Seasonal><Level>20</Level></Char>';
     const character = parseCharacterXml(xml)!;
     expect(character).to.include({
       id: 263,
@@ -61,14 +67,22 @@ describe('character-data XML parser', () => {
   });
 
   it('rejects missing and malformed required values', () => {
-    expect(() => parseCharacterXml('<Char id="1"><Level>20</Level></Char>'))
-      .to.throw(CharacterXmlParseError, 'Missing required <ObjectType>');
-    expect(() => parseCharacterXml('<Char><ObjectType>768</ObjectType></Char>'))
-      .to.throw(CharacterXmlParseError, 'Char id');
-    expect(() => parseCharacterXml('<Char id="1"><ObjectType>7x</ObjectType></Char>'))
-      .to.throw(CharacterXmlParseError, 'must be an integer');
-    expect(() => parseCharacterXml('<Char id="1"><ObjectType>768</ObjectType>'))
-      .to.throw(CharacterXmlParseError, 'Incomplete');
+    expect(() => parseCharacterXml('<Char id="1"><Level>20</Level></Char>')).to.throw(
+      CharacterXmlParseError,
+      'Missing required <ObjectType>',
+    );
+    expect(() => parseCharacterXml('<Char><ObjectType>768</ObjectType></Char>')).to.throw(
+      CharacterXmlParseError,
+      'Char id',
+    );
+    expect(() => parseCharacterXml('<Char id="1"><ObjectType>7x</ObjectType></Char>')).to.throw(
+      CharacterXmlParseError,
+      'must be an integer',
+    );
+    expect(() => parseCharacterXml('<Char id="1"><ObjectType>768</ObjectType>')).to.throw(
+      CharacterXmlParseError,
+      'Incomplete',
+    );
   });
 
   it('NewCharacterInfoPacket.character parses its own charXML', () => {

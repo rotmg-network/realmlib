@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to accept a pending guild invite.
  */
 export class JoinGuildPacket implements Packet {
-
   readonly type = PacketType.JOINGUILD;
 
   //#region packet-specific members

@@ -11,7 +11,6 @@ import { Writer } from '../../writer';
  * still exist".
  */
 export class CustomMapDeletePacket implements Packet {
-
   readonly type = PacketType.CUSTOM_MAP_DELETE;
 
   //#region packet-specific members

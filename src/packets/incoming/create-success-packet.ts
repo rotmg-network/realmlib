@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received in response to a `CreatePacket`
  */
 export class CreateSuccessPacket implements Packet {
-
   readonly type = PacketType.CREATE_SUCCESS;
 
   /**

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received to tell the player to display an effect such as an AOE grenade
  */
 export class ShowEffectPacket implements Packet {
-
   readonly type = PacketType.SHOWEFFECT;
 
   /**
@@ -59,7 +58,7 @@ export class ShowEffectPacket implements Packet {
     this.color = 0;
     this.duration = 0;
     this.flags = 0;
-    this.size = 100
+    this.size = 100;
   }
 
   read(reader: Reader): void {
@@ -71,34 +70,34 @@ export class ShowEffectPacket implements Packet {
     } else {
       this.targetObjectId = 0;
     }
-    if(loc2 & 2){
+    if (loc2 & 2) {
       this.pos1.x = reader.readFloat();
     } else {
       this.pos1.x = 0;
     }
-    if(loc2 & 4) {
-            this.pos1.y = reader.readFloat();
+    if (loc2 & 4) {
+      this.pos1.y = reader.readFloat();
     } else {
       this.pos1.y = 0;
     }
-    if(loc2 & 8){
+    if (loc2 & 8) {
       this.pos2.x = reader.readFloat();
     } else {
       this.pos2.x = 0;
     }
-    if(loc2 & 16) {
+    if (loc2 & 16) {
       this.pos2.y = reader.readFloat();
     } else {
       this.pos2.y = 0;
     }
-    if(loc2 & 1) {
+    if (loc2 & 1) {
       this.color = reader.readInt32();
     } else {
       // The wire field is signed int32, so retain the all-bits-set sentinel as
       // -1. This remains serializable if a caller later enables the color bit.
       this.color = -1;
     }
-    if(loc2 & 32) {
+    if (loc2 & 32) {
       this.duration = reader.readFloat();
     } else {
       this.duration = 1;

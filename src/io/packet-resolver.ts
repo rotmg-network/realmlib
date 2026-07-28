@@ -20,11 +20,14 @@ export class PacketResolver {
       return getPacketDefinitionById(id, direction)?.type;
     }
     const mapped = this.packetMap[id];
-    return typeof mapped === 'string' ? mapped as PacketType : undefined;
+    return typeof mapped === 'string' ? (mapped as PacketType) : undefined;
   }
 }
 
 /** Creates a resolver over an owned mutable custom map. */
-export function createPacketResolver(packetMap: PacketMap, canonicalMap: ReadonlyPacketMap): PacketResolver {
+export function createPacketResolver(
+  packetMap: PacketMap,
+  canonicalMap: ReadonlyPacketMap,
+): PacketResolver {
   return new PacketResolver(packetMap, canonicalMap);
 }

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Sent to drop an item from the client's inventory.
  */
 export class InvDropPacket implements Packet {
-
   readonly type = PacketType.INVDROP;
 
   //#region packet-specific members

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received to tell the player about new quests
  */
 export class QuestFetchResponsePacket implements Packet {
-
   readonly type = PacketType.QUEST_FETCH_RESPONSE;
 
   /**
@@ -53,12 +52,12 @@ export class QuestFetchResponsePacket implements Packet {
 
   toString(): string {
     let str = `[QuestFetchResponse] Quest Count: ${this.quests.length}\n
-    NextRefreshPrice: ${this.nextRefreshPrice}`
+    NextRefreshPrice: ${this.nextRefreshPrice}`;
     for (let i = 0; i < this.quests.length; i++) {
       if (i == 0) {
-        str += `\n${this.quests[i].toString()}\n`
+        str += `\n${this.quests[i].toString()}\n`;
       } else {
-        str += `${this.quests[i].toString()}\n`
+        str += `${this.quests[i].toString()}\n`;
       }
     }
     return str;

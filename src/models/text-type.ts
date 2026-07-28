@@ -9,5 +9,5 @@ export enum TextType {
   ConditionEffect = 6,
   Notification = 7,
   Exaltation = 8,
-  BXP = 9
+  BXP = 9,
 }

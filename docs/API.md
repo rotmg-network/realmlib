@@ -5,13 +5,13 @@
 The package root remains the compatibility surface. The following additive
 subpaths are also stable and may be used to keep imports focused:
 
-| Entry point | Intended surface |
-| --- | --- |
-| `realmlib/core` | framing, `PacketIO`, binary codecs, crypto, and errors |
-| `realmlib/protocol` | packet types, ids, registry definitions, and maps |
-| `realmlib/packets` | packet DTOs and feature-family namespaces |
-| `realmlib/models` | reusable wire and consumer data models |
-| `realmlib/data` | stat projection and character-data helpers |
+| Entry point         | Intended surface                                       |
+| ------------------- | ------------------------------------------------------ |
+| `realmlib/core`     | framing, `PacketIO`, binary codecs, crypto, and errors |
+| `realmlib/protocol` | packet types, ids, registry definitions, and maps      |
+| `realmlib/packets`  | packet DTOs and feature-family namespaces              |
+| `realmlib/models`   | reusable wire and consumer data models                 |
+| `realmlib/data`     | stat projection and character-data helpers             |
 
 Root exports will not be removed merely because the same symbol is available
 through a focused entry point.

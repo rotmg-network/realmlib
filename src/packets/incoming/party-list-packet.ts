@@ -13,7 +13,10 @@ export class PartyListPacket implements Packet {
   /** The advertised parties in this page. */
   parties: PartyInfoData[];
 
-  constructor() { this.packetNumber = 0; this.parties = []; }
+  constructor() {
+    this.packetNumber = 0;
+    this.parties = [];
+  }
 
   read(reader: Reader): void {
     this.packetNumber = reader.readUnsignedByte();

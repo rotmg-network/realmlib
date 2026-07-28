@@ -1,0 +1,6 @@
+coverage/
+etc/realmlib.api.md
+lib/
+node_modules/
+protocol/*.json
+temp/

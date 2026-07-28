@@ -12,8 +12,10 @@ import {
 describe('runtime input hardening', () => {
   it('rejects invalid hexdump row widths', () => {
     for (const width of [0, -1, 1.5, Number.NaN]) {
-      expect(() => hexdump(Buffer.from([1]), width))
-        .to.throw(RangeError, 'bytesPerRow must be a positive integer');
+      expect(() => hexdump(Buffer.from([1]), width)).to.throw(
+        RangeError,
+        'bytesPerRow must be a positive integer',
+      );
     }
   });
 
@@ -56,7 +58,7 @@ describe('runtime input hardening', () => {
 
     expect(packet.toString()).to.equal(
       '[Notification] {"kind":"object","effect":6,"extra":3,' +
-      '"message":"hello","objectId":42,"color":-1}',
+        '"message":"hello","objectId":42,"color":-1}',
     );
   });
 

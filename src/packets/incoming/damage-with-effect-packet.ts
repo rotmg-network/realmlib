@@ -19,7 +19,6 @@ import { Writer } from '../../writer';
  * in seconds.
  */
 export class DamageWithEffectPacket implements Packet {
-
   readonly type = PacketType.DAMAGE_WITH_EFFECT;
 
   //#region packet-specific members
@@ -54,7 +53,11 @@ export class DamageWithEffectPacket implements Packet {
 
   read(reader: Reader): void {
     this.targetId = reader.readInt32();
-    const effectsLen = reader.validateCollectionCount(reader.readUnsignedByte(), 1, 'damage effects');
+    const effectsLen = reader.validateCollectionCount(
+      reader.readUnsignedByte(),
+      1,
+      'damage effects',
+    );
     this.effects = new Array<number>(effectsLen);
     for (let i = 0; i < effectsLen; i++) {
       this.effects[i] = reader.readUnsignedByte();

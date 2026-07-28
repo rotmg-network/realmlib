@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to initiate the chat stream (unnused)
  */
 export class ChatHelloPacket implements Packet {
-
   readonly type = PacketType.CHATHELLO;
 
   /**
@@ -20,8 +19,8 @@ export class ChatHelloPacket implements Packet {
   token: string;
 
   constructor() {
-    this.accountId = "";
-    this.token = "";
+    this.accountId = '';
+    this.token = '';
   }
 
   write(writer: Writer): void {

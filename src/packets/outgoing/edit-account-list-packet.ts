@@ -14,7 +14,6 @@ import { Writer } from '../../writer';
  * `AccountListPacket` is keyed by account-id strings).
  */
 export class EditAccountListPacket implements Packet {
-
   readonly type = PacketType.EDITACCOUNTLIST;
 
   //#region packet-specific members

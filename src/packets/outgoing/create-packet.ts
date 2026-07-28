@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to create a new character.
  */
 export class CreatePacket implements Packet {
-
   readonly type = PacketType.CREATE;
 
   //#region packet-specific members

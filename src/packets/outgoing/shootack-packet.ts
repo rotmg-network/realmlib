@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to acknowledge an `EnemyShootPacket`.
  */
 export class ShootAckPacket implements Packet {
-
   type = PacketType.SHOOTACK;
 
   //#region packet-specific members

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * The current client names this message `ExaltationRedeemInfoMessage`.
  */
 export class ExaltationRedeemInfoPacket implements Packet {
-
   readonly type = PacketType.EXALTATION_REDEEM_INFO;
 
   //#region packet-specific members

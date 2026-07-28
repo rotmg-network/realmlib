@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Received when the player has been killed in the arena.
  */
 export class ArenaDeathPacket implements Packet {
-
   readonly type = PacketType.ARENA_DEATH;
   propagate = true;
 

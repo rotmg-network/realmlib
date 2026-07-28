@@ -16,7 +16,6 @@ import { AccountRewardGrant, parseAccountRewardGrants } from '../../models';
  * two-byte form `00 1e` / `00 1d`.
  */
 export class ClaimAccountLevelRewardResultPacket implements Packet {
-
   readonly type = PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT;
 
   //#region packet-specific members
@@ -57,5 +56,4 @@ export class ClaimAccountLevelRewardResultPacket implements Packet {
       writer.writeString(this.grantedRewardDescription);
     }
   }
-
 }

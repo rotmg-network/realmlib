@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when another player shoots a projectile.
  */
 export class AllyShootPacket implements Packet {
-
   readonly type = PacketType.ALLYSHOOT;
 
   //#region packet-specific members

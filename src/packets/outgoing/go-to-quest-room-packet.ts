@@ -6,7 +6,6 @@ import { PacketType } from '../../packet-type';
  * contains the reconnect information for the Quest Room.
  */
 export class GoToQuestRoomPacket implements Packet {
-
   readonly type = PacketType.QUEST_ROOM_MSG;
 
   //#region packet-specific members

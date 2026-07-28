@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received to tell the client to play a sound
  */
 export class PlaySoundPacket implements Packet {
-
   readonly type = PacketType.PLAYSOUND;
 
   /**

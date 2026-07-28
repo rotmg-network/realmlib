@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received when an AoE grenade has hit the ground.
  */
 export class AoePacket implements Packet {
-
   readonly type = PacketType.AOE;
 
   //#region packet-specific members

@@ -6,7 +6,6 @@ import { PacketType } from '../../packet-type';
  * contains the reconnect information for the Nexus.
  */
 export class EscapePacket implements Packet {
-
   readonly type = PacketType.ESCAPE;
 
   //#region packet-specific members

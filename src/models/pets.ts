@@ -8,7 +8,7 @@ export enum PetYardType {
   Uncommon = 2,
   Rare = 3,
   Legendary = 4,
-  Divine = 5
+  Divine = 5,
 }
 
 /**
@@ -19,7 +19,7 @@ export enum ActivePetUpdateType {
   Unknown = 0,
   Follow = 1,
   Unfollow = 2,
-  Release = 3
+  Release = 3,
 }
 
 /**
@@ -32,7 +32,7 @@ export enum PetUpgradeType {
   FeedPet = 2,
   FusePet = 3,
   /** Expands the selected pet's backpack capacity. */
-  PetBackpack = 4
+  PetBackpack = 4,
 }
 
 /**
@@ -62,7 +62,7 @@ export enum FavourPetOperation {
    */
   Entrance = 1,
   /** Two int32 title-slot ids follow (primary, secondary); mirrors RETITLE. */
-  Title = 2
+  Title = 2,
 }
 
 /** Result codes used when moving items to or from a pet container. */
@@ -70,5 +70,5 @@ export enum PetContainerTransferResult {
   Ok = 0,
   InvalidGeneric = 1,
   InvalidCantWithdrawFromPet = 2,
-  InvalidCantPutOnPet = 3
+  InvalidCantPutOnPet = 3,
 }

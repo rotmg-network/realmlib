@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * A packet which contains a bitmap image
  */
 export class PicPacket implements Packet {
-
   readonly type = PacketType.PIC;
 
   /**
@@ -38,8 +37,12 @@ export class PicPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    if (!Number.isInteger(this.width) || this.width <= 0
-      || !Number.isInteger(this.height) || this.height <= 0) {
+    if (
+      !Number.isInteger(this.width) ||
+      this.width <= 0 ||
+      !Number.isInteger(this.height) ||
+      this.height <= 0
+    ) {
       throw new RangeError('PicPacket dimensions must be positive integers');
     }
     const byteLength = this.width * this.height * 4;
@@ -48,8 +51,8 @@ export class PicPacket implements Packet {
     }
     if (this.bitmapData.length !== byteLength) {
       throw new RangeError(
-        `PicPacket bitmapData length ${this.bitmapData.length} does not match `
-        + `${this.width}x${this.height} RGBA length ${byteLength}`,
+        `PicPacket bitmapData length ${this.bitmapData.length} does not match ` +
+          `${this.width}x${this.height} RGBA length ${byteLength}`,
       );
     }
     writer.writeInt32(this.width);

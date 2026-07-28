@@ -48,7 +48,6 @@ export interface CustomisationSocketSelection {
  * >= 65536 would settle it.
  */
 export class BuyCustomisationSocketPacket implements Packet {
-
   readonly type = PacketType.BUY_CUSTOMISATION_SOCKET;
 
   //#region packet-specific members

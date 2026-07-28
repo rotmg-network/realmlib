@@ -27,8 +27,7 @@ export interface PacketDiagnostic extends RawPacket {
 }
 
 export type QueuedOutgoing =
-  | { kind: 'packet'; packet: Packet }
-  | { kind: 'raw'; id: number; payload: Buffer };
+  { kind: 'packet'; packet: Packet } | { kind: 'raw'; id: number; payload: Buffer };
 
 export interface SentPacketEvent {
   id: number;
@@ -37,8 +36,7 @@ export interface SentPacketEvent {
 }
 
 export type OutgoingDroppedEvent =
-  | { item: QueuedOutgoing; reason: 'queue-full' }
-  | { count: number; reason: 'connection-reset' };
+  { item: QueuedOutgoing; reason: 'queue-full' } | { count: number; reason: 'connection-reset' };
 
 type TypedPacketEvents = {
   [K in PacketType]: [packet: Packet];

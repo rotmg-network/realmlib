@@ -79,23 +79,14 @@ describe('deterministic codec properties', () => {
         actual.push(...decoder.push(stream.subarray(offset, offset + chunkLength)));
         offset += chunkLength;
       }
-      expect(actual.map((frame) => frame.toString('hex')))
-        .to.deep.equal(expected.map((frame) => frame.toString('hex')));
+      expect(actual.map((frame) => frame.toString('hex'))).to.deep.equal(
+        expected.map((frame) => frame.toString('hex')),
+      );
     }
   });
 
   it('matches Node buffer encodings at integer boundary values', () => {
-    const values = [
-      -0x80000000,
-      -0x8000,
-      -0x80,
-      -1,
-      0,
-      1,
-      0x7f,
-      0x7fff,
-      0x7fffffff,
-    ];
+    const values = [-0x80000000, -0x8000, -0x80, -1, 0, 1, 0x7f, 0x7fff, 0x7fffffff];
     for (const value of values) {
       const writer = new Writer();
       writer.writeInt32(value);

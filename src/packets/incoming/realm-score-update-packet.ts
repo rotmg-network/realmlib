@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * lifetime of a realm.
  */
 export class RealmScoreUpdatePacket implements Packet {
-
   readonly type = PacketType.REALM_SCORE_UPDATE;
 
   //#region packet-specific members

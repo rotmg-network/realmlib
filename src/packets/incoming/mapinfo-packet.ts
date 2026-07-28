@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received in response to the `HelloPacket`
  */
 export class MapInfoPacket implements Packet {
-
   readonly type = PacketType.MAPINFO;
 
   /**
@@ -199,6 +198,6 @@ export class MapInfoPacket implements Packet {
     AllowTeleport: ${this.allowPlayerTeleport}\n
     ShowDisplays: ${this.showDisplays}\n
     MaxPlayers: ${this.maxPlayers}\n
-    GameOpenedTime: ${this.gameOpenedTime}`
+    GameOpenedTime: ${this.gameOpenedTime}`;
   }
 }

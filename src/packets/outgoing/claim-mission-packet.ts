@@ -26,7 +26,6 @@ import { Writer } from '../../writer';
  * "Scouting the Unknown" at progress 4 (complete), i.e. the reward popup.
  */
 export class ClaimMissionPacket implements Packet {
-
   readonly type = PacketType.CLAIM_MISSION;
 
   //#region packet-specific members

@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received when a visible enemy shoots a projectile.
  */
 export class EnemyShootPacket implements Packet {
-
   readonly type = PacketType.ENEMYSHOOT;
 
   //#region packet-specific members

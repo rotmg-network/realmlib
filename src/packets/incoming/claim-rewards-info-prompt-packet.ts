@@ -23,7 +23,6 @@ import { Writer } from '../../writer';
  * ten, which is the third row shown to the player.
  */
 export class ClaimRewardsInfoPromptPacket implements Packet {
-
   readonly type = PacketType.CLAIM_REWARDS_INFO_PROMPT;
 
   //#region packet-specific members

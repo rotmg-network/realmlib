@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when an error has occurred
  */
 export class FailurePacket implements Packet {
-
   readonly type = PacketType.FAILURE;
 
   /**

@@ -21,10 +21,7 @@ function definitionLabel(definition) {
 
 function generateProtocolCompleteness(catalog) {
   const groups = protocolCompleteness();
-  const catalogNames = [
-    ...(catalog.unmapped_incoming ?? []),
-    ...(catalog.unmapped_outgoing ?? []),
-  ];
+  const catalogNames = [...(catalog.unmapped_incoming ?? []), ...(catalog.unmapped_outgoing ?? [])];
   const helpers = catalogNames.filter((name) => catalogHelpers.has(name)).sort();
   const candidates = catalogNames.filter((name) => !catalogHelpers.has(name)).sort();
   const generated = [
@@ -78,7 +75,10 @@ function generateProtocolCompleteness(catalog) {
 }
 
 function main(args = process.argv.slice(2)) {
-  const [catalogPath = 'protocol/exalt-current.json', outputPath = 'docs/PROTOCOL_COMPLETENESS.md'] = args;
+  const [
+    catalogPath = 'protocol/exalt-current.json',
+    outputPath = 'docs/PROTOCOL_COMPLETENESS.md',
+  ] = args;
   const catalog = JSON.parse(fs.readFileSync(path.resolve(catalogPath), 'utf8'));
   fs.writeFileSync(path.resolve(outputPath), generateProtocolCompleteness(catalog));
 }

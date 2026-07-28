@@ -8,7 +8,6 @@ import { Writer } from '../../../writer';
  * Sent to make an update to the pet currently following the player
  */
 export class ReskinPetPacket implements Packet {
-
   readonly type = PacketType.PET_CHANGE_FORM_MSG;
 
   /**
@@ -23,7 +22,6 @@ export class ReskinPetPacket implements Packet {
    * The slot object of a pet stone if one is used
    */
   item: SlotObjectData;
-
 
   constructor() {
     this.instanceId = 0;

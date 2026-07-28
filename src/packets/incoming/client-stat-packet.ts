@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received to give the player information about their stats.
  */
 export class ClientStatPacket implements Packet {
-
   readonly type = PacketType.CLIENTSTAT;
 
   //#region packet-specific members

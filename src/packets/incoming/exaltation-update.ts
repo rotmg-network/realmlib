@@ -1,7 +1,7 @@
-import { Packet } from "../../packet";
-import { PacketType } from "../../packet-type";
-import { Reader } from "../../reader";
-import { Writer } from "../../writer";
+import { Packet } from '../../packet';
+import { PacketType } from '../../packet-type';
+import { Reader } from '../../reader';
+import { Writer } from '../../writer';
 
 /**
  * Received once per connection for the character being loaded.
@@ -73,7 +73,8 @@ export class ExaltationUpdatePacket implements Packet {
   }
 
   toString(): string {
-    return `[ExaltationUpdate - 114] ObjectType: ${this.objType}\n` +
+    return (
+      `[ExaltationUpdate - 114] ObjectType: ${this.objType}\n` +
       `DEX: ${this.dexterityProgress}\n` +
       `SPD: ${this.speedProgress}\n` +
       `VIT: ${this.vitalityProgress}\n` +
@@ -81,7 +82,8 @@ export class ExaltationUpdatePacket implements Packet {
       `DEF: ${this.defenseProgress}\n` +
       `ATK: ${this.attackProgress}\n` +
       `MANA: ${this.manaProgress}\n` +
-      `LIFE: ${this.healthProgress}`;
+      `LIFE: ${this.healthProgress}`
+    );
   }
 }
 

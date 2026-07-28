@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to create a new guild.
  */
 export class CreateGuildPacket implements Packet {
-
   readonly type = PacketType.CREATEGUILD;
 
   //#region packet-specific members

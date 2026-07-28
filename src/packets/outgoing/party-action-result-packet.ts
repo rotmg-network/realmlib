@@ -13,7 +13,10 @@ export class PartyActionResultPacket implements Packet {
   /** Result of the requested action. */
   actionId: PartyActionResult;
 
-  constructor() { this.playerId = 65535; this.actionId = PartyActionResult.None; }
+  constructor() {
+    this.playerId = 65535;
+    this.actionId = PartyActionResult.None;
+  }
 
   read(reader: Reader): void {
     this.playerId = reader.readUnsignedShort();

@@ -1,9 +1,5 @@
 import { expect } from 'chai';
-import {
-  NotificationEffect,
-  NotificationPacket,
-  Writer,
-} from '../src';
+import { NotificationEffect, NotificationPacket, Writer } from '../src';
 import { readerFromBuffer } from './support/codec';
 
 describe('notification effect codecs', () => {

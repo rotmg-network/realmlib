@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Sent when the client takes damage from a ground source, such as lava.
  */
 export class GroundDamagePacket implements Packet {
-
   readonly type = PacketType.GROUNDDAMAGE;
 
   //#region packet-specific members

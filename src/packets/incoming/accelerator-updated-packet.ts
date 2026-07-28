@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * the richer "added" form. Treat the name as tentative.
  */
 export class AcceleratorUpdatedPacket implements Packet {
-
   readonly type = PacketType.ACCELERATOR_UPDATED;
 
   //#region packet-specific members

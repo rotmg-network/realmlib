@@ -8,7 +8,6 @@ import { StacksState } from '../../data';
  * Updates the local player's eight temporary base-stat stack counters.
  */
 export class StacksPacket implements Packet {
-
   readonly type = PacketType.STACKS;
 
   /** HP/MP/attack/defense/speed/vitality/wisdom/dexterity stack counters. */

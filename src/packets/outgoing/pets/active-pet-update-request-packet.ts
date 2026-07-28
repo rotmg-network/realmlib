@@ -8,7 +8,6 @@ import { Writer } from '../../../writer';
  * Sent to make an update to the pet currently following the player
  */
 export class ActivePetUpdateRequestPacket implements Packet {
-
   readonly type = PacketType.ACTIVE_PET_UPDATE_REQUEST;
 
   /**
@@ -36,7 +35,7 @@ export class ActivePetUpdateRequestPacket implements Packet {
   }
 
   typeToName(command: number): string {
-    switch(command) {
+    switch (command) {
       case ActivePetUpdateType.Follow:
         return `${command} : Follow`;
       case ActivePetUpdateType.Release:

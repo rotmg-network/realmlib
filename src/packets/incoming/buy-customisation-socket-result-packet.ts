@@ -14,7 +14,6 @@ import { Writer } from '../../writer';
  * prefix, not a short).
  */
 export class BuyCustomisationSocketResultPacket implements Packet {
-
   readonly type = PacketType.BUY_CUSTOMISATION_SOCKET_RESULT;
 
   //#region packet-specific members

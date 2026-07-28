@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Result of an enchantment reroll-count reset request.
  */
 export class ResetEnchantmentRerollCountResultPacket implements Packet {
-
   readonly type = PacketType.RESET_ENCHANTMENT_REROLL_COUNT_RESULT;
 
   //#region packet-specific members

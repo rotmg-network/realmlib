@@ -73,7 +73,11 @@ export class QuestData implements DataPacket {
     this.expiration = reader.readString();
     this.category = reader.readInt32();
     this.unknownInt = reader.readInt32();
-    const requirementsLen = reader.validateCollectionCount(reader.readShort(), 4, 'quest requirements');
+    const requirementsLen = reader.validateCollectionCount(
+      reader.readShort(),
+      4,
+      'quest requirements',
+    );
     this.requirements = new Array(requirementsLen);
     for (let i = 0; i < requirementsLen; i++) {
       this.requirements[i] = reader.readInt32();

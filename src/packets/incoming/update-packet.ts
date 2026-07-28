@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Adds newly visible tiles and objects and removes objects that left view.
  */
 export class UpdatePacket implements Packet {
-
   readonly type = PacketType.UPDATE;
 
   //#region packet-specific members
@@ -56,7 +55,11 @@ export class UpdatePacket implements Packet {
       this.tiles[i] = gd;
     }
 
-    const newObjectsLen = reader.validateCollectionCount(reader.readCompressedInt(), 12, 'new objects');
+    const newObjectsLen = reader.validateCollectionCount(
+      reader.readCompressedInt(),
+      12,
+      'new objects',
+    );
     this.newObjects = new Array<ObjectData>(newObjectsLen);
     for (let i = 0; i < newObjectsLen; i++) {
       const od = new ObjectData();

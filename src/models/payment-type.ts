@@ -6,5 +6,5 @@ export enum PaymentType {
   Gold = 0,
   Fame = 1,
   GuildFame = 2,
-  FortuneTokens = 3
+  FortuneTokens = 3,
 }

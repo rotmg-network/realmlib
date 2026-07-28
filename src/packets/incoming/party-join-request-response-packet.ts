@@ -16,7 +16,12 @@ export class PartyRequestResponsePacket implements Packet {
   /** Outcome state of the request. */
   state: number;
 
-  constructor() { this.name = ''; this.classId = 0; this.skinId = 0; this.state = 0; }
+  constructor() {
+    this.name = '';
+    this.classId = 0;
+    this.skinId = 0;
+    this.state = 0;
+  }
 
   read(reader: Reader): void {
     this.name = reader.readString();

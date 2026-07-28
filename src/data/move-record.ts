@@ -3,7 +3,6 @@ import { Reader } from '../reader';
 import { DataPacket } from '../packet';
 
 export class MoveRecord implements DataPacket {
-
   /**
    * The client time of this move record.
    */

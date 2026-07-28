@@ -9,7 +9,7 @@ export enum ItemCategory {
   Marks = 6,
   Pet = 7,
   Shiny = 8,
-  Other = 9
+  Other = 9,
 }
 
 /** Logical character storage areas used by inventory UI and transfers. */
@@ -18,5 +18,5 @@ export enum ContainerArea {
   Inventory = 1,
   Backpack = 2,
   BackpackExtension = 3,
-  ForgeVault = 4
+  ForgeVault = 4,
 }

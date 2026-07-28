@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to buy an item.
  */
 export class BuyPacket implements Packet {
-
   type = PacketType.BUY;
 
   //#region packet-specific members

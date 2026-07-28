@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * A packet which contains a file.
  */
 export class FilePacket implements Packet {
-
   readonly type = PacketType.FILE;
 
   //#region packet-specific members

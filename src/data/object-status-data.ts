@@ -11,7 +11,6 @@ import { StatData } from './stat-data';
  * changes for every visible entity.
  */
 export class ObjectStatusData implements DataPacket {
-
   /**
    * The object id of the object which this status is for
    */
@@ -57,7 +56,7 @@ export class ObjectStatusData implements DataPacket {
     if (!showStats) {
       return str;
     } else {
-      for(let i = 0; i < this.stats.length; i++) {
+      for (let i = 0; i < this.stats.length; i++) {
         if (i == 0) {
           str += `\n${this.stats[i].toString()}\n`;
         } else if (i == this.stats.length - 1) {

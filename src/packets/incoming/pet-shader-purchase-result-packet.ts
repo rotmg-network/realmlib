@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * capture exists yet.
  */
 export class PetShaderPurchaseResultPacket implements Packet {
-
   readonly type = PacketType.PET_SHADER_PURCHASE_RESULT;
 
   //#region packet-specific members

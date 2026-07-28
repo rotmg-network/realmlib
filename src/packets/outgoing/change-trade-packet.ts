@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to change the client's offer in the current active trade.
  */
 export class ChangeTradePacket implements Packet {
-
   readonly type = PacketType.CHANGETRADE;
 
   //#region packet-specific members

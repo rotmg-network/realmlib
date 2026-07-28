@@ -35,7 +35,10 @@ function toReader(writer: Writer): Reader {
 }
 
 /** Writes a packet, reads it back into a fresh instance of the same type. */
-function roundTrip<T extends { write(w: Writer): void; read(r: Reader): void }>(packet: T, fresh: T): T {
+function roundTrip<T extends { write(w: Writer): void; read(r: Reader): void }>(
+  packet: T,
+  fresh: T,
+): T {
   const writer = new Writer();
   packet.write(writer);
   fresh.read(toReader(writer));

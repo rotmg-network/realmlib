@@ -13,7 +13,6 @@ import { Writer } from '../../writer';
  * `lockedSlotCount:u8, lockedSlotIndices:u8[count]`.
  */
 export class RerollAllEnchantmentsPacket implements Packet {
-
   readonly type = PacketType.REROLL_ALL_ENCHANTMENTS;
 
   //#region packet-specific members

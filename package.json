@@ -66,6 +66,8 @@
     "typecheck": "tsc -p . --noEmit",
     "typecheck:test": "tsc -p tsconfig.test.json",
     "lint": "eslint \"{src,test}/**/*.ts\" \"scripts/**/*.cjs\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "mocha",
     "coverage:core": "c8 --all --include='src/io/**/*.ts' --include='src/crypto/**/*.ts' --include='src/packet-registry.ts' --include='src/data/parser.ts' --reporter=text --reporter=json-summary --check-coverage --lines=90 --statements=90 --branches=90 --functions=90 mocha",
     "benchmark:payload-copy": "node scripts/benchmark-payload-copy.cjs",
@@ -78,7 +80,7 @@
     "api:check": "npm run build --silent && npm run api:check:built",
     "package:check:built": "publint && node scripts/package-smoke.cjs",
     "package:check": "npm run build --silent && npm run package:check:built",
-    "check": "npm run typecheck && npm run typecheck:test && npm run lint && npm run coverage:core && npm run build && npm run check:protocol:built && npm run api:check:built && npm run package:check:built",
+    "check": "npm run typecheck && npm run typecheck:test && npm run lint && npm run format:check && npm run coverage:core && npm run build && npm run check:protocol:built && npm run api:check:built && npm run package:check:built",
     "prepare": "npm run build"
   },
   "files": [
@@ -111,6 +113,7 @@
     "chai": "^4.3.4",
     "eslint": "^10.8.0",
     "mocha": "^11.7.6",
+    "prettier": "^3.9.6",
     "publint": "^0.3.22",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",

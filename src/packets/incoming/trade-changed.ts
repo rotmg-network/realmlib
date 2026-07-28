@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when the active trade is changed
  */
 export class TradeChangedPacket implements Packet {
-
   readonly type = PacketType.TRADECHANGED;
 
   /**

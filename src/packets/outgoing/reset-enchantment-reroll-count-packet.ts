@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * internal format.
  */
 export class ResetEnchantmentRerollCountPacket implements Packet {
-
   readonly type = PacketType.RESET_ENCHANTMENT_REROLL_COUNT;
 
   //#region packet-specific members

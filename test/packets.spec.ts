@@ -89,9 +89,9 @@ describe('UpdatePacket', () => {
 
 describe('packet factory coverage', () => {
   it('derives unique ids, mappings, and factories from one registry', () => {
-    const wireKeys = PACKET_REGISTRY
-      .filter((definition) => definition.id !== undefined)
-      .map((definition) => `${definition.direction}:${definition.id}`);
+    const wireKeys = PACKET_REGISTRY.filter((definition) => definition.id !== undefined).map(
+      (definition) => `${definition.direction}:${definition.id}`,
+    );
     const types = PACKET_REGISTRY.map((definition) => definition.type);
     expect(new Set(wireKeys).size).to.equal(wireKeys.length);
     expect(new Set(types).size).to.equal(types.length);
@@ -114,7 +114,9 @@ describe('packet factory coverage', () => {
   });
 
   it('constructs the seasonal conversion packet', () => {
-    expect(createPacket(PacketType.CONVERT_SEASONAL_CHARACTER).type).to.equal(PacketType.CONVERT_SEASONAL_CHARACTER);
+    expect(createPacket(PacketType.CONVERT_SEASONAL_CHARACTER).type).to.equal(
+      PacketType.CONVERT_SEASONAL_CHARACTER,
+    );
   });
 
   it('constructs the chat hello packet', () => {
@@ -122,16 +124,26 @@ describe('packet factory coverage', () => {
   });
 
   it('constructs mapped but previously unhandled incoming packets', () => {
-    expect(createPacket(PacketType.FORGE_UNLOCKED_BLUEPRINTS).type).to.equal(PacketType.FORGE_UNLOCKED_BLUEPRINTS);
+    expect(createPacket(PacketType.FORGE_UNLOCKED_BLUEPRINTS).type).to.equal(
+      PacketType.FORGE_UNLOCKED_BLUEPRINTS,
+    );
     expect(createPacket(PacketType.PROGRESS_UPDATE).type).to.equal(PacketType.PROGRESS_UPDATE);
-    expect(createPacket(PacketType.UNLOCK_INFORMATION).type).to.equal(PacketType.UNLOCK_INFORMATION);
+    expect(createPacket(PacketType.UNLOCK_INFORMATION).type).to.equal(
+      PacketType.UNLOCK_INFORMATION,
+    );
   });
 
   it('constructs all captured reward claim packets', () => {
-    expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD).type).to.equal(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD);
-    expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT).type).to.equal(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT);
+    expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD).type).to.equal(
+      PacketType.CLAIM_ACCOUNT_LEVEL_REWARD,
+    );
+    expect(createPacket(PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT).type).to.equal(
+      PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT,
+    );
     expect(createPacket(PacketType.CLAIM_REWARD).type).to.equal(PacketType.CLAIM_REWARD);
-    expect(createPacket(PacketType.CLAIM_REWARD_RESULT).type).to.equal(PacketType.CLAIM_REWARD_RESULT);
+    expect(createPacket(PacketType.CLAIM_REWARD_RESULT).type).to.equal(
+      PacketType.CLAIM_REWARD_RESULT,
+    );
   });
 
   it('keeps deprecated constructors identical to canonical registry factories', () => {
@@ -163,7 +175,10 @@ describe('captured modern packet payloads', () => {
 
   it('parses PROGRESS_UPDATE as pool string entries', () => {
     const reader = new Reader(50);
-    Buffer.from('0030706f6f6c2f35303a35353a3130333a313738323430303738307c35303a35363a3230333a313738323430303738307c23', 'hex').copy(reader.buffer);
+    Buffer.from(
+      '0030706f6f6c2f35303a35353a3130333a313738323430303738307c35303a35363a3230333a313738323430303738307c23',
+      'hex',
+    ).copy(reader.buffer);
     const packet = new ProgressUpdatePacket();
     packet.read(reader);
     expect(packet.value).to.equal('pool/50:55:103:1782400780|50:56:203:1782400780|#');

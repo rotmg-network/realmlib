@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received to tell the client how many heroes are left in the current realm
  */
 export class RealmHeroesLeftPacket implements Packet {
-
   readonly type = PacketType.REALM_HERO_LEFT_MSG;
 
   /**

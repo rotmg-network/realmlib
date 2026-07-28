@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to remove a player from the client's current guild.
  */
 export class GuildRemovePacket implements Packet {
-
   readonly type = PacketType.GUILDREMOVE;
 
   //#region packet-specific members

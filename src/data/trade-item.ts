@@ -3,7 +3,6 @@ import { Reader } from '../reader';
 import { DataPacket } from '../packet';
 
 export class TradeItem implements DataPacket {
-
   /**
    * The item id
    */

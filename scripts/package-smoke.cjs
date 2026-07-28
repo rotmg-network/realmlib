@@ -14,11 +14,10 @@ let archivePath;
 let installRoot;
 
 try {
-  const packOutput = execFileSync(
-    npmCommand,
-    ['pack', '--json', '--ignore-scripts'],
-    { cwd: projectRoot, encoding: 'utf8' },
-  );
+  const packOutput = execFileSync(npmCommand, ['pack', '--json', '--ignore-scripts'], {
+    cwd: projectRoot,
+    encoding: 'utf8',
+  });
   const [packed] = JSON.parse(packOutput);
   if (!packed || typeof packed.filename !== 'string') {
     throw new Error('npm pack did not return package metadata');
@@ -57,8 +56,8 @@ try {
     readFileSync(path.join(installRoot, 'node_modules/realmlib/package.json'), 'utf8'),
   );
   console.log(
-    `package smoke passed: ${installedPackage.name}@${installedPackage.version}, `
-    + `${packed.entryCount} files, ${packed.unpackedSize} unpacked bytes`,
+    `package smoke passed: ${installedPackage.name}@${installedPackage.version}, ` +
+      `${packed.entryCount} files, ${packed.unpackedSize} unpacked bytes`,
   );
 } finally {
   if (archivePath) {

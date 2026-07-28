@@ -14,7 +14,6 @@ import { Writer } from '../../writer';
  * used the item much later. Nothing is consumed and no claim need follow.
  */
 export class ClaimRewardsInfoRequestPacket implements Packet {
-
   readonly type = PacketType.CLAIM_REWARDS_INFO_REQUEST;
 
   //#region packet-specific members

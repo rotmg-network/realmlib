@@ -24,8 +24,9 @@ describe('inventory stat<->slot helpers', () => {
     expect(inventorySlotIndex(StatType.BACKPACK_0_STAT)).to.equal(INVENTORY_SLOT_COUNT);
     expect(inventorySlotIndex(StatType.BACKPACK_7_STAT)).to.equal(19);
     expect(inventorySlotIndex(StatType.BACKPACK_8_STAT)).to.equal(20);
-    expect(inventorySlotIndex(StatType.BACKPACK_15_STAT))
-      .to.equal(INVENTORY_SLOT_COUNT + BACKPACK_SLOT_COUNT - 1);
+    expect(inventorySlotIndex(StatType.BACKPACK_15_STAT)).to.equal(
+      INVENTORY_SLOT_COUNT + BACKPACK_SLOT_COUNT - 1,
+    );
     expect(BACKPACK_END).to.equal(28);
   });
 

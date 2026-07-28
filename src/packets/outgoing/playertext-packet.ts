@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent when the client sends a chat message.
  */
 export class PlayerTextPacket implements Packet {
-
   readonly type = PacketType.PLAYERTEXT;
 
   /**

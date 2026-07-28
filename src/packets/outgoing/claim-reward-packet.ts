@@ -16,7 +16,6 @@ export enum ClaimRewardTrack {
  * selects the free or premium reward track, but that meaning is not proven.
  */
 export class ClaimRewardPacket implements Packet {
-
   readonly type = PacketType.CLAIM_REWARD;
 
   //#region packet-specific members

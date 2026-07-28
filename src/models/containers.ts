@@ -2,29 +2,29 @@
  * Container types that items can be stored in
  */
 export enum PanelType {
-    None = 0,
-    Map = 1,
-    Equipment = 2,
-    Inventory = 3,
-    Backpack = 4,
-    Quickslot = 5,
-    VaultPanel = 6,
-    PotionPanel = 7,
-    ExtraBackpack = 8,
-    Pet = 9,
-    ForgeVaultPanel = 10
+  None = 0,
+  Map = 1,
+  Equipment = 2,
+  Inventory = 3,
+  Backpack = 4,
+  Quickslot = 5,
+  VaultPanel = 6,
+  PotionPanel = 7,
+  ExtraBackpack = 8,
+  Pet = 9,
+  ForgeVaultPanel = 10,
 }
 
 /**
  * The types of vault containers
  */
 export enum VaultType {
-    None = 0,
-    Vault = 1,
-    Gift = 2,
-    Potions = 3,
-    TemporaryGift = 4,
-    Forge = 5
+  None = 0,
+  Vault = 1,
+  Gift = 2,
+  Potions = 3,
+  TemporaryGift = 4,
+  Forge = 5,
 }
 
 /**
@@ -36,7 +36,7 @@ export enum ExpansionTarget {
   Vault = 0,
   SeasonalVault = 1,
   SeasonalPotion = 2,
-  None = 3
+  None = 3,
 }
 
 /** Owner category used by inventory UI and transfer state. */
@@ -45,5 +45,5 @@ export enum InventoryOwnerType {
   OtherPlayer = 1,
   Npc = 2,
   Lootbag = 3,
-  Pet = 4
+  Pet = 4,
 }

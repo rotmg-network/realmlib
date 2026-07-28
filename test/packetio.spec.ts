@@ -99,8 +99,10 @@ describe('PacketIO outgoing queue', () => {
   });
 
   it('validates queue configuration', () => {
-    expect(() => new PacketIO({ maxOutgoingQueue: 0 }))
-      .to.throw(RangeError, 'maxOutgoingQueue must be a positive integer');
+    expect(() => new PacketIO({ maxOutgoingQueue: 0 })).to.throw(
+      RangeError,
+      'maxOutgoingQueue must be a positive integer',
+    );
   });
 
   it('retains the packet type in sent events', () => {

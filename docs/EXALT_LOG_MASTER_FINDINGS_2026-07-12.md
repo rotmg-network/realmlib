@@ -32,35 +32,35 @@ contrast missing below and proves that stat 80 is overloaded by a pet format.
 
 The final column is the number of unresolved parse groups after this update.
 
-| File | Kind | Bytes | Records | Connection IDs | Unresolved |
-|---|---:|---:|---:|---:|---:|
-| realmproxy-biglog.ndjson | packets | 63,306,112 | 200,000 | 37 | 0 |
-| realmproxy-castle1.ndjson | packets | 9,294,099 | 25,831 | 8 | 0 |
-| realmproxy-cellar2.ndjson | packets | 22,189,625 | 68,478 | 13 | 0 |
-| realmproxy-cults-desync.findings.md | prior findings | 4,966 | — | — | — |
-| realmproxy-cults-desync.ndjson | packets | 21,375,538 | 80,883 | 30 | 0 |
-| realmproxy-editaccountlist.ndjson | packets | 859,379 | 2,154 | 5 | 0 |
-| realmproxy-enchant-dismantle-dupes.ndjson | packets | 19,837,488 | 65,237 | 20 | 0 |
-| realmproxy-ep-staff-claimdaily.ndjson | packets | 2,944,800 | 7,733 | 25 | 0 |
-| realmproxy-oryx-3.ndjson | packets | 59,182,234 | 200,000 | 9 | 0 |
-| realmproxy-oryx-and-winecellar.findings.md | prior findings | 4,756 | — | — | — |
-| realmproxy-oryx-and-winecellar.ndjson | packets | 24,798,145 | 76,583 | 26 | 0 |
-| realmproxy-packets (1).ndjson | packets | 1,753,978 | 3,947 | 12 | 0 |
-| realmproxy-packets (3).ndjson | packets | 4,299,483 | 11,476 | 20 | 0 |
-| realmproxy-packets.ndjson | packets | 18,515,085 | 55,637 | 24 | 0 |
-| realmproxy-retitle-reskin-etc.ndjson | packets | 4,172,344 | 11,917 | 14 | 0 |
-| realmproxy-sessionOne.findings.md | prior findings | 5,591 | — | — | — |
-| realmproxy-sessionOne.ndjson | packets | 5,022,715 | 13,016 | 18 | 0 |
-| session-2026-07-09T23-01-52-493Z-appengine.ndjson | AppEngine | 2,915,791 | 289 | — | — |
-| session-2026-07-09T23-01-52-493Z-packets.ndjson | packets | 40,563,053 | 124,044 | 37 | 0 |
-| session-2026-07-10T01-44-20-510Z-appengine.ndjson | AppEngine | 1,843,168 | 395 | — | — |
-| session-2026-07-10T01-44-20-510Z-packets.ndjson | packets | 105,199,346 | 332,598 | 57 | 0 |
-| session-2026-07-10T11-36-43-674Z-appengine.ndjson | AppEngine | 3,040,196 | 270 | — | — |
-| session-2026-07-10T11-36-43-674Z-packets.ndjson | packets | 56,303,621 | 177,364 | 61 | 0 |
-| session-2026-07-12T13-41-59-786Z-appengine.ndjson | AppEngine | 676,999 | 127 | — | — |
-| session-2026-07-12T13-41-59-786Z-packets.ndjson | packets | 46,244,155 | 141,429 | 48 | 0 |
-| session-2026-07-12T20-29-40-150Z-appengine.ndjson | AppEngine | 1,015,296 | 80 | — | — |
-| session-2026-07-12T20-29-40-150Z-packets.ndjson | packets | 15,199,287 | 43,259 | 19 | 0 |
+| File                                              |           Kind |       Bytes | Records | Connection IDs | Unresolved |
+| ------------------------------------------------- | -------------: | ----------: | ------: | -------------: | ---------: |
+| realmproxy-biglog.ndjson                          |        packets |  63,306,112 | 200,000 |             37 |          0 |
+| realmproxy-castle1.ndjson                         |        packets |   9,294,099 |  25,831 |              8 |          0 |
+| realmproxy-cellar2.ndjson                         |        packets |  22,189,625 |  68,478 |             13 |          0 |
+| realmproxy-cults-desync.findings.md               | prior findings |       4,966 |       — |              — |          — |
+| realmproxy-cults-desync.ndjson                    |        packets |  21,375,538 |  80,883 |             30 |          0 |
+| realmproxy-editaccountlist.ndjson                 |        packets |     859,379 |   2,154 |              5 |          0 |
+| realmproxy-enchant-dismantle-dupes.ndjson         |        packets |  19,837,488 |  65,237 |             20 |          0 |
+| realmproxy-ep-staff-claimdaily.ndjson             |        packets |   2,944,800 |   7,733 |             25 |          0 |
+| realmproxy-oryx-3.ndjson                          |        packets |  59,182,234 | 200,000 |              9 |          0 |
+| realmproxy-oryx-and-winecellar.findings.md        | prior findings |       4,756 |       — |              — |          — |
+| realmproxy-oryx-and-winecellar.ndjson             |        packets |  24,798,145 |  76,583 |             26 |          0 |
+| realmproxy-packets (1).ndjson                     |        packets |   1,753,978 |   3,947 |             12 |          0 |
+| realmproxy-packets (3).ndjson                     |        packets |   4,299,483 |  11,476 |             20 |          0 |
+| realmproxy-packets.ndjson                         |        packets |  18,515,085 |  55,637 |             24 |          0 |
+| realmproxy-retitle-reskin-etc.ndjson              |        packets |   4,172,344 |  11,917 |             14 |          0 |
+| realmproxy-sessionOne.findings.md                 | prior findings |       5,591 |       — |              — |          — |
+| realmproxy-sessionOne.ndjson                      |        packets |   5,022,715 |  13,016 |             18 |          0 |
+| session-2026-07-09T23-01-52-493Z-appengine.ndjson |      AppEngine |   2,915,791 |     289 |              — |          — |
+| session-2026-07-09T23-01-52-493Z-packets.ndjson   |        packets |  40,563,053 | 124,044 |             37 |          0 |
+| session-2026-07-10T01-44-20-510Z-appengine.ndjson |      AppEngine |   1,843,168 |     395 |              — |          — |
+| session-2026-07-10T01-44-20-510Z-packets.ndjson   |        packets | 105,199,346 | 332,598 |             57 |          0 |
+| session-2026-07-10T11-36-43-674Z-appengine.ndjson |      AppEngine |   3,040,196 |     270 |              — |          — |
+| session-2026-07-10T11-36-43-674Z-packets.ndjson   |        packets |  56,303,621 | 177,364 |             61 |          0 |
+| session-2026-07-12T13-41-59-786Z-appengine.ndjson |      AppEngine |     676,999 |     127 |              — |          — |
+| session-2026-07-12T13-41-59-786Z-packets.ndjson   |        packets |  46,244,155 | 141,429 |             48 |          0 |
+| session-2026-07-12T20-29-40-150Z-appengine.ndjson |      AppEngine |   1,015,296 |      80 |              — |          — |
+| session-2026-07-12T20-29-40-150Z-packets.ndjson   |        packets |  15,199,287 |  43,259 |             19 |          0 |
 
 Capture-specific highlights:
 
@@ -85,23 +85,23 @@ Capture-specific highlights:
 
 The corpus contains 93 observed direction/packet combinations. The busiest are:
 
-| Packet | Direction | Count | Body bytes |
-|---|---:|---:|---:|
-| DAMAGE | S→C | 254,951 | 14–15 |
-| UPDATE | S→C | 224,036 | 12–34,862 |
-| UPDATEACK | C→S | 223,345 | 0 |
-| NEWTICK | S→C | 151,384 | 16–4,866 |
-| MOVE | C→S | 151,011 | 22–154 |
-| SHOWEFFECT | S→C | 124,403 | 2–30 |
-| ENEMYSHOOT | S→C | 99,143 | 21–26 |
-| PLAYERSHOOT | C→S | 73,084 | 32 |
-| SHOOTACK | C→S | 67,701 | 6 |
-| ENEMYHIT | C→S | 54,475 | 19 |
-| ALLYSHOOT | S→C | 44,425 | 15 |
-| OTHERHIT | C→S | 40,697 | 14 |
-| SERVERPLAYERSHOOT | S→C | 36,792 | 29–34 |
-| NOTIFICATION | S→C | 31,958 | 2–154 |
-| REALM_SCORE_UPDATE | S→C | 19,986 | 4 |
+| Packet             | Direction |   Count | Body bytes |
+| ------------------ | --------: | ------: | ---------: |
+| DAMAGE             |       S→C | 254,951 |      14–15 |
+| UPDATE             |       S→C | 224,036 |  12–34,862 |
+| UPDATEACK          |       C→S | 223,345 |          0 |
+| NEWTICK            |       S→C | 151,384 |   16–4,866 |
+| MOVE               |       C→S | 151,011 |     22–154 |
+| SHOWEFFECT         |       S→C | 124,403 |       2–30 |
+| ENEMYSHOOT         |       S→C |  99,143 |      21–26 |
+| PLAYERSHOOT        |       C→S |  73,084 |         32 |
+| SHOOTACK           |       C→S |  67,701 |          6 |
+| ENEMYHIT           |       C→S |  54,475 |         19 |
+| ALLYSHOOT          |       S→C |  44,425 |         15 |
+| OTHERHIT           |       C→S |  40,697 |         14 |
+| SERVERPLAYERSHOOT  |       S→C |  36,792 |      29–34 |
+| NOTIFICATION       |       S→C |  31,958 |      2–154 |
+| REALM_SCORE_UPDATE |       S→C |  19,986 |          4 |
 
 All previously reconstructed packet layouts—including DAMAGE, DEATH, MAPINFO,
 UPDATE, notifications, inventory acknowledgements, combat packets, forge,
@@ -172,8 +172,7 @@ named more strongly from a single occurrence.
 
 ### SHOWEFFECT size and IDs
 
-Presence-mask bit `0x80` means a signed byte `size`; the default when absent is
-100. It is no longer represented as a generic extra byte. Across 124,403 frames,
+Presence-mask bit `0x80` means a signed byte `size`; the default when absent is 100. It is no longer represented as a generic extra byte. Across 124,403 frames,
 effect IDs observed were 1–8, 10–23, 25–26, 31, 33, and 35–40. ID 35 is the
 client-confirmed Summoner Magic Circle. The July 13 Kensei capture identifies
 IDs 36/37 as the dash trail and channel-dash activation; IDs 38–40 remain

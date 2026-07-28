@@ -50,7 +50,10 @@ describe('Reader/Writer primitives', () => {
     expect(() => w.writeUnsignedByte(-1)).to.throw(RangeError, 'uint8 out of range');
     expect(() => w.writeShort(1.5)).to.throw(TypeError, 'int16 must be an integer');
     expect(() => w.writeFloat(Infinity)).to.throw(TypeError, 'float32 must be a finite number');
-    expect(() => w.writeBoolean(1 as unknown as boolean)).to.throw(TypeError, 'boolean must be true or false');
+    expect(() => w.writeBoolean(1 as unknown as boolean)).to.throw(
+      TypeError,
+      'boolean must be true or false',
+    );
   });
 
   it('rejects invalid packet ids instead of truncating them', () => {
@@ -62,8 +65,8 @@ describe('Reader/Writer primitives', () => {
 
 describe('compressed integers', () => {
   const values = [
-    0, 1, 5, 63, 64, 127, 128, 8191, 16384, 1_000_000, 2_147_483_647,
-    -1, -63, -64, -8192, -1_000_000, -2_147_483_647,
+    0, 1, 5, 63, 64, 127, 128, 8191, 16384, 1_000_000, 2_147_483_647, -1, -63, -64, -8192,
+    -1_000_000, -2_147_483_647,
   ];
   for (const value of values) {
     it(`round-trips ${value}`, () => {
@@ -102,8 +105,10 @@ describe('strings', () => {
 
   it('rejects strings which exceed the uint16 byte-length prefix', () => {
     const w = new Writer();
-    expect(() => w.writeString('x'.repeat(0x10000)))
-      .to.throw(RangeError, 'string byte length out of range');
+    expect(() => w.writeString('x'.repeat(0x10000))).to.throw(
+      RangeError,
+      'string byte length out of range',
+    );
   });
 });
 

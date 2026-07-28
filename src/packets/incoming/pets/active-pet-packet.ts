@@ -7,7 +7,6 @@ import { Writer } from '../../../writer';
  * Received to notify the player of a new pet.
  */
 export class ActivePetPacket implements Packet {
-
   readonly type = PacketType.ACTIVEPETUPDATE;
   propagate = true;
 

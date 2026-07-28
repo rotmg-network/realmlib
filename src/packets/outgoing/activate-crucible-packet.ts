@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * (`'6646626776023040'`) followed by a trailing short.
  */
 export class ActivateCruciblePacket implements Packet {
-
   readonly type = PacketType.ACTIVATE_CRUCIBLE;
 
   //#region packet-specific members

@@ -10,7 +10,6 @@ import { Writer } from '../../writer';
  * its meaning is unknown. No wire capture exists yet.
  */
 export class SetDiscoverablePacket implements Packet {
-
   readonly type = PacketType.SET_DISCOVERABLE;
 
   //#region packet-specific members

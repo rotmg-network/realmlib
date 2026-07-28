@@ -78,7 +78,7 @@ export enum ConditionEffect {
   UNKNOWN_61 = 61,
   UNKNOWN_62 = 62,
   UNKNOWN_63 = 63,
-  GROUND_DAMAGE = 99
+  GROUND_DAMAGE = 99,
 }
 
 /**
@@ -121,7 +121,7 @@ export enum ConditionEffectBits {
   HEXED = 0x8000000,
   NINJA_SPEEDY = 0x10000000,
   UNSTABLE = 0x20000000,
-  DARKNESS = 0x40000000
+  DARKNESS = 0x40000000,
 }
 
 /**
@@ -164,7 +164,7 @@ export enum ConditionEffectBits2 {
   UNKNOWN_61 = 0x20000000,
   UNKNOWN_62 = 0x40000000,
   /** Bit 31; JS bitwise ops coerce to int32, so `word & UNKNOWN_63` still works. */
-  UNKNOWN_63 = 0x80000000
+  UNKNOWN_63 = 0x80000000,
 }
 
 /**
@@ -174,7 +174,7 @@ export enum ConditionEffectBits2 {
 export enum DamageFlags {
   Kill = 1,
   ArmorPierce = 2,
-  Laser = 4
+  Laser = 4,
 }
 
 /**
@@ -182,13 +182,13 @@ export enum DamageFlags {
  */
 export enum PlayerShootSource {
   Primary = 0,
-  Ability = 1
+  Ability = 1,
 }
 
 /** Shape discriminator used by the server's debug-drawing packets. */
 export enum DebugShape {
   Square = 0,
-  Circle = 1
+  Circle = 1,
 }
 
 /**
@@ -201,12 +201,12 @@ export enum BarType {
   Breath = 2,
   Channeling = 4,
   Frostbite = 8,
-  Ability = 16
+  Ability = 16,
 }
 
 /**
  * The ID values of all visual/particle effects in the game
- * 
+ *
  *  "assembly": "Assembly-CSharp",
  *      "name": "PEHBMICMEDO",
  */
@@ -261,7 +261,7 @@ export enum VisualEffect {
   // Attack, AoE, ShockBlast.
   ATTACK = 38,
   AOE = 39,
-  SHOCK_BLAST = 40
+  SHOCK_BLAST = 40,
 }
 
 /**
@@ -311,7 +311,7 @@ export enum ParticleEffect {
   SummonerParticle = 32,
   /** @deprecated Client name is `SummonSpriteParticle`. */
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  SummonerSpriteParticle = 33
+  SummonerSpriteParticle = 33,
 }
 
 /**

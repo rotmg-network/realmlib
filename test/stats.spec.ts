@@ -166,21 +166,33 @@ describe('ObjectStatusData round trip', () => {
 
 describe('hasConditionEffect', () => {
   it('reads effects 1-31 from the first condition word', () => {
-    expect(hasConditionEffect(ConditionEffectBits.STASIS, 0, ConditionEffect.STASIS)).to.equal(true);
-    expect(hasConditionEffect(ConditionEffectBits.PARALYZED, 0, ConditionEffect.PARALYZED)).to.equal(true);
+    expect(hasConditionEffect(ConditionEffectBits.STASIS, 0, ConditionEffect.STASIS)).to.equal(
+      true,
+    );
+    expect(
+      hasConditionEffect(ConditionEffectBits.PARALYZED, 0, ConditionEffect.PARALYZED),
+    ).to.equal(true);
     expect(hasConditionEffect(0, 0, ConditionEffect.STASIS)).to.equal(false);
   });
 
   it('reads effects 32-63 from the second condition word', () => {
-    expect(hasConditionEffect(0, ConditionEffectBits2.PETRIFIED, ConditionEffect.PETRIFIED)).to.equal(true);
+    expect(
+      hasConditionEffect(0, ConditionEffectBits2.PETRIFIED, ConditionEffect.PETRIFIED),
+    ).to.equal(true);
     expect(hasConditionEffect(0, ConditionEffectBits2.CURSE, ConditionEffect.CURSE)).to.equal(true);
     // Bit 31 of the second word — the case plain `1 << 31` gets wrong.
-    expect(hasConditionEffect(0, ConditionEffectBits2.UNKNOWN_63, ConditionEffect.UNKNOWN_63)).to.equal(true);
+    expect(
+      hasConditionEffect(0, ConditionEffectBits2.UNKNOWN_63, ConditionEffect.UNKNOWN_63),
+    ).to.equal(true);
   });
 
   it('does not confuse the two words', () => {
     // STASIS is 22 (first word); testing it against condition2 must not fire.
-    expect(hasConditionEffect(0, ConditionEffectBits.STASIS, ConditionEffect.STASIS)).to.equal(false);
-    expect(hasConditionEffect(ConditionEffectBits2.PETRIFIED, 0, ConditionEffect.PETRIFIED)).to.equal(false);
+    expect(hasConditionEffect(0, ConditionEffectBits.STASIS, ConditionEffect.STASIS)).to.equal(
+      false,
+    );
+    expect(
+      hasConditionEffect(ConditionEffectBits2.PETRIFIED, 0, ConditionEffect.PETRIFIED),
+    ).to.equal(false);
   });
 });

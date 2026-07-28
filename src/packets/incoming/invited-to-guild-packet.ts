@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received when the player is invited to a guild.
  */
 export class InvitedToGuildPacket implements Packet {
-
   readonly type = PacketType.INVITEDTOGUILD;
 
   //#region packet-specific members

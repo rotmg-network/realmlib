@@ -16,7 +16,10 @@ export type RealmlibErrorCode =
 
 /** Base class for realmlib errors, carrying a machine-readable `code`. */
 export class RealmlibError extends Error {
-  constructor(readonly code: RealmlibErrorCode, message: string) {
+  constructor(
+    readonly code: RealmlibErrorCode,
+    message: string,
+  ) {
     super(message);
     this.name = new.target.name;
     // Restore the prototype chain when compiled to ES5 targets.
@@ -45,7 +48,10 @@ export class InvalidFrameLengthError extends RealmlibError {
 
 /** Raised when a frame prefix exceeds the configured safety limit. */
 export class FrameTooLargeError extends RealmlibError {
-  constructor(readonly frameLength: number, readonly maximumFrameSize: number) {
+  constructor(
+    readonly frameLength: number,
+    readonly maximumFrameSize: number,
+  ) {
     super('FRAME_TOO_LARGE', `Frame length ${frameLength} exceeds maximum ${maximumFrameSize}`);
   }
 }
@@ -66,10 +72,7 @@ export class MissingPacketFactoryError extends RealmlibError {
 
 /** Raised when a packet type has no usable numeric wire mapping. */
 export class PacketMappingError extends RealmlibError {
-  constructor(
-    code: 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID',
-    message: string,
-  ) {
+  constructor(code: 'MISSING_MAPPING' | 'INVALID_PACKET_ID' | 'INVALID_RAW_ID', message: string) {
     super(code, message);
   }
 }

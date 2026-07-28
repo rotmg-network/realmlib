@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received occasionally by the server to prompt a response from the client
  */
 export class PingPacket implements Packet {
-
   readonly type = PacketType.PING;
 
   /**

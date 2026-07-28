@@ -8,7 +8,6 @@ import { StacksState } from '../../data';
  * Updates the eight temporary base-stat stack counters for a character.
  */
 export class StatsPacket implements Packet {
-
   readonly type = PacketType.STATS;
 
   //#region packet-specific members
@@ -29,10 +28,7 @@ export class StatsPacket implements Packet {
    */
   get unknownInt1(): number {
     return (
-      (this.state.hp << 24)
-      | (this.state.mp << 16)
-      | (this.state.attack << 8)
-      | this.state.defense
+      (this.state.hp << 24) | (this.state.mp << 16) | (this.state.attack << 8) | this.state.defense
     );
   }
 
@@ -42,10 +38,10 @@ export class StatsPacket implements Packet {
    */
   get unknownInt2(): number {
     return (
-      (this.state.speed << 24)
-      | (this.state.vitality << 16)
-      | (this.state.wisdom << 8)
-      | this.state.dexterity
+      (this.state.speed << 24) |
+      (this.state.vitality << 16) |
+      (this.state.wisdom << 8) |
+      this.state.dexterity
     );
   }
 

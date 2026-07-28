@@ -7,11 +7,9 @@ import { Writer } from '../../writer';
  * Received to prompt the player to enter their password
  */
 export class PasswordPromptPacket implements Packet {
-
   readonly type = PacketType.PASSWORD_PROMPT;
 
   cleanPasswordStatus: number;
-
 
   constructor() {
     this.cleanPasswordStatus = 0;

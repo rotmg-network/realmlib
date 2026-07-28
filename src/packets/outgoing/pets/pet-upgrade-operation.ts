@@ -37,10 +37,7 @@ export interface PetUpgradeWireState {
   slotObjects: SlotObjectData[];
 }
 
-export function petYardUpgrade(
-  objectId: number,
-  paymentType: PaymentType,
-): PetUpgradeOperation {
+export function petYardUpgrade(objectId: number, paymentType: PaymentType): PetUpgradeOperation {
   return { kind: 'yard', objectId, paymentType };
 }
 
@@ -70,31 +67,35 @@ export function applyPetUpgradeOperation(
   state: PetUpgradeWireState,
   operation: PetUpgradeOperation,
 ): void {
-  state.petTransType = operation.kind === 'unknown'
-    ? operation.transactionType as PetUpgradeType
-    : {
-        yard: PetUpgradeType.PetYard,
-        feed: PetUpgradeType.FeedPet,
-        fuse: PetUpgradeType.FusePet,
-        backpack: PetUpgradeType.PetBackpack,
-      }[operation.kind];
-  state.pIdOne = operation.kind === 'feed' || operation.kind === 'backpack'
-    ? operation.petId
-    : operation.kind === 'fuse'
-      ? operation.firstPetId
-      : operation.kind === 'unknown'
+  state.petTransType =
+    operation.kind === 'unknown'
+      ? (operation.transactionType as PetUpgradeType)
+      : {
+          yard: PetUpgradeType.PetYard,
+          feed: PetUpgradeType.FeedPet,
+          fuse: PetUpgradeType.FusePet,
+          backpack: PetUpgradeType.PetBackpack,
+        }[operation.kind];
+  state.pIdOne =
+    operation.kind === 'feed' || operation.kind === 'backpack'
+      ? operation.petId
+      : operation.kind === 'fuse'
         ? operation.firstPetId
-        : 0;
-  state.pIdTwo = operation.kind === 'fuse'
-    ? operation.secondPetId
-    : operation.kind === 'unknown'
+        : operation.kind === 'unknown'
+          ? operation.firstPetId
+          : 0;
+  state.pIdTwo =
+    operation.kind === 'fuse'
       ? operation.secondPetId
-      : 0;
+      : operation.kind === 'unknown'
+        ? operation.secondPetId
+        : 0;
   state.objectId = 'objectId' in operation ? operation.objectId : 0;
   state.paymentType = 'paymentType' in operation ? operation.paymentType : 0;
-  state.slotObjects = operation.kind === 'feed' || operation.kind === 'unknown'
-    ? operation.slots.map((slot) => slot.clone())
-    : [];
+  state.slotObjects =
+    operation.kind === 'feed' || operation.kind === 'unknown'
+      ? operation.slots.map((slot) => slot.clone())
+      : [];
 }
 
 export function projectPetUpgradeOperation(state: PetUpgradeWireState): PetUpgradeOperation {

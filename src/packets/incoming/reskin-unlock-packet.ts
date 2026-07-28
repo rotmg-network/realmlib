@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * Received to notify the player that a new skin has been unlocked
  */
 export class ReskinUnlockPacket implements Packet {
-
   readonly type = PacketType.RESKIN_UNLOCK;
 
   /**

@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received in response to a `ChooseNamePacket`
  */
 export class NameResultPacket implements Packet {
-
   readonly type = PacketType.NAMERESULT;
 
   /**

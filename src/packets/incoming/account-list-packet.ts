@@ -8,7 +8,6 @@ import { Writer } from '../../writer';
  * those of players who have been locked, ignored, etc.
  */
 export class AccountListPacket implements Packet {
-
   readonly type = PacketType.ACCOUNTLIST;
 
   //#region packet-specific members

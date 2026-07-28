@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Sent to teleport to another player.
  */
 export class TeleportPacket implements Packet {
-
   readonly type = PacketType.TELEPORT;
 
   //#region packet-specific members
@@ -16,7 +15,7 @@ export class TeleportPacket implements Packet {
    */
   objectId: number;
   //#endregion
-  playerName: string
+  playerName: string;
 
   constructor() {
     this.objectId = 0;

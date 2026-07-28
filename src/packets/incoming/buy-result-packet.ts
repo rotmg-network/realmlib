@@ -7,7 +7,6 @@ import { Writer } from '../../writer';
  * Received in response to a `BuyPacket`.
  */
 export class BuyResultPacket implements Packet {
-
   readonly type = PacketType.BUYRESULT;
 
   //#region packet-specific members

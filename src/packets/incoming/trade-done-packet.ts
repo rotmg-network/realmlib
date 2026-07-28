@@ -9,7 +9,6 @@ import { Writer } from '../../writer';
  * it was accepted or cancelled
  */
 export class TradeDonePacket implements Packet {
-
   readonly type = PacketType.TRADEDONE;
 
   /**
