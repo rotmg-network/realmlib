@@ -15,9 +15,18 @@ export class RC4 {
    */
   constructor(key: Buffer | string) {
     if (typeof key === 'string') {
+      if (key.length === 0) {
+        throw new RangeError('RC4 key must not be empty');
+      }
+      if (key.length % 2 !== 0 || !/^[0-9a-f]+$/i.test(key)) {
+        throw new TypeError('RC4 string key must contain an even number of hexadecimal characters');
+      }
       this.key = Buffer.from(key, 'hex');
     } else if (Buffer.isBuffer(key)) {
-      this.key = key;
+      if (key.length === 0) {
+        throw new RangeError('RC4 key must not be empty');
+      }
+      this.key = Buffer.from(key);
     } else {
       throw new TypeError(`Parameter "key" must be a Buffer or a string, not ${typeof key}`);
     }
@@ -39,7 +48,6 @@ export class RC4 {
       this.state[this.i] = this.state[this.j];
       this.state[this.j] = tmp;
       const k = this.state[(this.state[this.i] + this.state[this.j]) % 256];
-      /* tslint:disable-next-line no-bitwise */
       data[n] = data[n] ^ k;
     }
   }

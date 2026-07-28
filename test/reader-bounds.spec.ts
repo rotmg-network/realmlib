@@ -47,6 +47,20 @@ describe('Reader bounds checking', () => {
     expect(() => reader.readCompressedInt()).to.throw(PacketReadError);
   });
 
+  it('rejects overlong and non-canonical compressed integers', () => {
+    const invalid = [
+      [0x80, 0x00],
+      [0x40],
+      [0x80, 0x80, 0x80, 0x80, 0x80, 0x00],
+      [0xff, 0xff, 0xff, 0xff, 0x7f],
+    ];
+
+    for (const bytes of invalid) {
+      expect(() => readerOf(bytes).readCompressedInt(), Buffer.from(bytes).toString('hex'))
+        .to.throw(PacketReadError);
+    }
+  });
+
   it('does not throw for reads that fit exactly', () => {
     const writer = new Writer();
     writer.writeInt32(1234);

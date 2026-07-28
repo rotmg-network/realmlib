@@ -7,6 +7,9 @@
  * @param bytesPerRow How many bytes to show per row. Defaults to 16.
  */
 export function hexdump(data: Buffer | number[], bytesPerRow: number = 16): string {
+  if (!Number.isInteger(bytesPerRow) || bytesPerRow <= 0) {
+    throw new RangeError(`bytesPerRow must be a positive integer, got ${String(bytesPerRow)}`);
+  }
   const buffer = Array.isArray(data) ? Buffer.from(data) : data;
   const lines: string[] = [];
   for (let offset = 0; offset < buffer.length; offset += bytesPerRow) {

@@ -319,9 +319,6 @@ export class NotificationPacket implements Packet {
   }
 
   toString(): string {
-    return `[Notification] ObjectId: ${this.objectId}\n
-    Message: ${this.message}\n
-    Color: ${this.color}\n\n
-    ${this}`;
+    return `[Notification] ${JSON.stringify(this.payload)}`;
   }
 }

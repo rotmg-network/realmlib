@@ -186,19 +186,31 @@ export class Reader {
   readCompressedInt(): number {
     let uByte = this.readUnsignedByte();
     const isNegative = (uByte & 64) !== 0;
-    let shift = 6;
     let value = uByte & 63;
+    let multiplier = 64;
+    let bytes = 1;
 
     while (uByte & 128) {
+      if (bytes === 5) {
+        throw new PacketReadError('compressed int exceeds 5 bytes');
+      }
       uByte = this.readUnsignedByte();
-      value = value | (uByte & 127) << shift;
-      shift += 7;
+      value += (uByte & 127) * multiplier;
+      multiplier *= 128;
+      bytes++;
     }
 
-    if (isNegative) {
-      value = -value;
+    if (bytes > 1 && (uByte & 127) === 0) {
+      throw new PacketReadError('compressed int uses a non-canonical overlong encoding');
     }
-    return value;
+    if (value > 0x7fffffff) {
+      throw new PacketReadError(`compressed int magnitude out of range: ${value}`);
+    }
+    if (isNegative && value === 0) {
+      throw new PacketReadError('compressed int uses a non-canonical negative zero');
+    }
+
+    return isNegative ? -value : value;
   }
 
   /** Changes the size of the buffer without affecting the contents
