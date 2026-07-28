@@ -34,7 +34,9 @@ write, or inspect RotMG packets, for example in:
 - MITM proxies (KRelay / JRelay style)
 - packet sniffers and analysers
 
-The main exports are available from the package root:
+The main exports are available from the package root. Stable focused entry
+points are also available as `realmlib/core`, `realmlib/protocol`,
+`realmlib/packets`, `realmlib/models`, and `realmlib/data`.
 
 | export | purpose |
 |--------|---------|
@@ -42,7 +44,7 @@ The main exports are available from the package root:
 | `Reader` / `Writer` | binary readers and writers used by packet classes |
 | `RC4` | the cipher and current `INCOMING_KEY` / `OUTGOING_KEY` values |
 | `PacketType` | string enum of every packet |
-| `DEFAULT_PACKET_MAP` | bidirectional id ↔ type map for the current build |
+| `DEFAULT_PACKET_MAP` | immutable compatibility map for current one-byte wire ids |
 | `Packet` subclasses | one class per packet (`packets/`) |
 | models / enums / data | `StatType`, `PortalType`, `GameId`, `FameData`, … |
 
@@ -51,7 +53,7 @@ The main exports are available from the package root:
 `PacketIO` sends and receives packets over a socket. It handles
 encryption/decryption, packet framing, and parsing frames into packet classes.
 
-The constructor takes an object with three optional properties:
+The constructor takes an object with six optional properties:
 
 - `socket` — a [`net.Socket`](https://nodejs.org/api/net.html#net_class_net_socket).
   Optional; you can `attach()` a socket later instead.
@@ -59,6 +61,12 @@ The constructor takes an object with three optional properties:
   a **clientless** application.
 - `packetMap` — id ↔ type map. Defaults to `DEFAULT_PACKET_MAP`; most projects
   can leave it unset.
+- `incomingDirection` — direction used to resolve ids read from the socket.
+  Defaults to `incoming`.
+- `outgoingDirection` — direction used to resolve types written to the socket.
+  Defaults to `outgoing`.
+- `maxOutgoingQueue` — maximum packets retained while the socket is
+  backpressured.
 
 ```typescript
 import { PacketIO, PacketType, UpdatePacket } from 'realmlib';
@@ -96,26 +104,28 @@ const clientIO = new PacketIO({
 
 The direction options are required for proxies because numeric ids are scoped
 by protocol direction. For example, ids 215 and 217 each have different
-client-to-server and server-to-client packet types. A normal client can omit
-both options and use the defaults shown by its traffic flow.
+client-to-server and server-to-client packet types. Swapping RC4 keys does not
+change id resolution. A normal client can omit both options and use the
+defaults shown by its traffic flow.
 
 ### The packet map
 
 `packetMap` is **bidirectional** — it holds both `TYPE → id` and `id → TYPE`:
 
 ```typescript
-import { PacketMap, PacketType } from 'realmlib';
+import { createPacketMap, PacketType } from 'realmlib';
 
-const packetMap: PacketMap = {
-  FAILURE: 0,
-  0: PacketType.FAILURE,
-};
+const packetMap = createPacketMap();
+packetMap[PacketType.FAILURE] = 0;
+packetMap[0] = PacketType.FAILURE;
 ```
 
-It should cover every member of the [`PacketType` enum](src/packet-type.ts).
-`DEFAULT_PACKET_MAP` already does. Missing entries mean those packets cannot be
-sent, and matching incoming packets cannot be parsed. A proxy will log them; a
-client app may disconnect.
+`DEFAULT_PACKET_MAP` is frozen and contains the current one-byte wire mappings.
+Use `createPacketMap()` when a mutable compatibility map is needed. The
+canonical registry keeps direction-scoped identities separately, so a flat
+numeric map cannot by itself represent both meanings of a colliding id.
+`PacketIO` uses `incomingDirection` and `outgoingDirection` to resolve those
+collisions. Missing entries mean packets cannot be sent or typed.
 
 ## Game models, enums, and data
 
@@ -126,9 +136,14 @@ data, and more. Import them from the package root alongside the packets.
 ## Debugging
 
 - `hexdump(buffer)` — pretty-print raw packet bytes.
-- `PacketIO` emits a **`rawPacket`** event for every frame, and an
-  **`unknownPacket`** event for ids not in the map. These are useful for
-  sniffing traffic or checking what changed after a game update.
+- `PacketIO` emits a **`rawPacket`** event for every frame.
+- **`packetDiagnostic`** reports `unknown`, `unimplemented`, `parsed`,
+  `parse-error`, `leftover`, and deliberately `opaque` bodies.
+- Focused **`unknownPacket`**, **`packetParseError`**, **`packetLeftover`**, and
+  **`packetOpaque`** events expose the corresponding diagnostic cases.
+
+The [documentation index](docs/INDEX.md) distinguishes current contracts,
+generated protocol status, dated evidence, and planning records.
 
 ## Development
 

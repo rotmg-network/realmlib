@@ -25,10 +25,10 @@ not reproduced in this report.
 | --- | --- | --- | --- |
 | Done | `UPDATE.write()` added a byte absent from every captured frame | 469,625/469,625 frames parsed but re-encoded one byte longer | `hasTrailingByte` now preserves the legacy/variant tail only when present |
 | Done | `MAPINFO.write()` added realm-score fields to non-realm maps | 632/763 frames re-encoded eight bytes longer; only 131 realm frames have the score tail | `hasRealmScores` now preserves the optional `maxRealmScore`/`curRealmScore` pair |
-| P1 | `INVRESULT.unknownInt2` documentation is false | 583/1,815 frames carry nonzero values with stable bit combinations | Document it as a second unresolved bitfield and add a raw bit enum rather than saying it is always zero |
+| Done | `INVRESULT.unknownInt2` documentation was false | 583/1,815 frames carry nonzero values with stable bit combinations | It is documented as a second unresolved bitfield and `InvResultSecondaryFlags` exposes raw bits without speculative names |
 | Done | `PLAYER_SHOOT` combined two bytes into one `int16` | Native serialization identifies a signed byte plus `PlayerShootSource` | The fields are now serialized separately; `ALLY_SHOOT` retains its native `int16` |
-| P1 | `SERVERPLAYERSHOOT.spellBomb` is a generic multi-shot tail | 3,356 frames carry count 2-19 and a radian angle increment | Rename to `hasMultiShot`, `numShots`, and `angleIncrement`; do not imply one ability |
-| P1 | Live `PacketIO` does not diagnose unread payload bytes | Strict replay checks leftovers, but `constructPacket()` reports parsed packets without testing `reader.remaining` | Emit a leftover/parse diagnostic before dispatch so future drift is visible |
+| Done | `SERVERPLAYERSHOOT.spellBomb` was a generic multi-shot tail | 3,356 frames carry count 2-19 and an unresolved angle increment | The canonical names are `hasMultiShot`, `numShots`, and `angleIncrement`; deprecated compatibility aliases remain |
+| Done | Live `PacketIO` did not diagnose unread payload bytes | Strict replay checks leftovers, but the old live path did not | `packetLeftover` and `packetDiagnostic` report unread bytes without suppressing typed dispatch |
 | Done | `TRADESTART`, Notification 12, `STACKS` (id 231), id 166, chest claims, and Battle Pass read data were reconciled | The former 72 failures now parse and their regression fixtures pass | Current-client names are used where labels and native layout agree |
 | P3 | Stat ids 156-158 remain semantically unresolved | No stat id above 158; values alone do not establish names | Preserve conservative names and request controlled captures |
 
@@ -40,7 +40,10 @@ without throwing, and consume their complete body:
 - 0 unmapped ids
 - 0 missing factories
 - 0 parse errors
-- 0 unread trailing bytes
+- 0 unread trailing bytes in modeled packet bodies
+
+Deliberately raw wire definitions are reported separately as `opaque`; their
+bodies are preserved without pretending a typed parser consumed them.
 
 This supersedes the capture-time labels, which contain 250 errors, 321
 leftovers, 5 unmapped frames, and 6,171 unparsed frames from older RealmLib
@@ -71,19 +74,20 @@ Only two packet types differed: all 469,625 `UPDATE` frames and 632 non-realm
 fixtures cover present and absent forms. Every captured body among the other
 97 observed packet types already round-tripped byte-for-byte.
 
-The corpus covers 99 of the 201 one-byte wire mappings. The registry also
+The corpus covers 99 of the 208 current one-byte direction-scoped wire
+mappings. The registry also
 retains legacy `IP_ADDRESS = 1000`, explicitly marked as non-wire because the
 frame id is one byte.
 Therefore, "every captured packet parses" must not be read as validation of
 uncaptured features such as vouchers, Battle Pass claims, pet upgrades, gifts,
 dash, guild administration, custom maps, or most customization purchases.
 
-The protocol gate still reports mapped but unmodeled types, none of which
-appears in this corpus: `REFINE_RESULT`, `BUY_REFINEMENT`, `SET_TRACKED_SEASON`,
-`UNLOCK_ENCHANTMENT_SLOT`, `UNLOCK_ENCHANTMENT`, `APPLY_ENCHANTMENT`,
-`ACCELERATOR_ADDED`, `UPGRADE_ENCHANTMENT`, `FOR_RECONNECT`, and
-`GIFT_NOTIFICATION`. A future capture of any of these would map successfully
-but fail factory construction until its packet class is added.
+The generated [protocol completeness report](PROTOCOL_COMPLETENESS.md)
+separates modeled wire packets, deliberately raw wire packets, research
+candidates, legacy metadata, and id-less transports. None of the raw or
+research-only definitions appears in this corpus. A future raw-wire capture is
+preserved and diagnosed as opaque; research candidates are not treated as
+confirmed wire packets until direction and framing evidence exists.
 
 ## Confirmed Packet Structures
 
@@ -282,7 +286,7 @@ dungeonModifier = ""
 
 The other 762 frames use `0/false`. One sample is not enough to name the int32.
 
-### P1: `INVRESULT` has two unresolved bitfields
+### Resolved: `INVRESULT` has two unresolved bitfields
 
 The first `flags` field uses the already documented raw bits. This corpus adds
 no bit outside the current `InvResultFlags` atlas.
@@ -299,7 +303,7 @@ Nonzero values occur on `ackType = 1` use acknowledgements; all 721 inventory
 mutation acknowledgements use zero. `InvResultSecondaryFlags` exposes the raw
 bit positions without assigning unproven semantic names.
 
-### P1: shot-tail models obscure byte structure
+### Resolved: shot-tail models obscure byte structure
 
 `PlayerShootPacket.unknownShort` was read as signed `int16`. Native code shows
 that its two bytes are independent:
@@ -520,13 +524,12 @@ The following source comments can be improved directly from this corpus:
   JSON string in all seven frames: six success and one cancellation.
 - `src/packets/incoming/failure-packet.ts`: add the observed sequence context
   for codes 3, 5, and 15.
-- `src/packetio.ts`: expand the class comment to state the actual framing:
+- `src/io/packetio.ts`: the class comment now states the actual framing:
   plaintext big-endian total length, plaintext packet id, RC4-encrypted body;
   RC4 state advances for every frame even when no typed listener exists; TCP
   chunks may contain partial or multiple frames.
-- `src/packetio.ts`: update `constructPacket()` documentation because
-  diagnostics can trigger parsing even when no packet-type listener exists,
-  and document the new leftover check when added.
+- `src/io/packetio.ts`: diagnostics can trigger parsing even when no
+  packet-type listener exists, and unread bytes are reported explicitly.
 
 ## Recommended Remaining Work
 
