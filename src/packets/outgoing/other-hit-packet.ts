@@ -37,14 +37,19 @@ export class OtherHitPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.time);
-    writer.writeShort(this.bulletId);
+    // UNSIGNED: PLAYERSHOOT emits bulletId as a uint16 (0-65535), and the
+    // server matches a hit to the shot by that id, so a hit packet must be
+    // able to carry the same range. Reading it signed made every claim for
+    // a bulletId above 32767 throw "int16 out of range" — silently losing
+    // half of all hit claims. Identical bytes on the wire either way.
+    writer.writeUnsignedShort(this.bulletId);
     writer.writeInt32(this.objectId);
     writer.writeInt32(this.targetId);
   }
 
   read(reader: Reader): void {
     this.time = reader.readInt32();
-    this.bulletId = reader.readShort();
+    this.bulletId = reader.readUnsignedShort();
     this.objectId = reader.readInt32();
     this.targetId = reader.readInt32();
   }
