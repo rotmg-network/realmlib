@@ -238,13 +238,52 @@ describe('PacketIO diagnostics', () => {
       outgoingDirection: 'incoming',
     });
     let sentType: PacketType | undefined;
+    let protocolDirection: 'incoming' | 'outgoing' | undefined;
     io.on('sentRawPacket', (event) => {
       sentType = event.type;
+      protocolDirection = event.protocolDirection;
     });
 
     io.sendRaw(215);
 
     expect(sentType).to.equal(PacketType.PARTY_JOIN_RESULT);
+    expect(protocolDirection).to.equal('incoming');
+  });
+
+  it('reports exact raw frame sizes across differently sized packets', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+    });
+    const sizes: number[] = [];
+    io.on('rawPacket', (event) => sizes.push(event.size));
+
+    emitIncoming(socket, 8, Buffer.from('0000002a', 'hex'));
+    emitIncoming(socket, 250, Buffer.from('01020304050607', 'hex'));
+
+    expect(sizes).to.deep.equal([9, 12]);
+  });
+
+  it('separates transport direction from proxy protocol direction', () => {
+    const { socket } = socketWithWrites([]);
+    const io = new PacketIO({
+      socket,
+      rc4: { incomingKey: '00', outgoingKey: '00' },
+      incomingDirection: 'outgoing',
+    });
+    let diagnostic: PacketDiagnostic | undefined;
+    io.on('packetDiagnostic', (event) => {
+      diagnostic = event;
+    });
+
+    emitIncoming(socket, 215, Buffer.from('0000002a', 'hex'));
+
+    expect(diagnostic).to.deep.include({
+      direction: 'incoming',
+      protocolDirection: 'outgoing',
+      type: PacketType.PARTY_JOIN_REQUEST,
+    });
   });
 
   it('includes payload bytes and field probes for unknown packets', () => {

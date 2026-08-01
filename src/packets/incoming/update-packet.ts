@@ -73,6 +73,7 @@ export class UpdatePacket implements Packet {
       this.drops[i] = reader.readCompressedInt();
     }
 
+    this.unknownByte = 0;
     this.hasTrailingByte = reader.remaining > 0;
     if (this.hasTrailingByte) {
       this.unknownByte = reader.readUnsignedByte();

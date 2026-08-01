@@ -391,6 +391,7 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
         type,
         payload: Buffer.from(body),
         size: frame.length,
+        protocolDirection: this.outgoingDirection,
         direction: 'outgoing',
       } as RawOutgoingPacket);
     }
@@ -451,6 +452,7 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
         type: packet.type,
         payload: Buffer.from(frame.subarray(5)),
         size: frame.length,
+        protocolDirection: this.outgoingDirection,
         direction: 'outgoing',
       } as RawOutgoingPacket);
     }
@@ -566,7 +568,8 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
           id,
           type,
           payload: Buffer.from(payload),
-          size: this.reader.length,
+          size: frame.length,
+          protocolDirection: this.incomingDirection,
           direction: 'incoming',
         };
         this.emit('rawPacket', rawPacket);
@@ -661,6 +664,7 @@ export class PacketIO extends EventEmitter<PacketIOEventMap> {
       type,
       payload: Buffer.from(payload),
       size: payload.length + 5,
+      protocolDirection: this.incomingDirection,
       direction: 'incoming',
       status,
       offset: safeOffset,

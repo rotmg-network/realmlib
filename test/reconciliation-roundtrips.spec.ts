@@ -235,6 +235,29 @@ describe('reconciled packet round trips (build 6.12)', () => {
     out.write(rewritten);
     expect(rewritten.buffer.subarray(0, rewritten.index).equals(body)).to.equal(true);
   });
+
+  it('UpdatePacket clears a prior trailing-byte value when the next body omits it', () => {
+    const withTail = new UpdatePacket();
+    withTail.hasTrailingByte = true;
+    withTail.unknownByte = 9;
+    const firstWriter = new Writer();
+    withTail.write(firstWriter);
+
+    const withoutTail = new UpdatePacket();
+    const secondWriter = new Writer();
+    withoutTail.write(secondWriter);
+
+    const reused = new UpdatePacket();
+    const firstReader = new Reader(firstWriter.index);
+    firstWriter.buffer.subarray(0, firstWriter.index).copy(firstReader.buffer);
+    reused.read(firstReader);
+    const secondReader = new Reader(secondWriter.index);
+    secondWriter.buffer.subarray(0, secondWriter.index).copy(secondReader.buffer);
+    reused.read(secondReader);
+
+    expect(reused.hasTrailingByte).to.equal(false);
+    expect(reused.unknownByte).to.equal(0);
+  });
 });
 
 describe('RealmShark-reconciled packet round trips', () => {

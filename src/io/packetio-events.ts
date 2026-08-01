@@ -10,6 +10,9 @@ export interface RawPacket {
   type: PacketType | undefined;
   payload: Buffer;
   size: number;
+  /** Direction used to resolve the numeric id in the protocol registry. */
+  readonly protocolDirection: WirePacketDirection;
+  /** Transport direction relative to this PacketIO instance. */
   readonly direction: 'incoming';
 }
 
