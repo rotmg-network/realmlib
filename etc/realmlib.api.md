@@ -3187,6 +3187,48 @@ export class MoveRecord implements DataPacket {
 }
 
 // @public
+export interface MutationBeginResult {
+    // (undocumented)
+    readonly accepted: boolean;
+    readonly record: MutationRecord;
+}
+
+// @public
+export class MutationCoordinator {
+    begin(operationKey: string, resourceKeys?: Iterable<string>): MutationBeginResult;
+    clearResolved(): number;
+    forget(id: number): boolean;
+    get(id: number): MutationRecord | undefined;
+    list(): readonly MutationRecord[];
+    markAllPendingUnknown(): number;
+    markUnknown(id: number): boolean;
+    resolve(id: number, state: MutationState.Confirmed | MutationState.Failed): boolean;
+}
+
+// @public
+export interface MutationRecord {
+    // (undocumented)
+    readonly id: number;
+    // (undocumented)
+    readonly operationKey: string;
+    // (undocumented)
+    readonly resourceKeys: readonly string[];
+    // (undocumented)
+    readonly state: MutationState;
+}
+
+// @public
+export enum MutationState {
+    // (undocumented)
+    Confirmed = "confirmed",
+    // (undocumented)
+    Failed = "failed",
+    // (undocumented)
+    Pending = "pending",
+    Unknown = "unknown"
+}
+
+// @public
 export class NameResultPacket implements Packet {
     constructor();
     errorText: string;
@@ -5373,6 +5415,19 @@ export class RefineResultPacket implements Packet {
 }
 
 // @public
+export function refreshBackoffDelayMs(attempt: number, options?: RefreshBackoffOptions): number;
+
+// @public
+export interface RefreshBackoffOptions {
+    // (undocumented)
+    readonly baseDelayMs?: number;
+    readonly jitterRatio?: number;
+    // (undocumented)
+    readonly maximumDelayMs?: number;
+    readonly random?: () => number;
+}
+
+// @public
 export class RequestTradePacket implements Packet {
     constructor();
     name: string;
@@ -5651,12 +5706,15 @@ export class SetGraveStonePacket implements Packet {
 // @public
 export class ShootAckPacket implements Packet {
     constructor();
+    ackCount: number;
     // (undocumented)
     read(reader: Reader): void;
     time: number;
     // (undocumented)
     type: PacketType;
-    unknownShort: number;
+    // @deprecated (undocumented)
+    get unknownShort(): number;
+    set unknownShort(value: number);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -5748,10 +5806,12 @@ export class SlotObjectData implements DataPacket {
     static from(objectId: number, slotId: number, objectType: number): SlotObjectData;
     isEmpty(): boolean;
     isNull(): boolean;
+    locationKey(): string;
     objectId: number;
     objectType: number;
     // (undocumented)
     read(reader: Reader): void;
+    sameLocation(other: SlotObjectData): boolean;
     slotId: number;
     // (undocumented)
     toString(): string;
@@ -6507,7 +6567,7 @@ export class UnlockMissionTreePacket implements Packet {
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.UNLOCK_MISSION_TREE;
-    // @deprecated
+    // @deprecated (undocumented)
     get unknownInt(): number;
     set unknownInt(value: number);
     // (undocumented)

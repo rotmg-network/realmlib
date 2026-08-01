@@ -63,6 +63,16 @@ export class SlotObjectData implements DataPacket {
     );
   }
 
+  /** Whether `other` addresses the same owner and slot, regardless of item type. */
+  sameLocation(other: SlotObjectData): boolean {
+    return this.objectId === other.objectId && this.slotId === other.slotId;
+  }
+
+  /** Stable resource key suitable for a {@link MutationCoordinator} slot guard. */
+  locationKey(): string {
+    return `slot:${this.objectId}:${this.slotId}`;
+  }
+
   clone(): SlotObjectData {
     return SlotObjectData.from(this.objectId, this.slotId, this.objectType);
   }

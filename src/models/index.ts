@@ -17,6 +17,7 @@ export * from './guild-rank';
 export * from './inv-result';
 export * from './items';
 export * from './missions';
+export * from './mutation-reconciliation';
 export * from './map-names';
 export * from './notifications';
 export * from './object-type';

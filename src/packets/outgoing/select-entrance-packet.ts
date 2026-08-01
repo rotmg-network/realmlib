@@ -4,16 +4,15 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Sent to select a dungeon entrance. The body is a single int32, observed as
- * `-1` in all captured samples (possibly "default entrance").
+ * Sent to select a player entrance effect. The body is a single int32
+ * with the entrance ID or -1 for the default entrance.
  */
 export class SelectEntrancePacket implements Packet {
   readonly type = PacketType.SELECT_ENTRANCE;
 
   //#region packet-specific members
   /**
-   * The id of the selected entrance, or -1 (the only observed value; exact
-   * semantics not yet confirmed).
+   * The id of the selected entrance, or -1.
    */
   entranceId: number;
   //#endregion

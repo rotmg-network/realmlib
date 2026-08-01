@@ -60,4 +60,15 @@ describe('SlotObjectData helpers', () => {
     expect(slot.equals(slot.clone())).to.equal(true);
     expect(slot.equals(SlotObjectData.from(55603, 1, 2991))).to.equal(false);
   });
+
+  it('compares and keys slot locations independently of stale item types', () => {
+    const before = SlotObjectData.from(55603, 12, 2991);
+    const after = SlotObjectData.from(55603, 12, -1);
+    const otherSlot = SlotObjectData.from(55603, 13, 2991);
+
+    expect(before.sameLocation(after)).to.equal(true);
+    expect(before.sameLocation(otherSlot)).to.equal(false);
+    expect(before.locationKey()).to.equal('slot:55603:12');
+    expect(after.locationKey()).to.equal(before.locationKey());
+  });
 });

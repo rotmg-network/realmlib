@@ -15,6 +15,6 @@ describe('PacketIO concrete event typing', () => {
   });
 
   it('defaults shoot acknowledgements to one acknowledged enemy shot', () => {
-    expect(new ShootAckPacket().unknownShort).to.equal(1);
+    expect(new ShootAckPacket().ackCount).to.equal(1);
   });
 });

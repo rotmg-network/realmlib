@@ -2047,8 +2047,8 @@
     {
       "id": 224,
       "type": "UNLOCK_MISSION_TREE",
-      "class": "Unknown224Packet",
-      "name": "Unknown224",
+      "class": "UnlockMissionTreePacket",
+      "name": "UnlockMissionTreePacket",
       "direction": "outgoing",
       "confidence": 80,
       "provenance": "realmlib packet-map.ts + create-packet.ts"

@@ -18,21 +18,30 @@ export class ShootAckPacket implements Packet {
    * Number of `EnemyShootPacket` messages acknowledged by this packet.
    * Captured values are 1-4; zero is not a valid ordinary acknowledgement.
    */
-  unknownShort: number;
+  ackCount: number;
   //#endregion
 
   constructor() {
     this.time = 0;
-    this.unknownShort = 1;
+    this.ackCount = 1;
+  }
+
+  /** @deprecated Use {@link ShootAckPacket.ackCount}. */
+  get unknownShort(): number {
+    return this.ackCount;
+  }
+
+  set unknownShort(value: number) {
+    this.ackCount = value;
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.time);
-    writer.writeShort(this.unknownShort);
+    writer.writeShort(this.ackCount);
   }
 
   read(reader: Reader): void {
     this.time = reader.readInt32();
-    this.unknownShort = reader.readShort();
+    this.ackCount = reader.readShort();
   }
 }

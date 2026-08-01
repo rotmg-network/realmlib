@@ -44,6 +44,10 @@ export * from './new-ability-message';
 export * from './new-char-info';
 export * from './newtick-packet';
 export * from './notification-packet';
+// The per-effect payload decoder belongs to the public surface: consumers get
+// NotificationPacket from here, and without this they cannot turn its
+// effect-specific body into the typed NotificationPayload union.
+export * from './notification-effect-codecs';
 export * from './password-prompt-packet';
 export * from './pic-packet';
 export * from './ping-packet';

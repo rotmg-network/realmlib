@@ -64,7 +64,7 @@ export * from './select-entrance-packet';
 export * from './set-ability-packet';
 export * from './set-condition-packet';
 export * from './shootack-packet';
-export * from './unknown-224-packet';
+export * from './unlock-mission-tree-packet';
 export * from './square-hit-packet';
 export * from './teleport-packet';
 export * from './updateack-packet';

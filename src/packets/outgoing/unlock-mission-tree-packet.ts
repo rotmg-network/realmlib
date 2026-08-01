@@ -28,10 +28,7 @@ export class UnlockMissionTreePacket implements Packet {
     this.boardId = 0;
   }
 
-  /**
-   * Backward-compatible alias for {@link UnlockMissionTreePacket.boardId}.
-   * @deprecated The int32 is the mission board/tree id.
-   */
+  /** @deprecated Use {@link UnlockMissionTreePacket.boardId}. */
   get unknownInt(): number {
     return this.boardId;
   }
@@ -49,7 +46,7 @@ export class UnlockMissionTreePacket implements Packet {
   }
 }
 
-/** @deprecated Renamed {@link UnlockMissionTreePacket}. */
+/** @deprecated Id 224 is `UnlockMissionTreePacket`; use that name instead. */
 export const Unknown224Packet = UnlockMissionTreePacket;
-/** @deprecated Renamed {@link UnlockMissionTreePacket}. */
+/** @deprecated Id 224 is `UnlockMissionTreePacket`; use that name instead. */
 export type Unknown224Packet = UnlockMissionTreePacket;

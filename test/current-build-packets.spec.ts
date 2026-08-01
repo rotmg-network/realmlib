@@ -81,17 +81,17 @@ describe('current-build packets reconciled from captured bytes', () => {
     const p = new ShootAckPacket();
     p.read(reader);
     expect(p.time).to.equal(0x00024d7d);
-    expect(p.unknownShort).to.equal(1);
+    expect(p.ackCount).to.equal(1);
     expect(reader.remaining).to.equal(0);
   });
 
   it('ShootAckPacket round trips', () => {
     const p = new ShootAckPacket();
     p.time = 987654;
-    p.unknownShort = 2;
+    p.ackCount = 2;
     const out = roundTrip(p, new ShootAckPacket());
     expect(out.time).to.equal(987654);
-    expect(out.unknownShort).to.equal(2);
+    expect(out.ackCount).to.equal(2);
   });
 
   it('FavourPetPacket reads the title category', () => {
