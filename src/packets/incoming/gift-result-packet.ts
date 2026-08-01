@@ -9,7 +9,7 @@ import { Writer } from '../../writer';
  * a second bool, and three strings. `ShopManager` references this class in
  * the same method as the strings "gift.Error" / "UnknownErrorOccured", which
  * is what names it (catalog `GiftResultMessage`). The non-result fields
- * cannot be named from the dump. No wire capture exists yet.
+ * remain raw except that the third string is the displayed failure message.
  */
 export class GiftResultPacket implements Packet {
   readonly type = PacketType.GIFT_RESULT;
@@ -23,8 +23,8 @@ export class GiftResultPacket implements Packet {
   unknownString: string;
   /** Second string. Purpose unknown. */
   unknownString2: string;
-  /** Third string. Purpose unknown. */
-  unknownString3: string;
+  /** Displayed failure message. */
+  errorMessage: string;
   //#endregion
 
   constructor() {
@@ -32,7 +32,44 @@ export class GiftResultPacket implements Packet {
     this.unknownBool = false;
     this.unknownString = '';
     this.unknownString2 = '';
-    this.unknownString3 = '';
+    this.errorMessage = '';
+  }
+
+  /** @deprecated Use {@link GiftResultPacket.errorMessage}. */
+  get unknownString3(): string {
+    return this.errorMessage;
+  }
+
+  set unknownString3(value: string) {
+    this.errorMessage = value;
+  }
+
+  /**
+   * Parses the first raw string as semicolon-separated records of comma-separated
+   * decimal item types. The raw string is never changed. Returns `undefined`
+   * rather than partially accepting a malformed record.
+   */
+  parseItemTypes(): number[][] | undefined {
+    if (this.unknownString === '') {
+      return [];
+    }
+
+    const records: number[][] = [];
+    for (const record of this.unknownString.split(';')) {
+      const itemTypes: number[] = [];
+      for (const token of record.split(',')) {
+        if (!/^-?\d+$/.test(token)) {
+          return undefined;
+        }
+        const itemType = Number(token);
+        if (!Number.isSafeInteger(itemType)) {
+          return undefined;
+        }
+        itemTypes.push(itemType);
+      }
+      records.push(itemTypes);
+    }
+    return records;
   }
 
   read(reader: Reader): void {
@@ -40,7 +77,7 @@ export class GiftResultPacket implements Packet {
     this.unknownBool = reader.readBoolean();
     this.unknownString = reader.readString();
     this.unknownString2 = reader.readString();
-    this.unknownString3 = reader.readString();
+    this.errorMessage = reader.readString();
   }
 
   write(writer: Writer): void {
@@ -48,6 +85,6 @@ export class GiftResultPacket implements Packet {
     writer.writeBoolean(this.unknownBool);
     writer.writeString(this.unknownString);
     writer.writeString(this.unknownString2);
-    writer.writeString(this.unknownString3);
+    writer.writeString(this.errorMessage);
   }
 }

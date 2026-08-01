@@ -15,6 +15,7 @@ import {
   ClaimRewardResultPacket,
   ClaimRewardsInfoPromptPacket,
   ClaimRewardsInfoRequestPacket,
+  CustomisationSocketSelection,
   DEFAULT_PACKET_MAP,
   Packet,
   PacketType,
@@ -26,6 +27,7 @@ import {
   Reader,
   RedeemVoucherPacket,
   DamageWithEffectPacket,
+  GiftResultPacket,
   SlotObjectData,
   UpgradeEnchanterPacket,
   VoucherResultPacket,
@@ -104,23 +106,47 @@ describe('Exalt proxy findings (2026-07-27)', () => {
       '000300000012cf00000000139400010000311300',
     );
     expect(three.selections).to.deep.equal([
-      { unknownByte: 0, itemType: 0x12cf, unknownByte2: 0 },
-      { unknownByte: 0, itemType: 0x1394, unknownByte2: 0 },
-      { unknownByte: 1, itemType: 0x3113, unknownByte2: 0 },
+      { category: 0, itemType: 0x12cf, currency: 0 },
+      { category: 0, itemType: 0x1394, currency: 0 },
+      { category: 1, itemType: 0x3113, currency: 0 },
     ]);
+    expect(three.selections[2].unknownByte).to.equal(1);
+    expect(three.selections[2].unknownByte2).to.equal(0);
     expect(writeHex(three)).to.equal('000300000012cf00000000139400010000311300');
 
     const oneDye = parse(new BuyCustomisationSocketPacket(), '0001000000102601');
-    expect(oneDye.selections).to.deep.equal([
-      { unknownByte: 0, itemType: 0x1026, unknownByte2: 1 },
-    ]);
+    expect(oneDye.selections).to.deep.equal([{ category: 0, itemType: 0x1026, currency: 1 }]);
 
     const twoDyes = parse(new BuyCustomisationSocketPacket(), '0002000000102601000000110701');
     expect(twoDyes.selections).to.deep.equal([
-      { unknownByte: 0, itemType: 0x1026, unknownByte2: 1 },
-      { unknownByte: 0, itemType: 0x1107, unknownByte2: 1 },
+      { category: 0, itemType: 0x1026, currency: 1 },
+      { category: 0, itemType: 0x1107, currency: 1 },
     ]);
     expect(writeHex(twoDyes)).to.equal('0002000000102601000000110701');
+  });
+
+  it('round trips unsigned customisation fields and keeps deprecated aliases synchronized', () => {
+    const selection = new CustomisationSocketSelection(255, 0x12345678, 255);
+    selection.unknownByte = 128;
+    selection.unknownByte2 = 129;
+    expect(selection.category).to.equal(128);
+    expect(selection.currency).to.equal(129);
+
+    const packet = new BuyCustomisationSocketPacket();
+    packet.selections = [selection];
+    const decoded = parse(new BuyCustomisationSocketPacket(), writeHex(packet));
+    expect(decoded.selections[0]).to.deep.equal({
+      category: 128,
+      itemType: 0x12345678,
+      currency: 129,
+    });
+
+    decoded.read(readerFromHex('0000'));
+    expect(decoded.selections).to.deep.equal([]);
+
+    const legacy = new BuyCustomisationSocketPacket();
+    legacy.selections = [{ unknownByte: 1, itemType: 2, unknownByte2: 3 }];
+    expect(legacy.selections[0]).to.deep.equal({ category: 1, itemType: 2, currency: 3 });
   });
 
   it('DamageWithEffectPacket (166) decodes a stasis application', () => {
@@ -147,6 +173,38 @@ describe('Exalt proxy findings (2026-07-27)', () => {
     expect(result.success).to.equal(true);
     expect(result.message).to.equal('');
     expect(writeHex(result)).to.equal('010000');
+  });
+
+  it('keeps GiftResult raw strings while parsing complete item-type records', () => {
+    const packet = new GiftResultPacket();
+    packet.result = false;
+    packet.unknownBool = true;
+    packet.unknownString = '2991,2991;3266,31883,813';
+    packet.unknownString2 = 'opaque';
+    packet.errorMessage = 'gift.Error';
+
+    const result = parse(new GiftResultPacket(), writeHex(packet));
+    expect(result.unknownBool).to.equal(true);
+    expect(result.unknownString).to.equal('2991,2991;3266,31883,813');
+    expect(result.unknownString2).to.equal('opaque');
+    expect(result.errorMessage).to.equal('gift.Error');
+    expect(result.unknownString3).to.equal('gift.Error');
+    expect(result.parseItemTypes()).to.deep.equal([
+      [2991, 2991],
+      [3266, 31883, 813],
+    ]);
+  });
+
+  it('does not partially parse or alter malformed GiftResult item records', () => {
+    const packet = new GiftResultPacket();
+    packet.unknownString = '2991,x;813';
+    packet.unknownString3 = 'UnknownErrorOccured';
+
+    expect(packet.errorMessage).to.equal('UnknownErrorOccured');
+    expect(packet.parseItemTypes()).to.equal(undefined);
+    const result = parse(new GiftResultPacket(), writeHex(packet));
+    expect(result.unknownString).to.equal('2991,x;813');
+    expect(result.parseItemTypes()).to.equal(undefined);
   });
 
   it('replays the 239 -> 170 reward-prompt exchange', () => {
