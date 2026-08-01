@@ -17,9 +17,7 @@ export class TextPacket implements Packet {
    * The object id of the sender
    */
   objectId: number;
-  /**
-   * The number of stars of the sender
-   */
+  /** The number of stars of the sender, or `-1` for a system/non-player sender. */
   numStars: number;
   /**
    * The length of time to display the chat bubble for
@@ -61,7 +59,7 @@ export class TextPacket implements Packet {
   read(reader: Reader): void {
     this.name = reader.readString();
     this.objectId = reader.readInt32();
-    this.numStars = reader.readUnsignedShort();
+    this.numStars = reader.readShort();
     this.bubbleTime = reader.readUnsignedByte();
     this.recipient = reader.readString();
     this.text = reader.readString();
@@ -73,7 +71,7 @@ export class TextPacket implements Packet {
   write(writer: Writer): void {
     writer.writeString(this.name);
     writer.writeInt32(this.objectId);
-    writer.writeUnsignedShort(this.numStars);
+    writer.writeShort(this.numStars);
     writer.writeUnsignedByte(this.bubbleTime);
     writer.writeString(this.recipient);
     writer.writeString(this.text);

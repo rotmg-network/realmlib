@@ -6,14 +6,14 @@ import { AccountRewardGrant, parseAccountRewardGrants } from '../../models';
 
 /**
  * Current build packet 233 (server -> client), sent in response to
- * `ClaimAccountLevelRewardPacket`. The body is a success flag, a compressed
+ * `ClaimAccountLevelRewardPacket`. The body is a success flag, an unsigned-byte
  * reward ID, and -- ONLY when the claim succeeded -- a comma-separated grant
  * descriptor such as `item:Stat Potion Choice Chest,item:Power Pizza` or
  * `fame:1000`. Item grants may include skin/texture data after a second colon.
  *
- * Confirmed against the 2026-07-26 proxy capture: the one successful sample
- * was `01 1e 000c "boost_loot:2"`, while all 106 failures were the bare
- * two-byte form `00 1e` / `00 1d`.
+ * Confirmed by 184 event-deduplicated responses. All 106 failures are the bare
+ * two-byte form `<success=0><rewardId>`, including three `00 ff` bodies that a
+ * compressed-integer decoder cannot consume.
  */
 export class ClaimAccountLevelRewardResultPacket implements Packet {
   readonly type = PacketType.CLAIM_ACCOUNT_LEVEL_REWARD_RESULT;
@@ -40,18 +40,17 @@ export class ClaimAccountLevelRewardResultPacket implements Packet {
 
   read(reader: Reader): void {
     this.success = reader.readBoolean();
-    this.rewardId = reader.readCompressedInt();
+    this.rewardId = reader.readUnsignedByte();
     // The descriptor is only written when the claim SUCCEEDED. A failed claim
     // (e.g. the reward was already taken) is just the two bytes
-    // `<success=0><compressed level>` -- reading the string unconditionally
+    // `<success=0><rewardId>` -- reading the string unconditionally
     // threw on 106 of the 107 samples in the 2026-07-26 proxy capture.
-    this.grantedRewardDescription =
-      this.success && reader.remaining >= 2 ? reader.readString() : '';
+    this.grantedRewardDescription = this.success ? reader.readString() : '';
   }
 
   write(writer: Writer): void {
     writer.writeBoolean(this.success);
-    writer.writeCompressedInt(this.rewardId);
+    writer.writeUnsignedByte(this.rewardId);
     if (this.success) {
       writer.writeString(this.grantedRewardDescription);
     }

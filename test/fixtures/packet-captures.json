@@ -66,12 +66,12 @@
       "roundTrip": true
     },
     {
-      "name": "empty vault contents",
+      "name": "vault contents with material unique data",
       "category": "vault",
       "id": 117,
       "type": "VAULT_CONTENT",
       "direction": "incoming",
-      "body": "010000000000000000000000000000000000000000",
+      "body": "0141910341414100104141414141414141414141414141414100000001f4ffffffff01f4001000400000000f2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c0000",
       "roundTrip": true
     },
     {

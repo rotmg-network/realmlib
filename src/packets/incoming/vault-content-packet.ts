@@ -39,6 +39,8 @@ export class VaultContentPacket implements Packet {
   vaultUpgradeCost: number;
   /** Gold cost of the next material storage upgrade. */
   materialUpgradeCost: number;
+  /** Current material storage size. */
+  currentMaterialMax: number;
   /** Gold cost of the next potion storage upgrade. */
   potionUpgradeCost: number;
   /** Current potion storage size. */
@@ -46,7 +48,14 @@ export class VaultContentPacket implements Packet {
   /** Potion storage size after the next upgrade. */
   nextPotionMax: number;
 
-  /** Trailing bytes preserved byte-exactly without claiming decoded semantics. */
+  /** Raw unique-item metadata for the main vault. */
+  vaultUniqueData: string;
+  /** Raw unique-item metadata for material storage. */
+  materialUniqueData: string;
+  /** Raw unique-item metadata for the spoils chest. */
+  spoilsUniqueData: string;
+
+  /** Additional future trailing bytes preserved byte-exactly. */
   opaqueTail: Buffer;
 
   constructor() {
@@ -63,9 +72,13 @@ export class VaultContentPacket implements Packet {
     this.spoilsContents = [];
     this.vaultUpgradeCost = -1;
     this.materialUpgradeCost = -1;
+    this.currentMaterialMax = -1;
     this.potionUpgradeCost = -1;
     this.currentPotionMax = -1;
     this.nextPotionMax = -1;
+    this.vaultUniqueData = '';
+    this.materialUniqueData = '';
+    this.spoilsUniqueData = '';
     this.opaqueTail = Buffer.alloc(0);
   }
 
@@ -101,9 +114,14 @@ export class VaultContentPacket implements Packet {
 
     this.vaultUpgradeCost = reader.readShort();
     this.materialUpgradeCost = reader.readShort();
+    this.currentMaterialMax = reader.readShort();
     this.potionUpgradeCost = reader.readShort();
     this.currentPotionMax = reader.readShort();
     this.nextPotionMax = reader.readShort();
+
+    this.vaultUniqueData = reader.readString();
+    this.materialUniqueData = reader.readString();
+    this.spoilsUniqueData = reader.readString();
 
     this.opaqueTail = Buffer.from(reader.buffer.subarray(reader.index, reader.length));
     reader.index = reader.length;
@@ -125,9 +143,14 @@ export class VaultContentPacket implements Packet {
 
     writer.writeShort(this.vaultUpgradeCost);
     writer.writeShort(this.materialUpgradeCost);
+    writer.writeShort(this.currentMaterialMax);
     writer.writeShort(this.potionUpgradeCost);
     writer.writeShort(this.currentPotionMax);
     writer.writeShort(this.nextPotionMax);
+
+    writer.writeString(this.vaultUniqueData);
+    writer.writeString(this.materialUniqueData);
+    writer.writeString(this.spoilsUniqueData);
 
     for (const byte of this.opaqueTail) {
       writer.writeUnsignedByte(byte);

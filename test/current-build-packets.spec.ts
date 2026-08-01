@@ -171,6 +171,34 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.unknownBytes).to.deep.equal([-128, -1, 127]);
   });
 
+  it('VaultContentPacket consumes the captured six-short and three-string tail', () => {
+    const hex =
+      '0141910341414100104141414141414141414141414141414100000001f4ffffffff01f4001000400000000f2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c0000';
+    const reader = hexReader(hex);
+    const packet = new VaultContentPacket();
+    packet.read(reader);
+
+    expect(packet.lastVaultPacket).to.equal(true);
+    expect(packet.chestObjectId).to.equal(-1);
+    expect(packet.materialObjectId).to.equal(209);
+    expect(packet.materialContents).to.deep.equal(new Array(16).fill(-1));
+    expect(packet.vaultUpgradeCost).to.equal(500);
+    expect(packet.materialUpgradeCost).to.equal(-1);
+    expect(packet.currentMaterialMax).to.equal(-1);
+    expect(packet.potionUpgradeCost).to.equal(500);
+    expect(packet.currentPotionMax).to.equal(16);
+    expect(packet.nextPotionMax).to.equal(64);
+    expect(packet.vaultUniqueData).to.equal('');
+    expect(packet.materialUniqueData).to.equal(',,,,,,,,,,,,,,,');
+    expect(packet.spoilsUniqueData).to.equal('');
+    expect(packet.opaqueTail).to.have.length(0);
+    expect(reader.remaining).to.equal(0);
+
+    const writer = new Writer();
+    packet.write(writer);
+    expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(hex);
+  });
+
   it('NotificationPacket effect 11 consumes message + progress values', () => {
     const reader = hexReader(
       '0b2a001b416c69656e20496e766173696f6e204164657074202d20426f7373000000010001',
@@ -593,6 +621,33 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(res.remaining).to.equal(0);
   });
 
+  it('VoucherResultPacket round trips the complete success tail with nonzero integers', () => {
+    const packet = new VoucherResultPacket();
+    packet.success = true;
+    packet.errorMessage = '';
+    packet.voucherCode = 'redacted';
+    packet.name = 'Fixture Gift';
+    packet.rewardItems = '100,200';
+    packet.gold = 123;
+    packet.battlePassDiscount = 45;
+    packet.battlePass = true;
+
+    const out = roundTrip(packet, new VoucherResultPacket());
+    expect(out).to.deep.include({
+      success: true,
+      errorMessage: '',
+      voucherCode: 'redacted',
+      name: 'Fixture Gift',
+      rewardItems: '100,200',
+      gold: 123,
+      battlePassDiscount: 45,
+      battlePass: true,
+    });
+    expect(out.strings).to.deep.equal(['', 'redacted', 'Fixture Gift', '100,200']);
+    expect(out.voucherName).to.equal('Fixture Gift');
+    expect(out.grantedItems).to.equal('100,200');
+  });
+
   it('account-level reward packets parse the captured claim', () => {
     const req = hexReader('0002312c0000000b'); // "1,", seq 11
     const p232 = new ClaimAccountLevelRewardPacket();
@@ -618,6 +673,24 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(packet.rewardId).to.equal(51);
     expect(packet.grantedRewardDescription).to.equal('');
     expect(res.remaining).to.equal(0);
+  });
+
+  it('account-level reward result uses the full unsigned-byte range, including captured 00ff', () => {
+    for (const rewardId of [0, 63, 64, 127, 255]) {
+      const packet = new ClaimAccountLevelRewardResultPacket();
+      packet.rewardId = rewardId;
+      const writer = new Writer();
+      packet.write(writer);
+      expect(writer.buffer.subarray(0, writer.index).toString('hex')).to.equal(
+        `00${rewardId.toString(16).padStart(2, '0')}`,
+      );
+
+      const reader = toReader(writer);
+      const decoded = new ClaimAccountLevelRewardResultPacket();
+      decoded.read(reader);
+      expect(decoded.rewardId).to.equal(rewardId);
+      expect(reader.remaining).to.equal(0);
+    }
   });
 
   it('ClaimRewardPacket / ClaimRewardResultPacket parse the XML reward claim', () => {

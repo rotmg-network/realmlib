@@ -65,10 +65,20 @@ describe('account-mutation and reward protocol audit', () => {
     expect(accountLevel.rewardId).to.equal(1);
     expect(accountLevel.grantedRewardDescription).to.equal('');
 
-    const voucher = parseHex(new VoucherResultPacket(), '01000161000162');
-    voucher.read(readerFromHex('00000178'));
+    const voucher = parseHex(
+      new VoucherResultPacket(),
+      '010000000161000162000163000000010000000201',
+    );
+    voucher.read(readerFromHex('00000178000179'));
     expect(voucher.success).to.equal(false);
-    expect(voucher.strings).to.deep.equal(['x']);
+    expect(voucher.errorMessage).to.equal('x');
+    expect(voucher.voucherCode).to.equal('y');
+    expect(voucher.name).to.equal('');
+    expect(voucher.rewardItems).to.equal('');
+    expect(voucher.gold).to.equal(0);
+    expect(voucher.battlePassDiscount).to.equal(0);
+    expect(voucher.battlePass).to.equal(false);
+    expect(voucher.strings).to.deep.equal(['x', 'y']);
   });
 
   it('clears forge and account-list arrays, and round-trips the authoritative slot identity', () => {
