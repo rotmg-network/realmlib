@@ -10,8 +10,8 @@ and layout evidence exists.
 
 | Category                      | Count | Meaning                                                    |
 | ----------------------------- | ----: | ---------------------------------------------------------- |
-| Modeled wire packets          |   202 | One-byte id, known direction, packet factory               |
-| Deliberately raw wire packets |     1 | One-byte id/direction known; layout not modeled            |
+| Modeled wire packets          |   203 | One-byte id, known direction, packet factory               |
+| Deliberately raw wire packets |     0 | One-byte id/direction known; layout not modeled            |
 | Registry research candidates  |     5 | One-byte id retained with unresolved direction/layout      |
 | Legacy/non-wire metadata      |     1 | Cannot be an active one-byte wire id                       |
 | Modeled id-less transports    |     2 | Separate transport/handshake packet without a game-wire id |
@@ -20,7 +20,7 @@ and layout evidence exists.
 
 ## Deliberately raw wire packets
 
-- `incoming:179` — `ACCELERATOR_ADDED`
+_None._
 
 ## Registry research candidates
 

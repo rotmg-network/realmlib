@@ -11,6 +11,20 @@ import { Socket } from 'net';
 export const ABILITY_SLOT_TYPES: readonly SlotType[];
 
 // @public
+export class AcceleratorAddedPacket implements Packet {
+    constructor();
+    acceleratorType: number;
+    // (undocumented)
+    read(reader: Reader): void;
+    // (undocumented)
+    readonly type = PacketType.ACCELERATOR_ADDED;
+    unknownInt: number;
+    value: number;
+    // (undocumented)
+    write(writer: Writer): void;
+}
+
+// @public
 export class AcceleratorUpdatedPacket implements Packet {
     constructor();
     // (undocumented)
@@ -48,10 +62,25 @@ export class AcceptTradePacket implements Packet {
 }
 
 // @public
+export enum AccountListAction {
+    Add = 1,
+    Remove = 0,
+    Snapshot = -1
+}
+
+// @public
 export class AccountListPacket implements Packet {
     constructor();
     accountIds: string[];
     accountListId: number;
+    get action(): AccountListAction;
+    set action(value: AccountListAction);
+    // (undocumented)
+    isAddition(): boolean;
+    // (undocumented)
+    isRemoval(): boolean;
+    // (undocumented)
+    isSnapshot(): boolean;
     lockAction: number;
     // (undocumented)
     read(reader: Reader): void;
@@ -80,10 +109,14 @@ export interface AccountRewardGrant {
 // @public
 export class ActivateCruciblePacket implements Packet {
     constructor();
+    activate: number;
     crucibleId: string;
+    crucibleType: number;
     // (undocumented)
     read(reader: Reader): void;
-    trailing: number;
+    // @deprecated
+    get trailing(): number;
+    set trailing(value: number);
     // (undocumented)
     readonly type = PacketType.ACTIVATE_CRUCIBLE;
     // (undocumented)
@@ -122,10 +155,13 @@ export class ActivePetPacket implements Packet {
 // @public
 export class ActivePetUpdateRequestPacket implements Packet {
     constructor();
+    static clearActive(): ActivePetUpdateRequestPacket;
     commandType: ActivePetUpdateType;
     instanceId: number;
     // (undocumented)
     read(reader: Reader): void;
+    static release(instanceId: number): ActivePetUpdateRequestPacket;
+    static setActive(instanceId: number): ActivePetUpdateRequestPacket;
     // (undocumented)
     toString(): string;
     // (undocumented)
@@ -138,11 +174,11 @@ export class ActivePetUpdateRequestPacket implements Packet {
 
 // @public
 export enum ActivePetUpdateType {
-    // (undocumented)
+    // @deprecated (undocumented)
     Follow = 1,
-    // (undocumented)
     Release = 3,
-    // (undocumented)
+    SetActive = 1,
+    // @deprecated (undocumented)
     Unfollow = 2,
     Unknown = 0
 }
@@ -154,12 +190,19 @@ export class AllyShootPacket implements Packet {
     bulletId: number;
     containerType: number;
     ownerId: number;
+    projectileId: number;
     // (undocumented)
     read(reader: Reader): void;
+    shootSource: PlayerShootSource;
     // (undocumented)
     readonly type = PacketType.ALLYSHOOT;
-    unknownByte: number;
-    unknownShort: number;
+    // @deprecated (undocumented)
+    get unknownByte(): number;
+    set unknownByte(value: number);
+    // @deprecated
+    get unknownShort(): number;
+    set unknownShort(value: number);
+    unknownShotByte: number;
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -389,7 +432,8 @@ export class BuyCustomisationSocketPacket implements Packet {
     constructor();
     // (undocumented)
     read(reader: Reader): void;
-    selections: CustomisationSocketSelection[];
+    get selections(): CustomisationSocketSelection[];
+    set selections(selections: Array<CustomisationSocketSelection | LegacyCustomisationSocketSelection>);
     // (undocumented)
     readonly type = PacketType.BUY_CUSTOMISATION_SOCKET;
     // (undocumented)
@@ -412,6 +456,8 @@ export class BuyCustomisationSocketResultPacket implements Packet {
 // @public
 export class BuyDustsPacket implements Packet {
     constructor();
+    static forQuantity(tier: number, quantity: number): BuyDustsPacket;
+    parsePurchase(): DustPurchase | undefined;
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
@@ -479,8 +525,32 @@ export class BuyRefinementPacket implements Packet {
 }
 
 // @public
+export enum BuyResultCode {
+    // (undocumented)
+    GenericSuccess = 0,
+    // (undocumented)
+    PetBackpackSuccess = 13,
+    // (undocumented)
+    PetFeedSuccess = 7,
+    // (undocumented)
+    Unknown10 = 10,
+    // (undocumented)
+    Unknown2 = 2,
+    // (undocumented)
+    Unknown3 = 3,
+    // (undocumented)
+    UnknownFailure = -1
+}
+
+// @public
 export class BuyResultPacket implements Packet {
     constructor();
+    get code(): BuyResultCode;
+    set code(value: BuyResultCode);
+    // (undocumented)
+    isPetBackpackSuccess(): boolean;
+    // (undocumented)
+    isPetFeedSuccess(): boolean;
     parseJson(): unknown | undefined;
     // (undocumented)
     read(reader: Reader): void;
@@ -812,8 +882,12 @@ export class ClaimDailyRewardMessage implements Packet {
 // @public
 export class ClaimDailyRewardResponse implements Packet {
     constructor();
+    // @deprecated (undocumented)
     gold: number;
+    // @deprecated (undocumented)
     itemId: number;
+    message: string;
+    // @deprecated (undocumented)
     quantity: number;
     // (undocumented)
     read(reader: Reader): void;
@@ -853,17 +927,33 @@ export class ClaimMissionResultPacket implements Packet {
 }
 
 // @public
+export enum ClaimRewardColumn {
+    // (undocumented)
+    Column0 = 0,
+    // (undocumented)
+    Column1 = 1
+}
+
+// @public
 export class ClaimRewardPacket implements Packet {
     constructor();
+    get column(): ClaimRewardColumn;
+    set column(value: ClaimRewardColumn);
+    columnId: number;
     // (undocumented)
+    static forColumn(column: ClaimRewardColumn): ClaimRewardPacket;
+    // @deprecated (undocumented)
     static forTrack(track: ClaimRewardTrack): ClaimRewardPacket;
     // (undocumented)
     read(reader: Reader): void;
+    // @deprecated (undocumented)
     get track(): ClaimRewardTrack;
     set track(value: ClaimRewardTrack);
     // (undocumented)
     readonly type = PacketType.CLAIM_REWARD;
-    unknownByte: number;
+    // @deprecated (undocumented)
+    get unknownByte(): number;
+    set unknownByte(value: number);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -911,7 +1001,7 @@ export class ClaimRewardsInfoRequestPacket implements Packet {
     write(writer: Writer): void;
 }
 
-// @public
+// @public @deprecated (undocumented)
 export enum ClaimRewardTrack {
     // (undocumented)
     Free = 0,
@@ -1543,10 +1633,17 @@ export enum CrucibleType {
 }
 
 // @public
-export interface CustomisationSocketSelection {
+export class CustomisationSocketSelection {
+    constructor(category?: number, itemType?: number, currency?: number);
+    category: number;
+    currency: number;
     itemType: number;
-    unknownByte: number;
-    unknownByte2: number;
+    // @deprecated (undocumented)
+    get unknownByte(): number;
+    set unknownByte(value: number);
+    // @deprecated (undocumented)
+    get unknownByte2(): number;
+    set unknownByte2(value: number);
 }
 
 // @public
@@ -1835,6 +1932,14 @@ export class DrawDebugShapePacket implements Packet {
     readonly type = PacketType.DRAW_DEBUG_SHAPE;
     // (undocumented)
     write(writer: Writer): void;
+}
+
+// @public (undocumented)
+export interface DustPurchase {
+    // (undocumented)
+    quantity: number;
+    // (undocumented)
+    tier: number;
 }
 
 // @public
@@ -2207,10 +2312,12 @@ export enum FavourPetOperation {
 // @public
 export class FavourPetPacket implements Packet {
     constructor();
+    static favoriteTitle(titleId: number, secondaryTitleId?: number): FavourPetPacket;
     operation: FavourPetOperation;
     static pet(petInstanceId: number): FavourPetPacket;
     // (undocumented)
     read(reader: Reader): void;
+    // @deprecated (undocumented)
     static title(titleId: number, secondaryTitleId?: number): FavourPetPacket;
     // (undocumented)
     readonly type = PacketType.FAVOUR_PET;
@@ -2461,6 +2568,8 @@ export class GiftNotificationPacket implements Packet {
 // @public
 export class GiftResultPacket implements Packet {
     constructor();
+    errorMessage: string;
+    parseItemTypes(): number[][] | undefined;
     // (undocumented)
     read(reader: Reader): void;
     result: boolean;
@@ -2469,7 +2578,9 @@ export class GiftResultPacket implements Packet {
     unknownBool: boolean;
     unknownString: string;
     unknownString2: string;
-    unknownString3: string;
+    // @deprecated (undocumented)
+    get unknownString3(): string;
+    set unknownString3(value: string);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -2934,6 +3045,16 @@ export class KeyInfoResponsePacket implements Packet {
     write(writer: Writer): void;
 }
 
+// @public @deprecated (undocumented)
+export interface LegacyCustomisationSocketSelection {
+    // (undocumented)
+    itemType: number;
+    // (undocumented)
+    unknownByte: number;
+    // (undocumented)
+    unknownByte2: number;
+}
+
 // @public
 export enum LegacyNotificationValue {
     // (undocumented)
@@ -3149,9 +3270,14 @@ export enum ModerationAction {
 export class ModeratorActionMessagePacket implements Packet {
     constructor();
     actionCode: number;
-    actionMessage: string;
+    // @deprecated (undocumented)
+    get actionMessage(): string;
+    set actionMessage(value: string);
+    durationDays: number;
+    playerNames: string;
     // (undocumented)
     read(reader: Reader): void;
+    reason: string;
     // (undocumented)
     readonly type = PacketType.MODERATOR_ACTION_MESSAGE;
     // (undocumented)
@@ -3360,8 +3486,50 @@ export namespace NotificationEffect {
     DUST = LegacyNotificationValue.DUST;
 }
 
-// Warning: (ae-forgotten-export) The symbol "NotificationEffectState" needs to be exported by the entry point index.d.ts
-//
+// @public
+export interface NotificationEffectState {
+    // (undocumented)
+    color: number;
+    // (undocumented)
+    colorOrType: number;
+    // (undocumented)
+    effect: number;
+    // (undocumented)
+    emoteType: number;
+    // (undocumented)
+    extra: number;
+    // (undocumented)
+    hasProgressMax: boolean;
+    // (undocumented)
+    hasProgressValue: boolean;
+    // (undocumented)
+    hasUiExtra: boolean;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    numberOfStars: number;
+    // (undocumented)
+    objectId: number;
+    // (undocumented)
+    objectTypeOrId: number;
+    // (undocumented)
+    pictureType: number;
+    // (undocumented)
+    progressMax: number;
+    // (undocumented)
+    progressValue: number;
+    // (undocumented)
+    queuePos: number;
+    // (undocumented)
+    senderObjectId: number;
+    // (undocumented)
+    uiExtra: number;
+    // (undocumented)
+    unknownInt: number;
+    // (undocumented)
+    unknownPayload: Buffer;
+}
+
 // @public
 export class NotificationPacket implements Packet, NotificationEffectState {
     constructor();
@@ -3472,6 +3640,9 @@ export type NotificationPayload = {
     extra: number;
     rawPayload?: Buffer;
 };
+
+// @public (undocumented)
+export function notificationPayload(state: NotificationEffectState): NotificationPayload;
 
 // @public (undocumented)
 export class ObjectData implements DataPacket {
@@ -4888,8 +5059,11 @@ export class PlayerShootPacket implements Packet {
     constructor();
     angle: number;
     bulletId: number;
+    burstByte: number;
     containerType: number;
-    isBurst: boolean;
+    // @deprecated
+    get isBurst(): boolean;
+    set isBurst(value: boolean);
     playerPos: WorldPosData;
     // (undocumented)
     read(reader: Reader): void;
@@ -5090,10 +5264,23 @@ export class PurchasePetShaderPacket implements Packet {
     write(writer: Writer): void;
 }
 
+// @public (undocumented)
+export interface PurchaseRequestFields {
+    // (undocumented)
+    category: string;
+    // (undocumented)
+    currency: string;
+    // (undocumented)
+    itemId: number;
+    // (undocumented)
+    quantity: number;
+}
+
 // @public
 export class PurchaseRequestPacket implements Packet {
     constructor();
     static build(category: string, itemId: number, quantity: number, currency: string): string;
+    parseFields(): PurchaseRequestFields | undefined;
     get parts(): string[];
     // (undocumented)
     read(reader: Reader): void;
@@ -5246,12 +5433,12 @@ export interface RawOutgoingPacket extends Omit<RawPacket, 'direction'> {
 
 // @public (undocumented)
 export interface RawPacket {
-    // (undocumented)
     readonly direction: 'incoming';
     // (undocumented)
     id: number;
     // (undocumented)
     payload: Buffer;
+    readonly protocolDirection: WirePacketDirection;
     // (undocumented)
     size: number;
     // (undocumented)
@@ -5302,6 +5489,9 @@ export class Reader {
     resizeBuffer(newSize: number): void;
     validateCollectionCount(count: number, minimumBytesPerItem?: number, label?: string): number;
 }
+
+// @public (undocumented)
+export function readNotificationEffect(state: NotificationEffectState, reader: Reader): void;
 
 // @public
 export type ReadonlyPacketMap = Readonly<PacketMap>;
@@ -5364,11 +5554,14 @@ export class ReconnectPacket implements Packet {
 // @public
 export class RedeemExaltationRewardPacket implements Packet {
     constructor();
+    itemId: number;
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.REDEEM_EXALTATION_REWARD;
-    unknownInt: number;
+    // @deprecated (undocumented)
+    get unknownInt(): number;
+    set unknownInt(value: number);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -5490,6 +5683,9 @@ export class ResetEnchantmentRerollCountResultPacket implements Packet {
     // (undocumented)
     write(writer: Writer): void;
 }
+
+// @public (undocumented)
+export function resetNotificationEffectState(state: NotificationEffectState): void;
 
 // @public
 export class ReskinPacket implements Packet {
@@ -5681,11 +5877,14 @@ export class SetConditionPacket implements Packet {
 export class SetDiscoverablePacket implements Packet {
     constructor();
     discoverable: boolean;
+    icon: number;
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.SET_DISCOVERABLE;
-    unknownShort: number;
+    // @deprecated (undocumented)
+    get unknownShort(): number;
+    set unknownShort(value: number);
     // (undocumented)
     write(writer: Writer): void;
 }
@@ -5693,11 +5892,14 @@ export class SetDiscoverablePacket implements Packet {
 // @public
 export class SetGraveStonePacket implements Packet {
     constructor();
+    gravestoneType: number;
     // (undocumented)
     read(reader: Reader): void;
     // (undocumented)
     readonly type = PacketType.SET_GRAVE_STONE;
-    unknownInt: number;
+    // @deprecated (undocumented)
+    get unknownInt(): number;
+    set unknownInt(value: number);
     unknownInt2: number;
     // (undocumented)
     write(writer: Writer): void;
@@ -6619,6 +6821,7 @@ export class UpgradeEnchanterPacket implements Packet {
 // @public
 export class UseItemPacket implements Packet {
     constructor();
+    abilityIndex: number;
     itemUsePos: WorldPosData;
     // (undocumented)
     read(reader: Reader): void;
@@ -6626,7 +6829,9 @@ export class UseItemPacket implements Packet {
     time: number;
     // (undocumented)
     readonly type = PacketType.USEITEM;
-    useItemFlag: number;
+    // @deprecated (undocumented)
+    get useItemFlag(): number;
+    set useItemFlag(value: number);
     useType: number;
     // (undocumented)
     write(writer: Writer): void;
@@ -6648,12 +6853,14 @@ export class UsePortalPacket implements Packet {
 export class VaultContentPacket implements Packet {
     constructor();
     chestObjectId: number;
+    currentMaterialMax: number;
     currentPotionMax: number;
     giftContents: number[];
     giftObjectId: number;
     lastVaultPacket: boolean;
     materialContents: number[];
     materialObjectId: number;
+    materialUniqueData: string;
     materialUpgradeCost: number;
     nextPotionMax: number;
     opaqueTail: Buffer;
@@ -6664,12 +6871,14 @@ export class VaultContentPacket implements Packet {
     read(reader: Reader): void;
     spoilsContents: number[];
     spoilsObjectId: number;
+    spoilsUniqueData: string;
     // (undocumented)
     readonly type = PacketType.VAULT_CONTENT;
     // @deprecated
     get unknownBytes(): number[];
     set unknownBytes(bytes: number[]);
     vaultContents: number[];
+    vaultUniqueData: string;
     vaultUpgradeCost: number;
     // (undocumented)
     write(writer: Writer): void;
@@ -6785,15 +6994,28 @@ export enum VisualEffect {
 // @public
 export class VoucherResultPacket implements Packet {
     constructor();
+    battlePass: boolean;
+    battlePassDiscount: number;
+    // @deprecated (undocumented)
     get description(): string;
+    errorMessage: string;
+    gold: number;
+    // @deprecated (undocumented)
     get grantedItems(): string;
+    name: string;
     // (undocumented)
     read(reader: Reader): void;
+    // @deprecated (undocumented)
     get resultKey(): string;
-    strings: string[];
+    rewardItems: string;
+    // @deprecated
+    get strings(): string[];
+    set strings(strings: string[]);
     success: boolean;
     // (undocumented)
     readonly type = PacketType.VOUCHER_RESULT;
+    voucherCode: string;
+    // @deprecated (undocumented)
     get voucherName(): string;
     // (undocumented)
     write(writer: Writer): void;
@@ -6822,6 +7044,9 @@ export class WorldPosData implements DataPacket, Point {
     // (undocumented)
     y: number;
 }
+
+// @public (undocumented)
+export function writeNotificationEffect(state: NotificationEffectState, writer: Writer): void;
 
 // @public
 export class Writer {

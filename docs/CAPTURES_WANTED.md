@@ -20,8 +20,9 @@ What captures are still worth taking, in order:
    packets above (they are client-binary-derived, not wire-observed).
    Highest value: 115+116 (exaltation redeem), 146→147 (skin recycle),
    151→152 (BP milestone boost), 156, 167, 236.
-2. **Nested-framing blockers** — 135 (refine result), 136 (buy refinement),
-   218 (server-name list), and 238 (GiftInfo).
+2. **Former nested-framing blockers** — 135 (refine result), 136 (buy
+   refinement), 218 (ForReconnect), and 238 (GiftInfo notification) are now
+   modeled. New captures remain useful as regression fixtures, not as blockers.
    A single body each pins the list/struct framing.
 3. **Remaining semantic checks** — reset an enchantment reroll count to decode
    id 198's opaque string; trigger an accelerator gain (separates 153 updated
@@ -244,9 +245,9 @@ Fresh client launch, proxy on, keep both logs.
 
 ## Session 14 — Reconnect & loading transitions
 
-- **[P] 218 FOR_RECONNECT** / **[P] 222 LOADING_SCREEN** — capture a full
-  nexus → realm → dungeon → nexus cycle and any forced reconnect; these fire on
-  transitions and are currently `unknown`-direction guesses.
+- **[P] 218 FOR_RECONNECT** / **[P] 222 SAVE_LOCK_UPDATE** — both incoming
+  directions and layouts are now modeled. Capture a full nexus → realm →
+  dungeon → nexus cycle only to resolve their higher-level transition roles.
 
 ## Session 15 — Currencies & failures
 
@@ -261,9 +262,10 @@ Fresh client launch, proxy on, keep both logs.
 
 ## Lower priority / probably skip
 
-`133 CREEP_HIT`, `147 UNKNOWN147`, `1000 IP_ADDRESS` are niche or internal.
-`218`/`222` are low value beyond confirming direction. Model only if a capture
-lands in your lap.
+`133 CREEP_HIT`, `147 SKIN_RECYCLE_RESPONSE`, `1000 IP_ADDRESS` are niche or
+internal. Packet 147 is modeled; a capture would add a real-body fixture.
+`218`/`222` are low value beyond resolving higher-level transition semantics;
+their directions and layouts are already modeled.
 
 ## Enums that are data-driven, not capture-driven
 

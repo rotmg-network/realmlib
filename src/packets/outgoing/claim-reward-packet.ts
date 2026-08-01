@@ -52,7 +52,7 @@ export class ClaimRewardPacket implements Packet {
     this.columnId = value;
   }
 
-  /** Typed alias for the captured free/premium track selector. */
+  /** @deprecated Packet 234 selects competition columns, not Battle Pass tracks. */
   get track(): ClaimRewardTrack {
     return this.columnId as ClaimRewardTrack;
   }

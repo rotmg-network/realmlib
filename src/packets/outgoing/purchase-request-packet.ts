@@ -44,7 +44,7 @@ export class PurchaseRequestPacket implements Packet {
     return this.request.split(',');
   }
 
-  /** Parses the observed four-field form while retaining {@link request}. */
+  /** Parses the observed four-field form while retaining {@link PurchaseRequestPacket.request}. */
   parseFields(): PurchaseRequestFields | undefined {
     const parts = this.request.split(',');
     if (parts.length !== 4) {

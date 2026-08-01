@@ -54,7 +54,8 @@ function generateProtocolCompleteness(catalog) {
     ['Modeled id-less transports', 'modeled-transport'],
   ]) {
     generated.push(`## ${title}`, '');
-    generated.push(...groups[key].map(definitionLabel), '');
+    const definitions = groups[key].map(definitionLabel);
+    generated.push(...(definitions.length === 0 ? ['_None._'] : definitions), '');
   }
 
   generated.push(
