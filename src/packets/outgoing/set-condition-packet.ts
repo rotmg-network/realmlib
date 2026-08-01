@@ -11,11 +11,11 @@ export class SetConditionPacket implements Packet {
 
   //#region packet-specific members
   /**
-   * The condition effect being conflicted.
+   * The unsigned condition-effect bitmask.
    */
   conditionEffect: number;
   /**
-   * The duration of the conditin effect.
+   * The duration of the condition effect.
    */
   conditionDuration: number;
   //#endregion
@@ -26,12 +26,12 @@ export class SetConditionPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.conditionEffect);
+    writer.writeUInt32(this.conditionEffect);
     writer.writeFloat(this.conditionDuration);
   }
 
   read(reader: Reader): void {
-    this.conditionEffect = reader.readByte();
+    this.conditionEffect = reader.readUInt32();
     this.conditionDuration = reader.readFloat();
   }
 }

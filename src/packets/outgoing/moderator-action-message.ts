@@ -10,25 +10,44 @@ export class ModeratorActionMessagePacket implements Packet {
   readonly type = PacketType.MODERATOR_ACTION_MESSAGE;
 
   //#region packet-specific members
-  /** The type of moderator action requested (enum ordinal). */
+  /** The unsigned-byte moderator action code. */
   // todo: add action code types
   actionCode: number;
-  /** The message associated with the action. */
-  actionMessage: string;
+  /** Target player names in the server's raw string representation. */
+  playerNames: string;
+  /** Reason supplied for the action. */
+  reason: string;
+  /** Signed duration in days. */
+  durationDays: number;
   //#endregion
 
   constructor() {
     this.actionCode = 0;
-    this.actionMessage = '';
+    this.playerNames = '';
+    this.reason = '';
+    this.durationDays = 0;
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.actionCode);
-    writer.writeString(this.actionMessage);
+    writer.writeUnsignedByte(this.actionCode);
+    writer.writeString(this.playerNames);
+    writer.writeString(this.reason);
+    writer.writeShort(this.durationDays);
   }
 
   read(reader: Reader): void {
-    this.actionCode = reader.readInt32();
-    this.actionMessage = reader.readString();
+    this.actionCode = reader.readUnsignedByte();
+    this.playerNames = reader.readString();
+    this.reason = reader.readString();
+    this.durationDays = reader.readShort();
+  }
+
+  /** @deprecated Use {@link ModeratorActionMessagePacket.reason}. */
+  get actionMessage(): string {
+    return this.reason;
+  }
+
+  set actionMessage(value: string) {
+    this.reason = value;
   }
 }

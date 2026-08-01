@@ -1000,7 +1000,12 @@ export const PACKET_REGISTRY: readonly PacketDefinition[] = [
   { id: 173, type: PacketType.UNLOCK_ENCHANTMENT_SLOT, direction: 'unknown' },
   { id: 175, type: PacketType.UNLOCK_ENCHANTMENT, direction: 'unknown' },
   { id: 177, type: PacketType.APPLY_ENCHANTMENT, direction: 'unknown' },
-  { id: 179, type: PacketType.ACCELERATOR_ADDED, direction: 'incoming' },
+  {
+    id: 179,
+    type: PacketType.ACCELERATOR_ADDED,
+    direction: 'incoming',
+    factory: () => new IncomingPackets.AcceleratorAddedPacket(),
+  },
   {
     id: 180,
     type: PacketType.ACTIVATE_CRUCIBLE,

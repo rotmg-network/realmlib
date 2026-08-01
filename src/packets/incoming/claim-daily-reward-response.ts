@@ -10,35 +10,31 @@ export class ClaimDailyRewardResponse implements Packet {
   readonly type = PacketType.LOGIN_REWARD_MSG;
 
   //#region packet-specific members
-  /**
-   * The item id of the reward received.
-   */
+  /** Server response text. This is the only field in the current wire layout. */
+  message: string;
+  /** @deprecated Not present in the current packet body; retained for source compatibility. */
   itemId: number;
-  /**
-   * The number of items received.
-   */
+  /** @deprecated Not present in the current packet body; retained for source compatibility. */
   quantity: number;
-  /**
-   * Unknown - possibly amount of gold received?
-   */
+  /** @deprecated Not present in the current packet body; retained for source compatibility. */
   gold: number;
   //#endregion
 
   constructor() {
+    this.message = '';
     this.itemId = 0;
     this.quantity = 0;
     this.gold = 0;
   }
 
   read(reader: Reader): void {
-    this.itemId = reader.readInt32();
-    this.quantity = reader.readInt32();
-    this.gold = reader.readInt32();
+    this.message = reader.readString();
+    this.itemId = 0;
+    this.quantity = 0;
+    this.gold = 0;
   }
 
   write(writer: Writer): void {
-    writer.writeInt32(this.itemId);
-    writer.writeInt32(this.quantity);
-    writer.writeInt32(this.gold);
+    writer.writeString(this.message);
   }
 }

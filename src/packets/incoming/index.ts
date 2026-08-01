@@ -93,6 +93,7 @@ export * from './skin-recycle-response-packet';
 export * from './damage-boost-packet';
 export * from './boost-bp-milestone-result-packet';
 export * from './accelerator-updated-packet';
+export * from './accelerator-added-packet';
 export * from './pet-shader-purchase-result-packet';
 export * from './exaltation-redeem-info-packet';
 export * from './stacks-packet';
