@@ -45,7 +45,7 @@ export class UpdatePacket implements Packet {
 
   read(reader: Reader): void {
     this.pos.read(reader);
-    this.levelType = reader.readByte();
+    this.levelType = reader.readUnsignedByte();
 
     const tilesLen = reader.validateCollectionCount(reader.readCompressedInt(), 6, 'ground tiles');
     this.tiles = new Array<GroundTileData>(tilesLen);
@@ -82,7 +82,7 @@ export class UpdatePacket implements Packet {
 
   write(writer: Writer): void {
     this.pos.write(writer);
-    writer.writeByte(this.levelType);
+    writer.writeUnsignedByte(this.levelType);
     writer.writeCompressedInt(this.tiles.length);
     for (const tile of this.tiles) {
       tile.write(writer);

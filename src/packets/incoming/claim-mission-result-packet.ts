@@ -35,13 +35,13 @@ export class ClaimMissionResultPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.slot = reader.readByte();
+    this.slot = reader.readUnsignedByte();
     this.success = reader.readBoolean();
     this.message = reader.readString();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.slot);
+    writer.writeUnsignedByte(this.slot);
     writer.writeBoolean(this.success);
     writer.writeString(this.message);
   }

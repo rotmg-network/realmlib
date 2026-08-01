@@ -31,13 +31,13 @@ export class SetAbilityPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.time);
-    writer.writeUnsignedByte(this.ability);
+    writer.writeByte(this.ability);
     this.target.write(writer);
   }
 
   read(reader: Reader): void {
     this.time = reader.readInt32();
-    this.ability = reader.readUnsignedByte();
+    this.ability = reader.readByte();
     this.target.read(reader);
   }
 }

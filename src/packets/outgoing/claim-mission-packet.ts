@@ -33,9 +33,9 @@ export class ClaimMissionPacket implements Packet {
   boardId: number;
   /** Mission id within the board (observed 3, matching the season entry). */
   missionId: number;
-  /** Slot index of the claim; independent of `missionId` (observed 1). */
+  /** Unsigned slot index of the claim; independent of `missionId` (observed 1). */
   slot: number;
-  /** Sub-id, -1 when absent (observed -1). */
+  /** Unsigned sub-id, exposed as -1 for the wire sentinel `0xffff`. */
   subId: number;
   //#endregion
 
@@ -49,14 +49,15 @@ export class ClaimMissionPacket implements Packet {
   read(reader: Reader): void {
     this.boardId = reader.readInt32();
     this.missionId = reader.readInt32();
-    this.slot = reader.readByte();
-    this.subId = reader.readShort();
+    this.slot = reader.readUnsignedByte();
+    const subId = reader.readUnsignedShort();
+    this.subId = subId === 0xffff ? -1 : subId;
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.boardId);
     writer.writeInt32(this.missionId);
-    writer.writeByte(this.slot);
-    writer.writeShort(this.subId);
+    writer.writeUnsignedByte(this.slot);
+    writer.writeUnsignedShort(this.subId === -1 ? 0xffff : this.subId);
   }
 }

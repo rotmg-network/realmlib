@@ -35,14 +35,14 @@ export class CreepHitPacket implements Packet {
 
   read(reader: Reader): void {
     this.time = reader.readInt32();
-    this.bulletId = reader.readShort();
+    this.bulletId = reader.readUnsignedShort();
     this.objectId = reader.readInt32();
     this.targetId = reader.readInt32();
   }
 
   write(writer: Writer): void {
     writer.writeInt32(this.time);
-    writer.writeShort(this.bulletId);
+    writer.writeUnsignedShort(this.bulletId);
     writer.writeInt32(this.objectId);
     writer.writeInt32(this.targetId);
   }

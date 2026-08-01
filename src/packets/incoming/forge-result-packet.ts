@@ -14,9 +14,7 @@ export class ForgeResultPacket implements Packet {
    * Whether the forge was successful
    */
   success: boolean;
-  /**
-   * The SlotObjectData of the items forged
-   */
+  /** Returned slots. A successful forge can legitimately return an empty list. */
   results: SlotObjectData[];
 
   constructor() {
@@ -27,7 +25,11 @@ export class ForgeResultPacket implements Packet {
   read(reader: Reader): void {
     this.success = reader.readBoolean();
 
-    const resultCount = reader.validateCollectionCount(reader.readByte(), 12, 'forge results');
+    const resultCount = reader.validateCollectionCount(
+      reader.readUnsignedByte(),
+      12,
+      'forge results',
+    );
     this.results = [];
     for (let i = 0; i < resultCount; i++) {
       const result = new SlotObjectData();
@@ -42,7 +44,7 @@ export class ForgeResultPacket implements Packet {
     // read() reads a byte count then that many slots; write() must mirror it.
     // The previous loop condition (`this.results.length`) never terminated for
     // a non-empty result set and skipped the count byte entirely.
-    writer.writeByte(this.results.length);
+    writer.writeUnsignedByte(this.results.length);
     for (let i = 0; i < this.results.length; i++) {
       this.results[i].write(writer);
     }

@@ -46,7 +46,7 @@ export class ReconnectPacket implements Packet {
   read(reader: Reader): void {
     this.name = reader.readString();
     this.host = reader.readString();
-    this.port = reader.readShort();
+    this.port = reader.readUnsignedShort();
     this.gameId = reader.readInt32();
     this.keyTime = reader.readInt32();
     this.key = reader.readByteArray();
@@ -55,7 +55,7 @@ export class ReconnectPacket implements Packet {
   write(writer: Writer): void {
     writer.writeString(this.name);
     writer.writeString(this.host);
-    writer.writeShort(this.port);
+    writer.writeUnsignedShort(this.port);
     writer.writeInt32(this.gameId);
     writer.writeInt32(this.keyTime);
     writer.writeByteArray(this.key);

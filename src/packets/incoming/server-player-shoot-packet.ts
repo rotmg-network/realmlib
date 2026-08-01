@@ -68,11 +68,11 @@ export class ServerPlayerShootPacket implements Packet {
     this.angle = reader.readFloat();
     this.damage = reader.readShort();
     this.unknownInt = reader.readInt32();
-    this.unknownByte = reader.readByte();
+    this.unknownByte = reader.readUnsignedByte();
 
     if (reader.remaining > 0) {
       this.hasMultiShot = true;
-      this.numShots = reader.readByte();
+      this.numShots = reader.readUnsignedByte();
       this.angleIncrement = reader.readFloat();
     } else {
       this.hasMultiShot = false;
@@ -89,10 +89,10 @@ export class ServerPlayerShootPacket implements Packet {
     writer.writeFloat(this.angle);
     writer.writeShort(this.damage);
     writer.writeInt32(this.unknownInt);
-    writer.writeByte(this.unknownByte);
+    writer.writeUnsignedByte(this.unknownByte);
 
     if (this.hasMultiShot) {
-      writer.writeByte(this.numShots);
+      writer.writeUnsignedByte(this.numShots);
       writer.writeFloat(this.angleIncrement);
     }
   }

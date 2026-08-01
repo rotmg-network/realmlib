@@ -29,11 +29,11 @@ export class ChangeGuildRankPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeString(this.name);
-    writer.writeByte(this.guildRank);
+    writer.writeUnsignedByte(this.guildRank);
   }
 
   read(reader: Reader): void {
     this.name = reader.readString();
-    this.guildRank = reader.readByte();
+    this.guildRank = reader.readUnsignedByte();
   }
 }

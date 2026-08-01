@@ -103,25 +103,25 @@ export class PetUpgradeRequestPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.petTransType);
+    writer.writeUnsignedByte(this.petTransType);
     writer.writeInt32(this.pIdOne);
     writer.writeInt32(this.pIdTwo);
     writer.writeInt32(this.objectId);
-    writer.writeByte(this.paymentType);
-    writer.writeShort(this.slotObjects.length);
+    writer.writeUnsignedByte(this.paymentType);
+    writer.writeUnsignedShort(this.slotObjects.length);
     for (const slotObject of this.slotObjects) {
       slotObject.write(writer);
     }
   }
 
   read(reader: Reader): void {
-    this.petTransType = reader.readByte();
+    this.petTransType = reader.readUnsignedByte();
     this.pIdOne = reader.readInt32();
     this.pIdTwo = reader.readInt32();
     this.objectId = reader.readInt32();
-    this.paymentType = reader.readByte();
+    this.paymentType = reader.readUnsignedByte();
     const slotObjectLen = reader.validateCollectionCount(
-      reader.readShort(),
+      reader.readUnsignedShort(),
       12,
       'pet upgrade slots',
     );

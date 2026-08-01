@@ -27,11 +27,11 @@ export class BoostBpMilestonePacket implements Packet {
 
   read(reader: Reader): void {
     this.passId = reader.readString();
-    this.milestone = reader.readByte();
+    this.milestone = reader.readUnsignedByte();
   }
 
   write(writer: Writer): void {
     writer.writeString(this.passId);
-    writer.writeByte(this.milestone);
+    writer.writeUnsignedByte(this.milestone);
   }
 }

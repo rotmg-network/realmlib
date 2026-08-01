@@ -45,7 +45,7 @@ export class ClaimRewardsInfoPromptPacket implements Packet {
 
   read(reader: Reader): void {
     this.chestItemType = reader.readInt32();
-    this.chestType = reader.readByte();
+    this.chestType = reader.readUnsignedByte();
     const count = reader.validateCollectionCount(reader.readShort(), 4, 'claimable rewards');
     this.items = new Array<number>(count);
     for (let i = 0; i < count; i++) {
@@ -55,7 +55,7 @@ export class ClaimRewardsInfoPromptPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeInt32(this.chestItemType);
-    writer.writeByte(this.chestType);
+    writer.writeUnsignedByte(this.chestType);
     writer.writeShort(this.items.length);
     for (const item of this.items) {
       writer.writeInt32(item);

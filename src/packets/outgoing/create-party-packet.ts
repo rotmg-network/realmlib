@@ -34,21 +34,21 @@ export class CreatePartyPacket implements Packet {
 
   read(reader: Reader): void {
     this.description = reader.readString();
-    this.minPowerLevel = reader.readShort();
-    this.maxPartySize = reader.readByte();
-    this.activity = reader.readByte();
-    this.maxedStatReq = reader.readByte();
-    this.privacy = reader.readByte();
-    this.serverIndex = reader.readByte();
+    this.minPowerLevel = reader.readUnsignedShort();
+    this.maxPartySize = reader.readUnsignedByte();
+    this.activity = reader.readUnsignedByte();
+    this.maxedStatReq = reader.readUnsignedByte();
+    this.privacy = reader.readUnsignedByte();
+    this.serverIndex = reader.readUnsignedByte();
   }
 
   write(writer: Writer): void {
     writer.writeString(this.description);
-    writer.writeShort(this.minPowerLevel);
-    writer.writeByte(this.maxPartySize);
-    writer.writeByte(this.activity);
-    writer.writeByte(this.maxedStatReq);
-    writer.writeByte(this.privacy);
-    writer.writeByte(this.serverIndex);
+    writer.writeUnsignedShort(this.minPowerLevel);
+    writer.writeUnsignedByte(this.maxPartySize);
+    writer.writeUnsignedByte(this.activity);
+    writer.writeUnsignedByte(this.maxedStatReq);
+    writer.writeUnsignedByte(this.privacy);
+    writer.writeUnsignedByte(this.serverIndex);
   }
 }

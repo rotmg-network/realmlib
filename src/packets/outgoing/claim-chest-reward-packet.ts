@@ -58,14 +58,14 @@ export class ClaimChestRewardPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.execute = reader.readByte();
+    this.execute = reader.readUnsignedByte();
     this.slotObject = new SlotObjectData();
     this.slotObject.read(reader);
     this.choiceIndex = reader.readShort();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.execute);
+    writer.writeUnsignedByte(this.execute);
     this.slotObject.write(writer);
     writer.writeShort(this.choiceIndex);
   }

@@ -19,11 +19,11 @@ export class PartyInviteResponsePacket implements Packet {
 
   read(reader: Reader): void {
     this.partyId = reader.readUInt32();
-    this.accept = reader.readByte();
+    this.accept = reader.readUnsignedByte();
   }
 
   write(writer: Writer): void {
     writer.writeUInt32(this.partyId);
-    writer.writeByte(this.accept);
+    writer.writeUnsignedByte(this.accept);
   }
 }

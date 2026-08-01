@@ -22,12 +22,12 @@ export class PlayerCalloutPacket implements Packet {
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.calloutType);
+    writer.writeUnsignedByte(this.calloutType);
     writer.writeInt32(this.playerObjId);
   }
 
   read(reader: Reader): void {
-    this.calloutType = reader.readByte();
+    this.calloutType = reader.readUnsignedByte();
     this.playerObjId = reader.readInt32();
   }
 }

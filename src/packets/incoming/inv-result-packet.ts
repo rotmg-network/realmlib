@@ -95,7 +95,7 @@ export class InvResultPacket implements Packet {
 
   read(reader: Reader): void {
     this.success = reader.readBoolean();
-    this.ackType = reader.readByte();
+    this.ackType = reader.readUnsignedByte();
     this.fromSlot.read(reader);
     this.toSlot.read(reader);
     this.flags = reader.readInt32();
@@ -104,7 +104,7 @@ export class InvResultPacket implements Packet {
 
   write(writer: Writer): void {
     writer.writeBoolean(this.success);
-    writer.writeByte(this.ackType);
+    writer.writeUnsignedByte(this.ackType);
     this.fromSlot.write(writer);
     this.toSlot.write(writer);
     writer.writeInt32(this.flags);

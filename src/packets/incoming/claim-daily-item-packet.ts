@@ -39,13 +39,13 @@ export class ClaimDailyItemPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.flag = reader.readByte();
+    this.flag = reader.readUnsignedByte();
     this.key = reader.readString();
     this.category = reader.readString();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.flag);
+    writer.writeUnsignedByte(this.flag);
     writer.writeString(this.key);
     writer.writeString(this.category);
   }
