@@ -3,6 +3,13 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
+export interface PurchaseRequestFields {
+  category: string;
+  itemId: number;
+  quantity: number;
+  currency: string;
+}
+
 /**
  * Sent to purchase an item from a shop.
  *
@@ -35,6 +42,20 @@ export class PurchaseRequestPacket implements Packet {
   /** The request split into its four comma-separated fields. */
   get parts(): string[] {
     return this.request.split(',');
+  }
+
+  /** Parses the observed four-field form while retaining {@link request}. */
+  parseFields(): PurchaseRequestFields | undefined {
+    const parts = this.request.split(',');
+    if (parts.length !== 4) {
+      return undefined;
+    }
+    const itemId = Number(parts[1]);
+    const quantity = Number(parts[2]);
+    if (!Number.isSafeInteger(itemId) || !Number.isSafeInteger(quantity)) {
+      return undefined;
+    }
+    return { category: parts[0], itemId, quantity, currency: parts[3] };
   }
 
   read(reader: Reader): void {

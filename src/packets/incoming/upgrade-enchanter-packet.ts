@@ -4,7 +4,9 @@ import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
 /**
- * Enchanter upgrade state (packet 185).
+ * Achievement/progression state delivered through packet 185. Native handler
+ * ownership is `AchievementsManager`; forge/enchanter acknowledgement semantics
+ * are not established despite the historical packet name.
  *
  * The most frequent previously-unparsable packet in the 2026-07-26 capture:
  * 358 samples, all exactly 9 bytes, all of the same shape:

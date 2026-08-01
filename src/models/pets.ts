@@ -17,8 +17,15 @@ export enum PetYardType {
 export enum ActivePetUpdateType {
   /** No pet command has been selected yet. */
   Unknown = 0,
-  Follow = 1,
+  /** Selects the supplied pet id; an instance id of zero clears the active pet. */
+  SetActive = 1,
+  /** @deprecated Use {@link ActivePetUpdateType.SetActive}. */
+  Follow = SetActive,
+  /** Unobserved legacy value retained so unknown historical callers still round-trip. */
+  LegacyUnobserved = 2,
+  /** @deprecated No current capture uses command 2; use `SetActive` with id 0 to clear. */
   Unfollow = 2,
+  /** Releases/deletes the supplied pet. */
   Release = 3,
 }
 

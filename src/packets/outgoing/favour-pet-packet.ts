@@ -10,9 +10,10 @@ import { Writer } from '../../writer';
  *
  * The first byte is a CATEGORY discriminator, not a count -- see
  * {@link FavourPetOperation} for the evidence. Category 0 carries one int32 pet
- * instance id (-1 clears); category 2 carries the two title-slot ids (primary,
- * secondary) and mirrors the `RETITLE` sent just before it (the 19:40 session
- * shows `RETITLE 0000c89f00000fe3` then `FAVOUR_PET 02 0000c89f00000fe3`).
+ * instance id (-1 clears); category 2 carries a favourite-title pair (primary,
+ * secondary). A capture happened to send the same pair as a nearby `RETITLE`,
+ * but independent same-millisecond operations prove the favourite and equipped
+ * title mutations must not be coupled.
  * Unknown categories retain every complete trailing int32 for diagnostics.
  *
  * `values` is deliberately not called `petIds`: the category-2 form does not
@@ -41,15 +42,17 @@ export class FavourPetPacket implements Packet {
     return packet;
   }
 
-  /**
-   * Favourite the equipped title pair. `secondaryTitleId` is 0 when only one
-   * title slot is used. The pair mirrors the preceding {@link RetitlePacket}.
-   */
-  static title(titleId: number, secondaryTitleId = 0): FavourPetPacket {
+  /** Favourite a title pair independently of the currently equipped titles. */
+  static favoriteTitle(titleId: number, secondaryTitleId = 0): FavourPetPacket {
     const packet = new FavourPetPacket();
     packet.operation = FavourPetOperation.Title;
     packet.values = [titleId, secondaryTitleId];
     return packet;
+  }
+
+  /** @deprecated Use {@link FavourPetPacket.favoriteTitle}. */
+  static title(titleId: number, secondaryTitleId = 0): FavourPetPacket {
+    return FavourPetPacket.favoriteTitle(titleId, secondaryTitleId);
   }
 
   write(writer: Writer): void {

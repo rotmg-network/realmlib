@@ -18,3 +18,13 @@ export enum AccountListType {
    */
   Ignore = 1,
 }
+
+/** How an incoming account-list packet should be applied. */
+export enum AccountListAction {
+  /** Replace the complete selected list with the packet contents. */
+  Snapshot = -1,
+  /** Remove the packet's account ids from the selected list. */
+  Remove = 0,
+  /** Add the packet's account ids to the selected list. */
+  Add = 1,
+}

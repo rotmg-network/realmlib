@@ -11,7 +11,7 @@ export class ReskinPacket implements Packet {
 
   //#region packet-specific members
   /**
-   * The id of the skin to activate.
+   * The id of the skin to activate. Zero selects the observed base/default skin.
    */
   skinId: number;
   //#endregion

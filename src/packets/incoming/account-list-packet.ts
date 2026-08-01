@@ -2,6 +2,7 @@ import { Packet } from '../../packet';
 import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
+import { AccountListAction } from '../../models';
 
 /**
  * Received to provide lists of accounts ids which are
@@ -19,16 +20,35 @@ export class AccountListPacket implements Packet {
    * The account ids included in the list.
    */
   accountIds: string[];
-  /**
-   * > Unknown.
-   */
+  /** Snapshot (-1), remove (0), or add (1). Unknown values remain numeric. */
   lockAction: number;
   //#endregion
 
   constructor() {
     this.accountListId = 0;
     this.accountIds = [];
-    this.lockAction = 0;
+    this.lockAction = AccountListAction.Snapshot;
+  }
+
+  /** Typed compatibility view of {@link AccountListPacket.lockAction}. */
+  get action(): AccountListAction {
+    return this.lockAction as AccountListAction;
+  }
+
+  set action(value: AccountListAction) {
+    this.lockAction = value;
+  }
+
+  isSnapshot(): boolean {
+    return this.lockAction === AccountListAction.Snapshot;
+  }
+
+  isAddition(): boolean {
+    return this.lockAction === AccountListAction.Add;
+  }
+
+  isRemoval(): boolean {
+    return this.lockAction === AccountListAction.Remove;
   }
 
   read(reader: Reader): void {

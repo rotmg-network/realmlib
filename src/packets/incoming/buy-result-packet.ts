@@ -3,8 +3,21 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
+/** Observed raw result codes multiplexed across several purchase operations. */
+export enum BuyResultCode {
+  UnknownFailure = -1,
+  GenericSuccess = 0,
+  Unknown2 = 2,
+  Unknown3 = 3,
+  PetFeedSuccess = 7,
+  Unknown10 = 10,
+  PetBackpackSuccess = 13,
+}
+
 /**
- * Received in response to a `BuyPacket`.
+ * Multiplexed purchase/economy result. The originating operation is required
+ * to interpret success: code 7 confirms pet feed and code 13 confirms pet
+ * backpack expansion, so `result === 0` is not a universal success test.
  */
 export class BuyResultPacket implements Packet {
   readonly type = PacketType.BUYRESULT;
@@ -24,6 +37,23 @@ export class BuyResultPacket implements Packet {
   constructor() {
     this.result = 0;
     this.resultString = '';
+  }
+
+  /** Typed view which preserves unknown numeric server values. */
+  get code(): BuyResultCode {
+    return this.result as BuyResultCode;
+  }
+
+  set code(value: BuyResultCode) {
+    this.result = value;
+  }
+
+  isPetFeedSuccess(): boolean {
+    return this.result === BuyResultCode.PetFeedSuccess;
+  }
+
+  isPetBackpackSuccess(): boolean {
+    return this.result === BuyResultCode.PetBackpackSuccess;
   }
 
   read(reader: Reader): void {

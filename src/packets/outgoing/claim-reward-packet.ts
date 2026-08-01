@@ -3,7 +3,13 @@ import { PacketType } from '../../packet-type';
 import { Reader } from '../../reader';
 import { Writer } from '../../writer';
 
-/** Inferred reward track selector used by packet 234. */
+/** Competition reward column selected by packet 234. */
+export enum ClaimRewardColumn {
+  Column0 = 0,
+  Column1 = 1,
+}
+
+/** @deprecated Packet 234 selects competition columns, not Battle Pass tracks. */
 export enum ClaimRewardTrack {
   Free = 0,
   Premium = 1,
@@ -12,30 +18,56 @@ export enum ClaimRewardTrack {
 /**
  * Current build packet 234 (client -> server). The body is a single byte
  * (observed as both 0 and 1); the server replies with a
- * `ClaimRewardResultPacket` carrying an XML reward manifest. The byte likely
- * selects the free or premium reward track, but that meaning is not proven.
+ * `ClaimRewardResultPacket` carrying an XML reward manifest. Current captures,
+ * `/missions/getCompetition`, and handler ownership prove the byte selects one
+ * of the competition reward columns. The response does not echo the column.
  */
 export class ClaimRewardPacket implements Packet {
   readonly type = PacketType.CLAIM_REWARD;
 
   //#region packet-specific members
-  /** A single byte (observed as 0 and 1). Purpose not yet confirmed. */
-  unknownByte: number;
+  /** Competition reward column (observed 0 and 1). */
+  columnId: number;
   //#endregion
 
   constructor() {
-    this.unknownByte = 0;
+    this.columnId = 0;
+  }
+
+  /** @deprecated Use {@link ClaimRewardPacket.columnId}. */
+  get unknownByte(): number {
+    return this.columnId;
+  }
+
+  set unknownByte(value: number) {
+    this.columnId = value;
+  }
+
+  /** Typed view of the competition column. */
+  get column(): ClaimRewardColumn {
+    return this.columnId as ClaimRewardColumn;
+  }
+
+  set column(value: ClaimRewardColumn) {
+    this.columnId = value;
   }
 
   /** Typed alias for the captured free/premium track selector. */
   get track(): ClaimRewardTrack {
-    return this.unknownByte as ClaimRewardTrack;
+    return this.columnId as ClaimRewardTrack;
   }
 
   set track(value: ClaimRewardTrack) {
-    this.unknownByte = value;
+    this.columnId = value;
   }
 
+  static forColumn(column: ClaimRewardColumn): ClaimRewardPacket {
+    const packet = new ClaimRewardPacket();
+    packet.column = column;
+    return packet;
+  }
+
+  /** @deprecated Use {@link ClaimRewardPacket.forColumn}. */
   static forTrack(track: ClaimRewardTrack): ClaimRewardPacket {
     const packet = new ClaimRewardPacket();
     packet.track = track;
@@ -43,10 +75,10 @@ export class ClaimRewardPacket implements Packet {
   }
 
   read(reader: Reader): void {
-    this.unknownByte = reader.readByte();
+    this.columnId = reader.readUnsignedByte();
   }
 
   write(writer: Writer): void {
-    writer.writeByte(this.unknownByte);
+    writer.writeUnsignedByte(this.columnId);
   }
 }

@@ -16,7 +16,8 @@ export class ShootAckPacket implements Packet {
   time: number;
   /**
    * Number of `EnemyShootPacket` messages acknowledged by this packet.
-   * Captured values are 1-4; zero is not a valid ordinary acknowledgement.
+   * Unmodified current traffic reaches 235; zero has not been observed as an
+   * ordinary acknowledgement.
    */
   ackCount: number;
   //#endregion
