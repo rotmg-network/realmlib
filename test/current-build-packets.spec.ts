@@ -125,7 +125,7 @@ describe('current-build packets reconciled from captured bytes', () => {
     expect(out.values).to.deep.equal([39436, 0]);
   });
 
-  it('FavourPetPacket title category carries both title slots (mirrors RETITLE)', () => {
+  it('FavourPetPacket title category carries an independent favorite-title pair', () => {
     // 19:40 session: RETITLE 0000c89f00000fe3 then FAVOUR_PET 02<same>.
     const reader = hexReader('020000c89f00000fe3');
     const p = new FavourPetPacket();

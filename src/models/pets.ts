@@ -21,8 +21,6 @@ export enum ActivePetUpdateType {
   SetActive = 1,
   /** @deprecated Use {@link ActivePetUpdateType.SetActive}. */
   Follow = SetActive,
-  /** Unobserved legacy value retained so unknown historical callers still round-trip. */
-  LegacyUnobserved = 2,
   /** @deprecated No current capture uses command 2; use `SetActive` with id 0 to clear. */
   Unfollow = 2,
   /** Releases/deletes the supplied pet. */
@@ -68,7 +66,7 @@ export enum FavourPetOperation {
    * unknown and keeps every complete trailing int32.
    */
   Entrance = 1,
-  /** Two int32 title-slot ids follow (primary, secondary); mirrors RETITLE. */
+  /** Two independent favourite-title slot ids follow (primary, secondary). */
   Title = 2,
 }
 

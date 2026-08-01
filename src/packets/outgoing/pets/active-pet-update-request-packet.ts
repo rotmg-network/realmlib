@@ -61,7 +61,7 @@ export class ActivePetUpdateRequestPacket implements Packet {
         return `${command} : SetActive`;
       case ActivePetUpdateType.Release:
         return `${command} : Release`;
-      case ActivePetUpdateType.LegacyUnobserved:
+      case ActivePetUpdateType.Unfollow:
         return `${command} : LegacyUnobserved`;
       default:
         return `${command} : Unknown`;
